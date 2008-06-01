@@ -1,0 +1,1199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.w3.org/2001/XMLSchema
+               http://www.w3.org/2001/XMLSchema.xsd"
+        elementFormDefault="qualified"
+        version="1.0"
+        xml:lang="EN">
+    <!-- BEGIN M3X Format Schema -->
+    <xs:annotation>
+        <xs:documentation>
+            M3X Schema for JSR184 and JSR297
+            Version 1.0 (DRAFT)
+        </xs:documentation>
+    </xs:annotation>
+    <!-- Import xml::base -->
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <!-- Root Element -->
+    <xs:element name="m3g">
+        <xs:annotation>
+            <xs:appinfo>enable-xmlns</xs:appinfo>
+            <xs:documentation>
+                The m3g element is the root of the document that describes
+                the content of a JSR184/297 .m3g file
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="section" minOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The m3g element must contain 1 or more sections
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="version" type="VersionType"/>
+            <xs:attribute name="author" type="string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="AnimationController"/>
+                    <xs:element ref="AnimationTrack"/>
+                    <xs:element ref="Appearance"/>
+                    <xs:element ref="Background"/>
+                    <xs:element ref="Camera"/>
+                    <xs:element ref="CompositingMode"/>
+                    <xs:element ref="Fog"/>
+                    <xs:element ref="Group"/>
+                    <xs:element ref="Image2D"/>
+                    <xs:element ref="KeyframeSequence"/>
+                    <xs:element ref="Light"/>
+                    <xs:element ref="Material"/>
+                    <xs:element ref="Mesh"/>
+                    <xs:element ref="MorphingMesh"/>
+                    <xs:element ref="PolygonMode"/>
+                    <xs:element ref="SkinnedMesh"/>
+                    <xs:element ref="Texture2D"/>
+                    <xs:element ref="TriangleStripArray"/>
+                    <xs:element ref="VertexArray"/>
+                    <xs:element ref="VertexBuffer"/>
+                    <xs:element ref="World"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+        
+    <!-- Simple types -->
+    <xs:simpleType name="bool">
+        <xs:restriction base="xs:boolean"/>
+    </xs:simpleType>
+    <xs:simpleType name="float">
+        <xs:restriction base="xs:double"/>
+    </xs:simpleType>
+    <xs:simpleType name="int">
+        <xs:restriction base="xs:long"/>
+    </xs:simpleType>
+    <xs:simpleType name="ColorType">
+        <xs:restriction base="xs:hexBinary"/>
+    </xs:simpleType>
+    <xs:simpleType name="uint">
+        <xs:restriction base="xs:unsignedLong"/>
+    </xs:simpleType>
+    <xs:simpleType name="string">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="ObjectReference">
+        <xs:annotation>
+            <xs:documentation>
+                This type is used for referencing other nodes in the same document
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(#(.*))"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Aggregate types -->
+    <xs:simpleType name="floatList">
+        <xs:list itemType="float"/>
+    </xs:simpleType>
+    <xs:simpleType name="uintList">
+        <xs:list itemType="uint"/>
+    </xs:simpleType>
+    <xs:simpleType name="intList">
+        <xs:list itemType="int"/>
+    </xs:simpleType>
+    <!-- Simple Arrays -->
+    <xs:simpleType name="float3">
+        <xs:restriction base="floatList">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="float4">
+        <xs:restriction base="floatList">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="float4x4">
+        <xs:restriction base="floatList">
+            <xs:minLength value="16"/>
+            <xs:maxLength value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Enumerations -->
+    <xs:simpleType name="AnimationTargetType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed properties for an animation track to target
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALPHA">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets the node ALPHA value of the target. Only valid for Node targets.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="AMBIENT_COLOR">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets Material ambient color value. Only valid for Material targets.
+                        Since M3G 1.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATABILITY">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets Object3D animatability. Only valid for Object3D targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_POSITION">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets reference position of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_SPEED">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets playback speed of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_WEIGHT">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets blending weight of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BOUNDING_BOX">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets bounding box information of node objects. Only valid for Node targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BOUNDING_SPHERE">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets bounding sphere information of node objects. Only valid for Node targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="COLOR">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets the color of Light, Background, Fog, Texture2D or VertexBuffer objects.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CROP">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets sprite crop information.
+                        Deprecated in M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="DENSITY"/>
+            <xs:enumeration value="DEPTH"/>
+            <xs:enumeration value="DIFFUSE_COLOR"/>
+            <xs:enumeration value="EMISSIVE_COLOR"/>
+            <xs:enumeration value="FAR_DISTANCE"/>
+            <xs:enumeration value="FIELD_OF_VIEW"/>
+            <xs:enumeration value="INTENSITY"/>
+            <xs:enumeration value="MORPH_WEIGHTS"/>
+            <xs:enumeration value="NEAR_DISTANCE"/>
+            <xs:enumeration value="ORIENTATION"/>
+            <xs:enumeration value="PICKABILITY"/>
+            <xs:enumeration value="POINT_SIZE"/>
+            <xs:enumeration value="SCALE"/>
+            <xs:enumeration value="SHININESS"/>
+            <xs:enumeration value="SPECULAR_COLOR"/>
+            <xs:enumeration value="SPOT_ANGLE"/>
+            <xs:enumeration value="SPOT_EXPONENT"/>
+            <xs:enumeration value="STENCIL"/>
+            <xs:enumeration value="TRANSLATION"/>
+            <xs:enumeration value="VISIBILITY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BackgroundRepeatType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed modes for the repetition of the image in a background element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BORDER">
+                <xs:annotation>
+                    <xs:documentation>
+                        Deprecated in M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="REPEAT">
+                <xs:annotation>
+                    <xs:documentation>
+                        Deprecated in M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BlenderType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed blend factor constants. They correspond to OpenGL|ES blend modes.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ADD"/>
+            <xs:enumeration value="CONSTANT_ALPHA"/>
+            <xs:enumeration value="CONSTANT_COLOR"/>
+            <xs:enumeration value="DST_ALPHA"/>
+            <xs:enumeration value="DST_COLOR"/>
+            <xs:enumeration value="ONE"/>
+            <xs:enumeration value="ONE_MINUS_CONSTANT_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_CONSTANT_COLOR"/>
+            <xs:enumeration value="ONE_MINUS_DST_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_DST_COLOR"/>
+            <xs:enumeration value="ONE_MINUS_SRC_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_SRC_COLOR"/>
+            <xs:enumeration value="REVERSE_SUBTRACT"/>
+            <xs:enumeration value="SRC_ALPHA"/>
+            <xs:enumeration value="SRC_ALPHA_SATURATE"/>
+            <xs:enumeration value="SRC_COLOR"/>
+            <xs:enumeration value="SUBTRACT"/>
+            <xs:enumeration value="ZERO"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CameraProjectionModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed projection matrix modes for a camera element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GENERIC"/>
+            <xs:enumeration value="PARALLEL"/>
+            <xs:enumeration value="PERSPECTIVE"/>
+            <xs:enumeration value="SCREEN"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CompositingModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed fragment composition modes in a compositing mode element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALPHA"/>
+            <xs:enumeration value="ALPHA_ADD"/>
+            <xs:enumeration value="ALPHA_PREMULTIPLY"/>
+            <xs:enumeration value="ALPHA_DARKEN"/>
+            <xs:enumeration value="MODULATE"/>
+            <xs:enumeration value="MODULATE_X2"/>
+            <xs:enumeration value="MODULATE_INV"/>
+            <xs:enumeration value="REPLACE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FogEquationType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed fog equations in a fog element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EXPONENTIAL"/>
+            <xs:enumeration value="EXPONENTIAL_SQUARED"/>
+            <xs:enumeration value="LINEAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ImageBaseColorType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed color formats of an image element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALPHA"/>
+            <xs:enumeration value="LUMINANCE"/>
+            <xs:enumeration value="LUMINANCE_ALPHA"/>
+            <xs:enumeration value="RGB"/>
+            <xs:enumeration value="RGB_ETC"/>
+            <xs:enumeration value="RGB565"/>
+            <xs:enumeration value="RGB565"/>
+            <xs:enumeration value="RGBA"/>
+            <xs:enumeration value="RGBA4444"/>
+            <xs:enumeration value="RGBA5551"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="KeyframeInterpolationType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed interpolation modes for a keyframesequence element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LINEAR"/>
+            <xs:enumeration value="SLERP"/>
+            <xs:enumeration value="SPLINE"/>
+            <xs:enumeration value="SQUAD"/>
+            <xs:enumeration value="STEP"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="KeyframePlaybackType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed playback modes for a keyframesequence element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CONSTANT"/>
+            <xs:enumeration value="LOOP"/>
+            <xs:enumeration value="ADDITIVE_LOOP"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LightType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed light element types
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AMBIENT"/>
+            <xs:enumeration value="DIRECTIONAL"/>
+            <xs:enumeration value="OMNI"/>
+            <xs:enumeration value="SPOT"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MaterialType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed material element types
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AMBIENT"/>
+            <xs:enumeration value="DIFFUSE"/>
+            <xs:enumeration value="EMISSIVE"/>
+            <xs:enumeration value="SPECULAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NodeAlignmentType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed alignment targets and axis for node elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="ORIGIN"/>
+            <xs:enumeration value="X_AXIS"/>
+            <xs:enumeration value="Y_AXIS"/>
+            <xs:enumeration value="Z_AXIS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PolygonCullingModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed culling modes for polygon mode elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BACK"/>
+            <xs:enumeration value="FRONT"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PolygonShadingModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed shading modes for polygon mode elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FLAT"/>
+            <xs:enumeration value="SMOOTH"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PolygonWindingModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed winding modes for polygon mode elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CCW"/>
+            <xs:enumeration value="CW"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TextureMipmapModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed mipmap image filter modes for texture elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BASE_LEVEL"/>
+            <xs:enumeration value="LINEAR"/>
+            <xs:enumeration value="NEAREST"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TextureFilterModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed image filter modes for texture elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ANISOTROPIC"/>
+            <xs:enumeration value="LINEAR"/>
+            <xs:enumeration value="NEAREST"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Texture2DBlendModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed texuture blend modes for texture2d elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ADD"/>
+            <xs:enumeration value="BLEND"/>
+            <xs:enumeration value="DECAL"/>
+            <xs:enumeration value="DOT3"/>
+            <xs:enumeration value="MODULATE"/>
+            <xs:enumeration value="REPLACE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Texture2DWrapModeType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed texuture wrapping modes for texture2d elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CLAMP"/>
+            <xs:enumeration value="MIRROR"/>
+            <xs:enumeration value="REPEAT"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="VersionType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed versions for an m3g document
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1.0"/>
+            <xs:enumeration value="1.1"/>
+            <xs:enumeration value="2.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="VertexArrayDataType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed data types for vertex array elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BYTE"/>
+            <xs:enumeration value="FIXED"/>
+            <xs:enumeration value="FLOAT"/>
+            <xs:enumeration value="HALF"/>
+            <xs:enumeration value="SHORT"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Complex types -->
+    <!-- Helper types -->
+    <xs:element name="Transform">
+        <xs:annotation>
+            <xs:documentation>
+                Matrix transformations embody mathematical changes to points within a coordinate systems or the
+                coordinate system itself. The Transform element contains a 4-by-4 matrix of floating-point values.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="float4x4"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ProjectionTransform">
+        <xs:annotation>
+            <xs:documentation>
+                Matrix transformations embody mathematical changes to points within a coordinate systems or the
+                coordinate system itself. The Transform element contains a 4-by-4 matrix of floating-point values.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="float4x4"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="translate">
+        <xs:simpleType>
+            <xs:restriction base="float3"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="scale">
+        <xs:simpleType>
+            <xs:restriction base="float3"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="rotate">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="float3">
+                    <xs:attribute name="angle" type="float"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="palette">
+        <xs:simpleType>
+            <xs:restriction base="uintList"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="pixels">
+        <xs:simpleType>
+            <xs:restriction base="uintList"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="keyframes">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="floatList">
+                    <xs:attribute name="componentSize" type="uint"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="keytimes">
+        <xs:simpleType>
+            <xs:restriction base="uintList"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="lengths">
+        <xs:simpleType>
+            <xs:restriction base="uintList"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="float_array">
+        <xs:simpleType>
+            <xs:restriction base="floatList">
+                <xs:minLength value="1"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="int_array">
+        <xs:simpleType>
+            <xs:restriction base="intList">
+                <xs:minLength value="1"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <!-- M3G types -->
+    <xs:complexType name="InstanceType">
+        <xs:annotation>
+            <xs:documentation>
+                The Instance type declares a base for M3G instance elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="ref" type="ObjectReference">
+            <xs:annotation>
+                <xs:documentation>
+                    The ref attribute is a text string containing the unique reference name of the target element.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="Object3DType" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                The Object3D type declares the basic storage of a serializable object for an M3G file.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element ref="AnimationTrack">
+                    <xs:annotation>
+                        <xs:documentation>
+                            An object can have any number of animation tracks targeting it.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element ref="AnimationTrackInstance">
+                    <xs:annotation>
+                        <xs:documentation>
+                            An object can have any number of animation tracks targeting it.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:ID">
+            <xs:annotation>
+                <xs:documentation>
+                    The name attribute is a text string containing the unique name of this element.
+                    This value must be unique within the instance document. Optional attribute.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="userID" type="int" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    The userID attribute is an integer that can be used by an application to find the object in the
+                    scene graph. Optional attribute.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="TransformableType">
+        <xs:complexContent>
+            <xs:extension base="Object3DType">
+                <xs:sequence>
+                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="rotate" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="Transform" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="NodeType">
+        <xs:complexContent>
+            <xs:extension base="TransformableType">
+                <!--<xs:sequence>
+                    <xs:element ref="aligment" minOccurs="0" maxOccurs="2"/>
+                </xs:sequence>-->
+                <xs:attribute name="rendering" type="bool" default="true"/>
+                <xs:attribute name="picking" type="bool" default="true"/>
+                <xs:attribute name="alphaFactor" type="float" default="1.0"/>
+                <xs:attribute name="scope" type="int" default="-1"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GroupType">
+        <xs:complexContent>
+            <xs:extension base="NodeType">
+                <xs:sequence>
+                    <xs:element ref="Camera" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="Light" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="Mesh" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="SkinnedMesh" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ImageBaseType">
+        <xs:complexContent>
+            <xs:extension base="Object3DType">
+                <xs:attribute name="format" type="ImageBaseColorType"/>
+                <xs:attribute name="mutable" type="bool"/>
+                <xs:attribute name="width" type="uint"/>
+                <xs:attribute name="height" type="uint"/>
+                <xs:attribute name="mipmap" type="bool"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="IndexBufferType">
+        <xs:complexContent>
+            <xs:extension base="Object3DType">
+                <xs:sequence>
+                    <xs:element name="indices" minOccurs="1" maxOccurs="1">
+                        <xs:simpleType>
+                            <xs:restriction base="uintList">
+                                <xs:minLength value="1"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="MeshType">
+        <xs:complexContent>
+            <xs:extension base="NodeType">
+                <xs:sequence>
+                    <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="submesh" minOccurs="1" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element ref="TriangleStripArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                <xs:element ref="AppearanceInstance" minOccurs="1" maxOccurs="1"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="AnimationController">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:attribute name="speed" type="float"/>
+                    <xs:attribute name="weight" type="float"/>
+                    <xs:attribute name="start" type="int"/>
+                    <xs:attribute name="end" type="int"/>
+                    <xs:attribute name="sequenceTime" type="int"/>
+                    <xs:attribute name="worldTime" type="int"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AnimationControllerInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AnimationTrack">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:element ref="KeyframeSequenceInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="AnimationControllerInstance" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="property" type="AnimationTargetType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AnimationTrackInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Appearance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:element ref="CompositingModeInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="FogInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="PolygonModeInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="MaterialInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="Texture2DInstance" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="layer" type="int"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AppearanceInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Background">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="color" type="int" default="0"/>
+                    <xs:attribute name="modeX" type="BackgroundRepeatType"/>
+                    <xs:attribute name="modeY" type="BackgroundRepeatType"/>
+                    <xs:attribute name="cropX" type="int"/>
+                    <xs:attribute name="cropY" type="int"/>
+                    <xs:attribute name="cropWidth" type="int"/>
+                    <xs:attribute name="cropHeight" type="int"/>
+                    <xs:attribute name="depthClear" type="bool"/>
+                    <xs:attribute name="colorClear" type="bool"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Camera">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="NodeType">
+                    <xs:sequence>
+                        <xs:element ref="ProjectionTransform" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="projection" type="CameraProjectionModeType"/>
+                    <xs:attribute name="fovy" type="float"/>
+                    <xs:attribute name="aspect" type="float"/>
+                    <xs:attribute name="near" type="float"/>
+                    <xs:attribute name="far" type="float"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CompositingMode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:attribute name="depthTest" type="bool"/>
+                    <xs:attribute name="depthWrite" type="bool"/>
+                    <xs:attribute name="colorWrite" type="bool"/>
+                    <xs:attribute name="alphaWrite" type="bool"/>
+                    <xs:attribute name="blending" type="CompositingModeType"/>
+                    <xs:attribute name="alphaThreshold" type="float"/>
+                    <xs:attribute name="depthOffsetFactor" type="float"/>
+                    <xs:attribute name="depthOffsetUnits" type="float"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CompositingModeInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Fog">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:attribute name="color" type="int"/>
+                    <xs:attribute name="mode" type="FogEquationType"/>
+                    <xs:attribute name="density" type="float"/>
+                    <xs:attribute name="near" type="float"/>
+                    <xs:attribute name="far" type="float"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="FogInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Group">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="GroupType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ImageBaseInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Image2D">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ImageBaseType">
+                    <xs:sequence>
+                        <xs:element ref="palette" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="pixels" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Image2DInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <!--FIXME add definition for ImageCube -->
+    <xs:element name="IndexBufferInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="KeyframeSequence">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:element ref="keytimes" minOccurs="1" maxOccurs="1"/>
+                        <xs:element ref="keyframes" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="componentCount" type="uint"/>
+                    <xs:attribute name="duration" type="uint"/>
+                    <xs:attribute name="first" type="uint"/>
+                    <xs:attribute name="interpolation" type="KeyframeInterpolationType"/>
+                    <xs:attribute name="keyframeCount" type="uint"/>
+                    <xs:attribute name="last" type="uint"/>
+                    <xs:attribute name="repeatMode" type="KeyframePlaybackType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="KeyframeSequenceInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Light">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="NodeType">
+                    <xs:attribute name="attenuationConstant" type="float"/>
+                    <xs:attribute name="attenuationLinear" type="float"/>
+                    <xs:attribute name="attenuationQuadratic" type="float"/>
+                    <xs:attribute name="color" type="int"/>
+                    <xs:attribute name="mode" type="LightType"/>
+                    <xs:attribute name="intensity" type="float"/>
+                    <xs:attribute name="spotAngle" type="float"/>
+                    <xs:attribute name="spotExponent" type="float"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Material">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:attribute name="ambient" type="int"/>
+                    <xs:attribute name="diffuse" type="int"/>
+                    <xs:attribute name="emissive" type="int"/>
+                    <xs:attribute name="specular" type="int"/>
+                    <xs:attribute name="shininess" type="float"/>
+                    <xs:attribute name="vertexColor" type="bool"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MaterialInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Mesh">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="MeshType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MorphingMesh">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="MeshType">
+                    <xs:sequence>
+                        <xs:element name="morphtarget" minOccurs="1" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
+                                </xs:sequence>
+                                <xs:attribute name="weight" type="float"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PolygonMode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:attribute name="culling" type="PolygonCullingModeType"/>
+                    <xs:attribute name="shading" type="PolygonShadingModeType"/>
+                    <xs:attribute name="winding" type="PolygonWindingModeType"/>
+                    <xs:attribute name="twoSidedLighting" type="bool"/>
+                    <xs:attribute name="localCameraLighting" type="bool"/>
+                    <xs:attribute name="perpectiveCorrection" type="bool"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PolygonModeInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SkinnedMesh">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="MeshType">
+                    <xs:sequence>
+                        <xs:element ref="Group" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="bone" minOccurs="1" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:attribute name="ref" type="xs:ID"/>
+                                <xs:attribute name="first" type="int"/>
+                                <xs:attribute name="count" type="int"/>
+                                <xs:attribute name="weight" type="float"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Texture2D">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="TransformableType">
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:element ref="Image2D" minOccurs="0" maxOccurs="1"/>
+                            <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
+                        </xs:choice>
+                    </xs:sequence>
+                    <xs:attribute name="color" type="ColorType" default="00FFFFFF"/>
+                    <xs:attribute name="blending" type="Texture2DBlendModeType"/>
+                    <xs:attribute name="wrapS" type="Texture2DWrapModeType"/>
+                    <xs:attribute name="wrapT" type="Texture2DWrapModeType"/>
+                    <xs:attribute name="levelFilter" type="TextureMipmapModeType"/>
+                    <xs:attribute name="imageFilter" type="TextureFilterModeType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Texture2DInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TriangleStripArray">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="IndexBufferType">
+                    <xs:sequence>
+                        <xs:element ref="lengths" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TriangleStripArrayInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VertexArray">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:element ref="float_array" minOccurs="1" maxOccurs="1"/>
+                            <xs:element ref="int_array" minOccurs="1" maxOccurs="1"/>
+                        </xs:choice>
+                    </xs:sequence>
+                    <xs:attribute name="componentCount" type="uint"/>
+                    <xs:attribute name="componentType" default="FLOAT" type="VertexArrayDataType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VertexArrayInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VertexBuffer">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Object3DType">
+                    <xs:sequence>
+                        <xs:element name="positions" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                                    <xs:choice>
+                                        <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
+                                        <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                    </xs:choice>
+                                </xs:sequence>
+                                <xs:attribute name="scale" type="float"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="normals" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:choice>
+                                    <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="colors" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:choice>
+                                    <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="texcoords" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                                    <xs:choice>
+                                        <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
+                                        <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                    </xs:choice>
+                                </xs:sequence>
+                                <xs:attribute name="scale" type="float"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="color" type="uint"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VertexBufferInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="InstanceType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="World">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="GroupType">
+                    <xs:attribute name="activeCamera" type="ObjectReference"/>
+                    <xs:attribute name="background" type="ObjectReference"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+
