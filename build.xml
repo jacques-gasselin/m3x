@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="m3x" default="default" basedir=".">
+    <description>Builds the all the packages for the M3X project.</description>
+
+    <target name="default">
+    </target>
+</project>

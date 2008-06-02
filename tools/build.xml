@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="m3x" default="build" basedir=".">
+    <description>Builds the tool packages for the M3X project.</description>
+    
+    <!--taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+      <classpath/>
+    </taskdef-->
+
+    <property name="src.dir" value="src"/>
+    <property name="src.m3x.dir" value="${src.dir}/m3x"/>
+    <property name="src.m3x.jaxb.dir" value="${src.m3x.dir}/jaxb"/>
+    <property name="schema.dir" value="../schema"/>
+    <property name="lib.dir" value="../lib"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.m3x.dir" value="${build.dir}/m3x"/>
+    <property name="build.m3x.jaxb.dir" value="${build.m3x.dir}/jaxb"/>
+
+    <property name="m3x.jaxb.package" value="m3x.jaxb"/>
+
+    
+    <target name="pre-build">
+        <mkdir dir="${src.m3x.dir}"/>
+        <mkdir dir="${src.m3x.jaxb.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.m3x.dir}"/>
+        <mkdir dir="${build.m3x.jaxb.dir}"/>
+    </target>
+    
+    
+    <target name="xjc-typedef">
+        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+          <classpath>
+            <fileset dir="${lib.dir}"/>
+          </classpath>
+        </taskdef>        
+    </target>
+
+    <target name="jaxb-build" depends="xjc-typedef">
+        <xjc package="${m3x.jaxb.package}"
+             destdir="${src.dir}">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <schema file="${schema.dir}/m3x.xsd"/>
+            <depends file="${schema.dir}/m3x.xsd"/>
+            <produces dir="${src.m3x.jaxb.dir}"/>
+        </xjc>
+    </target>
+    
+    <target name="build" depends="pre-build, jaxb-build">
+    </target>
+
+</project>

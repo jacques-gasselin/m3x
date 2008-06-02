@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.w3.org/2001/XMLSchema
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema
                http://www.w3.org/2001/XMLSchema.xsd"
-        elementFormDefault="qualified"
-        version="1.0"
-        xml:lang="EN">
+           elementFormDefault="qualified"
+           version="1.0"
+           xml:lang="EN">
     <!-- BEGIN M3X Format Schema -->
     <xs:annotation>
         <xs:documentation>
