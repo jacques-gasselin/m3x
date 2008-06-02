@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="m3x" default="default" basedir=".">
+<project name="m3x" default="build" basedir=".">
     <description>Builds the all the packages for the M3X project.</description>
 
-    <target name="default">
+    <target name="build">
+        <ant antfile="build.xml"
+             dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="build"/>
     </target>
 </project>
