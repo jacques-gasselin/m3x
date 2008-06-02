@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="m3x" default="build" basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
-    
-    <!--taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-      <classpath/>
-    </taskdef-->
 
     <property name="src.dir" value="src"/>
     <property name="src.m3x.dir" value="${src.dir}/m3x"/>
