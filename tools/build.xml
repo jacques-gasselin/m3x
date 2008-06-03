@@ -2,6 +2,7 @@
 <project name="m3x" default="build" basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
 
+    <property name="docs.dir" value="docs"/>
     <property name="src.dir" value="src"/>
     <property name="src.m3x.dir" value="${src.dir}/m3x"/>
     <property name="src.m3x.jaxb.dir" value="${src.m3x.dir}/jaxb"/>
@@ -45,6 +46,27 @@
     </target>
     
     <target name="build" depends="pre-build, jaxb-build">
+
+    </target>
+    
+    <target name="javadoc" depends="pre-build, jaxb-build">
+        <javadoc destdir="${docs.dir}/api"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="m3x Application Programming Interface">
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+            <fileset dir="src" defaultexcludes="yes">
+                <exclude name="test/**"/>
+            </fileset>
+            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
+            <group title="JAXB Packages" packages="m3x.jaxb"/>
+            <link href="http://java.sun.com/developer/technicalArticles/WebServices/jaxb/"/>
+            <link href="http://jcp.org/en/jsr/detail?id=297"/>
+        </javadoc>       
     </target>
 
 </project>

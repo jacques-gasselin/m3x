@@ -2,11 +2,37 @@
 <project name="m3x" default="build" basedir=".">
     <description>Builds the all the packages for the M3X project.</description>
 
-    <target name="build">
+    <target name="build"
+            description="runs the build target in all the subfolders">
         <ant antfile="build.xml"
              dir="tools"
              inheritall="true"
              inheritrefs="true"
              target="build"/>
     </target>
+    
+    <target name="clean"
+            description="runs the clean target in all the subfolders">
+        
+    </target>
+    
+    <target name="javadoc"
+            description="runs the javadoc target in all the subfolders">
+        <ant antfile="build.xml"
+             dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="javadoc"/>
+    </target>
+    
+    <target name="run"
+            description="runs the run target in all the subfolders">
+        
+    </target>
+    
+    <target name="test"
+            description="runs the test target in all the subfolders">
+        
+    </target>
+    
 </project>
