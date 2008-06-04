@@ -13,7 +13,11 @@
     
     <target name="clean"
             description="runs the clean target in all the subfolders">
-        
+        <ant antfile="build.xml"
+             dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="clean"/>
     </target>
     
     <target name="javadoc"

@@ -78,6 +78,7 @@
             <compilation-unit>
                 <package-root>www</package-root>
                 <package-root>tools/src</package-root>
+                <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

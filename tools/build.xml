@@ -26,9 +26,9 @@
     
     <target name="xjc-typedef">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-          <classpath>
-            <fileset dir="${lib.dir}"/>
-          </classpath>
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
         </taskdef>        
     </target>
 
@@ -45,8 +45,25 @@
         </xjc>
     </target>
     
-    <target name="build" depends="pre-build, jaxb-build">
+    <target name="clean">
+        <delete>
+            <fileset dir="${build.dir}" includes="**/*.class"/>
+        </delete>
+    </target>
 
+    <target name="build" depends="pre-build, jaxb-build">
+        <depend srcdir="${src.dir}"
+                destdir="${build.dir}"
+                cache="depcache"
+                closure="yes"/>
+        <javac destdir="${build.dir}"
+               fork="true">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+            <src path="${src.dir}"/>
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+        </javac>
     </target>
     
     <target name="javadoc" depends="pre-build, jaxb-build">
