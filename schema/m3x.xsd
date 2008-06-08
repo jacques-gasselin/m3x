@@ -16,6 +16,91 @@
     <!-- Import xml::base -->
     <xs:import namespace="http://www.w3.org/XML/1998/namespace"
                schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <!-- Simple types -->
+    <xs:simpleType name="Byte">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int16">
+        <xs:restriction base="xs:short"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt16">
+        <xs:restriction base="xs:unsignedShort"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int32">
+        <xs:restriction base="xs:int"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt32">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>    
+    <xs:simpleType name="Float32">
+        <xs:restriction base="xs:float"/>
+    </xs:simpleType>
+    <xs:simpleType name="String">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="Boolean">
+        <xs:restriction base="xs:boolean"/>
+    </xs:simpleType>
+    <xs:simpleType name="ObjectReference">
+        <xs:annotation>
+            <xs:documentation>
+                This type is used for referencing other nodes in the same document
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(#(.*))"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Aggregate types -->
+    <xs:simpleType name="ByteList">
+        <xs:list itemType="Byte"/>
+    </xs:simpleType>
+    <xs:simpleType name="Float32List">
+        <xs:list itemType="Float32"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt16List">
+        <xs:list itemType="UInt16"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int16List">
+        <xs:list itemType="Int16"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt32List">
+        <xs:list itemType="UInt32"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int32List">
+        <xs:list itemType="Int32"/>
+    </xs:simpleType>
+    <!-- Simple Arrays -->
+    <xs:simpleType name="Vector3D">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Vector4D">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Matrix">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="16"/>
+            <xs:maxLength value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ColorRGB">
+        <xs:restriction base="ByteList">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ColorRGBA">
+        <xs:restriction base="ByteList">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
     <!-- Root Element -->
     <xs:element name="m3g">
         <xs:annotation>
@@ -36,7 +121,7 @@
                 </xs:element>
             </xs:sequence>
             <xs:attribute name="version" type="VersionType"/>
-            <xs:attribute name="author" type="string"/>
+            <xs:attribute name="author" type="String"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="section" type="SectionType"/>
@@ -69,64 +154,6 @@
             <xs:element ref="World"/>
         </xs:choice>
     </xs:group>
-    <!-- Simple types -->
-    <xs:simpleType name="bool">
-        <xs:restriction base="xs:boolean"/>
-    </xs:simpleType>
-    <xs:simpleType name="float">
-        <xs:restriction base="xs:double"/>
-    </xs:simpleType>
-    <xs:simpleType name="int">
-        <xs:restriction base="xs:long"/>
-    </xs:simpleType>
-    <xs:simpleType name="ColorType">
-        <xs:restriction base="xs:hexBinary"/>
-    </xs:simpleType>
-    <xs:simpleType name="uint">
-        <xs:restriction base="xs:unsignedLong"/>
-    </xs:simpleType>
-    <xs:simpleType name="string">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-    <xs:simpleType name="ObjectReference">
-        <xs:annotation>
-            <xs:documentation>
-                This type is used for referencing other nodes in the same document
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:pattern value="(#(.*))"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <!-- Aggregate types -->
-    <xs:simpleType name="floatList">
-        <xs:list itemType="float"/>
-    </xs:simpleType>
-    <xs:simpleType name="uintList">
-        <xs:list itemType="uint"/>
-    </xs:simpleType>
-    <xs:simpleType name="intList">
-        <xs:list itemType="int"/>
-    </xs:simpleType>
-    <!-- Simple Arrays -->
-    <xs:simpleType name="float3">
-        <xs:restriction base="floatList">
-            <xs:minLength value="3"/>
-            <xs:maxLength value="3"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="float4">
-        <xs:restriction base="floatList">
-            <xs:minLength value="4"/>
-            <xs:maxLength value="4"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="float4x4">
-        <xs:restriction base="floatList">
-            <xs:minLength value="16"/>
-            <xs:maxLength value="16"/>
-        </xs:restriction>
-    </xs:simpleType>
     <!-- Enumerations -->
     <xs:simpleType name="AnimationTargetType">
         <xs:annotation>
@@ -134,7 +161,7 @@
                 The allowed properties for an animation track to target
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:string">
+        <xs:restriction base="String">
             <xs:enumeration value="ALPHA">
                 <xs:annotation>
                     <xs:documentation>
@@ -242,7 +269,7 @@
                 The allowed modes for the repetition of the image in a background element
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:string">
+        <xs:restriction base="String">
             <xs:enumeration value="BORDER">
                 <xs:annotation>
                     <xs:documentation>
@@ -265,7 +292,7 @@
                 The allowed blend factor constants. They correspond to OpenGL|ES blend modes.
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:string">
+        <xs:restriction base="String">
             <xs:enumeration value="ADD"/>
             <xs:enumeration value="CONSTANT_ALPHA"/>
             <xs:enumeration value="CONSTANT_COLOR"/>
@@ -534,7 +561,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
-            <xs:restriction base="float4x4"/>
+            <xs:restriction base="Matrix"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="ProjectionTransform">
@@ -545,67 +572,67 @@
             </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
-            <xs:restriction base="float4x4"/>
+            <xs:restriction base="Matrix"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="translate">
         <xs:simpleType>
-            <xs:restriction base="float3"/>
+            <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="scale">
         <xs:simpleType>
-            <xs:restriction base="float3"/>
+            <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="rotate">
         <xs:complexType>
             <xs:simpleContent>
-                <xs:extension base="float3">
-                    <xs:attribute name="angle" type="float"/>
+                <xs:extension base="Vector3D">
+                    <xs:attribute name="angle" type="Float32"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="palette">
         <xs:simpleType>
-            <xs:restriction base="uintList"/>
+            <xs:restriction base="ByteList"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="pixels">
         <xs:simpleType>
-            <xs:restriction base="uintList"/>
+            <xs:restriction base="ByteList"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="keyframes">
         <xs:complexType>
             <xs:simpleContent>
-                <xs:extension base="floatList">
-                    <xs:attribute name="componentSize" type="uint"/>
+                <xs:extension base="Float32List">
+                    <xs:attribute name="componentSize" type="Byte" use="required"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="keytimes">
         <xs:simpleType>
-            <xs:restriction base="uintList"/>
+            <xs:restriction base="UInt32List"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="lengths">
+    <xs:element name="stripLengths">
         <xs:simpleType>
-            <xs:restriction base="uintList"/>
+            <xs:restriction base="UInt16List"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="float_array">
         <xs:simpleType>
-            <xs:restriction base="floatList">
+            <xs:restriction base="Float32List">
                 <xs:minLength value="1"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
     <xs:element name="int_array">
         <xs:simpleType>
-            <xs:restriction base="intList">
+            <xs:restriction base="Int32List">
                 <xs:minLength value="1"/>
             </xs:restriction>
         </xs:simpleType>
@@ -657,7 +684,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="userID" type="int" default="0">
+        <xs:attribute name="userID" type="UInt32" default="0">
             <xs:annotation>
                 <xs:documentation>
                     The userID attribute is an integer that can be used by an application to find the object in the
@@ -684,10 +711,10 @@
                 <!--<xs:sequence>
                     <xs:element ref="aligment" minOccurs="0" maxOccurs="2"/>
                 </xs:sequence>-->
-                <xs:attribute name="rendering" type="bool" default="true"/>
-                <xs:attribute name="picking" type="bool" default="true"/>
-                <xs:attribute name="alphaFactor" type="float" default="1.0"/>
-                <xs:attribute name="scope" type="int" default="-1"/>
+                <xs:attribute name="renderingEnabled" type="Boolean" default="true"/>
+                <xs:attribute name="pickingEnabled" type="Boolean" default="true"/>
+                <xs:attribute name="alphaFactor" type="Float32" default="1.0"/>
+                <xs:attribute name="scope" type="Int32" default="-1"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -695,11 +722,13 @@
         <xs:complexContent>
             <xs:extension base="NodeType">
                 <xs:sequence>
-                    <xs:element ref="Camera" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="Light" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="Mesh" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="SkinnedMesh" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:choice>
+                        <xs:element ref="Camera" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element ref="Light" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element ref="Mesh" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element ref="SkinnedMesh" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:choice>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -708,10 +737,10 @@
         <xs:complexContent>
             <xs:extension base="Object3DType">
                 <xs:attribute name="format" type="ImageBaseColorType"/>
-                <xs:attribute name="mutable" type="bool"/>
-                <xs:attribute name="width" type="uint"/>
-                <xs:attribute name="height" type="uint"/>
-                <xs:attribute name="mipmap" type="bool"/>
+                <xs:attribute name="mutable" type="Boolean"/>
+                <xs:attribute name="width" type="UInt32"/>
+                <xs:attribute name="height" type="UInt32"/>
+                <xs:attribute name="mipmap" type="Boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -721,7 +750,7 @@
                 <xs:sequence>
                     <xs:element name="indices" minOccurs="1" maxOccurs="1">
                         <xs:simpleType>
-                            <xs:restriction base="uintList">
+                            <xs:restriction base="UInt16List">
                                 <xs:minLength value="1"/>
                             </xs:restriction>
                         </xs:simpleType>
@@ -751,12 +780,12 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3DType">
-                    <xs:attribute name="speed" type="float"/>
-                    <xs:attribute name="weight" type="float"/>
-                    <xs:attribute name="start" type="int"/>
-                    <xs:attribute name="end" type="int"/>
-                    <xs:attribute name="sequenceTime" type="int"/>
-                    <xs:attribute name="worldTime" type="int"/>
+                    <xs:attribute name="speed" type="Float32"/>
+                    <xs:attribute name="weight" type="Float32"/>
+                    <xs:attribute name="activeIntervalStart" type="Int32"/>
+                    <xs:attribute name="activeIntervalEnd" type="Int32"/>
+                    <xs:attribute name="referenceSequenceTime" type="Float32"/>
+                    <xs:attribute name="referenceWorldTime" type="Int32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -799,7 +828,7 @@
                         <xs:element ref="MaterialInstance" minOccurs="0" maxOccurs="1"/>
                         <xs:element ref="Texture2DInstance" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
-                    <xs:attribute name="layer" type="int"/>
+                    <xs:attribute name="layer" type="Byte"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -818,15 +847,15 @@
                     <xs:sequence>
                         <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="color" type="int" default="0"/>
-                    <xs:attribute name="modeX" type="BackgroundRepeatType"/>
-                    <xs:attribute name="modeY" type="BackgroundRepeatType"/>
-                    <xs:attribute name="cropX" type="int"/>
-                    <xs:attribute name="cropY" type="int"/>
-                    <xs:attribute name="cropWidth" type="int"/>
-                    <xs:attribute name="cropHeight" type="int"/>
-                    <xs:attribute name="depthClear" type="bool"/>
-                    <xs:attribute name="colorClear" type="bool"/>
+                    <xs:attribute name="backgroundColor" type="ColorRGBA" default="0 0 0 255"/>
+                    <xs:attribute name="backgroundImageModeX" type="BackgroundRepeatType"/>
+                    <xs:attribute name="backgroundImageModeY" type="BackgroundRepeatType"/>
+                    <xs:attribute name="cropX" type="Int32"/>
+                    <xs:attribute name="cropY" type="Int32"/>
+                    <xs:attribute name="cropWidth" type="Int32"/>
+                    <xs:attribute name="cropHeight" type="Int32"/>
+                    <xs:attribute name="depthClearEnabled" type="Boolean"/>
+                    <xs:attribute name="colorClearEnabled" type="Boolean"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -838,11 +867,11 @@
                     <xs:sequence>
                         <xs:element ref="ProjectionTransform" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="projection" type="CameraProjectionModeType"/>
-                    <xs:attribute name="fovy" type="float"/>
-                    <xs:attribute name="aspect" type="float"/>
-                    <xs:attribute name="near" type="float"/>
-                    <xs:attribute name="far" type="float"/>
+                    <xs:attribute name="projectionType" type="CameraProjectionModeType"/>
+                    <xs:attribute name="fovy" type="Float32"/>
+                    <xs:attribute name="aspectRatio" type="Float32"/>
+                    <xs:attribute name="near" type="Float32"/>
+                    <xs:attribute name="far" type="Float32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -851,14 +880,14 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3DType">
-                    <xs:attribute name="depthTest" type="bool"/>
-                    <xs:attribute name="depthWrite" type="bool"/>
-                    <xs:attribute name="colorWrite" type="bool"/>
-                    <xs:attribute name="alphaWrite" type="bool"/>
+                    <xs:attribute name="depthTestEnabled" type="Boolean"/>
+                    <xs:attribute name="depthWriteEnabled" type="Boolean"/>
+                    <xs:attribute name="colorWriteEnabled" type="Boolean"/>
+                    <xs:attribute name="alphaWriteEnabled" type="Boolean"/>
                     <xs:attribute name="blending" type="CompositingModeType"/>
-                    <xs:attribute name="alphaThreshold" type="float"/>
-                    <xs:attribute name="depthOffsetFactor" type="float"/>
-                    <xs:attribute name="depthOffsetUnits" type="float"/>
+                    <xs:attribute name="alphaThreshold" type="Float32"/>
+                    <xs:attribute name="depthOffsetFactor" type="Float32"/>
+                    <xs:attribute name="depthOffsetUnits" type="Float32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -874,11 +903,11 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3DType">
-                    <xs:attribute name="color" type="int"/>
+                    <xs:attribute name="color" type="ColorRGB"/>
                     <xs:attribute name="mode" type="FogEquationType"/>
-                    <xs:attribute name="density" type="float"/>
-                    <xs:attribute name="near" type="float"/>
-                    <xs:attribute name="far" type="float"/>
+                    <xs:attribute name="density" type="Float32"/>
+                    <xs:attribute name="near" type="Float32"/>
+                    <xs:attribute name="far" type="Float32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -939,12 +968,12 @@
                         <xs:element ref="keytimes" minOccurs="1" maxOccurs="1"/>
                         <xs:element ref="keyframes" minOccurs="1" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="componentCount" type="uint"/>
-                    <xs:attribute name="duration" type="uint"/>
-                    <xs:attribute name="first" type="uint"/>
+                    <xs:attribute name="componentCount" type="UInt32"/>
+                    <xs:attribute name="keyframeCount" type="UInt32"/>
+                    <xs:attribute name="duration" type="UInt32"/>
                     <xs:attribute name="interpolation" type="KeyframeInterpolationType"/>
-                    <xs:attribute name="keyframeCount" type="uint"/>
-                    <xs:attribute name="last" type="uint"/>
+                    <xs:attribute name="validRangeFirst" type="UInt32"/>
+                    <xs:attribute name="validRangeLast" type="UInt32"/>
                     <xs:attribute name="repeatMode" type="KeyframePlaybackType"/>
                 </xs:extension>
             </xs:complexContent>
@@ -961,14 +990,14 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="NodeType">
-                    <xs:attribute name="attenuationConstant" type="float"/>
-                    <xs:attribute name="attenuationLinear" type="float"/>
-                    <xs:attribute name="attenuationQuadratic" type="float"/>
-                    <xs:attribute name="color" type="int"/>
+                    <xs:attribute name="attenuationConstant" type="Float32"/>
+                    <xs:attribute name="attenuationLinear" type="Float32"/>
+                    <xs:attribute name="attenuationQuadratic" type="Float32"/>
+                    <xs:attribute name="color" type="ColorRGB"/>
                     <xs:attribute name="mode" type="LightType"/>
-                    <xs:attribute name="intensity" type="float"/>
-                    <xs:attribute name="spotAngle" type="float"/>
-                    <xs:attribute name="spotExponent" type="float"/>
+                    <xs:attribute name="intensity" type="Float32"/>
+                    <xs:attribute name="spotAngle" type="Float32"/>
+                    <xs:attribute name="spotExponent" type="Float32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -977,12 +1006,12 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3DType">
-                    <xs:attribute name="ambient" type="int"/>
-                    <xs:attribute name="diffuse" type="int"/>
-                    <xs:attribute name="emissive" type="int"/>
-                    <xs:attribute name="specular" type="int"/>
-                    <xs:attribute name="shininess" type="float"/>
-                    <xs:attribute name="vertexColor" type="bool"/>
+                    <xs:attribute name="ambientColor" type="ColorRGB"/>
+                    <xs:attribute name="diffuseColor" type="ColorRGBA"/>
+                    <xs:attribute name="emissiveColor" type="ColorRGB"/>
+                    <xs:attribute name="specularColor" type="ColorRGB"/>
+                    <xs:attribute name="shininess" type="Float32"/>
+                    <xs:attribute name="vertexColorTrackingEnabled" type="Boolean"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1011,7 +1040,7 @@
                                 <xs:sequence>
                                     <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
                                 </xs:sequence>
-                                <xs:attribute name="weight" type="float"/>
+                                <xs:attribute name="weight" type="Float32"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -1026,9 +1055,9 @@
                     <xs:attribute name="culling" type="PolygonCullingModeType"/>
                     <xs:attribute name="shading" type="PolygonShadingModeType"/>
                     <xs:attribute name="winding" type="PolygonWindingModeType"/>
-                    <xs:attribute name="twoSidedLighting" type="bool"/>
-                    <xs:attribute name="localCameraLighting" type="bool"/>
-                    <xs:attribute name="perpectiveCorrection" type="bool"/>
+                    <xs:attribute name="twoSidedLightingEnabled" type="Boolean"/>
+                    <xs:attribute name="localCameraLightingEnabled" type="Boolean"/>
+                    <xs:attribute name="perspectiveCorrectionEnabled" type="Boolean"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1048,10 +1077,13 @@
                         <xs:element ref="Group" minOccurs="1" maxOccurs="1"/>
                         <xs:element name="bone" minOccurs="1" maxOccurs="unbounded">
                             <xs:complexType>
-                                <xs:attribute name="ref" type="xs:ID"/>
-                                <xs:attribute name="first" type="int"/>
-                                <xs:attribute name="count" type="int"/>
-                                <xs:attribute name="weight" type="float"/>
+                                <xs:complexContent>
+                                    <xs:extension base="InstanceType">
+                                        <xs:attribute name="firstVertex" type="UInt32"/>
+                                        <xs:attribute name="vertexCount" type="UInt32"/>
+                                        <xs:attribute name="weight" type="Int32"/>                                        
+                                    </xs:extension>
+                                </xs:complexContent>                         
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -1069,10 +1101,10 @@
                             <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="color" type="ColorType" default="00FFFFFF"/>
+                    <xs:attribute name="blendColor" type="ColorRGB"/>
                     <xs:attribute name="blending" type="Texture2DBlendModeType"/>
-                    <xs:attribute name="wrapS" type="Texture2DWrapModeType"/>
-                    <xs:attribute name="wrapT" type="Texture2DWrapModeType"/>
+                    <xs:attribute name="wrappingS" type="Texture2DWrapModeType"/>
+                    <xs:attribute name="wrappingT" type="Texture2DWrapModeType"/>
                     <xs:attribute name="levelFilter" type="TextureMipmapModeType"/>
                     <xs:attribute name="imageFilter" type="TextureFilterModeType"/>
                 </xs:extension>
@@ -1091,7 +1123,7 @@
             <xs:complexContent>
                 <xs:extension base="IndexBufferType">
                     <xs:sequence>
-                        <xs:element ref="lengths" minOccurs="1" maxOccurs="1"/>
+                        <xs:element ref="stripLengths" minOccurs="1" maxOccurs="1"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -1114,7 +1146,7 @@
                             <xs:element ref="int_array" minOccurs="1" maxOccurs="1"/>
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="componentCount" type="uint"/>
+                    <xs:attribute name="componentCount" type="Byte"/>
                     <xs:attribute name="componentType" default="FLOAT" type="VertexArrayDataType"/>
                 </xs:extension>
             </xs:complexContent>
@@ -1141,7 +1173,7 @@
                                         <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
                                     </xs:choice>
                                 </xs:sequence>
-                                <xs:attribute name="scale" type="float"/>
+                                <xs:attribute name="scale" type="Float32"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="normals" minOccurs="0" maxOccurs="1">
@@ -1169,11 +1201,11 @@
                                         <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
                                     </xs:choice>
                                 </xs:sequence>
-                                <xs:attribute name="scale" type="float"/>
+                                <xs:attribute name="scale" type="Float32"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="color" type="uint"/>
+                    <xs:attribute name="defaultColor" type="ColorRGBA"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
