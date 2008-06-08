@@ -39,36 +39,36 @@
             <xs:attribute name="author" type="string"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="section">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:choice>
-                    <xs:element ref="AnimationController"/>
-                    <xs:element ref="AnimationTrack"/>
-                    <xs:element ref="Appearance"/>
-                    <xs:element ref="Background"/>
-                    <xs:element ref="Camera"/>
-                    <xs:element ref="CompositingMode"/>
-                    <xs:element ref="Fog"/>
-                    <xs:element ref="Group"/>
-                    <xs:element ref="Image2D"/>
-                    <xs:element ref="KeyframeSequence"/>
-                    <xs:element ref="Light"/>
-                    <xs:element ref="Material"/>
-                    <xs:element ref="Mesh"/>
-                    <xs:element ref="MorphingMesh"/>
-                    <xs:element ref="PolygonMode"/>
-                    <xs:element ref="SkinnedMesh"/>
-                    <xs:element ref="Texture2D"/>
-                    <xs:element ref="TriangleStripArray"/>
-                    <xs:element ref="VertexArray"/>
-                    <xs:element ref="VertexBuffer"/>
-                    <xs:element ref="World"/>
-                </xs:choice>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-        
+    <xs:element name="section" type="SectionType"/>
+    <xs:complexType name="SectionType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:group ref="RootElementGroup"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:group name="RootElementGroup">
+        <xs:choice>
+            <xs:element ref="AnimationController"/>
+            <xs:element ref="AnimationTrack"/>
+            <xs:element ref="Appearance"/>
+            <xs:element ref="Background"/>
+            <xs:element ref="Camera"/>
+            <xs:element ref="CompositingMode"/>
+            <xs:element ref="Fog"/>
+            <xs:element ref="Group"/>
+            <xs:element ref="Image2D"/>
+            <xs:element ref="KeyframeSequence"/>
+            <xs:element ref="Light"/>
+            <xs:element ref="Material"/>
+            <xs:element ref="Mesh"/>
+            <xs:element ref="PolygonMode"/>
+            <xs:element ref="SkinnedMesh"/>
+            <xs:element ref="Texture2D"/>
+            <xs:element ref="TriangleStripArray"/>
+            <xs:element ref="VertexArray"/>
+            <xs:element ref="VertexBuffer"/>
+            <xs:element ref="World"/>
+        </xs:choice>
+    </xs:group>
     <!-- Simple types -->
     <xs:simpleType name="bool">
         <xs:restriction base="xs:boolean"/>
