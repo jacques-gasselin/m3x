@@ -3,7 +3,11 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema
                http://www.w3.org/2001/XMLSchema.xsd"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+           jaxb:extensionBindingPrefixes="xjc"
            elementFormDefault="qualified"
+           jaxb:version="1.0"
            version="1.0"
            xml:lang="EN">
     <!-- BEGIN M3X Format Schema -->
@@ -127,10 +131,14 @@
     <xs:element name="section" type="SectionType"/>
     <xs:complexType name="SectionType">
         <xs:sequence maxOccurs="unbounded">
-            <xs:group ref="RootElementGroup"/>
+            <xs:annotation><xs:appinfo>
+                <jaxb:property name="objects"/>
+            </xs:appinfo></xs:annotation>   
+            <xs:group ref="RootElementGroup">
+            </xs:group>
         </xs:sequence>
     </xs:complexType>
-    <xs:group name="RootElementGroup">
+    <xs:group name="RootElementGroup">     
         <xs:choice>
             <xs:element ref="AnimationController"/>
             <xs:element ref="AnimationTrack"/>
@@ -660,7 +668,7 @@
         <xs:attribute name="ref" type="ObjectReference">
             <xs:annotation>
                 <xs:documentation>
-                    The ref attribute is a text string containing the unique reference name of the target element.
+                    The ref attribute is a text string containing the unique reference id of the target element.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -689,10 +697,10 @@
                 </xs:element>
             </xs:choice>
         </xs:sequence>
-        <xs:attribute name="name" type="xs:ID">
+        <xs:attribute name="id" type="xs:ID">
             <xs:annotation>
                 <xs:documentation>
-                    The name attribute is a text string containing the unique name of this element.
+                    The id attribute is a text string containing the unique id of this element.
                     This value must be unique within the instance document. Optional attribute.
                 </xs:documentation>
             </xs:annotation>
@@ -735,6 +743,9 @@
         <xs:complexContent>
             <xs:extension base="NodeType">
                 <xs:sequence maxOccurs="unbounded">
+                    <xs:annotation><xs:appinfo>
+                        <jaxb:property name="childNodes"/>
+                    </xs:appinfo></xs:annotation>  
                     <xs:group ref="NodeElementGroup"/>
                 </xs:sequence>
             </xs:extension>

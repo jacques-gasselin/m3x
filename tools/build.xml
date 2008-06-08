@@ -38,6 +38,7 @@
             <classpath>
                 <pathelement location="${src.dir}"/>
             </classpath>
+            <arg value="-extension"/>
             <arg value="-xmlschema"/>
             <schema file="${schema.dir}/m3x.xsd"/>
             <depends file="${schema.dir}/m3x.xsd"/>
