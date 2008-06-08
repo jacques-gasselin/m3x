@@ -112,7 +112,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="section" minOccurs="1">
+                <xs:element ref="section" minOccurs="1" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>
                             The m3g element must contain 1 or more sections
@@ -152,6 +152,15 @@
             <xs:element ref="VertexArray"/>
             <xs:element ref="VertexBuffer"/>
             <xs:element ref="World"/>
+        </xs:choice>
+    </xs:group>
+    <xs:group name="NodeElementGroup">
+        <xs:choice>
+            <xs:element ref="Camera"/>
+            <xs:element ref="Group"/>
+            <xs:element ref="Light"/>
+            <xs:element ref="Mesh"/>
+            <xs:element ref="SkinnedMesh"/>
         </xs:choice>
     </xs:group>
     <!-- Enumerations -->
@@ -575,7 +584,12 @@
             <xs:restriction base="Matrix"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="translate">
+    <xs:element name="translation">
+        <xs:simpleType>
+            <xs:restriction base="Vector3D"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="bias">
         <xs:simpleType>
             <xs:restriction base="Vector3D"/>
         </xs:simpleType>
@@ -585,7 +599,7 @@
             <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="rotate">
+    <xs:element name="orientation">
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="Vector3D">
@@ -697,9 +711,9 @@
         <xs:complexContent>
             <xs:extension base="Object3DType">
                 <xs:sequence>
-                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="translation" minOccurs="0" maxOccurs="1"/>
                     <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
-                    <xs:element ref="rotate" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="orientation" minOccurs="0" maxOccurs="1"/>
                     <xs:element ref="Transform" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
@@ -721,14 +735,8 @@
     <xs:complexType name="GroupType">
         <xs:complexContent>
             <xs:extension base="NodeType">
-                <xs:sequence>
-                    <xs:choice>
-                        <xs:element ref="Camera" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element ref="Light" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element ref="Mesh" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element ref="SkinnedMesh" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
-                    </xs:choice>
+                <xs:sequence maxOccurs="unbounded">
+                    <xs:group ref="NodeElementGroup"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1167,7 +1175,7 @@
                         <xs:element name="positions" minOccurs="1" maxOccurs="1">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                                    <xs:element ref="bias" minOccurs="0" maxOccurs="1"/>
                                     <xs:choice>
                                         <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
                                         <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
@@ -1195,7 +1203,7 @@
                         <xs:element name="texcoords" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element ref="translate" minOccurs="0" maxOccurs="1"/>
+                                    <xs:element ref="bias" minOccurs="0" maxOccurs="1"/>
                                     <xs:choice>
                                         <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
                                         <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
