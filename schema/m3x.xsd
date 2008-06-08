@@ -120,7 +120,7 @@
                     </xs:annotation>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute name="version" type="VersionType"/>
+            <xs:attribute name="version" type="VersionType" fixed="1.0"/>
             <xs:attribute name="author" type="String"/>
         </xs:complexType>
     </xs:element>
@@ -542,7 +542,6 @@
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="1.0"/>
-            <xs:enumeration value="1.1"/>
             <xs:enumeration value="2.0"/>
         </xs:restriction>
     </xs:simpleType>
@@ -748,7 +747,6 @@
                 <xs:attribute name="mutable" type="Boolean"/>
                 <xs:attribute name="width" type="UInt32"/>
                 <xs:attribute name="height" type="UInt32"/>
-                <xs:attribute name="mipmap" type="Boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
