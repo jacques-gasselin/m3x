@@ -51,9 +51,7 @@
                 This type is used for referencing other nodes in the same document
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:pattern value="(#(.*))"/>
-        </xs:restriction>
+        <xs:restriction base="xs:IDREF"/>
     </xs:simpleType>
     <!-- Aggregate types -->
     <xs:simpleType name="ByteList">
