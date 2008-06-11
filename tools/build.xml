@@ -3,6 +3,8 @@
     <description>Builds the tool packages for the M3X project.</description>
 
     <property name="docs.dir" location="docs"/>
+    <property name="res.dir" location="res"/>
+    <property name="res.xml.dir" location="${res.dir}/xml"/>
     <property name="src.dir" location="src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
     <property name="src.m3x.jaxb.dir" location="${src.m3x.dir}/jaxb"/>
@@ -95,6 +97,7 @@
                   <pathelement location="${build.dir}"/>
                   <fileset dir="${lib.dir}"/>
               </classpath>
+              <arg value="${res.xml.dir}/quad.m3x"/>
         </java>      
     </target>
 </project>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<m3g version="1.0">
+    <section>
+        <VertexArray id="posArray" componentCount="3" componentType="BYTE">
+            <int_array>
+               -128 -128 0
+               -128  127 0
+                127  127 0
+                127 -128 0
+            </int_array>
+        </VertexArray>
+    </section>
+</m3g>
