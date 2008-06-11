@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="m3x" default="build" basedir=".">
     <description>Builds the all the packages for the M3X project.</description>
-
+    <property name="schema.dir" location="schema"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="tools.dir" location="tools"/>
+    
     <target name="build"
             description="runs the build target in all the subfolders">
         <ant antfile="build.xml"
@@ -36,7 +39,11 @@
     
     <target name="test"
             description="runs the test target in all the subfolders">
-        
+        <ant antfile="build.xml"
+             dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="test"/>        
     </target>
     
 </project>

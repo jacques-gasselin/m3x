@@ -2,15 +2,13 @@
 <project name="m3x" default="build" basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
 
-    <property name="docs.dir" value="docs"/>
-    <property name="src.dir" value="src"/>
-    <property name="src.m3x.dir" value="${src.dir}/m3x"/>
-    <property name="src.m3x.jaxb.dir" value="${src.m3x.dir}/jaxb"/>
-    <property name="schema.dir" value="../schema"/>
-    <property name="lib.dir" value="../lib"/>
-    <property name="build.dir" value="build"/>
-    <property name="build.m3x.dir" value="${build.dir}/m3x"/>
-    <property name="build.m3x.jaxb.dir" value="${build.m3x.dir}/jaxb"/>
+    <property name="docs.dir" location="docs"/>
+    <property name="src.dir" location="src"/>
+    <property name="src.m3x.dir" location="${src.dir}/m3x"/>
+    <property name="src.m3x.jaxb.dir" location="${src.m3x.dir}/jaxb"/>
+    <property name="build.dir" location="build"/>
+    <property name="build.m3x.dir" location="${build.dir}/m3x"/>
+    <property name="build.m3x.jaxb.dir" location="${build.m3x.dir}/jaxb"/>
 
     <property name="m3x.jaxb.package" value="m3x.jaxb"/>
 
@@ -87,4 +85,16 @@
         </javadoc>       
     </target>
 
+    <target name="test"
+            description="runs the test target in all the subfolders"
+            depends="build">
+        <java classname="test.ConsoleTest"
+              fork="true"
+              dir="${build.dir}">
+              <classpath>
+                  <pathelement location="${build.dir}"/>
+                  <fileset dir="${lib.dir}"/>
+              </classpath>
+        </java>      
+    </target>
 </project>

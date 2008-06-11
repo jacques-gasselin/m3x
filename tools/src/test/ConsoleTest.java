@@ -3,7 +3,8 @@ package test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBException;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 /**Console test reader for the M3X tool-suite.
  * 
@@ -102,23 +103,23 @@ public class ConsoleTest extends Object
         }
         
         //process the options
-        javax.xml.bind.JAXBContext context = null;
+        JAXBContext context = null;
         try
         {
-            context = javax.xml.bind.JAXBContext.newInstance("m3x.jaxb");
+            context = JAXBContext.newInstance("m3x.jaxb");
         }
-        catch (javax.xml.bind.JAXBException e)
+        catch (JAXBException e)
         {
             print("unable to bind schema: " + e.getMessage());
             return null;
         }
         
-        javax.xml.bind.Unmarshaller unmarshaller = null;
+        Unmarshaller unmarshaller = null;
         try
         {
             unmarshaller = context.createUnmarshaller();
         }
-        catch (javax.xml.bind.JAXBException e)
+        catch (JAXBException e)
         {
             print("unable to create unmarshaller: " + e.getMessage());
             return null;
@@ -134,7 +135,7 @@ public class ConsoleTest extends Object
             print("infile is not a valid file: " + e.getMessage());
             return null;
         }
-        catch (javax.xml.bind.JAXBException e)
+        catch (JAXBException e)
         {
             print("unable to parse infile: " + e.getMessage());
             return null;
