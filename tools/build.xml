@@ -97,6 +97,7 @@
                   <pathelement location="${build.dir}"/>
                   <fileset dir="${lib.dir}"/>
               </classpath>
+              <sysproperty key="java.endorsed.dirs" value="${lib.dir}" />
               <arg value="${res.xml.dir}/quad.m3x"/>
         </java>      
     </target>
