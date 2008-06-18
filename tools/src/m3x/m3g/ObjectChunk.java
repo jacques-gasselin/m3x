@@ -1,0 +1,49 @@
+package m3x.m3g;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+
+/**
+ * Models a Object3D (see http://www.java2me.org/m3g/file-format.html#Objects)
+ * structure inside Section.objects byte array. There can be several objects
+ * inside one section.
+ * 
+ * @author jsaarinen
+ */
+public class ObjectChunk implements M3GSerializable
+{
+  /**
+   * Object type, enumerated in ObjectTypes.
+   */
+  private byte objectType;
+  
+  /**
+   * Length of the this.data;
+   */
+  private int length;
+  
+  /**
+   * The actual object data.
+   */
+  private byte[] data;
+
+  public ObjectChunk(byte objectType, byte[] data)
+  {
+    assert(data != null);
+    this.objectType = objectType;
+    this.length = data.length;
+    this.data = data;
+  }
+
+  /**
+   * Serialization happens according to
+   * http://www.java2me.org/m3g/file-format.html#ObjectStructure
+   */
+  public void serialize(DataOutputStream dataOutputStream) throws IOException
+  {
+    dataOutputStream.write(this.objectType);
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.length));
+    dataOutputStream.write(this.data);
+  }
+}
