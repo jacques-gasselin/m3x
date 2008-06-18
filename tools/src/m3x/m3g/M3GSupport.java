@@ -60,7 +60,7 @@ public class M3GSupport
   {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream dos = new DataOutputStream(baos);
-    object.serialize(dos);
+    object.serialize(dos, null);
     dos.close();
     return baos.toByteArray();    
   }

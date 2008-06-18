@@ -89,7 +89,7 @@ public class Section implements M3GSerializable
    * fields of this object are written into the output stream,
    * integers are converted into little endian format.
    */
-  public void serialize(DataOutputStream dataOutputStream) throws IOException
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.compressionScheme);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.totalSectionLength));
@@ -129,7 +129,7 @@ public class Section implements M3GSerializable
     Section section = new Section(COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, data);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream dos = new DataOutputStream(baos);
-    section.serialize(dos);
+    section.serialize(dos, null);
     dos.close();
     data = baos.toByteArray();
     System.out.println(new BigInteger(1, data).toString(16));

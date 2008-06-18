@@ -21,9 +21,11 @@ public interface M3GSerializable
    * 
    * @param dataOutputStream
    *  Where data will be written to.
+   * 
+   * @param m3gVersion TODO
    *  
    * @throws IOException
    *  When something nasty happened.
    */
-  void serialize(DataOutputStream dataOutputStream) throws IOException;
+  void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException;
 }

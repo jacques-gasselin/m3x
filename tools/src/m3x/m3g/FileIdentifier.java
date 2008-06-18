@@ -24,7 +24,7 @@ public class FileIdentifier implements M3GSerializable
   /**
    * The file header bytes are written to the output stream.
    */
-  public void serialize(DataOutputStream dataOutputStream) throws IOException
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(fileIdentifier);
   }

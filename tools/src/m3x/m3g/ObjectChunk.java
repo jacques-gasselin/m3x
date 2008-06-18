@@ -40,7 +40,7 @@ public class ObjectChunk implements M3GSerializable
    * Serialization happens according to
    * http://www.java2me.org/m3g/file-format.html#ObjectStructure
    */
-  public void serialize(DataOutputStream dataOutputStream) throws IOException
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.objectType);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.length));
