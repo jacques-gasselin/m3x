@@ -10,6 +10,9 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class Background extends Object3D implements M3GSerializable
 {
+  public final static byte MODE_BORDER = 32;
+  public final static byte MODE_REPEAT = 33;
+	
   private final ColorRGBA backgroundColor;
   private final ObjectIndex backgroundImage;
   private final byte backgroundImageModeX;
