@@ -49,8 +49,8 @@ public class Background extends Object3D implements M3GSerializable
     super.serialize(dataOutputStream, m3gVersion);
     this.backgroundColor.serialize(dataOutputStream, null);
     this.backgroundImage.serialize(dataOutputStream, null);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.backgroundImageModeX));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.backgroundImageModeY));
+    dataOutputStream.writeInt(this.backgroundImageModeX);
+    dataOutputStream.writeInt(this.backgroundImageModeY);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropX));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropY));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropWidth));
