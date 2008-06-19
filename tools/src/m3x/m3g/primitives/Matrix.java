@@ -11,7 +11,7 @@ public class Matrix implements M3GSerializable
 
   public Matrix(float[] matrix)
   {
-    assert(matrix.length == 16);
+    assert(matrix != null && matrix.length == 16);
     this.matrix = matrix;
   }
 
