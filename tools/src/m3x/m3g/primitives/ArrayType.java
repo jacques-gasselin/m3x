@@ -11,6 +11,7 @@ public class ArrayType implements M3GSerializable
   
   public ArrayType(M3GSerializable[] array)
   {
+    assert(array != null);
     this.array = array;
   }
 
