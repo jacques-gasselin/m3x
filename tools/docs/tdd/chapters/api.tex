@@ -1,12 +1,29 @@
 \chapter{Application Programming Interface}
+The m3x API provides access to data conversion facilities through three packages.
+These three packages are each responsible for one form of input and output of data.
+\begin{itemize}
+\item{The \texttt{m3x.jaxb} package uses the m3x XML Schema.}
+\item{The \texttt{m3x.m3g} package uses the M3G 1.0 and 2.0 binary format.}
+\item{The \texttt{m3x.translation} package provides application programming access.}
+\end{itemize}
 
-\section{M3X XML Data}
+The inclusion of each package is dictated by what each tool needs to do. Tools that want to convert between XML and binary formats need to use all the packages to achieve the conversion. Conversion from external data to XML or binary may only need two of the packages.
+
+
+\section{m3x.jaxb}
+The \texttt{m3x.jaxb} package use the Java API for XML Data Bindings (JAXB). The bindings are automatically created from the m3x XML Schema. Therefore an XML file that validates to the m3x Schema is valid input to this package.
+
+\subsubsection{Summary}
 An XML data file conforming to the m3x XML Schema can be manipulated using the \texttt{m3x.jaxb} package.
 
-\section{M3G Binary Data}
+\section{m3x.m3g}
+
+\subsubsection{Summary}
 A binary data file conforming either M3G 1.0 or M3G 2.0 can be manipulated using the \texttt{m3x.m3g} package.
 
-\section{External Data}
+\section{m3x.translation}
+
+\subsubsection{Summary}
 External data can be converted to M3G or XML data using the translation layer in the \texttt{m3x.translation} package.
 
 
