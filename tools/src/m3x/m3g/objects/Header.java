@@ -23,7 +23,6 @@ public class Header implements M3GSerializable
     this.authoringInformation = authoringInformation;
   }
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(version);

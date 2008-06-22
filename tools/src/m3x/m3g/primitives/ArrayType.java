@@ -15,7 +15,6 @@ public class ArrayType implements M3GSerializable
     this.array = array;
   }
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     for (int i = 0; i < this.array.length; i++)

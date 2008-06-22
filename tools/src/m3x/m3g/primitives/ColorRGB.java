@@ -23,7 +23,6 @@ public class ColorRGB implements M3GSerializable
     this.b = (byte)(b * 255.0f + 0.5f);
   }
   
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.r);

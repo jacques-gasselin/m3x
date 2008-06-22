@@ -2,9 +2,9 @@
 The m3x API provides access to data conversion facilities through three packages.
 These three packages are each responsible for one form of input and output of data.
 \begin{itemize}
-\item{The \texttt{m3x.jaxb} package uses the m3x XML Schema.}
-\item{The \texttt{m3x.m3g} package uses the M3G 1.0 and 2.0 binary format.}
-\item{The \texttt{m3x.translation} package provides application programming access.}
+\item The \texttt{m3x.jaxb} package uses the m3x XML Schema.
+\item The \texttt{m3x.m3g} package uses the M3G 1.0 and 2.0 binary format.
+\item The \texttt{m3x.translation} package provides application programming access.
 \end{itemize}
 
 The inclusion of each package is dictated by what each tool needs to do. Tools that want to convert between XML and binary formats need to use all the packages to achieve the conversion. Conversion from external data to XML or binary may only need two of the packages.
@@ -13,15 +13,51 @@ The inclusion of each package is dictated by what each tool needs to do. Tools t
 \section{m3x.jaxb}
 The \texttt{m3x.jaxb} package use the Java API for XML Data Bindings (JAXB). The bindings are automatically created from the m3x XML Schema. Therefore an XML file that validates to the m3x Schema is valid input to this package.
 
+The \texttt{ANT} build script uses the \texttt{xjc} JAXB implementation compiler to generate a package of classes that map the XML to runtime structures. JAXB handles serialization which removes an error prone part of the XML handling.
+
+The element nodes in the \texttt{m3x} Schema share the same name as the corresponding class in the \texttt{M3G} API. \texttt{Group} maps to \texttt{<Group>} and so on.
+Because an XML Schema only allows inheritance for types and not elements; the naming convention of the classes in the \texttt{m3x.jaxb} package have a 'Type' suffix for most classes. \texttt{Objec3D} maps to \texttt{Object3DType} and so on.
+
+In the \texttt{m3x.jaxb} package all \texttt{M3G} constants are handled by their string name, not their value as in the \texttt{M3G} API. Conversion between the two is the responsibility of the \texttt{m3x.translation} package.
+
+\subsubsection{Deserialisation}
+To deserialise an XML document one must create a JAXB \texttt{Unmarshaller} object. The following steps will obtain one using the m3x Schema:
+\begin{enumerate}
+\item Create a JAXB context.\\\texttt{JAXBContext context = JAXBContext.newInstance("m3x.jaxb");}
+\item Create an Unmarshaller.\\\texttt{Unmarshaller unmarshaller = context.createUnmarshaller();}
+\item Deserialise an XML document from an input stream, \texttt{i}.\\\texttt{m3x.jaxb.M3G root = (m3x.jaxb.M3G)unmarshaller.unmarshal(i);}
+\end{enumerate}
+
+
 \subsubsection{Summary}
 An XML data file conforming to the m3x XML Schema can be manipulated using the \texttt{m3x.jaxb} package.
+
+
+
 
 \section{m3x.m3g}
 
 \subsubsection{Summary}
 A binary data file conforming either M3G 1.0 or M3G 2.0 can be manipulated using the \texttt{m3x.m3g} package.
 
+
 \section{m3x.translation}
+The \texttt{m3x.translation} package uses \texttt{m3x.jaxb} and \texttt{m3x.m3g} to translate between formats. The package can be used by a third-party application to create \texttt{m3x} or \texttt{m3g} content.
+
+\subsubsection{Basics}
+All translation classes implement the \texttt{Translator} interface. The interface defines the methods to create a translation object from an XML or binary class. It also defines the methods to create an XML or a binary class from a translation object.
+\\\\
+\texttt{interface Translator}
+\begin{itemize}
+\item \texttt{void set(m3x.m3g.Object3D)}\\Sets the values from an M3G object.
+\item \texttt{void set(m3x.jaxb.Object3DType)}\\Sets the values from an XML object.
+\item \texttt{m3x.m3g.Object3D toM3G()}\\Gets a converted M3G object.
+\item \texttt{m3x.jaxb.Object3DType toXML()}\\Gets a converted XML object.
+\end{itemize}
+
+
+Each class in the \texttt{m3x.translation} package must able to be instantiated by using \texttt{Class.newInstance()}. That means that the objects created with the default constructor must be able to execute \texttt{toM3G()} and \texttt{toXML()}. It must be a complete object able to be converted without throwing any exceptions related to the state of the object. It may still be an object that is not valid in the target XML or M3G format.
+
 
 \subsubsection{Summary}
 External data can be converted to M3G or XML data using the translation layer in the \texttt{m3x.translation} package.

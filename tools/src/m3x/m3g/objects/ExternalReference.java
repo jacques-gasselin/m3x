@@ -15,7 +15,6 @@ public class ExternalReference implements M3GSerializable
     this.uri = uri;
   }
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(ObjectTypes.EXTERNAL_REFERENCE);

@@ -795,12 +795,12 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3DType">
-                    <xs:attribute name="speed" type="Float32"/>
-                    <xs:attribute name="weight" type="Float32"/>
-                    <xs:attribute name="activeIntervalStart" type="Int32"/>
-                    <xs:attribute name="activeIntervalEnd" type="Int32"/>
-                    <xs:attribute name="referenceSequenceTime" type="Float32"/>
-                    <xs:attribute name="referenceWorldTime" type="Int32"/>
+                    <xs:attribute name="speed" type="Float32" default="1.0"/>
+                    <xs:attribute name="weight" type="Float32" default="1.0"/>
+                    <xs:attribute name="activeIntervalStart" type="Int32" default="0"/>
+                    <xs:attribute name="activeIntervalEnd" type="Int32" default="0"/>
+                    <xs:attribute name="referenceSequenceTime" type="Float32" default="0.0"/>
+                    <xs:attribute name="referenceWorldTime" type="Int32" default="0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

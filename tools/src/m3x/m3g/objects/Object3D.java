@@ -26,8 +26,8 @@ public abstract class Object3D implements M3GSerializable
     this.userParameterCount = userParameters != null ? userParameters.length : 0;
     this.userParameters = userParameters;
   }
+  
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     for (int i = 0; i < this.animationTracks.length; i++)

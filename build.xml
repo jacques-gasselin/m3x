@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="m3x" default="build" basedir=".">
     <description>Builds the all the packages for the M3X project.</description>
     <property name="schema.dir" location="schema"/>

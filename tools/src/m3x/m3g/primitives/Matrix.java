@@ -28,7 +28,6 @@ public class Matrix implements M3GSerializable
     }
   }
   
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws java.io.IOException
   {
     for (float element : this.matrix)

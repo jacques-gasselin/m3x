@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project name="m3x" default="build" basedir=".">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="m3x.tools" default="build" basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
 
     <property name="docs.dir" location="docs"/>
@@ -7,6 +7,7 @@
     <property name="res.xml.dir" location="${res.dir}/xml"/>
     <property name="src.dir" location="src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
+    <property name="src.test.dir" location="${src.dir}/test"/>
     <property name="src.m3x.jaxb.dir" location="${src.m3x.dir}/jaxb"/>
     <property name="build.dir" location="build"/>
     <property name="build.m3x.dir" location="${build.dir}/m3x"/>
@@ -90,6 +91,12 @@
     <target name="test"
             description="runs the test target in all the subfolders"
             depends="build">
+        <!-- run unit tests -->
+        <ant antfile="build.xml"
+             dir="${src.test.dir}"
+             inheritall="true"
+             inheritrefs="true"
+             target="test"/>   
         <java classname="test.ConsoleTest"
               fork="true"
               dir="${build.dir}">
@@ -99,6 +106,6 @@
               </classpath>
               <sysproperty key="java.endorsed.dirs" value="${lib.dir}" />
               <arg value="${res.xml.dir}/quad.m3x"/>
-        </java>      
+        </java>
     </target>
 </project>

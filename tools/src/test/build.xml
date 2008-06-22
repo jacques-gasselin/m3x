@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="m3x.tools.src.test" default="build" basedir=".">
+    <description>Runs the tests for the M3X project tools.</description>
+    <target name="test"
+            description="runs the tests">
+        <!-- run unit tests -->
+        <junit printsummary="on">
+            <classpath>
+                <pathelement location="${build.dir}"/>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+            <batchtest>
+                <fileset dir="${src.dir}">
+                    <include name="**/*Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+</project>

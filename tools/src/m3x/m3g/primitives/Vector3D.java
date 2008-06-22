@@ -17,7 +17,6 @@ public class Vector3D implements M3GSerializable
     this.z = z;
   }
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.x));
