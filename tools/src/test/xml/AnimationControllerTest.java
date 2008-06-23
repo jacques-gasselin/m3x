@@ -79,4 +79,28 @@ public class AnimationControllerTest extends TestCase
         animationController.setActiveIntervalEnd(newInterval);
         assertEquals(animationController.getActiveIntervalEnd(), newInterval);
     }
+    
+    public void testGetReferenceSequenceTime()
+    {
+        assertEquals(animationController.getReferenceSequenceTime(), 0.0f, 0);
+    }
+    
+    public void testSetReferenceSequenceTime()
+    {
+        final float newTime = 2.0f;
+        animationController.setReferenceSequenceTime(newTime);
+        assertEquals(animationController.getReferenceSequenceTime(), newTime, 0);
+    }
+    
+    public void testGetReferenceWorldTime()
+    {
+        assertEquals(animationController.getReferenceWorldTime(), 0.0f, 0);
+    }
+    
+    public void testSetReferenceWorldTime()
+    {
+        final int newTime = 2;
+        animationController.setReferenceWorldTime(newTime);
+        assertEquals(animationController.getReferenceWorldTime(), newTime);
+    }
 }
