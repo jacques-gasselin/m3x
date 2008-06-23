@@ -4,7 +4,8 @@
     <target name="test"
             description="runs the tests">
         <!-- run unit tests -->
-        <junit printsummary="on">
+        <junit printsummary="on"
+               haltonerror="true">
             <classpath>
                 <pathelement location="${build.dir}"/>
                 <fileset dir="${lib.dir}"/>

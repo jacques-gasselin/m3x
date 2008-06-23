@@ -8,20 +8,19 @@
     <property name="src.dir" location="src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
     <property name="src.test.dir" location="${src.dir}/test"/>
-    <property name="src.m3x.jaxb.dir" location="${src.m3x.dir}/jaxb"/>
+    <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
     <property name="build.dir" location="build"/>
     <property name="build.m3x.dir" location="${build.dir}/m3x"/>
-    <property name="build.m3x.jaxb.dir" location="${build.m3x.dir}/jaxb"/>
+    <property name="build.m3x.xml.dir" location="${build.m3x.dir}/xml"/>
 
-    <property name="m3x.jaxb.package" value="m3x.jaxb"/>
+    <property name="m3x.xml.package" value="m3x.xml"/>
+    <property name="m3x.m3g.package" value="m3x.m3g"/>
+    <property name="m3x.translation.package" value="m3x.translation"/>
 
     
     <target name="pre-build">
-        <mkdir dir="${src.m3x.dir}"/>
-        <mkdir dir="${src.m3x.jaxb.dir}"/>
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${build.m3x.dir}"/>
-        <mkdir dir="${build.m3x.jaxb.dir}"/>
+        <mkdir dir="${src.m3x.xml.dir}"/>
+        <mkdir dir="${build.m3x.xml.dir}"/>
     </target>
     
     
@@ -33,8 +32,8 @@
         </taskdef>        
     </target>
 
-    <target name="jaxb-build" depends="xjc-typedef">
-        <xjc package="${m3x.jaxb.package}"
+    <target name="xml-build" depends="xjc-typedef">
+        <xjc package="${m3x.xml.package}"
              destdir="${src.dir}">
             <classpath>
                 <pathelement location="${src.dir}"/>
@@ -43,7 +42,7 @@
             <arg value="-xmlschema"/>
             <schema file="${schema.dir}/m3x.xsd"/>
             <depends file="${schema.dir}/m3x.xsd"/>
-            <produces dir="${src.m3x.jaxb.dir}"/>
+            <produces dir="${src.m3x.xml.dir}"/>
         </xjc>
     </target>
     
@@ -53,7 +52,7 @@
         </delete>
     </target>
 
-    <target name="build" depends="pre-build, jaxb-build">
+    <target name="build" depends="pre-build, xml-build">
         <depend srcdir="${src.dir}"
                 destdir="${build.dir}"
                 cache="depcache"
@@ -68,7 +67,7 @@
         </javac>
     </target>
     
-    <target name="javadoc" depends="pre-build, jaxb-build">
+    <target name="javadoc" depends="pre-build, xml-build">
         <javadoc destdir="${docs.dir}/api"
                  author="true"
                  version="true"
@@ -82,7 +81,9 @@
             </fileset>
             <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
-            <group title="JAXB Packages" packages="m3x.jaxb"/>
+            <group title="XML Packages" packages="${m3x.xml.package}"/>
+            <group title="M3G Packages" packages="${m3x.m3g.package}"/>
+            <group title="Translation Packages" packages="${m3x.translation.package}"/>
             <link href="http://java.sun.com/developer/technicalArticles/WebServices/jaxb/"/>
             <link href="http://jcp.org/en/jsr/detail?id=297"/>
         </javadoc>       
@@ -96,7 +97,7 @@
              dir="${src.test.dir}"
              inheritall="true"
              inheritrefs="true"
-             target="test"/>   
+             target="test"/>
         <java classname="test.ConsoleTest"
               fork="true"
               dir="${build.dir}">
