@@ -17,7 +17,7 @@ public class AnimationControllerTest extends TestCase
     private AnimationController animationController;
     
     /**Sets up the test case fixture.
-     * Creates a new instance of an m3x.jaxb.AnimationController.
+     * Creates a new instance of an m3x.xml.AnimationController.
      */
     @Override
     public void setUp()
@@ -54,5 +54,29 @@ public class AnimationControllerTest extends TestCase
         final float negativeWeight = -1.0f;
         animationController.setWeight(negativeWeight);
         assertEquals(animationController.getWeight(), negativeWeight, 0);
-    }    
+    }
+    
+    public void testGetActiveIntervalStart()
+    {
+        assertEquals(animationController.getActiveIntervalStart(), 0);
+    }
+    
+    public void testSetActiveIntervalStart()
+    {
+        final int newInterval = 2;
+        animationController.setActiveIntervalStart(newInterval);
+        assertEquals(animationController.getActiveIntervalStart(), newInterval);
+    }
+    
+    public void testGetActiveIntervalEnd()
+    {
+        assertEquals(animationController.getActiveIntervalEnd(), 0);
+    }
+    
+    public void testSetActiveIntervalEnd()
+    {
+        final int newInterval = 2;
+        animationController.setActiveIntervalEnd(newInterval);
+        assertEquals(animationController.getActiveIntervalEnd(), newInterval);
+    }
 }
