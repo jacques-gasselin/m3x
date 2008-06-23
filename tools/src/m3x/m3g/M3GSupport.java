@@ -56,6 +56,13 @@ public class M3GSupport
     return baos.toByteArray();
   }
   
+  /**
+   * Returns the M3G object as a byte array.
+   * 
+   * @param object
+   * @return
+   * @throws IOException
+   */
   public static byte[] objectToBytes(M3GSerializable object) throws IOException
   {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
