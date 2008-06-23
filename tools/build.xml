@@ -10,6 +10,9 @@
     <property name="src.test.dir" location="${src.dir}/test"/>
     <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
     <property name="build.dir" location="build"/>
+    <property name="build.src.dir" location="${build.dir}/src"/>
+    <property name="build.src.m3x.dir" location="${build.src.dir}/m3x"/>
+    <property name="build.src.m3x.xml.dir" location="${build.src.m3x.dir}/xml"/>
     <property name="build.m3x.dir" location="${build.dir}/m3x"/>
     <property name="build.m3x.xml.dir" location="${build.m3x.dir}/xml"/>
 
@@ -19,10 +22,9 @@
 
     
     <target name="pre-build">
-        <mkdir dir="${src.m3x.xml.dir}"/>
         <mkdir dir="${build.m3x.xml.dir}"/>
+        <mkdir dir="${build.src.m3x.xml.dir}"/>
     </target>
-    
     
     <target name="xjc-typedef">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
@@ -34,16 +36,29 @@
 
     <target name="xml-build" depends="xjc-typedef">
         <xjc package="${m3x.xml.package}"
-             destdir="${src.dir}">
+             destdir="${build.src.dir}">
             <classpath>
+                <fileset dir="${lib.dir}"/>
                 <pathelement location="${src.dir}"/>
             </classpath>
             <arg value="-extension"/>
             <arg value="-xmlschema"/>
             <schema file="${schema.dir}/m3x.xsd"/>
             <depends file="${schema.dir}/m3x.xsd"/>
-            <produces dir="${src.m3x.xml.dir}"/>
+            <produces dir="${build.src.m3x.xml.dir}"/>
         </xjc>
+        <depend srcdir="${build.src.dir}"
+                destdir="${build.dir}"
+                cache="depcache"
+                closure="yes"/>
+        <javac destdir="${build.dir}"
+               fork="true">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+            <src path="${build.src.dir}"/>
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+        </javac>
     </target>
     
     <target name="clean">

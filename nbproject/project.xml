@@ -3,6 +3,9 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>m3x</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>m3x</name>
             <properties/>
@@ -22,6 +25,12 @@
                     <label>tools/src</label>
                     <type>java</type>
                     <location>tools/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tools/build/src</label>
+                    <type>java</type>
+                    <location>tools/build/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -56,6 +65,10 @@
                         <label>tools/src</label>
                         <location>tools/src</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>tools/build/src</label>
+                        <location>tools/build/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -75,6 +88,7 @@
             <compilation-unit>
                 <package-root>www</package-root>
                 <package-root>tools/src</package-root>
+                <package-root>tools/build/src</package-root>
                 <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
