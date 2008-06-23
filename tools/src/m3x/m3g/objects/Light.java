@@ -50,13 +50,13 @@ public class Light extends Node implements M3GSerializable
       throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.write(M3GSupport.swapBytes(this.attenuationConstant));
-    dataOutputStream.write(M3GSupport.swapBytes(this.attenuationLinear));
-    dataOutputStream.write(M3GSupport.swapBytes(this.attenuationQuadratic));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.attenuationConstant));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.attenuationLinear));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.attenuationQuadratic));
     this.color.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.mode);
-    dataOutputStream.write(M3GSupport.swapBytes(this.intensity));
-    dataOutputStream.write(M3GSupport.swapBytes(this.spotAngle));
-    dataOutputStream.write(M3GSupport.swapBytes(this.spotExponent));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.intensity));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.spotAngle));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.spotExponent));
   }
 }

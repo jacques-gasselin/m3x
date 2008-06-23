@@ -75,10 +75,10 @@ public class Camera extends Node implements M3GSerializable
 		}
 		else
 		{
-			dataOutputStream.write(M3GSupport.swapBytes(this.fovy));
-			dataOutputStream.write(M3GSupport.swapBytes(this.aspectRatio));
-			dataOutputStream.write(M3GSupport.swapBytes(this.near));
-			dataOutputStream.write(M3GSupport.swapBytes(this.far));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.fovy));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.aspectRatio));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.near));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.far));
 		}
 	}
 }

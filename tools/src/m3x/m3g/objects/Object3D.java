@@ -38,7 +38,7 @@ public abstract class Object3D implements M3GSerializable
     for (int i = 0; i < this.userParameterCount; i++)
     {
       UserParameter userParameter = this.userParameters[i];
-      dataOutputStream.write(M3GSupport.swapBytes(userParameter.parameterID));
+      dataOutputStream.writeInt(M3GSupport.swapBytes(userParameter.parameterID));
       dataOutputStream.write(userParameter.parameterValue);
     }
   }

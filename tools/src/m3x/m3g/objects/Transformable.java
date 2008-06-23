@@ -59,7 +59,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
 			dataOutputStream.writeBoolean(true);
 			this.translation.serialize(dataOutputStream, null);
 			this.scale.serialize(dataOutputStream, null);
-			dataOutputStream.write(M3GSupport.swapBytes(this.orientationAngle));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.orientationAngle));
 			this.orientationAxis.serialize(dataOutputStream, null);
 			dataOutputStream.writeBoolean(false);
 		}

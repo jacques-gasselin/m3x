@@ -55,8 +55,8 @@ public class Image2D extends Object3D implements M3GSerializable
 		super.serialize(dataOutputStream, m3gVersion);
 		dataOutputStream.write(this.format);
 		dataOutputStream.writeBoolean(this.isMutable);
-		dataOutputStream.write(M3GSupport.swapBytes(this.width));
-		dataOutputStream.write(M3GSupport.swapBytes(this.height));
+		dataOutputStream.writeInt(M3GSupport.swapBytes(this.width));
+		dataOutputStream.writeInt(M3GSupport.swapBytes(this.height));
 		if (this.isMutable == false)
 		{
 			dataOutputStream.write(this.palette);
