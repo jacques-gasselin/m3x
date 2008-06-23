@@ -24,9 +24,9 @@ public class Group extends Object3D implements M3GSerializable
 			throws IOException 
 	{
 		super.serialize(dataOutputStream, m3gVersion);
-		for (int i = 0; i < this.children.length; i++)
+		for (ObjectIndex child : this.children)
 		{
-			this.children[i].serialize(dataOutputStream, m3gVersion);
+			child.serialize(dataOutputStream, m3gVersion);
 		}
 	}	
 }
