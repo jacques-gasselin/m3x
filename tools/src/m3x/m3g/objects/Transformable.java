@@ -71,7 +71,4 @@ public abstract class Transformable extends Object3D implements M3GSerializable
 			this.transform.serialize(dataOutputStream, null);
 		}
 	}
-	
-	
-	
 }
