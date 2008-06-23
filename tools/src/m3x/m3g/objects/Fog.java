@@ -51,13 +51,13 @@ public class Fog extends Object3D implements M3GSerializable
 		dataOutputStream.write(this.mode);
 		if (this.mode == MODE_EXPONENTIAL)
 		{
-			dataOutputStream.write(M3GSupport.swapBytes(this.density));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.density));
 		}
 		else
 		if (this.mode == MODE_LINEAR)
 		{
-			dataOutputStream.write(M3GSupport.swapBytes(this.near));
-			dataOutputStream.write(M3GSupport.swapBytes(this.far));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.near));
+			dataOutputStream.writeInt(M3GSupport.swapBytes(this.far));
 		}
 		else
 		{

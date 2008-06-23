@@ -42,7 +42,7 @@ public class Material extends Object3D implements M3GSerializable
     this.diffuseColor.serialize(dataOutputStream, m3gVersion);
     this.emissiveColor.serialize(dataOutputStream, m3gVersion);
     this.specularColor.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.write(M3GSupport.swapBytes(this.shininess));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.shininess));
     dataOutputStream.writeBoolean(this.vertexColorTrackingEnabled);
   }
 }

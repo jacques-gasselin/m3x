@@ -34,11 +34,11 @@ public class AnimationController extends Object3D implements M3GSerializable
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.write(M3GSupport.swapBytes(this.speed));
-    dataOutputStream.write(M3GSupport.swapBytes(this.weight));
-    dataOutputStream.write(M3GSupport.swapBytes(this.activeIntervalStart));
-    dataOutputStream.write(M3GSupport.swapBytes(this.activeIntervalEnd));
-    dataOutputStream.write(M3GSupport.swapBytes(this.referenceSequenceTime));
-    dataOutputStream.write(M3GSupport.swapBytes(this.referenceWorldTime));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.speed));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.weight));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.activeIntervalStart));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.activeIntervalEnd));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceSequenceTime));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceWorldTime));
   }  
 }
