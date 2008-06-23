@@ -11,6 +11,12 @@ import m3x.m3g.primitives.Vector3D;
 
 public abstract class Node extends Transformable implements M3GSerializable
 {
+  public static final byte NONE = (byte)144;
+  public static final byte ORIGIN = (byte)145;
+  public static final byte X_AXIS = (byte)146;
+  public static final byte Y_AXIS = (byte)147;
+  public static final byte Z_AXIS = (byte)148;
+  
 	private final boolean enableRendering;
 	private final boolean enablePicking;
 	private final byte alphaFactor;
