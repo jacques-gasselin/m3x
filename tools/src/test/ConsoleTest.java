@@ -106,7 +106,7 @@ public class ConsoleTest extends Object
         JAXBContext context = null;
         try
         {
-            context = JAXBContext.newInstance("m3x.jaxb");
+            context = JAXBContext.newInstance("m3x.xml");
         }
         catch (JAXBException e)
         {
@@ -125,10 +125,10 @@ public class ConsoleTest extends Object
             return null;
         }
         
-        m3x.jaxb.M3G root = null;
+        m3x.xml.M3G root = null;
         try
         {
-            root = (m3x.jaxb.M3G)unmarshaller.unmarshal(new FileInputStream(infile));
+            root = (m3x.xml.M3G)unmarshaller.unmarshal(new FileInputStream(infile));
         }
         catch (FileNotFoundException e)
         {

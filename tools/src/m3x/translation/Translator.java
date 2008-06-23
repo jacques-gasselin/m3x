@@ -11,7 +11,7 @@ public interface Translator
      * @param object - the object to set from
      * @throw java.lang.ClassCastException - if object is not of a valid type.
      */
-    public void set(m3x.jaxb.Object3DType object);
+    public void set(m3x.xml.Object3DType object);
 
     /**Sets the values from an M3G object
      * 
@@ -24,7 +24,7 @@ public interface Translator
      * 
      * @return an XML representation
      */
-    public m3x.jaxb.Object3DType toXML();
+    public m3x.xml.Object3DType toXML();
     
     /**Convert to an M3G object.
      * 
