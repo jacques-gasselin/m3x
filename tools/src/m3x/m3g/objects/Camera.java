@@ -54,6 +54,7 @@ public class Camera extends Node implements M3GSerializable
 	{
 		super(animationTracks, userParameters, transform, enableRendering,
 				enablePicking, alphaFactor, scope);
+		assert(projectionType == PROJECTION_TYPE_PARALLEL || projectionType == PROJECTION_TYPE_PERSPECTIVE);
 		this.projectionType = projectionType;
 		this.projectionMatrix = null;
 		this.fovy = fovy;
