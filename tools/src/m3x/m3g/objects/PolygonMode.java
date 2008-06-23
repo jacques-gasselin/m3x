@@ -9,6 +9,14 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class PolygonMode extends Object3D implements M3GSerializable
 {
+  public static final byte CULL_BACK = (byte)160;
+  public static final byte CULL_FRONT = (byte)161;
+  public static final byte CULL_NONE = (byte)162;
+  public static final byte SHADE_FLAT = (byte)164;
+  public static final byte SHADE_SMOOTH = (byte)165;
+  public static final byte WINDING_CCW = (byte)168;
+  public static final byte WINDING_CW = (byte)169;
+  
   private final byte culling;
   private final byte shading;
   private final byte winding;
