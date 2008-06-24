@@ -4,10 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.primitives.Vector3D;
 
-public class Texture2D extends Object3D implements M3GSerializable
+public class Texture2D extends Transformable implements M3GSerializable
 {
   public static final int FILTER_BASE_LEVEL = 208;
   public static final int FILTER_LINEAR = 209;
@@ -27,13 +29,15 @@ public class Texture2D extends Object3D implements M3GSerializable
   private final int wrappingT;
   private final int levelFilter;
   private final int imageFilter;
-  
+
   public Texture2D(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, ObjectIndex texture, ColorRGB blendColor,
-      byte blending, byte wrappingS, byte wrappingT, byte levelFilter,
-      byte imageFilter)
+      UserParameter[] userParameters, Vector3D translation, Vector3D scale,
+      float orientationAngle, Vector3D orientationAxis, ObjectIndex texture,
+      ColorRGB blendColor, int blending, int wrappingS, int wrappingT,
+      int levelFilter, int imageFilter)
   {
-    super(animationTracks, userParameters);
+    super(animationTracks, userParameters, translation, scale,
+        orientationAngle, orientationAxis);
     this.texture = texture;
     this.blendColor = blendColor;
     this.blending = blending;
@@ -42,6 +46,8 @@ public class Texture2D extends Object3D implements M3GSerializable
     this.levelFilter = levelFilter;
     this.imageFilter = imageFilter;
   }
+
+
 
   @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

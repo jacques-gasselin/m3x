@@ -19,6 +19,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
 	
 	private final boolean hasGeneralTransform;
 	private final Matrix transform;
+	
 	public Transformable(ObjectIndex[] animationTracks,
 			UserParameter[] userParameters,
 			Vector3D translation,
