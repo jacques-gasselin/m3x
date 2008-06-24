@@ -35,6 +35,8 @@ public class Mesh extends Node implements M3GSerializable
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);
+    assert(subMeshes != null);
+    assert(subMeshes.length > 0);
     this.vertexBuffer = vertexBuffer;
     this.subMeshes = subMeshes;
     this.submeshCount = subMeshes.length;
