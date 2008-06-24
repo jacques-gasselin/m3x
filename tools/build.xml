@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="m3x.tools" default="build" basedir=".">
+<project name="m3x.tools"
+         default="build"
+         basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
 
-    <property name="docs.dir" location="docs"/>
-    <property name="res.dir" location="res"/>
+    <property name="docs.dir" location="${basedir}/docs"/>
+    <property name="res.dir" location="${basedir}/res"/>
     <property name="res.xml.dir" location="${res.dir}/xml"/>
-    <property name="src.dir" location="src"/>
+    <property name="src.dir" location="${basedir}/src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
     <property name="src.test.dir" location="${src.dir}/test"/>
     <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
-    <property name="build.dir" location="build"/>
+    <property name="build.dir" location="${basedir}/build"/>
     <property name="build.src.dir" location="${build.dir}/src"/>
     <property name="build.src.m3x.dir" location="${build.src.dir}/m3x"/>
     <property name="build.src.m3x.xml.dir" location="${build.src.m3x.dir}/xml"/>
@@ -20,6 +22,7 @@
     <property name="m3x.m3g.package" value="m3x.m3g"/>
     <property name="m3x.translation.package" value="m3x.translation"/>
 
+    <property name="checkstyle.policy" location="${basedir}/checkstyle-policy.xml"/>
     
     <target name="pre-build">
         <mkdir dir="${build.m3x.xml.dir}"/>
@@ -68,6 +71,18 @@
     </target>
 
     <target name="build" depends="pre-build, xml-build">
+        <taskdef resource="checkstyletask.properties"
+                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>        
+        <checkstyle failOnViolation="false"
+                    config="${checkstyle.policy}">
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+            <formatter type="plain"/>
+            <fileset dir="${src.dir}" defaultexcludes="yes">
+                <exclude name="**/*.html"/>
+            </fileset>
+        </checkstyle>
         <depend srcdir="${src.dir}"
                 destdir="${build.dir}"
                 cache="depcache"
@@ -101,8 +116,8 @@
             </fileset>            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
             <group title="XML Packages" packages="${m3x.xml.package}"/>
-            <group title="M3G Packages" packages="${m3x.m3g.package}"/>
-            <group title="Translation Packages" packages="${m3x.translation.package}"/>
+            <group title="M3G Packages" packages="${m3x.m3g.package}, ${m3x.m3g.package}.*"/>
+            <group title="Translation Packages" packages="${m3x.translation.package}, ${m3x.translation.package}.*"/>
             <link href="http://java.sun.com/developer/technicalArticles/WebServices/jaxb/"/>
             <link href="http://jcp.org/en/jsr/detail?id=297"/>
         </javadoc>       

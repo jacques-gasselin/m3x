@@ -8,7 +8,7 @@ import m3x.m3g.M3GSupport;
 
 public class Header implements M3GSerializable
 {
-  private final static byte[] version = {1, 0};
+  private final static byte[] VERSION = {1, 0};
   private final boolean hasExternalReferences;
   private final int totalFileSize;
   private final int approximateContentSize;
@@ -25,7 +25,7 @@ public class Header implements M3GSerializable
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
-    dataOutputStream.write(version);
+    dataOutputStream.write(VERSION);
     dataOutputStream.writeBoolean(this.hasExternalReferences);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.totalFileSize));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.approximateContentSize));

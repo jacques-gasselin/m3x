@@ -1,0 +1,33 @@
+<!DOCTYPE module PUBLIC
+"-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+"http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+    <module name="TreeWalker">
+        <module name="AvoidStarImport"/>
+        <module name="ConstantName"/>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="PackageName">
+            <property name="format" value="^[a-z0-9]+(\.[a-zA-Z_][a-zA-Z0-9_]*)*$"/>
+        </module>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
+        <module name="ParameterName"/>
+        <module name="TypeName"/>
+        <module name="EmptyBlock"/>
+        <module name="JavadocType"/>
+        <module name="JavadocMethod"/>
+        <module name="EmptyForInitializerPad"/>
+        <module name="MethodParamPad"/>
+        <module name="TabCharacter"/>
+        <module name="VisibilityModifier"/>
+        <module name="FinalClass"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="MutableException"/>
+        <module name="LeftCurly">
+            <property name="option" value="nl"/>
+            <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF"/>
+        </module>
+    </module>
+</module>
