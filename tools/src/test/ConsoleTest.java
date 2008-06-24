@@ -2,9 +2,7 @@ package test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
 
 /**Console test reader for the M3X tool-suite.
  * 
@@ -12,10 +10,15 @@ import javax.xml.bind.Unmarshaller;
  */
 public class ConsoleTest extends Object
 {
-    private ConsoleTest()
+    private m3x.xml.M3G xmlRoot = null;
+    private m3x.xml.Deserialiser xmlDeserialiser = null;
+    
+    private ConsoleTest(m3x.xml.M3G root, m3x.xml.Deserialiser deserialiser)
     {
         super();
         
+        xmlRoot = root;
+        xmlDeserialiser = deserialiser;
     }
     
     private static final void print(final String s)
@@ -102,46 +105,30 @@ public class ConsoleTest extends Object
             }
         }
         
-        //process the options
-        JAXBContext context = null;
-        try
+        //process the file input option
+        InputStream inStream = null;
+        if (infile != null)
         {
-            context = JAXBContext.newInstance("m3x.xml");
+            try
+            {
+                inStream = new FileInputStream(infile);
+            }
+            catch (FileNotFoundException e)
+            {
+                print("infile is not a valid file: " + e.getMessage());
+                return null;
+            }
         }
-        catch (JAXBException e)
+        else
         {
-            print("unable to bind schema: " + e.getMessage());
-            return null;
+            //no input file given, use system in.
+            inStream = System.in;
         }
+
+        final m3x.xml.Deserialiser deserialiser = new m3x.xml.Deserialiser();
+        final m3x.xml.M3G root = deserialiser.deserialise(inStream);
         
-        Unmarshaller unmarshaller = null;
-        try
-        {
-            unmarshaller = context.createUnmarshaller();
-        }
-        catch (JAXBException e)
-        {
-            print("unable to create unmarshaller: " + e.getMessage());
-            return null;
-        }
-        
-        m3x.xml.M3G root = null;
-        try
-        {
-            root = (m3x.xml.M3G)unmarshaller.unmarshal(new FileInputStream(infile));
-        }
-        catch (FileNotFoundException e)
-        {
-            print("infile is not a valid file: " + e.getMessage());
-            return null;
-        }
-        catch (JAXBException e)
-        {
-            print("unable to parse infile: " + e.getMessage());
-            return null;
-        }
-        
-        return new ConsoleTest();
+        return new ConsoleTest(root, deserialiser);
     }
     
     /**Entry function for M3X

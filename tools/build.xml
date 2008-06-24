@@ -113,6 +113,8 @@
              inheritall="true"
              inheritrefs="true"
              target="test"/>
+        <!-- testing the console XML application -->
+        <echo>Testing Console input</echo>
         <java classname="test.ConsoleTest"
               fork="true"
               dir="${build.dir}">
