@@ -4,30 +4,29 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class Texture2D extends Object3D implements M3GSerializable
 {
-  public static final byte FILTER_BASE_LEVEL = (byte)208;
-  public static final byte FILTER_LINEAR = (byte)209;
-  public static final byte FILTER_NEAREST = (byte)210;
-  public static final byte FUNC_ADD = (byte)224;
-  public static final byte FUNC_BLEND = (byte)225;
-  public static final byte FUNC_DECAL = (byte)226;
-  public static final byte FUNC_MODULATE = (byte)227;
-  public static final byte FUNC_REPLACE = (byte)228;
-  public static final byte WRAP_CLAMP = (byte)240;
-  public static final byte WRAP_REPEAT = (byte)241;
+  public static final int FILTER_BASE_LEVEL = 208;
+  public static final int FILTER_LINEAR = 209;
+  public static final int FILTER_NEAREST = 210;
+  public static final int FUNC_ADD = 224;
+  public static final int FUNC_BLEND = 225;
+  public static final int FUNC_DECAL = 226;
+  public static final int FUNC_MODULATE = 227;
+  public static final int FUNC_REPLACE = 228;
+  public static final int WRAP_CLAMP = 240;
+  public static final int WRAP_REPEAT = 241;
   
   private final ObjectIndex texture;
   private final ColorRGB blendColor;
-  private final byte blending;
-  private final byte wrappingS;
-  private final byte wrappingT;
-  private final byte levelFilter;
-  private final byte imageFilter;
+  private final int blending;
+  private final int wrappingS;
+  private final int wrappingT;
+  private final int levelFilter;
+  private final int imageFilter;
   
   public Texture2D(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ObjectIndex texture, ColorRGB blendColor,

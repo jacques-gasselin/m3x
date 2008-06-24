@@ -12,16 +12,16 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class Light extends Node implements M3GSerializable 
 {
-	public final static byte MODE_AMBIENT = (byte)128;
-	public final static byte MODE_DIRECTIONAL = (byte)129;
-	public final static byte MODE_OMNI = (byte)130;
-	public final static byte MODE_SPOT = (byte)131;
+	public final static int MODE_AMBIENT = 128;
+	public final static int MODE_DIRECTIONAL = 129;
+	public final static int MODE_OMNI = 130;
+	public final static int MODE_SPOT = 131;
 	
 	private final float attenuationConstant;
 	private final float attenuationLinear;
 	private final float attenuationQuadratic;
 	private final ColorRGB color;
-	private final byte mode;
+	private final int mode;
 	private final float intensity;
 	private final float spotAngle;
 	private final float spotExponent;
@@ -30,7 +30,7 @@ public class Light extends Node implements M3GSerializable
 			Matrix transform, boolean enableRendering, boolean enablePicking,
 			byte alphaFactor, int scope, float attenuationConstant,
 			float attenuationLinear, float attenuationQuadratic,
-			ColorRGB color, byte mode, float intensity, float spotAngle,
+			ColorRGB color, int mode, float intensity, float spotAngle,
 			float spotExponent) 
 	{
 		super(animationTracks, userParameters, transform, enableRendering,
