@@ -17,7 +17,7 @@ public class Material extends Object3D implements M3GSerializable
   private final ColorRGB specularColor;
   private final float shininess;
   private final boolean vertexColorTrackingEnabled;
-  
+
   public Material(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ColorRGB ambientColor,
       ColorRGBA diffuseColor, ColorRGB emissiveColor, ColorRGB specularColor,
