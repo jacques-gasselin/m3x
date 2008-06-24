@@ -54,7 +54,7 @@ public class Deserialiser
     /**Deserialise an input stream that contains an XML document.
      * 
      * @param stream
-     * @return
+     * @return - the root M3G object
      */
     public m3x.xml.M3G deserialise(InputStream stream)
     {
