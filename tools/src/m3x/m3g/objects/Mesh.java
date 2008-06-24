@@ -16,7 +16,6 @@ public class Mesh extends Node implements M3GSerializable
     public ObjectIndex indexBuffer;
     public ObjectIndex appearance;
     
-    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

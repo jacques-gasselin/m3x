@@ -25,8 +25,6 @@ public class Deserialiser
 
     /**Creates a new Deserialser that is bound to the m3x.xml JAXB context.
      * 
-     * @throws IllegalArgumentException - if unable to bind the JAXB classes.
-     * @throws IllegalArgumentException - if unable to create a JAXB unmarshaller.
      */
     public Deserialiser()
     {
@@ -53,7 +51,7 @@ public class Deserialiser
     
     /**Deserialise an input stream that contains an XML document.
      * 
-     * @param stream
+     * @param stream - the inout stream to read from.
      * @return - the root M3G object
      */
     public m3x.xml.M3G deserialise(InputStream stream)

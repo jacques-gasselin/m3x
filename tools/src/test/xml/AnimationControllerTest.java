@@ -25,12 +25,18 @@ public class AnimationControllerTest extends TestCase
         animationController = new AnimationController();
     }
 
+    /**Tests getSpeed
+     * 
+     */
     public void testGetSpeed()
     {
         //assert on the default value.
         assertEquals(animationController.getSpeed(), 1.0f, 0);
     }
     
+    /**Tests setSpeed
+     * 
+     */
     public void testSetSpeed()
     {
         final float positiveSpeed = 2.0f;
@@ -41,11 +47,17 @@ public class AnimationControllerTest extends TestCase
         assertEquals(animationController.getSpeed(), negativeSpeed, 0);
     }
     
+    /**Test getWeight
+     * 
+     */
     public void testGetWeight()
     {
         assertEquals(animationController.getWeight(), 1.0f, 0);
     }
     
+    /**Tests setWeight
+     * 
+     */
     public void testSetWeight()
     {
         final float positiveWeight = 2.0f;
@@ -56,11 +68,17 @@ public class AnimationControllerTest extends TestCase
         assertEquals(animationController.getWeight(), negativeWeight, 0);
     }
     
+    /**Tests getActiveIntervalStart
+     * 
+     */
     public void testGetActiveIntervalStart()
     {
         assertEquals(animationController.getActiveIntervalStart(), 0);
     }
     
+    /**Tests setActiveIntervalStart
+     * 
+     */
     public void testSetActiveIntervalStart()
     {
         final int newInterval = 2;
@@ -68,11 +86,17 @@ public class AnimationControllerTest extends TestCase
         assertEquals(animationController.getActiveIntervalStart(), newInterval);
     }
     
+    /**Tests getActiveIntervalEnd
+     * 
+     */
     public void testGetActiveIntervalEnd()
     {
         assertEquals(animationController.getActiveIntervalEnd(), 0);
     }
     
+    /**Tests setActiveIntervalEnd
+     * 
+     */
     public void testSetActiveIntervalEnd()
     {
         final int newInterval = 2;
@@ -80,11 +104,17 @@ public class AnimationControllerTest extends TestCase
         assertEquals(animationController.getActiveIntervalEnd(), newInterval);
     }
     
+    /**Tests getReferenceSequenceTime
+     * 
+     */
     public void testGetReferenceSequenceTime()
     {
         assertEquals(animationController.getReferenceSequenceTime(), 0.0f, 0);
     }
     
+    /**Tests setReferenceSequenceTime
+     * 
+     */
     public void testSetReferenceSequenceTime()
     {
         final float newTime = 2.0f;
@@ -92,11 +122,17 @@ public class AnimationControllerTest extends TestCase
         assertEquals(animationController.getReferenceSequenceTime(), newTime, 0);
     }
     
+    /**Tests getReferenceWorldTime
+     * 
+     */
     public void testGetReferenceWorldTime()
     {
         assertEquals(animationController.getReferenceWorldTime(), 0.0f, 0);
     }
     
+    /**Tests setReferenceWorldTime
+     * 
+     */
     public void testSetReferenceWorldTime()
     {
         final int newTime = 2;

@@ -8,11 +8,16 @@ import java.io.InputStream;
  * 
  * @author Jacques Gasselin de Richebourg
  */
-public class ConsoleTest extends Object
+public final class ConsoleTest extends Object
 {
     private m3x.xml.M3G xmlRoot = null;
     private m3x.xml.Deserialiser xmlDeserialiser = null;
     
+    /**Creates a ConsoleTest instance using the XML bindings.
+     * 
+     * @param root - the root of the XML document
+     * @param deserialiser - the object that resolves the references of the XML.
+     */
     private ConsoleTest(m3x.xml.M3G root, m3x.xml.Deserialiser deserialiser)
     {
         super();
@@ -21,11 +26,18 @@ public class ConsoleTest extends Object
         xmlDeserialiser = deserialiser;
     }
     
+    /**Convenience function for printing to the screen.
+     * 
+     * @param s - the message to print.
+     */
     private static final void print(final String s)
     {
         System.out.println(s);
     }
-
+    
+    /**Prints a brief usage message for the ConsoleTest.
+     * 
+     */
     private static final void printUsage()
     {
         print("M3X<->M3G format conversion tool");
@@ -38,6 +50,7 @@ public class ConsoleTest extends Object
      * 
      * @param args - the command line arguments
      * @throws java.lang.IllegalArgumentException - if any option is unparsable
+     * @return an initialised ConsoleTest instance
      */
     private static final ConsoleTest parseArgs(final String[] args)
             throws IllegalArgumentException

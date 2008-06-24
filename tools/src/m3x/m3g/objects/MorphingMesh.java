@@ -16,7 +16,6 @@ public class MorphingMesh extends Node implements M3GSerializable
     public ObjectIndex morphTarget;
     public float initialWeight;
     
-    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
