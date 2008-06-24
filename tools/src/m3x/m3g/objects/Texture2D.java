@@ -47,8 +47,6 @@ public class Texture2D extends Transformable implements M3GSerializable
     this.imageFilter = imageFilter;
   }
 
-
-
   @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
