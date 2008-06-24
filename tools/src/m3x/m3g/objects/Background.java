@@ -15,8 +15,8 @@ public class Background extends Object3D implements M3GSerializable
 	
   private final ColorRGBA backgroundColor;
   private final ObjectIndex backgroundImage;
-  private final byte backgroundImageModeX;
-  private final byte backgroundImageModeY;
+  private final int backgroundImageModeX;
+  private final int backgroundImageModeY;
   private final int cropX;
   private final int cropY;
   private final int cropWidth;
@@ -26,11 +26,13 @@ public class Background extends Object3D implements M3GSerializable
   
   public Background(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ColorRGBA backgroundColor, ObjectIndex backgroundImage,
-      byte backgroundImageModeX, byte backgroundImageModeY, int cropX,
+      int backgroundImageModeX, int backgroundImageModeY, int cropX,
       int cropY, int cropWidth, int cropHeight, boolean depthClearEnabled,
       boolean colorClearEnabled)
   {
     super(animationTracks, userParameters);
+    assert(backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT);
+    assert(backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT);
     this.backgroundColor = backgroundColor;
     this.backgroundImage = backgroundImage;
     this.backgroundImageModeX = backgroundImageModeX;

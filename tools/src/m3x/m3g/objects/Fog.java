@@ -5,17 +5,16 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class Fog extends Object3D implements M3GSerializable 
 {
-	private final static byte MODE_EXPONENTIAL = 80;
-	private final static byte MODE_LINEAR = 81;
+	private final static int MODE_EXPONENTIAL = 80;
+	private final static int MODE_LINEAR = 81;
 	
 	private final ColorRGB color;
-	private final byte mode;
+	private final int mode;
 	private final float density;
 	private final float near;
 	private final float far;

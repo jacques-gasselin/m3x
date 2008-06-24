@@ -17,11 +17,11 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class Camera extends Node implements M3GSerializable
 {
-	public static final byte PROJECTION_TYPE_GENERIC = 48;
-	public static final byte PROJECTION_TYPE_PARALLEL = 49;
-	public static final byte PROJECTION_TYPE_PERSPECTIVE = 50;
+	public static final int PROJECTION_TYPE_GENERIC = 48;
+	public static final int PROJECTION_TYPE_PARALLEL = 49;
+	public static final int PROJECTION_TYPE_PERSPECTIVE = 50;
 	
-	private final byte projectionType;
+	private final int projectionType;
 	private final Matrix projectionMatrix;
 	private final float fovy;
 	private final float aspectRatio;
@@ -49,7 +49,7 @@ public class Camera extends Node implements M3GSerializable
 	public Camera(ObjectIndex[] animationTracks,
 			UserParameter[] userParameters, Matrix transform,
 			boolean enableRendering, boolean enablePicking, byte alphaFactor,
-			int scope, byte projectionType,
+			int scope, int projectionType,
 			float fovy, float aspectRatio, float near, float far) 
 	{
 		super(animationTracks, userParameters, transform, enableRendering,

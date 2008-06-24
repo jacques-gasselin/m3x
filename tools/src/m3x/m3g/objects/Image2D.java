@@ -10,13 +10,13 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class Image2D extends Object3D implements M3GSerializable
 {
-	public static final byte FORMAT_ALPHA = 96;
-	public static final byte FORMAT_LUMINANCE = 97;
-	public static final byte FORMAT_LUMINANCE_ALPHA = 98;
-	public static final byte FORMAT_RGB = 99;
-	public static final byte FORMAT_RGBA = 100;
+	public static final int FORMAT_ALPHA = 96;
+	public static final int FORMAT_LUMINANCE = 97;
+	public static final int FORMAT_LUMINANCE_ALPHA = 98;
+	public static final int FORMAT_RGB = 99;
+	public static final int FORMAT_RGBA = 100;
 	
-	private final byte format;
+	private final int format;
 	private final boolean isMutable;
 	private final int width;
 	private final int height;
@@ -24,7 +24,7 @@ public class Image2D extends Object3D implements M3GSerializable
 	private final byte[] pixels;
 	
 	public Image2D(ObjectIndex[] animationTracks,
-			UserParameter[] userParameters, byte format, int width, int height,
+			UserParameter[] userParameters, int format, int width, int height,
 			byte[] palette, byte[] pixels) 
 	{
 		super(animationTracks, userParameters);
