@@ -147,7 +147,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
         break;
         
       default:
-        assert(false);
+        throw new IOException("Invalid encoding: " + this.encoding);
     }
     
     dataOutputStream.writeInt(M3GSupport.swapBytes(componentCount));
