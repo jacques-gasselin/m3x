@@ -17,6 +17,15 @@ public class VertexArray extends Object3D implements M3GTypedObject
   private final byte[] byteComponentsOrDeltas;
   private final short[] shortComponentsOrDeltas;
    
+  /**
+   * 
+   * @param animationTracks
+   * @param userParameters
+   * @param byteComponentsOrDeltas
+   * @param isDeltas
+   *  If true, this constructor is given deltas in the previous parameter, i.e.
+   *  the user of this class must calculate them.
+   */
   public VertexArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, byte[] byteComponentsOrDeltas, boolean isDeltas)
   {
@@ -29,6 +38,15 @@ public class VertexArray extends Object3D implements M3GTypedObject
     this.shortComponentsOrDeltas = null;
   }
 
+  /**
+   * 
+   * @param animationTracks
+   * @param userParameters
+   * @param shortComponentsOrDeltas
+   * @param isDeltas
+   *  If true, this constructor is given deltas in the previous parameter, i.e.
+   *  the user of this class must calculate them.
+   */
   public VertexArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, short[] shortComponentsOrDeltas, boolean isDeltas)
   {
@@ -49,7 +67,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
     dataOutputStream.write(this.componentSize);
     dataOutputStream.write(this.componentCount);
     dataOutputStream.write(this.encoding);
-    switch (this.encoding)
+    switch (this.componentSize)
     {
       case 1:
         for (byte b : this.byteComponentsOrDeltas)
