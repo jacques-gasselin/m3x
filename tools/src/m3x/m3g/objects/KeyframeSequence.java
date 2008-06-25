@@ -7,10 +7,12 @@ import java.util.Set;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class KeyframeSequence extends Object3D implements M3GSerializable 
+public class KeyframeSequence extends Object3D implements M3GTypedObject 
 {
   public static class KeyFrame
   {
@@ -20,6 +22,8 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
   public static class FloatKeyFrame extends KeyFrame
   {
     public float[] vectorValue;
+    
+    
   }
   
   public static class ByteKeyFrame extends KeyFrame
@@ -193,6 +197,12 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
       default:
         assert(false);
     }
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.KEYFRAME_SEQUENCE;
   }
 
   private void writeBiasAndScale(DataOutputStream dataOutputStream)
