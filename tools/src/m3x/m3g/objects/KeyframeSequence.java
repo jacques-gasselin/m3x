@@ -40,6 +40,10 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
   public static final int SQUAD = 179;
   public static final int STEP = 180;
   
+  private static final int ENCODING_FLOATS = 0;
+  private static final int ENCODING_BYTES = 1;
+  private static final int ENCODING_SHORTS = 2;
+  
 	private final int interpolation;
 	private final int repeatMode;
 	private final int encoding;
@@ -61,7 +65,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
     assert(keyFrames != null);
     this.interpolation = interpolation;
     this.repeatMode = repeatMode;
-    this.encoding = 0;
+    this.encoding = ENCODING_FLOATS;
     this.duration = duration;
     this.validRangeFirst = validRangeFirst;
     this.validRangeLast = validRangeLast;
@@ -81,7 +85,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
     assert(keyFrames != null);
     this.interpolation = interpolation;
     this.repeatMode = repeatMode;
-    this.encoding = 1;
+    this.encoding = ENCODING_BYTES;
     this.duration = duration;
     this.validRangeFirst = validRangeFirst;
     this.validRangeLast = validRangeLast;
@@ -100,7 +104,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
     super(animationTracks, userParameters);
     this.interpolation = interpolation;
     this.repeatMode = repeatMode;
-    this.encoding = 2;
+    this.encoding = ENCODING_SHORTS;
     this.duration = duration;
     this.validRangeFirst = validRangeFirst;
     this.validRangeLast = validRangeLast;
@@ -122,14 +126,36 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.duration));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.validRangeFirst));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.validRangeLast));
-    int componentCount = this.floatKeyFrames[0].vectorValue.length;
-    int keyFrameCount = this.floatKeyFrames.length;
+    
+    int componentCount;
+    int keyFrameCount;
+    switch (this.encoding)
+    {
+      case ENCODING_FLOATS: 
+        componentCount = this.floatKeyFrames[0].vectorValue.length;
+        keyFrameCount = this.floatKeyFrames.length;
+        break;
+        
+      case ENCODING_BYTES: 
+        componentCount = this.byteKeyFrames[0].vectorValue.length;
+        keyFrameCount = this.byteKeyFrames.length;
+        break;
+        
+      case ENCODING_SHORTS: 
+        componentCount = this.shortKeyFrames[0].vectorValue.length;
+        keyFrameCount = this.shortKeyFrames.length;
+        break;
+        
+      default:
+        assert(false);
+    }
+    
     dataOutputStream.writeInt(M3GSupport.swapBytes(componentCount));
     dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrameCount));
     
     switch (this.encoding)
     {
-      case 0:
+      case ENCODING_FLOATS:
         for (FloatKeyFrame keyFrame : this.floatKeyFrames)
         {
           dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrame.time));
@@ -140,7 +166,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
         }
         break;
 
-      case 1:
+      case ENCODING_BYTES:
         writeBiasAndScale(dataOutputStream);
         for (ByteKeyFrame keyFrame : this.byteKeyFrames)
         {
@@ -152,7 +178,7 @@ public class KeyframeSequence extends Object3D implements M3GSerializable
         }
         break;
 
-      case 2:
+      case ENCODING_SHORTS:
         writeBiasAndScale(dataOutputStream);
         for (ShortKeyFrame keyFrame : this.shortKeyFrames)
         {
