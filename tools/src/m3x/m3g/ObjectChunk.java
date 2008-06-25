@@ -28,6 +28,11 @@ public class ObjectChunk implements M3GSerializable
    */
   private byte[] data;
 
+  /**
+   * 
+   * @param objectType
+   * @param data
+   */
   public ObjectChunk(byte objectType, byte[] data)
   {
     assert(data != null);

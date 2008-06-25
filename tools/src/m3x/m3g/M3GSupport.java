@@ -14,12 +14,24 @@ import java.io.IOException;
  */
 public class M3GSupport
 {
+  /**
+   * Converts a float from big-endian to little-endian or vice versa.
+   * 
+   * @param x
+   * @return
+   */
   public static int swapBytes(float x)
   {
     int asInt = Float.floatToRawIntBits(x);
     return swapBytes(asInt);
   }
   
+  /**
+   * Converts an 32-bit integer from big-endian to little-endian or vice versa.
+   * 
+   * @param x
+   * @return
+   */
   public static int swapBytes(int x)
   {
     int b1 = (x >>  0) & 0x000000FF;
@@ -29,6 +41,12 @@ public class M3GSupport
     return (b1 << 24) | (b2 << 16) | (b3 << 8) | (b4 << 0);
   }
 
+  /**
+   * Converts a 16-bit integer from big-endian to little-endian or vice versa.
+   * 
+   * @param x
+   * @return
+   */
   public static short swapBytes(short x)
   {
     int b1 = (x >> 0) & 0x000000FF;
