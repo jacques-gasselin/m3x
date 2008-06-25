@@ -63,7 +63,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       UserParameter[] userParameters, int[] intIndices)
   {
     super(animationTracks, userParameters);
-    this.encoding = 0;
+    this.encoding = 128;
     this.byteStartIndex = 0;
     this.shortStartIndex = 0;
     this.intStartIndex = 0;
@@ -76,7 +76,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       UserParameter[] userParameters, byte[] byteIndices)
   {
     super(animationTracks, userParameters);
-    this.encoding = 128;
+    this.encoding = 129;
     this.byteStartIndex = 0;
     this.shortStartIndex = 0;
     this.intStartIndex = 0;
