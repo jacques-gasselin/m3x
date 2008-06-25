@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
 import m3x.m3g.primitives.ObjectIndex;
 
 public abstract class Object3D implements M3GSerializable

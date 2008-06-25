@@ -4,9 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Appearance extends Object3D implements M3GSerializable
+public class Appearance extends Object3D implements M3GTypedObject
 {
   private final byte layer;
   private final ObjectIndex compositingMpde;
@@ -42,5 +44,11 @@ public class Appearance extends Object3D implements M3GSerializable
     {
       this.textures[i].serialize(dataOutputStream, null);
     }
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.APPEARANCE;
   }
 }

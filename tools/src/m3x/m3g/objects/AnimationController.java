@@ -3,11 +3,12 @@ package m3x.m3g.objects;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GTypedObject;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class AnimationController extends Object3D implements M3GSerializable
+public class AnimationController extends Object3D implements M3GTypedObject
 {
   private final float speed;
   private final float weight;
@@ -40,5 +41,11 @@ public class AnimationController extends Object3D implements M3GSerializable
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.activeIntervalEnd));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceSequenceTime));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceWorldTime));
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.ANIMATION_CONTROLLER;
   }  
 }

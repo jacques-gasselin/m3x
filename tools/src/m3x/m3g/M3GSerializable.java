@@ -11,7 +11,7 @@ import java.io.OutputStream;
  * @author jsaarinen
  */
 public interface M3GSerializable
-{
+{  
   /**
    * Implementations of this method should output the corresponding
    * M3G object data to the output stream.

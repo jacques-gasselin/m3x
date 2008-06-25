@@ -5,10 +5,12 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Background extends Object3D implements M3GSerializable
+public class Background extends Object3D implements M3GTypedObject
 {
   public final static int MODE_BORDER = 32;
   public final static int MODE_REPEAT = 33;
@@ -59,5 +61,11 @@ public class Background extends Object3D implements M3GSerializable
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropHeight));
     dataOutputStream.writeBoolean(this.depthClearEnabled);
     dataOutputStream.writeBoolean(this.colorClearEnabled);
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.BACKGROUND;
   }
 }

@@ -5,10 +5,12 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Sprite extends Object3D implements M3GSerializable
+public class Sprite extends Object3D implements M3GTypedObject
 {
   private final ObjectIndex image;
   private final ObjectIndex appearance;
@@ -44,5 +46,11 @@ public class Sprite extends Object3D implements M3GSerializable
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropY));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropWidth));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropHeight));
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.SPRITE;
   }
 }

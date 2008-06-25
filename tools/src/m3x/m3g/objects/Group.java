@@ -4,11 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.objects.Object3D.UserParameter;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Group extends Node implements M3GSerializable 
+public class Group extends Node implements M3GTypedObject 
 {
     private final ObjectIndex[] children;
 
@@ -22,15 +23,20 @@ public class Group extends Node implements M3GSerializable
         this.children = children;
     }
 
+  @Override
+	public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+			throws IOException 
+	{
+		super.serialize(dataOutputStream, m3gVersion);
+		for (ObjectIndex child : this.children)
+		{
+			child.serialize(dataOutputStream, m3gVersion);
+		}
+	}
 
-    @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-            throws IOException 
-    {
-        super.serialize(dataOutputStream, m3gVersion);
-        for (ObjectIndex child : this.children)
-        {
-            child.serialize(dataOutputStream, m3gVersion);
-        }
-    }	
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.GROUP;
+  }	
 }

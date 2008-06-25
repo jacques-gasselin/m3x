@@ -5,10 +5,12 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class TriangleStripArray extends IndexBuffer implements M3GSerializable
+public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
 {
   private final int encoding;
   private final int intStartIndex;
@@ -141,5 +143,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GSerializable
         assert(false);
         break;
     }
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.TRIANGLE_STRIP_ARRAY;
   }  
 }

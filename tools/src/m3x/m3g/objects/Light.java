@@ -5,12 +5,14 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Light extends Node implements M3GSerializable 
+public class Light extends Node implements M3GTypedObject 
 {
     public final static int MODE_AMBIENT = 128;
     public final static int MODE_DIRECTIONAL = 129;
@@ -58,5 +60,11 @@ public class Light extends Node implements M3GSerializable
         dataOutputStream.writeInt(M3GSupport.swapBytes(this.intensity));
         dataOutputStream.writeInt(M3GSupport.swapBytes(this.spotAngle));
         dataOutputStream.writeInt(M3GSupport.swapBytes(this.spotExponent));
+    }
+
+    @Override
+    public byte getObjectType()
+    {
+      return ObjectTypes.LIGHT;
     }
 }

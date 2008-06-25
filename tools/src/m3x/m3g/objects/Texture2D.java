@@ -4,12 +4,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
-public class Texture2D extends Transformable implements M3GSerializable
+public class Texture2D extends Transformable implements M3GTypedObject
 {
   public static final int FILTER_BASE_LEVEL = 208;
   public static final int FILTER_LINEAR = 209;
@@ -59,5 +61,11 @@ public class Texture2D extends Transformable implements M3GSerializable
     dataOutputStream.write(this.wrappingT);
     dataOutputStream.write(this.levelFilter);
     dataOutputStream.write(this.imageFilter);    
-  }  
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.TEXTURE_2D;
+  }
 }

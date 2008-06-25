@@ -5,11 +5,13 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class MorphingMesh extends Node implements M3GSerializable
+public class MorphingMesh extends Node implements M3GTypedObject
 {
   public class TargetBuffer implements M3GSerializable
   {
@@ -26,7 +28,6 @@ public class MorphingMesh extends Node implements M3GSerializable
   
   private final int morphTargetCount;
   private final TargetBuffer[] morphTargets;
-  
   
   public MorphingMesh(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Matrix transform,
@@ -52,5 +53,12 @@ public class MorphingMesh extends Node implements M3GSerializable
     {
       targetBuffer.serialize(dataOutputStream, m3gVersion);
     }
+  }
+
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.MORPHING_MESH;
   }
 }

@@ -4,10 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class PolygonMode extends Object3D implements M3GSerializable
+public class PolygonMode extends Object3D implements M3GTypedObject
 {
   public static final byte CULL_BACK = (byte)160;
   public static final byte CULL_FRONT = (byte)161;
@@ -49,5 +51,11 @@ public class PolygonMode extends Object3D implements M3GSerializable
     dataOutputStream.writeBoolean(this.twoSidedLightingEnabled);
     dataOutputStream.writeBoolean(this.localCameraLightingEnabled);
     dataOutputStream.writeBoolean(this.perspectiveCorrectionEnabled);
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.POLYGON_MODE;
   }
 }

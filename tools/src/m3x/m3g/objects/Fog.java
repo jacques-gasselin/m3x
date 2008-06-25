@@ -5,10 +5,12 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Fog extends Object3D implements M3GSerializable 
+public class Fog extends Object3D implements M3GTypedObject 
 {
     private final static int MODE_EXPONENTIAL = 80;
     private final static int MODE_LINEAR = 81;
@@ -63,4 +65,10 @@ public class Fog extends Object3D implements M3GSerializable
             assert(false);
         }
     }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.FOG;
+  }
 }

@@ -5,9 +5,11 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class AnimationTrack extends Object3D implements M3GSerializable
+public class AnimationTrack extends Object3D implements M3GTypedObject
 {
   public static final int ALPHA = 256;
   public static final int AMBIENT_COLOR = 257;
@@ -52,5 +54,11 @@ public class AnimationTrack extends Object3D implements M3GSerializable
     this.keyframeSequence.serialize(dataOutputStream, null);
     this.animationController.serialize(dataOutputStream, null);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.propertyID));
+  }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.ANIMATION_TRACK;
   }
 }

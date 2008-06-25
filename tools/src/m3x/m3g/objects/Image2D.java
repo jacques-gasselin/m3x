@@ -5,10 +5,12 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
-public class Image2D extends Object3D implements M3GSerializable
+public class Image2D extends Object3D implements M3GTypedObject
 {
     public static final int FORMAT_ALPHA = 96;
     public static final int FORMAT_LUMINANCE = 97;
@@ -62,5 +64,11 @@ public class Image2D extends Object3D implements M3GSerializable
             dataOutputStream.write(this.palette);
             dataOutputStream.write(this.pixels);
         }
+    }
+
+    @Override
+    public byte getObjectType()
+    {
+      return ObjectTypes.IMAGE_2D;
     }
 }

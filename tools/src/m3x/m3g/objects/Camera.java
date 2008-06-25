@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
@@ -15,7 +17,7 @@ import m3x.m3g.primitives.ObjectIndex;
  * 
  * @author jsaarinen
  */
-public class Camera extends Node implements M3GSerializable
+public class Camera extends Node implements M3GTypedObject
 {
     public static final int PROJECTION_TYPE_GENERIC = 48;
     public static final int PROJECTION_TYPE_PARALLEL = 49;
@@ -81,4 +83,10 @@ public class Camera extends Node implements M3GSerializable
             dataOutputStream.writeInt(M3GSupport.swapBytes(this.far));
         }
     }
+
+  @Override
+  public byte getObjectType()
+  {
+    return ObjectTypes.CAMERA;
+  }
 }
