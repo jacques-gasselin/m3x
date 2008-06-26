@@ -16,9 +16,9 @@
         <module name="ParameterName"/>
         <module name="TypeName"/>
         <module name="EmptyBlock"/>
-        <module name="JavadocType"/>
+<!--        <module name="JavadocType"/>
         <module name="JavadocMethod"/>
-        <module name="EmptyForInitializerPad"/>
+-->        <module name="EmptyForInitializerPad"/>
         <module name="MethodParamPad"/>
         <module name="TabCharacter"/>
         <module name="VisibilityModifier"/>
