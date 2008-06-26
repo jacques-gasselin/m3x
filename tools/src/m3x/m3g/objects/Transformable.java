@@ -41,7 +41,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
     public Transformable(ObjectIndex[] animationTracks,
             UserParameter[] userParameters,
             Matrix transform) 
-    {	
+    {
         super(animationTracks, userParameters);
         this.hasComponentTransforn = false;
         this.translation = null;

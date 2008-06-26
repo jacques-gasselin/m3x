@@ -88,5 +88,5 @@ public abstract class Node extends Transformable implements M3GSerializable
             this.yReference.serialize(dataOutputStream, m3gVersion);
 
         }
-    }	
+    }
 }
