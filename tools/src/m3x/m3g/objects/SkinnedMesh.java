@@ -59,7 +59,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
   }
 
   @Override
-  public void serialize(DataOutputStream dataOutputStream, String version)
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
     this.skeleton.serialize(dataOutputStream, m3gVersion);
