@@ -17,7 +17,7 @@ public class CountedArrayType extends ArrayType implements M3GSerializable
     this.count = count;
   }
  
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.count));

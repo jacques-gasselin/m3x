@@ -17,7 +17,7 @@ public class Mesh extends Node implements M3GTypedObject
   {
     public ObjectIndex indexBuffer;
     public ObjectIndex appearance;
-    
+
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -25,25 +25,25 @@ public class Mesh extends Node implements M3GTypedObject
       this.appearance.serialize(dataOutputStream, m3gVersion);
     }
   }
-  
+
   private final ObjectIndex vertexBuffer;
   private final int submeshCount;
   private final SubMesh[] subMeshes;
-  
+
   public Mesh(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes)
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);
-    assert(subMeshes != null);
-    assert(subMeshes.length > 0);
+    assert (subMeshes != null);
+    assert (subMeshes.length > 0);
     this.vertexBuffer = vertexBuffer;
     this.subMeshes = subMeshes;
     this.submeshCount = subMeshes.length;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -56,7 +56,7 @@ public class Mesh extends Node implements M3GTypedObject
     }
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.MESH;

@@ -19,7 +19,7 @@ public class Sprite extends Object3D implements M3GTypedObject
   private final int cropY;
   private final int cropWidth;
   private final int cropHeight;
-  
+
   public Sprite(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       ObjectIndex image, ObjectIndex appearance, boolean isScaled, int cropX,
       int cropY, int cropWidth, int cropHeight)
@@ -34,7 +34,7 @@ public class Sprite extends Object3D implements M3GTypedObject
     this.cropHeight = cropHeight;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -48,7 +48,7 @@ public class Sprite extends Object3D implements M3GTypedObject
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropHeight));
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.SPRITE;

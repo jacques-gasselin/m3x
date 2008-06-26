@@ -31,7 +31,7 @@ public class AnimationController extends Object3D implements M3GTypedObject
     this.referenceWorldTime = referenceWorldTime;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
@@ -43,7 +43,7 @@ public class AnimationController extends Object3D implements M3GTypedObject
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceWorldTime));
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.ANIMATION_CONTROLLER;

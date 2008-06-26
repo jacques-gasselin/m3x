@@ -23,7 +23,7 @@ public class Texture2D extends Transformable implements M3GTypedObject
   public static final int FUNC_REPLACE = 228;
   public static final int WRAP_CLAMP = 240;
   public static final int WRAP_REPEAT = 241;
-  
+
   private final ObjectIndex texture;
   private final ColorRGB blendColor;
   private final int blending;
@@ -49,7 +49,7 @@ public class Texture2D extends Transformable implements M3GTypedObject
     this.imageFilter = imageFilter;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -60,10 +60,10 @@ public class Texture2D extends Transformable implements M3GTypedObject
     dataOutputStream.write(this.wrappingS);
     dataOutputStream.write(this.wrappingT);
     dataOutputStream.write(this.levelFilter);
-    dataOutputStream.write(this.imageFilter);    
+    dataOutputStream.write(this.imageFilter);
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.TEXTURE_2D;

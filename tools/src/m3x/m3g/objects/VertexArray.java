@@ -16,21 +16,22 @@ public class VertexArray extends Object3D implements M3GTypedObject
   private final int encoding;
   private final byte[] byteComponentsOrDeltas;
   private final short[] shortComponentsOrDeltas;
-   
+
   /**
    * 
    * @param animationTracks
    * @param userParameters
    * @param byteComponentsOrDeltas
    * @param isDeltas
-   *  If true, this constructor is given deltas in the previous parameter, i.e.
-   *  the user of this class must calculate them.
+   *          If true, this constructor is given deltas in the previous
+   *          parameter, i.e. the user of this class must calculate them.
    */
   public VertexArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, byte[] byteComponentsOrDeltas, boolean isDeltas)
+      UserParameter[] userParameters, byte[] byteComponentsOrDeltas,
+      boolean isDeltas)
   {
     super(animationTracks, userParameters);
-    assert(byteComponentsOrDeltas != null);
+    assert (byteComponentsOrDeltas != null);
     this.componentSize = 1;
     this.componentCount = byteComponentsOrDeltas.length;
     this.encoding = isDeltas ? 1 : 0;
@@ -44,22 +45,23 @@ public class VertexArray extends Object3D implements M3GTypedObject
    * @param userParameters
    * @param shortComponentsOrDeltas
    * @param isDeltas
-   *  If true, this constructor is given deltas in the previous parameter, i.e.
-   *  the user of this class must calculate them.
+   *          If true, this constructor is given deltas in the previous
+   *          parameter, i.e. the user of this class must calculate them.
    */
   public VertexArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, short[] shortComponentsOrDeltas, boolean isDeltas)
+      UserParameter[] userParameters, short[] shortComponentsOrDeltas,
+      boolean isDeltas)
   {
     super(animationTracks, userParameters);
-    assert(shortComponentsOrDeltas != null);
+    assert (shortComponentsOrDeltas != null);
     this.componentSize = 2;
     this.componentCount = shortComponentsOrDeltas.length;
     this.encoding = isDeltas ? 1 : 0;
     this.byteComponentsOrDeltas = null;
     this.shortComponentsOrDeltas = shortComponentsOrDeltas;
   }
+
   
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String version)
       throws IOException
   {
@@ -82,13 +84,13 @@ public class VertexArray extends Object3D implements M3GTypedObject
           dataOutputStream.writeShort(M3GSupport.swapBytes(s));
         }
         break;
-     
+
       default:
         throw new IOException("Invalid component size: " + this.componentSize);
     }
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.VERTEX_ARRAY;

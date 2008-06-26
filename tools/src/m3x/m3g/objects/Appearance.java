@@ -16,7 +16,7 @@ public class Appearance extends Object3D implements M3GTypedObject
   private final ObjectIndex polygonMode;
   private final ObjectIndex material;
   private final ObjectIndex[] textures;
-    
+
   public Appearance(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, byte layer, ObjectIndex compositingMpde,
       ObjectIndex fog, ObjectIndex polygonMode, ObjectIndex material,
@@ -31,8 +31,9 @@ public class Appearance extends Object3D implements M3GTypedObject
     this.textures = textures;
   }
 
-  @Override
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+  
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+      throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.layer);
@@ -46,7 +47,7 @@ public class Appearance extends Object3D implements M3GTypedObject
     }
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.APPEARANCE;

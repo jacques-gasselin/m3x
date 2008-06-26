@@ -34,7 +34,7 @@ public class Material extends Object3D implements M3GTypedObject
     this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -47,7 +47,7 @@ public class Material extends Object3D implements M3GTypedObject
     dataOutputStream.writeBoolean(this.vertexColorTrackingEnabled);
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.MATERIAL;

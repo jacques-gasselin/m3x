@@ -19,7 +19,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
   private final int[] intIndices;
   private final byte[] byteIndices;
   private final short[] shortIndices;
-  
+
   public TriangleStripArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int intStartIndex)
   {
@@ -32,7 +32,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.byteIndices = null;
     this.shortIndices = null;
   }
-  
+
   public TriangleStripArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, byte byteStartIndex)
   {
@@ -58,7 +58,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.byteIndices = null;
     this.shortIndices = null;
   }
-  
+
   public TriangleStripArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int[] intIndices)
   {
@@ -71,7 +71,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.byteIndices = null;
     this.shortIndices = null;
   }
-  
+
   public TriangleStripArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, byte[] byteIndices)
   {
@@ -98,7 +98,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.shortIndices = shortIndices;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -109,45 +109,45 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       case 0:
         dataOutputStream.writeInt(M3GSupport.swapBytes(this.intStartIndex));
         break;
-        
+
       case 1:
         dataOutputStream.writeShort(M3GSupport.swapBytes(this.shortStartIndex));
         break;
-     
+
       case 2:
         dataOutputStream.write(this.byteStartIndex);
         break;
-      
+
       case 128:
         for (int index : this.intIndices)
         {
-          dataOutputStream.writeInt(M3GSupport.swapBytes(index));          
+          dataOutputStream.writeInt(M3GSupport.swapBytes(index));
         }
         break;
-        
+
       case 129:
         for (byte index : this.byteIndices)
         {
-          dataOutputStream.write(index);          
+          dataOutputStream.write(index);
         }
         break;
 
       case 130:
         for (short index : this.shortIndices)
         {
-          dataOutputStream.writeShort(M3GSupport.swapBytes(index));          
+          dataOutputStream.writeShort(M3GSupport.swapBytes(index));
         }
         break;
-    
+
       default:
-        assert(false);
+        assert (false);
         break;
     }
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.TRIANGLE_STRIP_ARRAY;
-  }  
+  }
 }

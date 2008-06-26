@@ -19,7 +19,7 @@ public class AnimationControllerTest extends TestCase
     /**Sets up the test case fixture.
      * Creates a new instance of an m3x.xml.AnimationController.
      */
-    @Override
+    
     public void setUp()
     {
         animationController = new AnimationController();

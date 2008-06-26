@@ -14,7 +14,7 @@ public class Background extends Object3D implements M3GTypedObject
 {
   public final static int MODE_BORDER = 32;
   public final static int MODE_REPEAT = 33;
-	
+
   private final ColorRGBA backgroundColor;
   private final ObjectIndex backgroundImage;
   private final int backgroundImageModeX;
@@ -25,16 +25,16 @@ public class Background extends Object3D implements M3GTypedObject
   private final int cropHeight;
   private final boolean depthClearEnabled;
   private final boolean colorClearEnabled;
-  
+
   public Background(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, ColorRGBA backgroundColor, ObjectIndex backgroundImage,
-      int backgroundImageModeX, int backgroundImageModeY, int cropX,
-      int cropY, int cropWidth, int cropHeight, boolean depthClearEnabled,
-      boolean colorClearEnabled)
+      UserParameter[] userParameters, ColorRGBA backgroundColor,
+      ObjectIndex backgroundImage, int backgroundImageModeX,
+      int backgroundImageModeY, int cropX, int cropY, int cropWidth,
+      int cropHeight, boolean depthClearEnabled, boolean colorClearEnabled)
   {
     super(animationTracks, userParameters);
-    assert(backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT);
-    assert(backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT);
+    assert (backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT);
+    assert (backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT);
     this.backgroundColor = backgroundColor;
     this.backgroundImage = backgroundImage;
     this.backgroundImageModeX = backgroundImageModeX;
@@ -47,8 +47,9 @@ public class Background extends Object3D implements M3GTypedObject
     this.colorClearEnabled = colorClearEnabled;
   }
 
-  @Override
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+  
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+      throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
     this.backgroundColor.serialize(dataOutputStream, null);
@@ -63,7 +64,7 @@ public class Background extends Object3D implements M3GTypedObject
     dataOutputStream.writeBoolean(this.colorClearEnabled);
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.BACKGROUND;

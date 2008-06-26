@@ -32,11 +32,11 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
   public static final int SPOT_EXPONENT = 274;
   public static final int TRANSLATION = 275;
   public static final int VISIBILITY = 276;
-  
+
   private final ObjectIndex keyframeSequence;
   private final ObjectIndex animationController;
   private final int propertyID;
-  
+
   public AnimationTrack(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ObjectIndex keyframeSequence,
       ObjectIndex animationController, int propertyID)
@@ -47,8 +47,9 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.propertyID = propertyID;
   }
 
-  @Override
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+  
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+      throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
     this.keyframeSequence.serialize(dataOutputStream, null);
@@ -56,7 +57,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.propertyID));
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.ANIMATION_TRACK;

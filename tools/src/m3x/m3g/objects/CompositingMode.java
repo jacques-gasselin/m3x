@@ -17,7 +17,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   public static final int MODULATE = 66;
   public static final int MODULATE_X2 = 67;
   public static final int REPLACE = 68;
-  
+
   private final boolean depthTestEnabled;
   private final boolean depthWriteEnabled;
   private final boolean colorWriteEnabled;
@@ -26,7 +26,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   private final byte alphaThreshold;
   private final float depthOffsetFactor;
   private final float depthOffsetUnits;
-  
+
   public CompositingMode(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, boolean depthTestEnabled,
       boolean depthWriteEnabled, boolean colorWriteEnabled,
@@ -44,7 +44,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     this.depthOffsetUnits = depthOffsetUnits;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -59,7 +59,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     dataOutputStream.write(M3GSupport.swapBytes(this.depthOffsetUnits));
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.COMPOSITING_MODE;

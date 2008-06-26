@@ -21,7 +21,7 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
     this.a = (byte)(a * 255.0f + 0.5f);
   }
   
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);

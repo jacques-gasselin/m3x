@@ -20,8 +20,8 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     public int firstVertex;
     public int vertexCount;
     public int weight;
+
     
-    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -31,39 +31,39 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
       dataOutputStream.writeInt(M3GSupport.swapBytes(this.weight));
     }
   }
-  
+
   private final ObjectIndex skeleton;
   private final int transformReferenceCount;
   private final BoneReference[] boneReferences;
-  
+
   public SkinnedMesh(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Matrix transform,
       boolean enableRendering, boolean enablePicking, byte alphaFactor,
       int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes,
-      ObjectIndex skeleton,
-      BoneReference[] boneReferences)
+      ObjectIndex skeleton, BoneReference[] boneReferences)
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
-    assert(skeleton != null);
-    assert(boneReferences != null);
+    assert (skeleton != null);
+    assert (boneReferences != null);
     this.skeleton = skeleton;
     this.transformReferenceCount = boneReferences.length;
     this.boneReferences = boneReferences;
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.SKINNED_MESH;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
     this.skeleton.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.transformReferenceCount));
+    dataOutputStream.writeInt(M3GSupport
+        .swapBytes(this.transformReferenceCount));
     for (BoneReference boneReference : this.boneReferences)
     {
       boneReference.serialize(dataOutputStream, m3gVersion);

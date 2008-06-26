@@ -13,7 +13,7 @@ public class World extends Group implements M3GTypedObject
 {
   private final ObjectIndex activeCamera;
   private final ObjectIndex background;
-  
+
   public World(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, ObjectIndex[] children,
@@ -25,7 +25,7 @@ public class World extends Group implements M3GTypedObject
     this.background = background;
   }
 
-  @Override
+  
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -34,7 +34,7 @@ public class World extends Group implements M3GTypedObject
     this.background.serialize(dataOutputStream, m3gVersion);
   }
 
-  @Override
+  
   public byte getObjectType()
   {
     return ObjectTypes.WORLD;

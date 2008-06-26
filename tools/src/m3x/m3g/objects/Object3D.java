@@ -10,37 +10,40 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public abstract class Object3D implements M3GSerializable
 {
-    public static class UserParameter
-    {
-        public int parameterID;
-        public byte[] parameterValue;
-    }
-  
-    private final ObjectIndex[] animationTracks;
-    private final int userParameterCount;
-    private final UserParameter[] userParameters;
+  public static class UserParameter
+  {
+    public int parameterID;
+    public byte[] parameterValue;
+  }
 
-    protected Object3D(ObjectIndex[] animationTracks, UserParameter[] userParameters)
-    {
-        assert(animationTracks != null);
-        this.animationTracks = animationTracks;
-        this.userParameterCount = userParameters != null ? userParameters.length : 0;
-        this.userParameters = userParameters;
-    }
-  
+  private final ObjectIndex[] animationTracks;
+  private final int userParameterCount;
+  private final UserParameter[] userParameters;
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+  protected Object3D(ObjectIndex[] animationTracks,
+      UserParameter[] userParameters)
+  {
+    assert (animationTracks != null);
+    this.animationTracks = animationTracks;
+    this.userParameterCount = userParameters != null ? userParameters.length
+        : 0;
+    this.userParameters = userParameters;
+  }
+
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+      throws IOException
+  {
+    for (int i = 0; i < this.animationTracks.length; i++)
     {
-        for (int i = 0; i < this.animationTracks.length; i++)
-        {
-            this.animationTracks[i].serialize(dataOutputStream, null);
-        }
-        dataOutputStream.writeInt(M3GSupport.swapBytes(this.userParameterCount));
-        for (int i = 0; i < this.userParameterCount; i++)
-        {
-            UserParameter userParameter = this.userParameters[i];
-            dataOutputStream.writeInt(M3GSupport.swapBytes(userParameter.parameterID));
-            dataOutputStream.write(userParameter.parameterValue);
-        }
+      this.animationTracks[i].serialize(dataOutputStream, null);
     }
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.userParameterCount));
+    for (int i = 0; i < this.userParameterCount; i++)
+    {
+      UserParameter userParameter = this.userParameters[i];
+      dataOutputStream
+          .writeInt(M3GSupport.swapBytes(userParameter.parameterID));
+      dataOutputStream.write(userParameter.parameterValue);
+    }
+  }
 }
