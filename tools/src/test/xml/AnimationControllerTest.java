@@ -1,14 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package test.xml;
 
 import junit.framework.TestCase;
 import m3x.xml.AnimationController;
 
-/**
+/**Test case for m3x.xml.AnimationController
  *
  * @author jgasseli
  */
@@ -19,7 +14,7 @@ public class AnimationControllerTest extends TestCase
     /**Sets up the test case fixture.
      * Creates a new instance of an m3x.xml.AnimationController.
      */
-    
+    @Override
     public void setUp()
     {
         animationController = new AnimationController();

@@ -44,6 +44,7 @@ public class Fog extends Object3D implements M3GTypedObject
   }
 
   
+  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -65,7 +66,6 @@ public class Fog extends Object3D implements M3GTypedObject
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.FOG;

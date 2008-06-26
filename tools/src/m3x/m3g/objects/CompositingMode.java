@@ -45,6 +45,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   }
 
   
+  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -59,7 +60,6 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     dataOutputStream.write(M3GSupport.swapBytes(this.depthOffsetUnits));
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.COMPOSITING_MODE;

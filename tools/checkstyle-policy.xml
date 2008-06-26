@@ -16,9 +16,7 @@
         <module name="ParameterName"/>
         <module name="TypeName"/>
         <module name="EmptyBlock"/>
-<!--        <module name="JavadocType"/>
-        <module name="JavadocMethod"/>
--->        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForInitializerPad"/>
         <module name="MethodParamPad"/>
         <module name="TabCharacter"/>
         <module name="VisibilityModifier"/>
@@ -29,5 +27,8 @@
             <property name="option" value="nl"/>
             <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF"/>
         </module>
+        <!-- Enable these towards the end of the project -->
+        <!--module name="JavadocType"/-->
+        <!--module name="JavadocMethod"/-->
     </module>
 </module>
