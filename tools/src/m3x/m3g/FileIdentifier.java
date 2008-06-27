@@ -1,7 +1,9 @@
 package m3x.m3g;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * See http://www.java2me.org/m3g/file-format.html#FileIdentifier
@@ -20,6 +22,19 @@ public class FileIdentifier implements M3GSerializable
     0x31, 0x38, 0x34, (byte)0xBB, 
     0x0D, 0x0A, 0x1A, 0x0A 
   };
+
+  private byte[] fileIdentifier;
+  
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException
+  {
+    this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
+    dataInputStream.read(this.fileIdentifier);
+    if (!Arrays.equals(this.FILE_IDENTIFIER, FILE_IDENTIFIER))
+    {
+      throw new IOException("Invalid M3G file header!");
+    }
+  }
 
   /**
    * The file header bytes are written to the output stream.

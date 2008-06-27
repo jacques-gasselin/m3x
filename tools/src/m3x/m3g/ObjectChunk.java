@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -39,6 +40,15 @@ public class ObjectChunk implements M3GSerializable
     this.objectType = objectType;
     this.length = data.length;
     this.data = data;
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException
+  {
+    this.objectType = dataInputStream.readByte();
+    this.length = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.data = new byte[this.length];
+    dataInputStream.read(this.data);
   }
 
   /**

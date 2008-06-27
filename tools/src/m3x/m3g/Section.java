@@ -1,11 +1,14 @@
 package m3x.m3g;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.zip.Adler32;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 
 /**
@@ -82,6 +85,65 @@ public class Section implements M3GSerializable
     // uncompressed length, objects array length and Adler32 checksum
     this.totalSectionLength = 1 + 4 + 4 + this.objects.length + 4;
   }
+
+  
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException, FileFormatException
+  {
+    this.compressionScheme = dataInputStream.readByte();
+    if (this.compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
+        this.compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+    {
+      throw new FileFormatException("Invalid compression scheme: " + this.compressionScheme);
+    }
+    
+    this.totalSectionLength = M3GSupport.swapBytes(dataInputStream.readInt());
+    if (this.totalSectionLength <= 0)
+    {
+      throw new FileFormatException("Invalid total section length: " + this.totalSectionLength);
+    }
+    
+    this.uncompressedLength = M3GSupport.swapBytes(dataInputStream.readInt());
+    if (this.uncompressedLength <= 0)
+    {
+      throw new FileFormatException("Invalid uncompressed length: " + this.uncompressedLength);
+    }
+    
+    this.objects = new byte[this.uncompressedLength];
+    int objectsLengthInBytes = this.totalSectionLength - 1 - 4 - 4 - 4;
+    if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+    {
+      byte[] compressedObjects = new byte[objectsLengthInBytes];
+      dataInputStream.read(compressedObjects);
+      Inflater inflater = new Inflater();
+      inflater.setInput(compressedObjects);
+      try
+      {
+        inflater.inflate(this.objects);
+      }
+      catch (DataFormatException e)
+      {
+        throw new IOException(e);
+      }
+      finally
+      {
+        inflater.end();
+      }
+    }
+    else
+    {
+      // uncompressed, just read the array
+      dataInputStream.read(this.objects);
+    }
+    
+    int checksum = this.calculateChecksum();
+    int checksumFromStream = M3GSupport.swapBytes(dataInputStream.readInt());
+    if (checksum != checksumFromStream)
+    {
+      throw new FileFormatException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);
+    }
+  }
+
 
   /**
    * See http://www.java2me.org/m3g/file-format.html#Section for more

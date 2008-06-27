@@ -1,8 +1,10 @@
 package m3x.m3g.objects;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
@@ -48,6 +50,11 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
   }
 
   
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException, FileFormatException
+  {    
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {

@@ -1,8 +1,10 @@
 package m3x.m3g.objects;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
@@ -21,7 +23,12 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     public int vertexCount;
     public int weight;
 
-    
+        
+    public void deserialize(DataInputStream dataInputStream, String version)
+        throws IOException, FileFormatException
+    {      
+    }
+
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -56,8 +63,13 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
   {
     return ObjectTypes.SKINNED_MESH;
   }
-
   
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException, FileFormatException
+  {
+    super.deserialize(dataInputStream, version);
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {

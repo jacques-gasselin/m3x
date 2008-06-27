@@ -1,8 +1,10 @@
 package m3x.m3g.primitives;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 
 public class ColorRGBA extends ColorRGB implements M3GSerializable
@@ -22,6 +24,13 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
   }
   
   
+  public void deserialize(DataInputStream dataInputStream, String version)
+      throws IOException, FileFormatException
+  {
+    super.deserialize(dataInputStream, version);
+    this.a = dataInputStream.readByte();
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
