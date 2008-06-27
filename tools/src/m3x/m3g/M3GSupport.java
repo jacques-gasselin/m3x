@@ -14,6 +14,10 @@ import java.io.IOException;
  */
 public class M3GSupport
 {
+  private M3GSupport()
+  {  
+  }
+  
   /**
    * Converts a float from big-endian to little-endian or vice versa.
    * 
