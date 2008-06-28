@@ -9,6 +9,7 @@ import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
+import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class AnimationTrack extends Object3D implements M3GTypedObject
@@ -35,9 +36,9 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
   public static final int TRANSLATION = 275;
   public static final int VISIBILITY = 276;
 
-  private final ObjectIndex keyframeSequence;
-  private final ObjectIndex animationController;
-  private final int propertyID;
+  private ObjectIndex keyframeSequence;
+  private ObjectIndex animationController;
+  private int propertyID;
 
   public AnimationTrack(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ObjectIndex keyframeSequence,
@@ -48,11 +49,20 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.animationController = animationController;
     this.propertyID = propertyID;
   }
-
   
+  public AnimationTrack(ObjectIndex[] animationTracks,
+      UserParameter[] userParameters)
+  {
+    super(animationTracks, userParameters);
+  }
+
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
   {    
+    this.keyframeSequence = new ObjectIndex();
+    this.keyframeSequence.deserialize(dataInputStream, version);
+    this.animationController = new ObjectIndex();
+    this.animationController.deserialize(dataInputStream, version);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -63,7 +73,6 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.animationController.serialize(dataOutputStream, null);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.propertyID));
   }
-
   
   public byte getObjectType()
   {
