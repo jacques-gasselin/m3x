@@ -1,6 +1,7 @@
 package m3x.m3g;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -92,5 +93,49 @@ public class M3GSupport
     object.serialize(dos, null);
     dos.close();
     return baos.toByteArray();    
+  }
+  
+  /**
+   * A helper method for read an integer from the stream saved as little-endian byte order. 
+   * @param dataInputStream
+   * @return
+   * @throws IOException
+   */
+  public static int readInt(DataInputStream dataInputStream) throws IOException
+  {
+    return swapBytes(dataInputStream.readInt());
+  }
+  
+  /**
+   * A helper method to write an integer as little-endian to the stream.
+   * @param dataOutputStream
+   * @param x
+   * @throws IOException
+   */
+  public static void writeInt(DataOutputStream dataOutputStream, int x) throws IOException
+  {
+    dataOutputStream.writeInt(swapBytes(x));
+  }
+
+  /**
+   * A helper method for read a float from the stream saved as little-endian byte order. 
+   * @param dataInputStream
+   * @return
+   * @throws IOException
+   */
+  public static float readFloat(DataInputStream dataInputStream) throws IOException
+  {
+    return Float.intBitsToFloat(swapBytes(dataInputStream.readInt()));
+  }
+  
+  /**
+   * A helper method to write a float as little-endian to the stream.
+   * @param dataOutputStream
+   * @param x
+   * @throws IOException
+   */
+  public static void writeInt(DataOutputStream dataOutputStream, float x) throws IOException
+  {
+    dataOutputStream.writeInt(swapBytes(x));
   }
 }

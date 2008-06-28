@@ -56,21 +56,21 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     super(animationTracks, userParameters);
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
     this.keyframeSequence = new ObjectIndex();
-    this.keyframeSequence.deserialize(dataInputStream, version);
+    this.keyframeSequence.deserialize(dataInputStream, m3gVersion);
     this.animationController = new ObjectIndex();
-    this.animationController.deserialize(dataInputStream, version);
+    this.animationController.deserialize(dataInputStream, m3gVersion);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
-    this.keyframeSequence.serialize(dataOutputStream, null);
-    this.animationController.serialize(dataOutputStream, null);
+    this.keyframeSequence.serialize(dataOutputStream, m3gVersion);
+    this.animationController.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.propertyID));
   }
   
