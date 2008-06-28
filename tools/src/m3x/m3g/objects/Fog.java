@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
@@ -45,20 +44,26 @@ public class Fog extends Object3D implements M3GTypedObject
     this.far = far;
   }
 
+  public Fog()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
   {
+    super.deserialize(dataInputStream, version);
     this.color.deserialize(dataInputStream, version);
     this.mode = dataInputStream.readByte();
     if (this.mode == MODE_EXPONENTIAL)
     {
-      this.density = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+      this.density = M3GSupport.readFloat(dataInputStream);
     }
     else
     if (this.mode == MODE_LINEAR)
     {
-      this.near = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
-      this.far = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));      
+      this.near = M3GSupport.readFloat(dataInputStream);
+      this.far = M3GSupport.readFloat(dataInputStream);      
     }
     else
     {
