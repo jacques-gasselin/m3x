@@ -8,16 +8,17 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.ObjectTypes;
+import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class AnimationController extends Object3D implements M3GTypedObject
 {
-  private final float speed;
-  private final float weight;
-  private final int activeIntervalStart;
-  private final int activeIntervalEnd;
-  private final float referenceSequenceTime;
-  private final int referenceWorldTime;
+  private float speed;
+  private float weight;
+  private int activeIntervalStart;
+  private int activeIntervalEnd;
+  private float referenceSequenceTime;
+  private int referenceWorldTime;
   
   public AnimationController(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, float speed, float weight,
@@ -32,11 +33,23 @@ public class AnimationController extends Object3D implements M3GTypedObject
     this.referenceSequenceTime = referenceSequenceTime;
     this.referenceWorldTime = referenceWorldTime;
   }
-
   
+  public AnimationController(ObjectIndex[] animationTracks,
+      UserParameter[] userParameters)
+  {
+    super(animationTracks, userParameters);
+  }
+
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
-  {    
+  {
+    super.deserialize(dataInputStream, version);
+    this.speed = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+    this.weight = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+    this.activeIntervalStart = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.activeIntervalEnd = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.referenceSequenceTime = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+    this.referenceWorldTime = M3GSupport.swapBytes(dataInputStream.readInt());
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
@@ -49,7 +62,6 @@ public class AnimationController extends Object3D implements M3GTypedObject
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceSequenceTime));
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.referenceWorldTime));
   }
-
   
   public byte getObjectType()
   {
