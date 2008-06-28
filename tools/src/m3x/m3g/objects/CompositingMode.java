@@ -61,8 +61,8 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     dataOutputStream.writeBoolean(this.alphaWriteEnabled);
     dataOutputStream.write(this.alphaThreshold);
     dataOutputStream.write(this.blending);
-    dataOutputStream.write(M3GSupport.swapBytes(this.depthOffsetFactor));
-    dataOutputStream.write(M3GSupport.swapBytes(this.depthOffsetUnits));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.depthOffsetFactor));
+    dataOutputStream.writeInt(M3GSupport.swapBytes(this.depthOffsetUnits));
   }
 
   public byte getObjectType()

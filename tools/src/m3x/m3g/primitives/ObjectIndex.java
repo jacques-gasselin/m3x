@@ -17,7 +17,10 @@ public class ObjectIndex implements M3GSerializable
     this.index = index;
   }
 
-  
+  public ObjectIndex()
+  {
+  }
+
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
   {

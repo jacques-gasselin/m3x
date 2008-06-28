@@ -21,12 +21,12 @@ public class PolygonMode extends Object3D implements M3GTypedObject
   public static final byte WINDING_CCW = (byte) 168;
   public static final byte WINDING_CW = (byte) 169;
 
-  private final byte culling;
-  private final byte shading;
-  private final byte winding;
-  private final boolean twoSidedLightingEnabled;
-  private final boolean localCameraLightingEnabled;
-  private final boolean perspectiveCorrectionEnabled;
+  private byte culling;
+  private byte shading;
+  private byte winding;
+  private boolean twoSidedLightingEnabled;
+  private boolean localCameraLightingEnabled;
+  private boolean perspectiveCorrectionEnabled;
 
   public PolygonMode(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, byte culling, byte shading, byte winding,
@@ -45,6 +45,12 @@ public class PolygonMode extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
   {    
+    this.culling = dataInputStream.readByte();
+    this.shading = dataInputStream.readByte();
+    this.winding = dataInputStream.readByte();
+    this.twoSidedLightingEnabled = dataInputStream.readBoolean();
+    this.localCameraLightingEnabled = dataInputStream.readBoolean();
+    this.perspectiveCorrectionEnabled = dataInputStream.readBoolean();
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

@@ -17,11 +17,11 @@ public class Fog extends Object3D implements M3GTypedObject
   private final static int MODE_EXPONENTIAL = 80;
   private final static int MODE_LINEAR = 81;
 
-  private final ColorRGB color;
-  private final int mode;
-  private final float density;
-  private final float near;
-  private final float far;
+  private ColorRGB color;
+  private int mode;
+  private float density;
+  private float near;
+  private float far;
 
   public Fog(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       ColorRGB color, float density)
@@ -47,7 +47,23 @@ public class Fog extends Object3D implements M3GTypedObject
 
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
-  {    
+  {
+    this.color.deserialize(dataInputStream, version);
+    this.mode = dataInputStream.readByte();
+    if (this.mode == MODE_EXPONENTIAL)
+    {
+      this.density = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+    }
+    else
+    if (this.mode == MODE_LINEAR)
+    {
+      this.near = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+      this.far = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));      
+    }
+    else
+    {
+      throw new FileFormatException("Invalid fog mode: " + this.mode);
+    }
   }
 
   @Override
