@@ -21,10 +21,10 @@ public class ObjectIndex implements M3GSerializable
   {
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
-    this.index = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.index = M3GSupport.readInt(dataInputStream);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException

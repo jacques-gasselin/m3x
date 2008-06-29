@@ -19,12 +19,12 @@ public class Vector3D implements M3GSerializable
     this.z = z;
   }
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
-    this.x = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
-    this.y = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
-    this.z = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+    this.x = M3GSupport.readFloat(dataInputStream);
+    this.y = M3GSupport.readFloat(dataInputStream);
+    this.z = M3GSupport.readFloat(dataInputStream);
   }
 
 

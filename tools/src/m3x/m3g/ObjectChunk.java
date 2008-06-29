@@ -42,11 +42,11 @@ public class ObjectChunk implements M3GSerializable
     this.data = data;
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException
   {
     this.objectType = dataInputStream.readByte();
-    this.length = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.length = M3GSupport.readInt(dataInputStream);
     this.data = new byte[this.length];
     dataInputStream.read(this.data);
   }
@@ -58,7 +58,7 @@ public class ObjectChunk implements M3GSerializable
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.objectType);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.length));
+    M3GSupport.writeInt(dataOutputStream, this.length);
     dataOutputStream.write(this.data);
   }
 }

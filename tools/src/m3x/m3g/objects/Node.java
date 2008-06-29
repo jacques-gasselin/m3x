@@ -1,14 +1,14 @@
 package m3x.m3g.objects;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.primitives.Vector3D;
 
 public abstract class Node extends Transformable implements M3GSerializable
 {
@@ -18,16 +18,16 @@ public abstract class Node extends Transformable implements M3GSerializable
   public static final int Y_AXIS = 147;
   public static final int Z_AXIS = 148;
 
-  private final boolean enableRendering;
-  private final boolean enablePicking;
-  private final byte alphaFactor;
-  private final int scope;
-  private final boolean hasAlignment;
+  private boolean enableRendering;
+  private boolean enablePicking;
+  private byte alphaFactor;
+  private int scope;
+  private boolean hasAlignment;
 
-  private final byte zTarget;
-  private final byte yTarget;
-  private final ObjectIndex zReference;
-  private final ObjectIndex yReference;
+  private byte zTarget;
+  private byte yTarget;
+  private ObjectIndex zReference;
+  private ObjectIndex yReference;
 
   public Node(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -62,7 +62,29 @@ public abstract class Node extends Transformable implements M3GSerializable
     this.yReference = yReference;
   }
 
-  
+  public Node()
+  {
+    super();
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+      throws IOException, FileFormatException
+  {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.enableRendering = dataInputStream.readBoolean();
+    this.enablePicking = dataInputStream.readBoolean();
+    this.alphaFactor = dataInputStream.readByte();
+    this.scope = M3GSupport.readInt(dataInputStream);
+    this.hasAlignment = dataInputStream.readBoolean();
+    if (this.hasAlignment)
+    {
+      this.zTarget = dataInputStream.readByte();
+      this.yTarget = dataInputStream.readByte();
+      this.zReference.deserialize(dataInputStream, m3gVersion);
+      this.yReference.deserialize(dataInputStream, m3gVersion);
+    }
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -77,7 +99,6 @@ public abstract class Node extends Transformable implements M3GSerializable
       dataOutputStream.write(this.yTarget);
       this.zReference.serialize(dataOutputStream, m3gVersion);
       this.yReference.serialize(dataOutputStream, m3gVersion);
-
     }
   }
 }

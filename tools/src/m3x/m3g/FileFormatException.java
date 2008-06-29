@@ -1,7 +1,16 @@
 package m3x.m3g;
 
+/**
+ * Thrown when the M3G deserialization fails because of bad input data.
+ * 
+ * @author jsaarinen
+ */
 public class FileFormatException extends Exception
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   public FileFormatException()
   {

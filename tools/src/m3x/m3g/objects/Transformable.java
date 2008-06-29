@@ -5,21 +5,20 @@ import java.io.IOException;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
 public abstract class Transformable extends Object3D implements M3GSerializable
 {
-  private final boolean hasComponentTransforn;
-  private final Vector3D translation;
-  private final Vector3D scale;
-  private final float orientationAngle;
-  private final Vector3D orientationAxis;
+  private boolean hasComponentTransforn;
+  private Vector3D translation;
+  private Vector3D scale;
+  private float orientationAngle;
+  private Vector3D orientationAxis;
 
-  private final boolean hasGeneralTransform;
-  private final Matrix transform;
+  private boolean hasGeneralTransform;
+  private Matrix transform;
 
   public Transformable(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Vector3D translation, Vector3D scale,
@@ -33,6 +32,11 @@ public abstract class Transformable extends Object3D implements M3GSerializable
     this.orientationAxis = orientationAxis;
     this.hasGeneralTransform = false;
     this.transform = null;
+  }
+
+  public Transformable()
+  {
+    super();
   }
 
   public Transformable(ObjectIndex[] animationTracks,

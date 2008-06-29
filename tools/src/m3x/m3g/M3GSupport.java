@@ -134,7 +134,7 @@ public class M3GSupport
    * @param x
    * @throws IOException
    */
-  public static void writeInt(DataOutputStream dataOutputStream, float x) throws IOException
+  public static void writeFloat(DataOutputStream dataOutputStream, float x) throws IOException
   {
     dataOutputStream.writeInt(swapBytes(x));
   }

@@ -9,8 +9,6 @@ import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Mesh.SubMesh;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
@@ -24,7 +22,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     public int weight;
 
         
-    public void deserialize(DataInputStream dataInputStream, String version)
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {      
     }
@@ -64,10 +62,10 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     return ObjectTypes.SKINNED_MESH;
   }
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
-    super.deserialize(dataInputStream, version);
+    super.deserialize(dataInputStream, m3gVersion);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

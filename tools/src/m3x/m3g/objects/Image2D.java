@@ -5,11 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class Image2D extends Object3D implements M3GTypedObject
@@ -51,7 +49,7 @@ public class Image2D extends Object3D implements M3GTypedObject
     this.pixels = null;
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
   }
@@ -62,16 +60,17 @@ public class Image2D extends Object3D implements M3GTypedObject
     super.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.format);
     dataOutputStream.writeBoolean(this.isMutable);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.width));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.height));
+    M3GSupport.writeInt(dataOutputStream, this.width);
+    M3GSupport.writeInt(dataOutputStream, this.height);
     if (this.isMutable == false)
     {
+      M3GSupport.writeInt(dataOutputStream, this.palette.length);
       dataOutputStream.write(this.palette);
+      M3GSupport.writeInt(dataOutputStream, this.pixels.length);
       dataOutputStream.write(this.pixels);
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.IMAGE_2D;

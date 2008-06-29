@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
@@ -13,7 +12,7 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class Group extends Node implements M3GTypedObject
 {
-  private final ObjectIndex[] children;
+  private ObjectIndex[] children;
 
   public Group(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -25,9 +24,18 @@ public class Group extends Node implements M3GTypedObject
     this.children = children;
   }
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public Group()
+  {
+    super();
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    for (ObjectIndex objectIndex : this.children)
+    {
+      objectIndex.deserialize(dataInputStream, m3gVersion);
+    }
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -39,7 +47,6 @@ public class Group extends Node implements M3GTypedObject
       child.serialize(dataOutputStream, m3gVersion);
     }
   }
-
   
   public byte getObjectType()
   {

@@ -5,10 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
@@ -26,13 +24,13 @@ public class Texture2D extends Transformable implements M3GTypedObject
   public static final int WRAP_CLAMP = 240;
   public static final int WRAP_REPEAT = 241;
 
-  private final ObjectIndex texture;
-  private final ColorRGB blendColor;
-  private final int blending;
-  private final int wrappingS;
-  private final int wrappingT;
-  private final int levelFilter;
-  private final int imageFilter;
+  private ObjectIndex texture;
+  private ColorRGB blendColor;
+  private int blending;
+  private int wrappingS;
+  private int wrappingT;
+  private int levelFilter;
+  private int imageFilter;
 
   public Texture2D(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Vector3D translation, Vector3D scale,
@@ -51,10 +49,23 @@ public class Texture2D extends Transformable implements M3GTypedObject
     this.imageFilter = imageFilter;
   }
 
-   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public Texture2D()
+  {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.texture.deserialize(dataInputStream, m3gVersion);
+    this.blendColor.deserialize(dataInputStream, m3gVersion);
+    this.blending = dataInputStream.readByte();
+    this.wrappingS = dataInputStream.readByte();
+    this.wrappingT = dataInputStream.readByte();
+    this.levelFilter = dataInputStream.readByte();
+    this.imageFilter = dataInputStream.readByte();
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
@@ -36,7 +35,7 @@ public class Material extends Object3D implements M3GTypedObject
     this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
   }

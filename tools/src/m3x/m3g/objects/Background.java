@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
@@ -49,7 +48,7 @@ public class Background extends Object3D implements M3GTypedObject
     this.colorClearEnabled = colorClearEnabled;
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
   }
@@ -58,8 +57,8 @@ public class Background extends Object3D implements M3GTypedObject
       throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
-    this.backgroundColor.serialize(dataOutputStream, null);
-    this.backgroundImage.serialize(dataOutputStream, null);
+    this.backgroundColor.serialize(dataOutputStream, m3gVersion);
+    this.backgroundImage.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.writeInt(this.backgroundImageModeX);
     dataOutputStream.writeInt(this.backgroundImageModeY);
     dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropX));

@@ -5,22 +5,20 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class Sprite extends Object3D implements M3GTypedObject
 {
-  private final ObjectIndex image;
-  private final ObjectIndex appearance;
-  private final boolean isScaled;
-  private final int cropX;
-  private final int cropY;
-  private final int cropWidth;
-  private final int cropHeight;
+  private ObjectIndex image;
+  private ObjectIndex appearance;
+  private boolean isScaled;
+  private int cropX;
+  private int cropY;
+  private int cropWidth;
+  private int cropHeight;
 
   public Sprite(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       ObjectIndex image, ObjectIndex appearance, boolean isScaled, int cropX,
@@ -36,10 +34,22 @@ public class Sprite extends Object3D implements M3GTypedObject
     this.cropHeight = cropHeight;
   }
 
-  
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public Sprite()
+  {
+    super();
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
-  {    
+  { 
+    super.deserialize(dataInputStream, m3gVersion);
+    this.image.deserialize(dataInputStream, m3gVersion);
+    this.appearance.deserialize(dataInputStream, m3gVersion);
+    this.isScaled = dataInputStream.readBoolean();
+    this.cropX = M3GSupport.readInt(dataInputStream);
+    this.cropY = M3GSupport.readInt(dataInputStream);
+    this.cropWidth = M3GSupport.readInt(dataInputStream);
+    this.cropHeight = M3GSupport.readInt(dataInputStream);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

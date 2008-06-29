@@ -10,8 +10,7 @@ import m3x.m3g.M3GSupport;
 
 public class Header implements M3GSerializable
 {
-  private final static byte[] VERSION =
-  { 1, 0 };
+  private final static byte[] VERSION = {1, 0};
   private boolean hasExternalReferences;
   private int totalFileSize;
   private int approximateContentSize;
@@ -32,8 +31,8 @@ public class Header implements M3GSerializable
     byte[] version = new byte[2];
     dataInputStream.read(version);
     this.hasExternalReferences = dataInputStream.readBoolean();
-    this.totalFileSize = M3GSupport.swapBytes(dataInputStream.readInt());
-    this.approximateContentSize = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.totalFileSize = M3GSupport.readInt(dataInputStream);
+    this.approximateContentSize = M3GSupport.readInt(dataInputStream);
     this.authoringInformation = dataInputStream.readUTF();
   }
 

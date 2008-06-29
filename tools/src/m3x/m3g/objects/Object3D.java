@@ -7,7 +7,6 @@ import java.io.IOException;
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
 import m3x.m3g.primitives.ObjectIndex;
 
 public abstract class Object3D implements M3GSerializable
@@ -17,16 +16,16 @@ public abstract class Object3D implements M3GSerializable
     public int parameterID;
     public byte[] parameterValue;
     
-    public void deserialize(DataInputStream dataInputStream, String version)
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
-      this.parameterID = M3GSupport.swapBytes(dataInputStream.readInt());
-      int parameterValueLength = M3GSupport.swapBytes(dataInputStream.readInt());
+      this.parameterID = M3GSupport.readInt(dataInputStream);
+      int parameterValueLength = M3GSupport.readInt(dataInputStream);
       this.parameterValue = new byte[parameterValueLength];
       dataInputStream.read(this.parameterValue);
     }
     
-    public void serialize(DataOutputStream dataOutputStream, String version)
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
       dataOutputStream.writeInt(M3GSupport.swapBytes(this.parameterID));
@@ -39,7 +38,7 @@ public abstract class Object3D implements M3GSerializable
   private int userParameterCount;
   private UserParameter[] userParameters;
 
-  protected Object3D(ObjectIndex[] animationTracks,
+  public Object3D(ObjectIndex[] animationTracks,
       UserParameter[] userParameters)
   {
     assert (animationTracks != null);
@@ -53,23 +52,23 @@ public abstract class Object3D implements M3GSerializable
     super();
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
-    int animationTracksLength = M3GSupport.swapBytes(dataInputStream.readInt());
+    int animationTracksLength = M3GSupport.readInt(dataInputStream);
     this.animationTracks = new ObjectIndex[animationTracksLength];
     for (int i = 0; i < this.animationTracks.length; i++)
     {
       this.animationTracks[i] = new ObjectIndex();
-      this.animationTracks[i].deserialize(dataInputStream, version);
+      this.animationTracks[i].deserialize(dataInputStream, m3gVersion);
     }
     
-    this.userParameterCount = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.userParameterCount = M3GSupport.readInt(dataInputStream);
     this.userParameters = new UserParameter[this.userParameterCount];
     for (int i = 0; i < this.userParameters.length; i++)
     {
       this.userParameters[i] = new UserParameter();
-      this.userParameters[i].deserialize(dataInputStream, version);
+      this.userParameters[i].deserialize(dataInputStream, m3gVersion);
     }
   }
 

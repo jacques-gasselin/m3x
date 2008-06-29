@@ -5,11 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class AnimationTrack extends Object3D implements M3GTypedObject
@@ -50,10 +48,9 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.propertyID = propertyID;
   }
   
-  public AnimationTrack(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters)
+  public AnimationTrack()
   {
-    super(animationTracks, userParameters);
+    super();
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
@@ -63,6 +60,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.keyframeSequence.deserialize(dataInputStream, m3gVersion);
     this.animationController = new ObjectIndex();
     this.animationController.deserialize(dataInputStream, m3gVersion);
+    this.propertyID = M3GSupport.readInt(dataInputStream);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -71,7 +69,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     super.serialize(dataOutputStream, m3gVersion);
     this.keyframeSequence.serialize(dataOutputStream, m3gVersion);
     this.animationController.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.propertyID));
+    M3GSupport.writeInt(dataOutputStream, this.propertyID);
   }
   
   public byte getObjectType()

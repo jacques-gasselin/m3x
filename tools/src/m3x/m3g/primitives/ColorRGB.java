@@ -32,7 +32,7 @@ public class ColorRGB implements M3GSerializable
     dataOutputStream.write(this.b);
   }
 
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
     this.r = dataInputStream.readByte();

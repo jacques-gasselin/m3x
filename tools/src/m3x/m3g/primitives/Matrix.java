@@ -15,28 +15,35 @@ public class Matrix implements M3GSerializable
    */
   private float[] matrix;
 
+  private final static int MATRIX_LENGTH = 16;
+  
   public Matrix(float[] matrix)
   {
-    assert(matrix != null && matrix.length == 16);
+    assert(matrix != null && matrix.length == MATRIX_LENGTH);
     this.matrix = matrix;
   }
 
   public Matrix(double[] matrix)
   {
-    assert(matrix != null && matrix.length == 16);
-    this.matrix = new float[16];
+    assert(matrix != null && matrix.length == MATRIX_LENGTH);
+    this.matrix = new float[MATRIX_LENGTH];
     for (int i = 0; i < matrix.length; i++)
     {
       this.matrix[i] = (float)matrix[i];
     }
   }
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public Matrix()
+  {
+  }
+
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
-    for (int i = 0; i < 16; i++)
+    this.matrix = new float[MATRIX_LENGTH];
+    for (int i = 0; i < MATRIX_LENGTH; i++)
     {
-      this.matrix[i] = Float.intBitsToFloat(M3GSupport.swapBytes(dataInputStream.readInt()));
+      this.matrix[i] = M3GSupport.readFloat(dataInputStream);
     }
   }
 

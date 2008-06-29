@@ -1,7 +1,8 @@
 package m3x.m3g;
 
 /**
- * An interface which all concrete M3G classes implement.
+ * An interface which all concrete (which have object type field)
+ * M3G classes implement.
  * 
  * @author jsaarinen
  */

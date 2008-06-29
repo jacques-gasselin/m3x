@@ -8,7 +8,6 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class VertexArray extends Object3D implements M3GTypedObject
@@ -63,15 +62,15 @@ public class VertexArray extends Object3D implements M3GTypedObject
     this.shortComponentsOrDeltas = shortComponentsOrDeltas;
   }
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
   }
 
-  public void serialize(DataOutputStream dataOutputStream, String version)
+  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
-    super.serialize(dataOutputStream, version);
+    super.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.componentSize);
     dataOutputStream.write(this.componentCount);
     dataOutputStream.write(this.encoding);

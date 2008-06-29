@@ -25,12 +25,12 @@ public class FileIdentifier implements M3GSerializable
 
   private byte[] fileIdentifier;
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException
   {
     this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
     dataInputStream.read(this.fileIdentifier);
-    if (!Arrays.equals(this.FILE_IDENTIFIER, FILE_IDENTIFIER))
+    if (!Arrays.equals(this.fileIdentifier, FILE_IDENTIFIER))
     {
       throw new IOException("Invalid M3G file header!");
     }

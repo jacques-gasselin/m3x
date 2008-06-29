@@ -87,7 +87,7 @@ public class Section implements M3GSerializable
   }
 
   
-  public void deserialize(DataInputStream dataInputStream, String version)
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
     this.compressionScheme = dataInputStream.readByte();
@@ -97,13 +97,13 @@ public class Section implements M3GSerializable
       throw new FileFormatException("Invalid compression scheme: " + this.compressionScheme);
     }
     
-    this.totalSectionLength = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.totalSectionLength = M3GSupport.readInt(dataInputStream);
     if (this.totalSectionLength <= 0)
     {
       throw new FileFormatException("Invalid total section length: " + this.totalSectionLength);
     }
     
-    this.uncompressedLength = M3GSupport.swapBytes(dataInputStream.readInt());
+    this.uncompressedLength = M3GSupport.readInt(dataInputStream);
     if (this.uncompressedLength <= 0)
     {
       throw new FileFormatException("Invalid uncompressed length: " + this.uncompressedLength);
@@ -137,7 +137,7 @@ public class Section implements M3GSerializable
     }
     
     int checksum = this.calculateChecksum();
-    int checksumFromStream = M3GSupport.swapBytes(dataInputStream.readInt());
+    int checksumFromStream = M3GSupport.readInt(dataInputStream);
     if (checksum != checksumFromStream)
     {
       throw new FileFormatException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);

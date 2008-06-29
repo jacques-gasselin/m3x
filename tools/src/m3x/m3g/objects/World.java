@@ -1,9 +1,10 @@
 package m3x.m3g.objects;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.M3GSerializable;
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
@@ -11,8 +12,8 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class World extends Group implements M3GTypedObject
 {
-  private final ObjectIndex activeCamera;
-  private final ObjectIndex background;
+  private ObjectIndex activeCamera;
+  private ObjectIndex background;
 
   public World(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -24,8 +25,20 @@ public class World extends Group implements M3GTypedObject
     this.activeCamera = activeCamera;
     this.background = background;
   }
+    
+  public World()
+  {
+    super();
+  }
 
-  
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+      throws IOException, FileFormatException
+  {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.activeCamera.deserialize(dataInputStream, m3gVersion);
+    this.background.deserialize(dataInputStream, m3gVersion);
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -33,7 +46,6 @@ public class World extends Group implements M3GTypedObject
     this.activeCamera.serialize(dataOutputStream, m3gVersion);
     this.background.serialize(dataOutputStream, m3gVersion);
   }
-
   
   public byte getObjectType()
   {
