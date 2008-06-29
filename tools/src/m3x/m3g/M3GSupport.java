@@ -13,7 +13,7 @@ import java.io.IOException;
  * 
  * @author jsaarinen
  */
-public class M3GSupport
+public final class M3GSupport
 {
   private M3GSupport()
   {  

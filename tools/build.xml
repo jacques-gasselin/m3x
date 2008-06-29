@@ -67,6 +67,7 @@
     <target name="clean">
         <delete>
             <fileset dir="${build.dir}" includes="**/*.class"/>
+            <fileset dir="${build.dir}" includes="**/*.java"/>
         </delete>
     </target>
 
