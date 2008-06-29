@@ -124,7 +124,9 @@ public class Section implements M3GSerializable
       catch (DataFormatException e)
       {
         //avoiding Java SE 6 style Throwable copy constructor
-        throw new IOException(e.getMessage());
+        IOException ioe = new IOException(e.toString());
+        ioe.initCause(e);
+        throw ioe;
       }
       finally
       {
