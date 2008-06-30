@@ -157,11 +157,11 @@ public class Section implements M3GSerializable
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.compressionScheme);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.totalSectionLength));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.uncompressedLength));
+    M3GSupport.writeInt(dataOutputStream, this.totalSectionLength);
+    M3GSupport.writeInt(dataOutputStream, this.uncompressedLength);
     dataOutputStream.write(this.objects);
     int checksum = calculateChecksum();
-    dataOutputStream.writeInt(M3GSupport.swapBytes(checksum));
+    M3GSupport.writeInt(dataOutputStream, checksum);
   }
 
   /**

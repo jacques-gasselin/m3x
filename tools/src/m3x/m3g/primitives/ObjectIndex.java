@@ -29,6 +29,6 @@ public class ObjectIndex implements M3GSerializable
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.index));
+    M3GSupport.writeInt(dataOutputStream, this.index);
   }
 }

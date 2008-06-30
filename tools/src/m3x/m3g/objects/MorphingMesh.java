@@ -22,18 +22,20 @@ public class MorphingMesh extends Node implements M3GTypedObject
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {      
+      this.morphTarget = new ObjectIndex();
+      this.morphTarget.deserialize(dataInputStream, m3gVersion);
+      this.initialWeight = M3GSupport.readFloat(dataInputStream);
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
       this.morphTarget.serialize(dataOutputStream, m3gVersion);
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.initialWeight));
-    }
+      M3GSupport.writeFloat(dataOutputStream, this.initialWeight);}
   }
 
-  private final int morphTargetCount;
-  private final TargetBuffer[] morphTargets;
+  private int morphTargetCount;
+  private TargetBuffer[] morphTargets;
 
   public MorphingMesh(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Matrix transform,
@@ -48,16 +50,29 @@ public class MorphingMesh extends Node implements M3GTypedObject
     this.morphTargets = morphTargets;
   }
 
+  public MorphingMesh()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.morphTargetCount = M3GSupport.readInt(dataInputStream);
+    this.morphTargets = new TargetBuffer[this.morphTargetCount];
+    for (int i = 0; i < this.morphTargets.length; i++)
+    {
+      this.morphTargets[i] = new TargetBuffer();
+      this.morphTargets[i].deserialize(dataInputStream, m3gVersion);
+    }
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.morphTargetCount));
+    M3GSupport.writeInt(dataOutputStream, this.morphTargetCount);
     for (TargetBuffer targetBuffer : this.morphTargets)
     {
       targetBuffer.serialize(dataOutputStream, m3gVersion);

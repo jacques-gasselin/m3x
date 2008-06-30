@@ -11,23 +11,23 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class KeyframeSequence extends Object3D implements M3GTypedObject
 {
-  public static class KeyFrame
+  public class KeyFrame
   {
     public int time;
   }
 
-  public static class FloatKeyFrame extends KeyFrame
+  public class FloatKeyFrame extends KeyFrame
   {
     public float[] vectorValue;
 
   }
 
-  public static class ByteKeyFrame extends KeyFrame
+  public class ByteKeyFrame extends KeyFrame
   {
     public byte[] vectorValue;
   }
 
-  public static class ShortKeyFrame extends KeyFrame
+  public class ShortKeyFrame extends KeyFrame
   {
     public short[] vectorValue;
   }
@@ -127,9 +127,9 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     dataOutputStream.write(this.interpolation);
     dataOutputStream.write(this.repeatMode);
     dataOutputStream.write(this.encoding);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.duration));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.validRangeFirst));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.validRangeLast));
+    M3GSupport.writeInt(dataOutputStream, this.duration);
+    M3GSupport.writeInt(dataOutputStream, this.validRangeFirst);
+    M3GSupport.writeInt(dataOutputStream, this.validRangeLast);
 
     int componentCount;
     int keyFrameCount;
@@ -154,18 +154,18 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         throw new IOException("Invalid encoding: " + this.encoding);
     }
 
-    dataOutputStream.writeInt(M3GSupport.swapBytes(componentCount));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrameCount));
+    M3GSupport.writeInt(dataOutputStream, componentCount);
+    M3GSupport.writeInt(dataOutputStream, keyFrameCount);
 
     switch (this.encoding)
     {
       case ENCODING_FLOATS:
         for (FloatKeyFrame keyFrame : this.floatKeyFrames)
         {
-          dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrame.time));
+          M3GSupport.writeInt(dataOutputStream, keyFrame.time);
           for (float component : keyFrame.vectorValue)
           {
-            dataOutputStream.writeInt(M3GSupport.swapBytes(component));
+            M3GSupport.writeFloat(dataOutputStream, component);
           }
         }
         break;
@@ -174,7 +174,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         writeBiasAndScale(dataOutputStream);
         for (ByteKeyFrame keyFrame : this.byteKeyFrames)
         {
-          dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrame.time));
+          M3GSupport.writeInt(dataOutputStream, keyFrame.time);
           for (byte component : keyFrame.vectorValue)
           {
             dataOutputStream.write(component);
@@ -186,10 +186,10 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         writeBiasAndScale(dataOutputStream);
         for (ShortKeyFrame keyFrame : this.shortKeyFrames)
         {
-          dataOutputStream.writeInt(M3GSupport.swapBytes(keyFrame.time));
+          M3GSupport.writeFloat(dataOutputStream, keyFrame.time);
           for (short component : keyFrame.vectorValue)
           {
-            dataOutputStream.writeShort(M3GSupport.swapBytes(component));
+            M3GSupport.writeShort(dataOutputStream, component);
           }
         }
         break;
@@ -210,11 +210,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
   {
     for (float component : this.vectorBias)
     {
-      dataOutputStream.writeInt(M3GSupport.swapBytes(component));
+      M3GSupport.writeFloat(dataOutputStream, component);
     }
     for (float component : this.vectorScale)
     {
-      dataOutputStream.writeInt(M3GSupport.swapBytes(component));
+      M3GSupport.writeFloat(dataOutputStream, component);
     }
   }
 }

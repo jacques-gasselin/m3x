@@ -86,7 +86,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
       case 2:
         for (short s : this.shortComponentsOrDeltas)
         {
-          dataOutputStream.writeShort(M3GSupport.swapBytes(s));
+          M3GSupport.writeShort(dataOutputStream, s);
         }
         break;
 

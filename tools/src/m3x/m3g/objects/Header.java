@@ -3,6 +3,7 @@ package m3x.m3g.objects;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
@@ -25,11 +26,20 @@ public class Header implements M3GSerializable
     this.authoringInformation = authoringInformation;
   }
 
+  public Header()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
     byte[] version = new byte[2];
     dataInputStream.read(version);
+    if (!Arrays.equals(version, VERSION))
+    {
+      throw new FileFormatException("Invalid M3G version!");
+    }
     this.hasExternalReferences = dataInputStream.readBoolean();
     this.totalFileSize = M3GSupport.readInt(dataInputStream);
     this.approximateContentSize = M3GSupport.readInt(dataInputStream);
@@ -41,9 +51,8 @@ public class Header implements M3GSerializable
   {
     dataOutputStream.write(VERSION);
     dataOutputStream.writeBoolean(this.hasExternalReferences);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.totalFileSize));
-    dataOutputStream
-        .writeInt(M3GSupport.swapBytes(this.approximateContentSize));
+    M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
+    M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
     dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
     dataOutputStream.write('\0');
   }

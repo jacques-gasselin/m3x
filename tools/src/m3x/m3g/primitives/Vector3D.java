@@ -30,8 +30,8 @@ public class Vector3D implements M3GSerializable
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.x));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.y));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.z));
+    M3GSupport.writeFloat(dataOutputStream, this.x);
+    M3GSupport.writeFloat(dataOutputStream, this.y);
+    M3GSupport.writeFloat(dataOutputStream, this.z);
   }
 }

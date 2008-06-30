@@ -102,13 +102,12 @@ public class Camera extends Node implements M3GTypedObject
     }
     else
     {
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.fovy));
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.aspectRatio));
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.near));
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.far));
+      M3GSupport.writeFloat(dataOutputStream, this.fovy);
+      M3GSupport.writeFloat(dataOutputStream, this.aspectRatio);
+      M3GSupport.writeFloat(dataOutputStream, this.near);
+      M3GSupport.writeFloat(dataOutputStream, this.far);
     }
   }
-
   
   public byte getObjectType()
   {

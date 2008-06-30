@@ -10,4 +10,9 @@ public abstract class IndexBuffer extends Object3D implements M3GSerializable
   {
     super(animationTracks, userParameters);
   }
+
+  public IndexBuffer()
+  {
+    super();
+  }
 }

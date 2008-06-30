@@ -59,10 +59,10 @@ public class Sprite extends Object3D implements M3GTypedObject
     this.image.serialize(dataOutputStream, m3gVersion);
     this.appearance.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.writeBoolean(this.isScaled);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropX));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropY));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropWidth));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropHeight));
+    M3GSupport.writeInt(dataOutputStream, this.cropX);
+    M3GSupport.writeInt(dataOutputStream, this.cropY);
+    M3GSupport.writeInt(dataOutputStream, this.cropWidth);
+    M3GSupport.writeInt(dataOutputStream, this.cropHeight);
   }
 
   

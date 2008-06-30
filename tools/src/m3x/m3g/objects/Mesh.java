@@ -61,14 +61,13 @@ public class Mesh extends Node implements M3GTypedObject
   {
     super.serialize(dataOutputStream, m3gVersion);
     this.vertexBuffer.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.submeshCount));
+    M3GSupport.writeInt(dataOutputStream, this.submeshCount);
     for (SubMesh subMesh : this.subMeshes)
     {
       subMesh.serialize(dataOutputStream, m3gVersion);
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.MESH;

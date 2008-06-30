@@ -23,7 +23,6 @@ public abstract class Node extends Transformable implements M3GSerializable
   private byte alphaFactor;
   private int scope;
   private boolean hasAlignment;
-
   private byte zTarget;
   private byte yTarget;
   private ObjectIndex zReference;
@@ -92,7 +91,7 @@ public abstract class Node extends Transformable implements M3GSerializable
     dataOutputStream.writeBoolean(this.enableRendering);
     dataOutputStream.writeBoolean(this.enablePicking);
     dataOutputStream.write(this.alphaFactor);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.scope));
+    M3GSupport.writeInt(dataOutputStream, this.scope);
     if (this.hasAlignment)
     {
       dataOutputStream.write(this.zTarget);

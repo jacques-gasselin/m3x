@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
@@ -32,9 +33,12 @@ public class Group extends Node implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
-    for (ObjectIndex objectIndex : this.children)
+    int childrenLength = M3GSupport.readInt(dataInputStream);
+    this.children = new ObjectIndex[childrenLength];
+    for (int i = 0; i < this.children.length; i++)
     {
-      objectIndex.deserialize(dataInputStream, m3gVersion);
+      this.children[i] = new ObjectIndex();
+      this.children[i].deserialize(dataInputStream, m3gVersion);
     }
   }
 
@@ -42,6 +46,7 @@ public class Group extends Node implements M3GTypedObject
       throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
+    M3GSupport.writeInt(dataOutputStream, this.children.length);
     for (ObjectIndex child : this.children)
     {
       child.serialize(dataOutputStream, m3gVersion);

@@ -31,9 +31,9 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         throws IOException
     {
       this.transformNode.serialize(dataOutputStream, m3gVersion);
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.firstVertex));
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.vertexCount));
-      dataOutputStream.writeInt(M3GSupport.swapBytes(this.weight));
+      M3GSupport.writeInt(dataOutputStream, this.firstVertex);
+      M3GSupport.writeInt(dataOutputStream, this.vertexCount);
+      M3GSupport.writeInt(dataOutputStream, this.weight);
     }
   }
 
@@ -72,8 +72,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
       throws IOException
   {
     this.skeleton.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(M3GSupport
-        .swapBytes(this.transformReferenceCount));
+    M3GSupport.writeInt(dataOutputStream, this.transformReferenceCount);
     for (BoneReference boneReference : this.boneReferences)
     {
       boneReference.serialize(dataOutputStream, m3gVersion);

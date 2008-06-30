@@ -51,7 +51,7 @@ public class Matrix implements M3GSerializable
   {
     for (float element : this.matrix)
     {
-      dataOutputStream.writeInt(M3GSupport.swapBytes(element));
+      M3GSupport.writeFloat(dataOutputStream, element);
     }
   }
 }

@@ -18,12 +18,12 @@ public class Image2D extends Object3D implements M3GTypedObject
   public static final int FORMAT_RGB = 99;
   public static final int FORMAT_RGBA = 100;
 
-  private final int format;
-  private final boolean isMutable;
-  private final int width;
-  private final int height;
-  private final byte[] palette;
-  private final byte[] pixels;
+  private int format;
+  private boolean isMutable;
+  private int width;
+  private int height;
+  private byte[] palette;
+  private byte[] pixels;
 
   public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       int format, int width, int height, byte[] palette, byte[] pixels)
@@ -49,9 +49,43 @@ public class Image2D extends Object3D implements M3GTypedObject
     this.pixels = null;
   }
 
+  public Image2D()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
-  {    
+  {
+    this.format = dataInputStream.readByte();
+    if (this.format != FORMAT_ALPHA &&
+        this.format != FORMAT_LUMINANCE &&
+        this.format != FORMAT_LUMINANCE_ALPHA &&
+        this.format != FORMAT_RGB &&
+        this.format != FORMAT_RGBA)
+    {
+      throw new FileFormatException("Invalid Image2D format: " + this.format);
+    }
+    this.isMutable = dataInputStream.readBoolean();
+    this.width = M3GSupport.readInt(dataInputStream);
+    if (this.width <= 0)
+    {
+      throw new FileFormatException("Invalid Image2D width: " + this.width);
+    }
+    this.height = M3GSupport.readInt(dataInputStream);
+    if (this.height <= 0)
+    {
+      throw new FileFormatException("Invalid Image2D height: " + this.height);
+    }
+    if (this.isMutable == false)
+    {
+      int paletteLength = M3GSupport.readInt(dataInputStream);
+      this.palette = new byte[paletteLength];
+      dataInputStream.read(this.palette);
+      int pixelsLength = M3GSupport.readInt(dataInputStream);
+      this.pixels = new byte[pixelsLength];
+      dataInputStream.read(this.pixels);
+    }
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

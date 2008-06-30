@@ -16,16 +16,16 @@ public class Background extends Object3D implements M3GTypedObject
   public final static int MODE_BORDER = 32;
   public final static int MODE_REPEAT = 33;
 
-  private final ColorRGBA backgroundColor;
-  private final ObjectIndex backgroundImage;
-  private final int backgroundImageModeX;
-  private final int backgroundImageModeY;
-  private final int cropX;
-  private final int cropY;
-  private final int cropWidth;
-  private final int cropHeight;
-  private final boolean depthClearEnabled;
-  private final boolean colorClearEnabled;
+  private ColorRGBA backgroundColor;
+  private ObjectIndex backgroundImage;
+  private int backgroundImageModeX;
+  private int backgroundImageModeY;
+  private int cropX;
+  private int cropY;
+  private int cropWidth;
+  private int cropHeight;
+  private boolean depthClearEnabled;
+  private boolean colorClearEnabled;
 
   public Background(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ColorRGBA backgroundColor,
@@ -48,9 +48,25 @@ public class Background extends Object3D implements M3GTypedObject
     this.colorClearEnabled = colorClearEnabled;
   }
 
+  public Background()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
-  {    
+  {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.backgroundColor.deserialize(dataInputStream, m3gVersion);
+    this.backgroundImage.deserialize(dataInputStream, m3gVersion);
+    this.backgroundImageModeX = dataInputStream.readByte();
+    this.backgroundImageModeY = dataInputStream.readByte();
+    this.cropX = M3GSupport.readInt(dataInputStream);
+    this.cropY = M3GSupport.readInt(dataInputStream);
+    this.cropWidth = M3GSupport.readInt(dataInputStream);
+    this.cropHeight = M3GSupport.readInt(dataInputStream);
+    this.depthClearEnabled = dataInputStream.readBoolean();
+    this.colorClearEnabled = dataInputStream.readBoolean();
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -59,16 +75,15 @@ public class Background extends Object3D implements M3GTypedObject
     super.serialize(dataOutputStream, m3gVersion);
     this.backgroundColor.serialize(dataOutputStream, m3gVersion);
     this.backgroundImage.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.writeInt(this.backgroundImageModeX);
-    dataOutputStream.writeInt(this.backgroundImageModeY);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropX));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropY));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropWidth));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.cropHeight));
+    dataOutputStream.write(this.backgroundImageModeX);
+    dataOutputStream.write(this.backgroundImageModeY);
+    M3GSupport.writeInt(dataOutputStream, this.cropX);
+    M3GSupport.writeInt(dataOutputStream, this.cropY);
+    M3GSupport.writeInt(dataOutputStream, this.cropWidth);
+    M3GSupport.writeInt(dataOutputStream, this.cropHeight);
     dataOutputStream.writeBoolean(this.depthClearEnabled);
     dataOutputStream.writeBoolean(this.colorClearEnabled);
   }
-
   
   public byte getObjectType()
   {

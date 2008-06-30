@@ -25,7 +25,7 @@ public final class M3GSupport
    * @param x
    * @return
    */
-  public static int swapBytes(float x)
+  private static int swapBytes(float x)
   {
     int asInt = Float.floatToRawIntBits(x);
     return swapBytes(asInt);
@@ -37,7 +37,7 @@ public final class M3GSupport
    * @param x
    * @return
    */
-  public static int swapBytes(int x)
+  private static int swapBytes(int x)
   {
     int b1 = (x >>  0) & 0x000000FF;
     int b2 = (x >>  8) & 0x000000FF;
@@ -52,7 +52,7 @@ public final class M3GSupport
    * @param x
    * @return
    */
-  public static short swapBytes(short x)
+  private static short swapBytes(short x)
   {
     int b1 = (x >> 0) & 0x000000FF;
     int b2 = (x >> 8) & 0x000000FF;
@@ -137,5 +137,16 @@ public final class M3GSupport
   public static void writeFloat(DataOutputStream dataOutputStream, float x) throws IOException
   {
     dataOutputStream.writeInt(swapBytes(x));
+  }
+  
+  /**
+   * 
+   * @param dataOutputStream
+   * @param x
+   * @throws IOException
+   */
+  public static void writeShort(DataOutputStream dataOutputStream, short x) throws IOException
+  {
+    dataOutputStream.writeShort(swapBytes(x));    
   }
 }

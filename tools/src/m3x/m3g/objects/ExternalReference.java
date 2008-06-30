@@ -17,6 +17,11 @@ public class ExternalReference implements M3GTypedObject
     this.uri = uri;
   }
 
+  public ExternalReference()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {

@@ -111,11 +111,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     switch (this.encoding)
     {
       case 0:
-        dataOutputStream.writeInt(M3GSupport.swapBytes(this.intStartIndex));
+        M3GSupport.writeInt(dataOutputStream, this.intStartIndex);
         break;
 
       case 1:
-        dataOutputStream.writeShort(M3GSupport.swapBytes(this.shortStartIndex));
+        M3GSupport.writeShort(dataOutputStream, this.shortStartIndex);
         break;
 
       case 2:
@@ -125,7 +125,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       case 128:
         for (int index : this.intIndices)
         {
-          dataOutputStream.writeInt(M3GSupport.swapBytes(index));
+          M3GSupport.writeInt(dataOutputStream, index);
         }
         break;
 
@@ -139,7 +139,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       case 130:
         for (short index : this.shortIndices)
         {
-          dataOutputStream.writeShort(M3GSupport.swapBytes(index));
+          M3GSupport.writeShort(dataOutputStream, index);
         }
         break;
 
@@ -149,7 +149,6 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.TRIANGLE_STRIP_ARRAY;

@@ -18,14 +18,14 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   public static final int MODULATE_X2 = 67;
   public static final int REPLACE = 68;
 
-  private final boolean depthTestEnabled;
-  private final boolean depthWriteEnabled;
-  private final boolean colorWriteEnabled;
-  private final boolean alphaWriteEnabled;
-  private final int blending;
-  private final byte alphaThreshold;
-  private final float depthOffsetFactor;
-  private final float depthOffsetUnits;
+  private boolean depthTestEnabled;
+  private boolean depthWriteEnabled;
+  private boolean colorWriteEnabled;
+  private boolean alphaWriteEnabled;
+  private int blending;
+  private byte alphaThreshold;
+  private float depthOffsetFactor;
+  private float depthOffsetUnits;
 
   public CompositingMode(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, boolean depthTestEnabled,
@@ -44,9 +44,22 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     this.depthOffsetUnits = depthOffsetUnits;
   }
 
+  public CompositingMode()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    this.depthTestEnabled = dataInputStream.readBoolean();
+    this.depthWriteEnabled = dataInputStream.readBoolean();
+    this.colorWriteEnabled = dataInputStream.readBoolean();
+    this.alphaWriteEnabled = dataInputStream.readBoolean();
+    this.alphaThreshold = dataInputStream.readByte();
+    this.blending = dataInputStream.readByte();
+    this.depthOffsetFactor = M3GSupport.readFloat(dataInputStream);
+    this.depthOffsetUnits = M3GSupport.readFloat(dataInputStream);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -59,8 +72,8 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     dataOutputStream.writeBoolean(this.alphaWriteEnabled);
     dataOutputStream.write(this.alphaThreshold);
     dataOutputStream.write(this.blending);
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.depthOffsetFactor));
-    dataOutputStream.writeInt(M3GSupport.swapBytes(this.depthOffsetUnits));
+    M3GSupport.writeFloat(dataOutputStream, this.depthOffsetFactor);
+    M3GSupport.writeFloat(dataOutputStream, this.depthOffsetUnits);
   }
 
   public byte getObjectType()
