@@ -153,4 +153,39 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
   {
     return ObjectTypes.TRIANGLE_STRIP_ARRAY;
   }
+
+  public int getEncoding()
+  {
+    return this.encoding;
+  }
+
+  public int getIntStartIndex()
+  {
+    return this.intStartIndex;
+  }
+
+  public byte getByteStartIndex()
+  {
+    return this.byteStartIndex;
+  }
+
+  public short getShortStartIndex()
+  {
+    return this.shortStartIndex;
+  }
+
+  public int[] getIntIndices()
+  {
+    return this.intIndices;
+  }
+
+  public byte[] getByteIndices()
+  {
+    return this.byteIndices;
+  }
+
+  public short[] getShortIndices()
+  {
+    return this.shortIndices;
+  }
 }
