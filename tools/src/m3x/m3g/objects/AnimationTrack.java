@@ -76,4 +76,19 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
   {
     return ObjectTypes.ANIMATION_TRACK;
   }
+
+  public ObjectIndex getKeyframeSequence()
+  {
+    return this.keyframeSequence;
+  }
+
+  public ObjectIndex getAnimationController()
+  {
+    return this.animationController;
+  }
+
+  public int getPropertyID()
+  {
+    return this.propertyID;
+  }
 }

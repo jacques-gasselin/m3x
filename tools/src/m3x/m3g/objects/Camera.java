@@ -74,6 +74,7 @@ public class Camera extends Node implements M3GTypedObject
     this.projectionType = dataInputStream.readByte();
     if (this.projectionType == PROJECTION_TYPE_GENERIC)
     {
+      this.projectionMatrix = new Matrix();
       this.projectionMatrix.deserialize(dataInputStream, m3gVersion);
     }
     else
@@ -112,5 +113,35 @@ public class Camera extends Node implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.CAMERA;
+  }
+
+  public int getProjectionType()
+  {
+    return this.projectionType;
+  }
+
+  public Matrix getProjectionMatrix()
+  {
+    return this.projectionMatrix;
+  }
+
+  public float getFovy()
+  {
+    return this.fovy;
+  }
+
+  public float getAspectRatio()
+  {
+    return this.aspectRatio;
+  }
+
+  public float getNear()
+  {
+    return this.near;
+  }
+
+  public float getFar()
+  {
+    return this.far;
   }
 }

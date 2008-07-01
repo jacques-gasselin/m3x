@@ -55,19 +55,49 @@ public class Appearance extends Object3D implements M3GTypedObject
   {
     super.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.layer);
-    this.compositingMode.serialize(dataOutputStream, null);
-    this.fog.serialize(dataOutputStream, null);
-    this.polygonMode.serialize(dataOutputStream, null);
-    this.material.serialize(dataOutputStream, null);
+    this.compositingMode.serialize(dataOutputStream, m3gVersion);
+    this.fog.serialize(dataOutputStream, m3gVersion);
+    this.polygonMode.serialize(dataOutputStream, m3gVersion);
+    this.material.serialize(dataOutputStream, m3gVersion);
     M3GSupport.writeInt(dataOutputStream, this.textures.length);
     for (int i = 0; i < this.textures.length; i++)
     {
-      this.textures[i].serialize(dataOutputStream, null);
+      this.textures[i].serialize(dataOutputStream, m3gVersion);
     }
   }
 
   public byte getObjectType()
   {
     return ObjectTypes.APPEARANCE;
+  }
+
+  public byte getLayer()
+  {
+    return this.layer;
+  }
+
+  public ObjectIndex getCompositingMode()
+  {
+    return this.compositingMode;
+  }
+
+  public ObjectIndex getFog()
+  {
+    return this.fog;
+  }
+
+  public ObjectIndex getPolygonMode()
+  {
+    return this.polygonMode;
+  }
+
+  public ObjectIndex getMaterial()
+  {
+    return this.material;
+  }
+
+  public ObjectIndex[] getTextures()
+  {
+    return this.textures;
   }
 }

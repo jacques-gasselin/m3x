@@ -64,5 +64,35 @@ public class AnimationController extends Object3D implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.ANIMATION_CONTROLLER;
+  }
+
+  public float getSpeed()
+  {
+    return this.speed;
+  }
+
+  public float getWeight()
+  {
+    return this.weight;
+  }
+
+  public int getActiveIntervalStart()
+  {
+    return this.activeIntervalStart;
+  }
+
+  public int getActiveIntervalEnd()
+  {
+    return this.activeIntervalEnd;
+  }
+
+  public float getReferenceSequenceTime()
+  {
+    return this.referenceSequenceTime;
+  }
+
+  public int getReferenceWorldTime()
+  {
+    return this.referenceWorldTime;
   }  
 }

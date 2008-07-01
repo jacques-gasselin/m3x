@@ -149,4 +149,14 @@ public final class M3GSupport
   {
     dataOutputStream.writeShort(swapBytes(x));    
   }
+
+  /**
+   * 
+   * @param dataInputStream
+   * @return
+   */
+  public static short readShort(DataInputStream dataInputStream) throws IOException
+  {
+    return swapBytes(dataInputStream.readShort());
+  }
 }

@@ -89,4 +89,54 @@ public class Background extends Object3D implements M3GTypedObject
   {
     return ObjectTypes.BACKGROUND;
   }
+
+  public ColorRGBA getBackgroundColor()
+  {
+    return this.backgroundColor;
+  }
+
+  public ObjectIndex getBackgroundImage()
+  {
+    return this.backgroundImage;
+  }
+
+  public int getBackgroundImageModeX()
+  {
+    return this.backgroundImageModeX;
+  }
+
+  public int getBackgroundImageModeY()
+  {
+    return this.backgroundImageModeY;
+  }
+
+  public int getCropX()
+  {
+    return this.cropX;
+  }
+
+  public int getCropY()
+  {
+    return this.cropY;
+  }
+
+  public int getCropWidth()
+  {
+    return this.cropWidth;
+  }
+
+  public int getCropHeight()
+  {
+    return this.cropHeight;
+  }
+
+  public boolean isDepthClearEnabled()
+  {
+    return this.depthClearEnabled;
+  }
+
+  public boolean isColorClearEnabled()
+  {
+    return this.colorClearEnabled;
+  }
 }

@@ -34,6 +34,10 @@ public class Group extends Node implements M3GTypedObject
       throws IOException, FileFormatException
   {    
     int childrenLength = M3GSupport.readInt(dataInputStream);
+    if (childrenLength <= 0)
+    {
+      throw new FileFormatException("Number of children <= 0: " + childrenLength);
+    }
     this.children = new ObjectIndex[childrenLength];
     for (int i = 0; i < this.children.length; i++)
     {

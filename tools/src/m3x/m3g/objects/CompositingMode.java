@@ -80,4 +80,44 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   {
     return ObjectTypes.COMPOSITING_MODE;
   }
+
+  public boolean isDepthTestEnabled()
+  {
+    return this.depthTestEnabled;
+  }
+
+  public boolean isDepthWriteEnabled()
+  {
+    return this.depthWriteEnabled;
+  }
+
+  public boolean isColorWriteEnabled()
+  {
+    return this.colorWriteEnabled;
+  }
+
+  public boolean isAlphaWriteEnabled()
+  {
+    return this.alphaWriteEnabled;
+  }
+
+  public int getBlending()
+  {
+    return this.blending;
+  }
+
+  public byte getAlphaThreshold()
+  {
+    return this.alphaThreshold;
+  }
+
+  public float getDepthOffsetFactor()
+  {
+    return this.depthOffsetFactor;
+  }
+
+  public float getDepthOffsetUnits()
+  {
+    return this.depthOffsetUnits;
+  }
 }
