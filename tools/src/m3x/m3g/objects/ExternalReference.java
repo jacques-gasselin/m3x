@@ -31,13 +31,17 @@ public class ExternalReference implements M3GTypedObject
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
-    dataOutputStream.write(this.uri.getBytes("UTF.8"));
+    dataOutputStream.write(this.uri.getBytes("UTF-8"));
     dataOutputStream.write('\0');
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.EXTERNAL_REFERENCE;
+  }
+
+  public String getUri()
+  {
+    return this.uri;
   }
 }

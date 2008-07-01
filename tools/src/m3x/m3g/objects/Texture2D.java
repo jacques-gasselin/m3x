@@ -52,7 +52,6 @@ public class Texture2D extends Transformable implements M3GTypedObject
   public Texture2D()
   {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
@@ -84,5 +83,40 @@ public class Texture2D extends Transformable implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.TEXTURE_2D;
+  }
+
+  public ObjectIndex getTexture()
+  {
+    return this.texture;
+  }
+
+  public ColorRGB getBlendColor()
+  {
+    return this.blendColor;
+  }
+
+  public int getBlending()
+  {
+    return this.blending;
+  }
+
+  public int getWrappingS()
+  {
+    return this.wrappingS;
+  }
+
+  public int getWrappingT()
+  {
+    return this.wrappingT;
+  }
+
+  public int getLevelFilter()
+  {
+    return this.levelFilter;
+  }
+
+  public int getImageFilter()
+  {
+    return this.imageFilter;
   }
 }

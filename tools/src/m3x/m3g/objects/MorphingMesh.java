@@ -79,9 +79,18 @@ public class MorphingMesh extends Node implements M3GTypedObject
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.MORPHING_MESH;
+  }
+
+  public int getMorphTargetCount()
+  {
+    return this.morphTargetCount;
+  }
+
+  public TargetBuffer[] getMorphTargets()
+  {
+    return this.morphTargets;
   }
 }

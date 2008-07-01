@@ -72,4 +72,34 @@ public class PolygonMode extends Object3D implements M3GTypedObject
   {
     return ObjectTypes.POLYGON_MODE;
   }
+
+  public byte getCulling()
+  {
+    return this.culling;
+  }
+
+  public byte getShading()
+  {
+    return this.shading;
+  }
+
+  public byte getWinding()
+  {
+    return this.winding;
+  }
+
+  public boolean isTwoSidedLightingEnabled()
+  {
+    return this.twoSidedLightingEnabled;
+  }
+
+  public boolean isLocalCameraLightingEnabled()
+  {
+    return this.localCameraLightingEnabled;
+  }
+
+  public boolean isPerspectiveCorrectionEnabled()
+  {
+    return this.perspectiveCorrectionEnabled;
+  }
 }

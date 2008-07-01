@@ -23,6 +23,10 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
     this.a = (byte)(a * 255.0f + 0.5f);
   }
   
+  public ColorRGBA()
+  {
+    super();
+  }
   
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException

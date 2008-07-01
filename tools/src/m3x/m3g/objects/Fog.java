@@ -71,7 +71,6 @@ public class Fog extends Object3D implements M3GTypedObject
     }
   }
 
-  @Override
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
@@ -96,5 +95,30 @@ public class Fog extends Object3D implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.FOG;
+  }
+
+  public ColorRGB getColor()
+  {
+    return this.color;
+  }
+
+  public int getMode()
+  {
+    return this.mode;
+  }
+
+  public float getDensity()
+  {
+    return this.density;
+  }
+
+  public float getNear()
+  {
+    return this.near;
+  }
+
+  public float getFar()
+  {
+    return this.far;
   }
 }

@@ -51,4 +51,14 @@ public class World extends Group implements M3GTypedObject
   {
     return ObjectTypes.WORLD;
   }
+
+  public ObjectIndex getActiveCamera()
+  {
+    return this.activeCamera;
+  }
+
+  public ObjectIndex getBackground()
+  {
+    return this.background;
+  }
 }

@@ -56,4 +56,24 @@ public class Header implements M3GSerializable
     dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
     dataOutputStream.write('\0');
   }
+
+  public boolean isHasExternalReferences()
+  {
+    return this.hasExternalReferences;
+  }
+
+  public int getTotalFileSize()
+  {
+    return this.totalFileSize;
+  }
+
+  public int getApproximateContentSize()
+  {
+    return this.approximateContentSize;
+  }
+
+  public String getAuthoringInformation()
+  {
+    return this.authoringInformation;
+  }  
 }

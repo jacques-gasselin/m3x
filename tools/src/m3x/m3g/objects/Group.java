@@ -61,4 +61,9 @@ public class Group extends Node implements M3GTypedObject
   {
     return ObjectTypes.GROUP;
   }
+
+  public ObjectIndex[] getChildren()
+  {
+    return this.children;
+  }
 }

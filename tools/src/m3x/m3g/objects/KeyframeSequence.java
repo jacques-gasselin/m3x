@@ -276,6 +276,61 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     return ObjectTypes.KEYFRAME_SEQUENCE;
   }
 
+  public int getInterpolation()
+  {
+    return this.interpolation;
+  }
+
+  public int getRepeatMode()
+  {
+    return this.repeatMode;
+  }
+
+  public int getEncoding()
+  {
+    return this.encoding;
+  }
+
+  public int getDuration()
+  {
+    return this.duration;
+  }
+
+  public int getValidRangeFirst()
+  {
+    return this.validRangeFirst;
+  }
+
+  public int getValidRangeLast()
+  {
+    return this.validRangeLast;
+  }
+
+  public FloatKeyFrame[] getFloatKeyFrames()
+  {
+    return this.floatKeyFrames;
+  }
+
+  public ByteKeyFrame[] getByteKeyFrames()
+  {
+    return this.byteKeyFrames;
+  }
+
+  public ShortKeyFrame[] getShortKeyFrames()
+  {
+    return this.shortKeyFrames;
+  }
+
+  public float[] getVectorBias()
+  {
+    return this.vectorBias;
+  }
+
+  public float[] getVectorScale()
+  {
+    return this.vectorScale;
+  }
+
   private void writeBiasAndScale(DataOutputStream dataOutputStream)
       throws IOException
   {

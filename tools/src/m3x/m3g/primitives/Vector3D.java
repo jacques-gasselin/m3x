@@ -19,6 +19,10 @@ public class Vector3D implements M3GSerializable
     this.z = z;
   }
   
+  public Vector3D()
+  {
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {

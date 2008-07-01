@@ -34,9 +34,9 @@ public class Mesh extends Node implements M3GTypedObject
     }
   }
 
-  private final ObjectIndex vertexBuffer;
-  private final int submeshCount;
-  private final SubMesh[] subMeshes;
+  private ObjectIndex vertexBuffer;
+  private int subMeshCount;
+  private SubMesh[] subMeshes;
 
   public Mesh(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -48,12 +48,27 @@ public class Mesh extends Node implements M3GTypedObject
     assert (subMeshes.length > 0);
     this.vertexBuffer = vertexBuffer;
     this.subMeshes = subMeshes;
-    this.submeshCount = subMeshes.length;
+    this.subMeshCount = subMeshes.length;
   }
   
+  public Mesh()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
+    this.vertexBuffer = new ObjectIndex();
+    this.vertexBuffer.deserialize(dataInputStream, m3gVersion);
+    int subMeshCount = M3GSupport.readInt(dataInputStream);
+    this.subMeshes = new SubMesh[subMeshCount];
+    for (int i = 0; i < this.subMeshes.length; i++)
+    {
+      this.subMeshes[i] = new SubMesh();
+      this.subMeshes[i].deserialize(dataInputStream, m3gVersion);
+    }
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -61,7 +76,7 @@ public class Mesh extends Node implements M3GTypedObject
   {
     super.serialize(dataOutputStream, m3gVersion);
     this.vertexBuffer.serialize(dataOutputStream, m3gVersion);
-    M3GSupport.writeInt(dataOutputStream, this.submeshCount);
+    M3GSupport.writeInt(dataOutputStream, this.subMeshCount);
     for (SubMesh subMesh : this.subMeshes)
     {
       subMesh.serialize(dataOutputStream, m3gVersion);
@@ -71,5 +86,20 @@ public class Mesh extends Node implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.MESH;
+  }
+
+  public ObjectIndex getVertexBuffer()
+  {
+    return this.vertexBuffer;
+  }
+
+  public int getSubmeshCount()
+  {
+    return this.subMeshCount;
+  }
+
+  public SubMesh[] getSubMeshes()
+  {
+    return this.subMeshes;
   }
 }

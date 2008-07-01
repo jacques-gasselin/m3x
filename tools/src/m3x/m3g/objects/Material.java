@@ -14,12 +14,12 @@ import m3x.m3g.primitives.ObjectIndex;
 
 public class Material extends Object3D implements M3GTypedObject
 {
-  private final ColorRGB ambientColor;
-  private final ColorRGBA diffuseColor;
-  private final ColorRGB emissiveColor;
-  private final ColorRGB specularColor;
-  private final float shininess;
-  private final boolean vertexColorTrackingEnabled;
+  private ColorRGB ambientColor;
+  private ColorRGBA diffuseColor;
+  private ColorRGB emissiveColor;
+  private ColorRGB specularColor;
+  private float shininess;
+  private boolean vertexColorTrackingEnabled;
 
   public Material(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ColorRGB ambientColor,
@@ -38,6 +38,16 @@ public class Material extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    this.ambientColor = new ColorRGB();
+    this.ambientColor.deserialize(dataInputStream, m3gVersion);
+    this.diffuseColor = new ColorRGBA();
+    this.diffuseColor.deserialize(dataInputStream, m3gVersion);
+    this.emissiveColor = new ColorRGB();
+    this.emissiveColor.deserialize(dataInputStream, m3gVersion);
+    this.specularColor = new ColorRGB();
+    this.specularColor.deserialize(dataInputStream, m3gVersion);
+    this.shininess = M3GSupport.readFloat(dataInputStream);
+    this.vertexColorTrackingEnabled = dataInputStream.readBoolean();
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -55,5 +65,35 @@ public class Material extends Object3D implements M3GTypedObject
   public byte getObjectType()
   {
     return ObjectTypes.MATERIAL;
+  }
+
+  public ColorRGB getAmbientColor()
+  {
+    return this.ambientColor;
+  }
+
+  public ColorRGBA getDiffuseColor()
+  {
+    return this.diffuseColor;
+  }
+
+  public ColorRGB getEmissiveColor()
+  {
+    return this.emissiveColor;
+  }
+
+  public ColorRGB getSpecularColor()
+  {
+    return this.specularColor;
+  }
+
+  public float getShininess()
+  {
+    return this.shininess;
+  }
+
+  public boolean isVertexColorTrackingEnabled()
+  {
+    return this.vertexColorTrackingEnabled;
   }
 }

@@ -95,9 +95,33 @@ public class VertexArray extends Object3D implements M3GTypedObject
     }
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.VERTEX_ARRAY;
+  }
+
+  public int getComponentSize()
+  {
+    return this.componentSize;
+  }
+
+  public int getComponentCount()
+  {
+    return this.componentCount;
+  }
+
+  public int getEncoding()
+  {
+    return this.encoding;
+  }
+
+  public byte[] getByteComponentsOrDeltas()
+  {
+    return this.byteComponentsOrDeltas;
+  }
+
+  public short[] getShortComponentsOrDeltas()
+  {
+    return this.shortComponentsOrDeltas;
   }
 }

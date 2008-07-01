@@ -65,9 +65,43 @@ public class Sprite extends Object3D implements M3GTypedObject
     M3GSupport.writeInt(dataOutputStream, this.cropHeight);
   }
 
-  
   public byte getObjectType()
   {
     return ObjectTypes.SPRITE;
+  }
+
+  public ObjectIndex getImage()
+  {
+    return this.image;
+  }
+
+  public ObjectIndex getAppearance()
+  {
+    return this.appearance;
+  }
+
+  public boolean isScaled()
+  {
+    return this.isScaled;
+  }
+
+  public int getCropX()
+  {
+    return this.cropX;
+  }
+
+  public int getCropY()
+  {
+    return this.cropY;
+  }
+
+  public int getCropWidth()
+  {
+    return this.cropWidth;
+  }
+
+  public int getCropHeight()
+  {
+    return this.cropHeight;
   }
 }

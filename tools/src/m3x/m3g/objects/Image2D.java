@@ -109,4 +109,34 @@ public class Image2D extends Object3D implements M3GTypedObject
   {
     return ObjectTypes.IMAGE_2D;
   }
+
+  public int getFormat()
+  {
+    return this.format;
+  }
+
+  public boolean isMutable()
+  {
+    return this.isMutable;
+  }
+
+  public int getWidth()
+  {
+    return this.width;
+  }
+
+  public int getHeight()
+  {
+    return this.height;
+  }
+
+  public byte[] getPalette()
+  {
+    return this.palette;
+  }
+
+  public byte[] getPixels()
+  {
+    return this.pixels;
+  }
 }
