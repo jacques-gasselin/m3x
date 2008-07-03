@@ -11,6 +11,21 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
+/**
+  Boolean       hasComponentTransform;
+  IF hasComponentTransform==TRUE, THEN
+  Vector3D      translation;
+  Vector3D      scale;
+  Float32       orientationAngle;
+  Vector3D      orientationAxis;
+  END
+  Boolean       hasGeneralTransform;
+  IF hasGeneralTransform==TRUE, THEN
+    Matrix        transform;
+  END
+
+ * @author jsaarinen
+ */
 public abstract class Transformable extends Object3D implements M3GSerializable
 {
   private boolean hasComponentTransform;

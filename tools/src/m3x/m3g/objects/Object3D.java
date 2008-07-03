@@ -9,6 +9,17 @@ import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  UInt32           userID;
+  ObjectIndex[]    animationTracks;
+  UInt32           userParameterCount;
+  FOR each user parameter...
+    UInt32        parameterID;
+    Byte[]        parameterValue;
+  END
+ 
+ * @author jsaarinen
+ */
 public abstract class Object3D implements M3GSerializable
 {
   public class UserParameter implements M3GSerializable

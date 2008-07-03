@@ -10,6 +10,18 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Byte          format;
+  Boolean       isMutable;
+  UInt32        width;
+  UInt32        height;
+  IF isMutable==false, THEN
+      Byte[]        palette;
+      Byte[]        pixels;
+  END
+      
+ * @author jsaarinen
+ */
 public class Image2D extends Object3D implements M3GTypedObject
 {
   public static final int FORMAT_ALPHA = 96;

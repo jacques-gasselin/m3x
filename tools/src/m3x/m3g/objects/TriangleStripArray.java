@@ -10,6 +10,25 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Byte       encoding;
+  IF encoding == 0, THEN
+    UInt32        startIndex;
+  ELSE IF encoding == 1, THEN
+    Byte          startIndex;
+  ELSE IF encoding == 2, THEN
+    UInt16        startIndex;
+  ELSE IF encoding == 128, THEN
+    UInt32[]      indices;
+  ELSE IF encoding == 129, THEN
+    Byte[]        indices;
+  ELSE IF encoding == 130, THEN
+    UInt16[]      indices;
+  END
+  UInt32[]      stripLengths;
+
+ * @author jsaarinen
+ */
 public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
 {
   private final int encoding;

@@ -11,6 +11,17 @@ import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
+/**
+  ObjectIndex   image;
+  ColorRGB      blendColor;
+  Byte          blending;
+  Byte          wrappingS;
+  Byte          wrappingT;
+  Byte          levelFilter;
+  Byte          imageFilter;
+
+ * @author jsaarinen
+ */
 public class Texture2D extends Transformable implements M3GTypedObject
 {
   public static final int FILTER_BASE_LEVEL = 208;
@@ -58,7 +69,9 @@ public class Texture2D extends Transformable implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
+    this.texture = new ObjectIndex();
     this.texture.deserialize(dataInputStream, m3gVersion);
+    this.blendColor = new ColorRGB();
     this.blendColor.deserialize(dataInputStream, m3gVersion);
     this.blending = dataInputStream.readByte();
     this.wrappingS = dataInputStream.readByte();

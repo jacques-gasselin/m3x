@@ -11,6 +11,11 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+ * ObjectIndex[] children;
+ * 
+ * @author jsaarinen
+ */
 public class Group extends Node implements M3GTypedObject
 {
   private ObjectIndex[] children;

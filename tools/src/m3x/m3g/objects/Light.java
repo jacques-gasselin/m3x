@@ -12,6 +12,18 @@ import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Float32       attenuationConstant;
+  Float32       attenuationLinear;
+  Float32       attenuationQuadratic;
+  ColorRGB      color;
+  Byte          mode;
+  Float32       intensity;
+  Float32       spotAngle;
+  Float32       spotExponent;
+
+ * @author jsaarinen
+ */
 public class Light extends Node implements M3GTypedObject
 {
   public final static int MODE_AMBIENT = 128;

@@ -9,6 +9,16 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Byte          culling;
+  Byte          shading;
+  Byte          winding;
+  Boolean       twoSidedLightingEnabled;
+  Boolean       localCameraLightingEnabled;
+  Boolean       perspectiveCorrectionEnabled;
+
+ * @author jsaarinen
+ */
 public class PolygonMode extends Object3D implements M3GTypedObject
 {
   public static final byte CULL_BACK = (byte) 160;

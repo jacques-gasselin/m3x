@@ -10,6 +10,22 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Boolean       enableRendering;
+  Boolean       enablePicking;
+  Byte          alphaFactor;
+  UInt32        scope;
+  Boolean       hasAlignment;
+  IF hasAlignment==TRUE, THEN
+    Byte          zTarget;
+    Byte          yTarget;
+
+    ObjectIndex   zReference;
+    ObjectIndex   yReference;
+  END
+
+ * @author jsaarinen
+ */
 public abstract class Node extends Transformable implements M3GSerializable
 {
   public static final int NONE = 144;

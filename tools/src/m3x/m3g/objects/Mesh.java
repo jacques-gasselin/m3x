@@ -12,6 +12,16 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  ObjectIndex   vertexBuffer;
+  UInt32        submeshCount;
+  FOR each submesh...
+    ObjectIndex   indexBuffer;
+    ObjectIndex   appearance;
+  END
+
+ * @author jsaarinen
+ */
 public class Mesh extends Node implements M3GTypedObject
 {
   public class SubMesh implements M3GSerializable
@@ -22,7 +32,9 @@ public class Mesh extends Node implements M3GTypedObject
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
+      this.indexBuffer = new ObjectIndex();
       this.indexBuffer.deserialize(dataInputStream, m3gVersion);
+      this.appearance = new ObjectIndex();
       this.appearance.deserialize(dataInputStream, m3gVersion);
     }
 

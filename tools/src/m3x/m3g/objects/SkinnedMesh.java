@@ -12,6 +12,18 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  ObjectIndex   skeleton;
+  UInt32        transformReferenceCount;
+  FOR each bone reference...
+    ObjectIndex   transformNode;
+    UInt32        firstVertex;
+    UInt32        vertexCount;
+    Int32         weight;
+  END
+
+ * @author jsaarinen
+ */
 public class SkinnedMesh extends Mesh implements M3GTypedObject
 {
   public class BoneReference implements M3GSerializable

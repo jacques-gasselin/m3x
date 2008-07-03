@@ -12,6 +12,14 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  UInt32        morphTargetCount;
+  FOR each target buffer...
+    ObjectIndex   morphTarget;
+    Float32       initialWeight;
+  END
+ * @author jsaarinen
+ */
 public class MorphingMesh extends Node implements M3GTypedObject
 {
   public class TargetBuffer implements M3GSerializable

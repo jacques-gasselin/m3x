@@ -10,6 +10,28 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Byte          componentSize;
+  Byte          componentCount;
+  Byte          encoding;
+  UInt16        vertexCount;
+  FOR each vertex...
+    IF componentSize==1, THEN
+        IF encoding==0, THEN
+              Byte[componentCount] components;
+        ELSE IF encoding==1, THEN
+              Byte[componentCount] componentDeltas;
+        END
+    ELSE
+        IF encoding==0, THEN
+              Int16[componentCount] components;
+        ELSE IF encoding==1, THEN
+              Int16[componentCount] componentDeltas;
+        END
+    END
+  END
+ * @author jsaarinen
+ */
 public class VertexArray extends Object3D implements M3GTypedObject
 {
   private final static int BYTE_SIZE_IN_BYTES = 1;
