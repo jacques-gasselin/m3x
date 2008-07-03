@@ -10,6 +10,14 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+   ObjectIndex   keyframeSequence;
+   ObjectIndex   animationController;
+   UInt32        propertyID;
+
+ * @author jsaarinen
+ *
+ */
 public class AnimationTrack extends Object3D implements M3GTypedObject
 {
   public static final int ALPHA = 256;

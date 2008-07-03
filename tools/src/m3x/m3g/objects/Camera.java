@@ -14,6 +14,16 @@ import m3x.m3g.primitives.ObjectIndex;
 /**
  * This class is the data structure for Camera object in M3G format, see the URL
  * below for more information. http://www.java2me.org/m3g/file-format.htm
+
+  Byte          projectionType;
+  IF projectionType==GENERIC, THEN
+    Matrix        projectionMatrix;
+  ELSE
+    Float32       fovy;
+    Float32       AspectRatio;
+    Float32       near;
+    Float32       far;
+  END
  * 
  * @author jsaarinen
  */

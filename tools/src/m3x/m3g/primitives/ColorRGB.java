@@ -44,4 +44,19 @@ public class ColorRGB implements M3GSerializable
     this.g = dataInputStream.readByte();
     this.b = dataInputStream.readByte();
   }
+
+  public byte getR()
+  {
+    return this.r;
+  }
+
+  public byte getG()
+  {
+    return this.g;
+  }
+
+  public byte getB()
+  {
+    return this.b;
+  }
 }

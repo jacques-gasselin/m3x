@@ -10,6 +10,16 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Byte          layer;
+  ObjectIndex   compositingMode;
+  ObjectIndex   fog;
+  ObjectIndex   polygonMode;
+  ObjectIndex   material;
+  ObjectIndex[] textures;
+
+ * @author jsaarinen
+ */
 public class Appearance extends Object3D implements M3GTypedObject
 {
   private byte layer;

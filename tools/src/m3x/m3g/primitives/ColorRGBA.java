@@ -40,4 +40,9 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
     super.serialize(dataOutputStream, m3gVersion);
     dataOutputStream.write(this.a);
   }
+
+  public byte getA()
+  {
+    return this.a;
+  }
 }

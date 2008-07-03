@@ -11,6 +11,18 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  ColorRGB      color;
+  Byte          mode;
+  IF mode==EXPONENTIAL, THEN
+    Float32       density;
+  ELSE IF mode==LINEAR, THEN
+    Float32       near;
+    Float32       far;
+  END
+
+ * @author jsaarinen
+ */
 public class Fog extends Object3D implements M3GTypedObject
 {
   private final static int MODE_EXPONENTIAL = 80;

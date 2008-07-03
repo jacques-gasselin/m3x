@@ -10,6 +10,18 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  Boolean       depthTestEnabled;
+  Boolean       depthWriteEnabled;
+  Boolean       colorWriteEnabled;
+  Boolean       alphaWriteEnabled;
+  Byte          blending;
+  Byte          alphaThreshold;
+  Float32       depthOffsetFactor;
+  Float32       depthOffsetUnits;
+
+ * @author jsaarinen
+ */
 public class CompositingMode extends Object3D implements M3GTypedObject
 {
   public static final int ALPHA = 64;
@@ -23,14 +35,14 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   private boolean colorWriteEnabled;
   private boolean alphaWriteEnabled;
   private int blending;
-  private byte alphaThreshold;
+  private int alphaThreshold;
   private float depthOffsetFactor;
   private float depthOffsetUnits;
 
   public CompositingMode(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, boolean depthTestEnabled,
       boolean depthWriteEnabled, boolean colorWriteEnabled,
-      boolean alphaWriteEnabled, int blending, byte alphaThreshold,
+      boolean alphaWriteEnabled, int blending, int alphaThreshold,
       float depthOffsetFactor, float depthOffsetUnits)
   {
     super(animationTracks, userParameters);
@@ -106,7 +118,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     return this.blending;
   }
 
-  public byte getAlphaThreshold()
+  public int getAlphaThreshold()
   {
     return this.alphaThreshold;
   }

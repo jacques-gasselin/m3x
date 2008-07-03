@@ -11,6 +11,20 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+  ColorRGBA     backgroundColor;
+  ObjectIndex   backgroundImage;
+  Byte          backgroundImageModeX;
+  Byte          backgroundImageModeY;
+  Int32         cropX;
+  Int32         cropY;
+  Int32         cropWidth;
+  Int32         cropHeight;
+  Boolean       depthClearEnabled;
+  Boolean       colorClearEnabled;
+
+ * @author jsaarinen
+ */
 public class Background extends Object3D implements M3GTypedObject
 {
   public final static int MODE_BORDER = 32;

@@ -38,4 +38,19 @@ public class Vector3D implements M3GSerializable
     M3GSupport.writeFloat(dataOutputStream, this.y);
     M3GSupport.writeFloat(dataOutputStream, this.z);
   }
+
+  public float getX()
+  {
+    return this.x;
+  }
+
+  public float getY()
+  {
+    return this.y;
+  }
+
+  public float getZ()
+  {
+    return this.z;
+  }
 }

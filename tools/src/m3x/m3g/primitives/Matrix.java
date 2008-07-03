@@ -8,6 +8,11 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 
+/**
+ * A normal 4x4 matrix using floating point elements.
+ * 
+ * @author jsaarinen
+ */
 public class Matrix implements M3GSerializable
 {
   /**
@@ -17,12 +22,21 @@ public class Matrix implements M3GSerializable
 
   private final static int MATRIX_LENGTH = 16;
   
+  /**
+   * Constructs a new matrix.
+   * 
+   * @param matrix
+   */
   public Matrix(float[] matrix)
   {
     assert(matrix != null && matrix.length == MATRIX_LENGTH);
     this.matrix = matrix;
   }
 
+  /**
+   * Constructs a new matrix from doubles.
+   * @param matrix
+   */
   public Matrix(double[] matrix)
   {
     assert(matrix != null && matrix.length == MATRIX_LENGTH);
@@ -33,6 +47,11 @@ public class Matrix implements M3GSerializable
     }
   }
   
+  /**
+   * Constructs a new matrix, no float[] created at this point,
+   * this is meant to be used with deserialize(), which will
+   * then create the array.
+   */
   public Matrix()
   {
   }
@@ -47,11 +66,24 @@ public class Matrix implements M3GSerializable
     }
   }
 
+  /**
+   * Writes float array to the stream.
+   */
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws java.io.IOException
   {
     for (float element : this.matrix)
     {
       M3GSupport.writeFloat(dataOutputStream, element);
     }
+  }
+
+  public float[] getMatrix()
+  {
+    return this.matrix;
+  }
+
+  public void setMatrix(float[] matrix)
+  {
+    this.matrix = matrix;
   }
 }

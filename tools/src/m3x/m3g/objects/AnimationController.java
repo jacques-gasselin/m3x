@@ -11,10 +11,6 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
- * ObjectType: 01
-   Superclass data: Object3D
-   Followed by:
-
     Float32       speed;
     Float32       weight;
     Int32         activeIntervalStart;
