@@ -53,6 +53,9 @@ public class AnimationController extends Object3D implements M3GTypedObject
     super();
   }
 
+  /**
+   * Deserialization done as specified in the class JavaDoc.
+   */
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
@@ -65,6 +68,9 @@ public class AnimationController extends Object3D implements M3GTypedObject
     this.referenceWorldTime = M3GSupport.readInt(dataInputStream);
   }
 
+  /**
+   * Serialization done as specified in the class JavaDoc.
+   */
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     super.serialize(dataOutputStream, m3gVersion);
