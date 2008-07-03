@@ -10,6 +10,21 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
+/**
+ * ObjectType: 01
+   Superclass data: Object3D
+   Followed by:
+
+    Float32       speed;
+    Float32       weight;
+    Int32         activeIntervalStart;
+    Int32         activeIntervalEnd;
+    Float32       referenceSequenceTime;
+    Int32         referenceWorldTime;
+
+ * @author jsaarinen
+ *
+ */
 public class AnimationController extends Object3D implements M3GTypedObject
 {
   private float speed;
