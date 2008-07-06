@@ -31,16 +31,18 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
 {
-  private final int encoding;
-  private final int intStartIndex;
-  private final byte byteStartIndex;
-  private final short shortStartIndex;
-  private final int[] intIndices;
-  private final byte[] byteIndices;
-  private final short[] shortIndices;
-
+  private int encoding;
+  private int intStartIndex;
+  private byte byteStartIndex;
+  private short shortStartIndex;
+  private int[] intIndices;
+  private byte[] byteIndices;
+  private short[] shortIndices;
+  private int[] stripLengths;
+  
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, int intStartIndex)
+      UserParameter[] userParameters, int intStartIndex,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 0;
@@ -50,10 +52,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = null;
     this.byteIndices = null;
     this.shortIndices = null;
+    this.stripLengths = stripLengths;
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, byte byteStartIndex)
+      UserParameter[] userParameters, byte byteStartIndex,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 1;
@@ -63,10 +67,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = null;
     this.byteIndices = null;
     this.shortIndices = null;
+    this.stripLengths = stripLengths;
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, short shortStartIndex)
+      UserParameter[] userParameters, short shortStartIndex,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 2;
@@ -76,10 +82,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = null;
     this.byteIndices = null;
     this.shortIndices = null;
+    this.stripLengths = stripLengths;
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, int[] intIndices)
+      UserParameter[] userParameters, int[] intIndices,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 128;
@@ -89,10 +97,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = intIndices;
     this.byteIndices = null;
     this.shortIndices = null;
+    this.stripLengths = stripLengths;
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, byte[] byteIndices)
+      UserParameter[] userParameters, byte[] byteIndices,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 129;
@@ -102,10 +112,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = null;
     this.byteIndices = byteIndices;
     this.shortIndices = null;
+    this.stripLengths = stripLengths;
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, short[] shortIndices)
+      UserParameter[] userParameters, short[] shortIndices,
+      int[] stripLengths)
   {
     super(animationTracks, userParameters);
     this.encoding = 130;
@@ -115,11 +127,14 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     this.intIndices = null;
     this.byteIndices = null;
     this.shortIndices = shortIndices;
+    this.stripLengths = stripLengths;
   }
   
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
+    super.deserialize(dataInputStream, m3gVersion);
+    this.encoding = dataInputStream.readByte();
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -166,6 +181,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         assert (false);
         break;
     }
+    M3GSupport.writeInt(dataOutputStream, this.stripLengths.length);
+    for (int x : this.stripLengths)
+    {
+      M3GSupport.writeInt(dataOutputStream, x);
+    }
   }
 
   public byte getObjectType()
@@ -206,5 +226,10 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
   public short[] getShortIndices()
   {
     return this.shortIndices;
+  }
+
+  public int[] getStripLengths()
+  {
+    return stripLengths;
   }
 }

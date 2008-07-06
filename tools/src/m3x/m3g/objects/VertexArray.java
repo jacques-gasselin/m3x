@@ -141,7 +141,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
         break;
 
       default:
-        throw new IOException("Invalid component size: " + this.componentSize);
+        assert(false);
     }
   }
 

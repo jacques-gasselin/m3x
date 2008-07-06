@@ -7,6 +7,8 @@ import java.io.IOException;
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
+import m3x.m3g.primitives.ColorRGBA;
+import m3x.m3g.primitives.ObjectIndex;
 
 /**
   ColorRGBA     defaultColor;
@@ -25,18 +27,24 @@ import m3x.m3g.ObjectTypes;
  */
 public class VertexBuffer extends Object3D implements M3GTypedObject
 {
-
+  private ColorRGBA defaultColor;
+  private ObjectIndex positions;
+  private float[] positionBias;
+  private float positionScale;
+  private ObjectIndex normals;
+  private ObjectIndex colors;
+  private int textureCoordinateArrayCount;
+  private TextureCoordinate[] textureCoordinates;
+  
   public void deserialize(DataInputStream dataInputStream, String version)
       throws IOException, FileFormatException
   {
-    // TODO Auto-generated method stub
     super.deserialize(dataInputStream, version);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String version)
       throws IOException
   {
-    // TODO Auto-generated method stub
     super.serialize(dataOutputStream, version);
   }
 
