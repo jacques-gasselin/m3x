@@ -43,18 +43,7 @@ public class Header implements M3GSerializable
     this.hasExternalReferences = dataInputStream.readBoolean();
     this.totalFileSize = M3GSupport.readInt(dataInputStream);
     this.approximateContentSize = M3GSupport.readInt(dataInputStream);
-    this.authoringInformation = readUTF8(dataInputStream);
-  }
-
-  private String readUTF8(DataInputStream dataInputStream) throws IOException
-  {
-    StringBuffer buffer = new StringBuffer();
-    byte b;
-    while ((b = dataInputStream.readByte()) != '\0')
-    {
-      buffer.append((char)b);
-    }
-    return buffer.toString();
+    this.authoringInformation = M3GSupport.readUTF8(dataInputStream);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

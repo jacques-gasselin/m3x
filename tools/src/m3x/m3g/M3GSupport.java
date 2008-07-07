@@ -159,4 +159,22 @@ public final class M3GSupport
   {
     return swapBytes(dataInputStream.readShort());
   }
+  
+  /**
+   * Reads an UTF-8 string terminated with \0 byte.
+   * 
+   * @param dataInputStream
+   * @return
+   * @throws IOException
+   */
+  public static String readUTF8(DataInputStream dataInputStream) throws IOException
+  {
+    StringBuffer buffer = new StringBuffer();
+    byte b;
+    while ((b = dataInputStream.readByte()) != '\0')
+    {
+      buffer.append((char)b);
+    }
+    return buffer.toString();
+  }
 }
