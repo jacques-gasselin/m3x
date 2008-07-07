@@ -20,7 +20,9 @@ public class HeaderTest extends TestCase
       Header deserializedHeader = new Header();
       deserializedHeader.deserialize(dis, "1.0");
       dis.close();
-      assertTrue(serializaedHeader.getAuthoringInformation().equals(deserializedHeader.getAuthoringInformation()));
+      String authInfo1 = serializaedHeader.getAuthoringInformation();
+      String authInfo2 = deserializedHeader.getAuthoringInformation();
+      assertTrue(authInfo1.equals(authInfo2));
       assertTrue(serializaedHeader.getApproximateContentSize() == deserializedHeader.getApproximateContentSize());
       assertTrue(serializaedHeader.getTotalFileSize() == deserializedHeader.getTotalFileSize());
     }
