@@ -28,6 +28,19 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
     super();
   }
   
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (!(obj instanceof ColorRGBA))
+    {
+      return false;
+    }
+    return super.equals(obj) && this.a == ((ColorRGBA)obj).a;
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
