@@ -30,6 +30,20 @@ public class ColorRGB implements M3GSerializable
     super();
   }
 
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (!(obj instanceof ColorRGB))
+    {
+      return false;
+    }
+    ColorRGB color = (ColorRGB)obj;
+    return this.r == color.r && this.g == color.g && this.b == color.b;
+  }
+
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
   {
     dataOutputStream.write(this.r);
