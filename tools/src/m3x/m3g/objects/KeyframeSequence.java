@@ -302,7 +302,6 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         assert (false);
     }
   }
-
   
   public byte getObjectType()
   {
