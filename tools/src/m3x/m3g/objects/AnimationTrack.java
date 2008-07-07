@@ -69,6 +69,10 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     this.animationController = new ObjectIndex();
     this.animationController.deserialize(dataInputStream, m3gVersion);
     this.propertyID = M3GSupport.readInt(dataInputStream);
+    if (this.propertyID < ALPHA || this.propertyID > VISIBILITY)
+    {
+      throw new FileFormatException("Invalid property ID: " + this.propertyID);
+    }
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
