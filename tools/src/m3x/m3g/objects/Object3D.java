@@ -22,7 +22,7 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public abstract class Object3D implements M3GSerializable
 {
-  public class UserParameter implements M3GSerializable
+  public static class UserParameter implements M3GSerializable
   {
     public int parameterID;
     public byte[] parameterValue;

@@ -58,9 +58,15 @@ public class Light extends Node implements M3GTypedObject
     this.spotExponent = spotExponent;
   }
   
+  public Light()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     this.attenuationConstant = M3GSupport.readFloat(dataInputStream);
     this.attenuationLinear = M3GSupport.readFloat(dataInputStream);
     this.attenuationQuadratic = M3GSupport.readFloat(dataInputStream);

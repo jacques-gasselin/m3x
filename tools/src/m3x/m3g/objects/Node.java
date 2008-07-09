@@ -95,7 +95,9 @@ public abstract class Node extends Transformable implements M3GSerializable
     {
       this.zTarget = dataInputStream.readByte();
       this.yTarget = dataInputStream.readByte();
+      this.zReference = new ObjectIndex();
       this.zReference.deserialize(dataInputStream, m3gVersion);
+      this.yReference = new ObjectIndex();
       this.yReference.deserialize(dataInputStream, m3gVersion);
     }
   }

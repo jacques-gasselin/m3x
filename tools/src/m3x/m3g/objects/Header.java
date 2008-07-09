@@ -10,7 +10,7 @@ import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 
 public class Header implements M3GSerializable
-{
+{  
   private final static byte[] VERSION = {1, 0};
   private boolean hasExternalReferences;
   private int totalFileSize;

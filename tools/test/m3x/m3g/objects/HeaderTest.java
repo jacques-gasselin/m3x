@@ -1,25 +1,16 @@
 package m3x.m3g.objects;
 
-import junit.framework.TestCase;
-import java.io.*;
+import m3x.m3g.M3GSupport;
 
-public class HeaderTest extends TestCase
+public class HeaderTest extends AbstractTestCase
 {
-  public void testHeader()
+  public void testSerializationAndDeserialization()
   {
-    Header serializaedHeader = new Header(false, 666, 666, "JUnit test case");
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    DataOutputStream dos = new DataOutputStream(baos);
     try
     {
-      serializaedHeader.serialize(dos, "1.0");
-      dos.close();
-      byte[] serialized = baos.toByteArray();
-      ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-      DataInputStream dis = new DataInputStream(bais);
-      Header deserializedHeader = new Header();
-      deserializedHeader.deserialize(dis, "1.0");
-      dis.close();
+      Header serializaedHeader = new Header(false, 666, 666, "JUnit test case");
+      byte[] serialized = M3GSupport.objectToBytes(serializaedHeader);
+      Header deserializedHeader = (Header)M3GSupport.bytesToObject(serialized, Header.class);
       String authInfo1 = serializaedHeader.getAuthoringInformation();
       String authInfo2 = deserializedHeader.getAuthoringInformation();
       assertTrue(authInfo1.equals(authInfo2));

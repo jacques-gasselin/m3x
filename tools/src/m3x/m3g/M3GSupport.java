@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,7 +28,7 @@ public final class M3GSupport
    */
   private static int swapBytes(float x)
   {
-    int asInt = Float.floatToRawIntBits(x);
+    int asInt = Float.floatToIntBits(x);
     return swapBytes(asInt);
   }
   
@@ -176,5 +177,41 @@ public final class M3GSupport
       buffer.append((char)b);
     }
     return buffer.toString();
+  }
+  
+  /**
+   * Constructs a M3G object from a byte array.
+   * 
+   * @param serialized
+   *  The bytes.
+   *  
+   * @param clazz
+   *  Class of the object in the bytes given.
+   *  
+   * @return
+   * @throws Exception
+   */
+  public static M3GSerializable bytesToObject(byte[] serialized, Class<? extends M3GSerializable> clazz) throws Exception
+  {
+    DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(serialized));
+    M3GSerializable serializable = clazz.newInstance();
+    serializable.deserialize(dataInputStream, null);
+    dataInputStream.close();
+    return serializable; 
+  }
+  
+  public static void main(String[] args) throws Exception
+  {
+    float x = 666.0f;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    DataOutputStream dos = new DataOutputStream(baos);
+    writeFloat(dos, x);
+    dos.close();
+    byte[] serialized = baos.toByteArray();
+    ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
+    DataInputStream dis = new DataInputStream(bais);
+    float y = readFloat(dis);
+    dis.close();
+    assert(x == y);
   }
 }
