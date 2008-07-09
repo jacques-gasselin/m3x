@@ -110,6 +110,7 @@ public abstract class Node extends Transformable implements M3GSerializable
     dataOutputStream.writeBoolean(this.enablePicking);
     dataOutputStream.write(this.alphaFactor);
     M3GSupport.writeInt(dataOutputStream, this.scope);
+    dataOutputStream.writeBoolean(this.hasAlignment);
     if (this.hasAlignment)
     {
       dataOutputStream.write(this.zTarget);

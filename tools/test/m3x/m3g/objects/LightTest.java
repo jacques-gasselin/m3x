@@ -36,31 +36,19 @@ public class LightTest extends AbstractTestCase
     {   
       byte[] serialized = M3GSupport.objectToBytes(light);
       Light deserialized = (Light)M3GSupport.bytesToObject(serialized, Light.class);
-      float x = light.getAttenuationConstant();
-      System.out.printf("%x %x", Float.floatToIntBits(x), Float.floatToIntBits(deserialized.getAttenuationConstant()));
       assertTrue(light.getAttenuationConstant() == deserialized.getAttenuationConstant());
       assertTrue(light.getAttenuationLinear() == deserialized.getAttenuationLinear());
       assertTrue(light.getAttenuationQuadratic() == deserialized.getAttenuationQuadratic());
+      assertTrue(light.getColor().equals(deserialized.getColor()));
+      assertTrue(light.getIntensity() == deserialized.getIntensity());
+      assertTrue(light.getMode() == deserialized.getMode());
+      assertTrue(light.getSpotAngle() == deserialized.getSpotAngle());
+      assertTrue(light.getSpotExponent() == deserialized.getSpotExponent());
     }
     catch (Exception e)
     {
       e.printStackTrace();
       fail(e.getMessage());
     }
-  }
-  
-  public void testBla() throws Exception
-  {
-    float x = 666.0f;
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    DataOutputStream dos = new DataOutputStream(baos);
-    M3GSupport.writeFloat(dos, x);
-    dos.close();
-    byte[] serialized = baos.toByteArray();
-    ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-    DataInputStream dis = new DataInputStream(bais);
-    float y = M3GSupport.readFloat(dis);
-    dis.close();
-    assert(x == y);
   }
 }

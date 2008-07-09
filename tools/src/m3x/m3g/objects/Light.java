@@ -72,7 +72,7 @@ public class Light extends Node implements M3GTypedObject
     this.attenuationQuadratic = M3GSupport.readFloat(dataInputStream);
     this.color = new ColorRGB();
     this.color.deserialize(dataInputStream, m3gVersion);
-    this.mode = dataInputStream.readByte();
+    this.mode = dataInputStream.readByte() & 0x000000FF;
     this.intensity = M3GSupport.readFloat(dataInputStream);
     this.spotAngle = M3GSupport.readFloat(dataInputStream);
     this.spotExponent = M3GSupport.readFloat(dataInputStream);
