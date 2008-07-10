@@ -65,6 +65,7 @@ public class Fog extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
+    this.color = new ColorRGB();
     this.color.deserialize(dataInputStream, m3gVersion);
     this.mode = dataInputStream.readByte();
     if (this.mode == MODE_EXPONENTIAL)

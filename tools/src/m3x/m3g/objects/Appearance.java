@@ -47,9 +47,13 @@ public class Appearance extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {    
     this.layer = dataInputStream.readByte();
+    this.compositingMode = new ObjectIndex();
     this.compositingMode.deserialize(dataInputStream, m3gVersion);
+    this.fog = new ObjectIndex();
     this.fog.deserialize(dataInputStream, m3gVersion);
+    this.polygonMode = new ObjectIndex();
     this.polygonMode.deserialize(dataInputStream, m3gVersion);
+    this.material = new ObjectIndex();
     this.material.deserialize(dataInputStream, m3gVersion);
     int texturesLength = M3GSupport.readInt(dataInputStream);
     this.textures = new ObjectIndex[texturesLength];

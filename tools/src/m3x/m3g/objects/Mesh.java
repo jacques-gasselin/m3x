@@ -24,7 +24,7 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class Mesh extends Node implements M3GTypedObject
 {
-  public class SubMesh implements M3GSerializable
+  public static class SubMesh implements M3GSerializable
   {
     public ObjectIndex indexBuffer;
     public ObjectIndex appearance;
