@@ -71,7 +71,9 @@ public class Background extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
+    this.backgroundColor = new ColorRGBA();
     this.backgroundColor.deserialize(dataInputStream, m3gVersion);
+    this.backgroundImage = new ObjectIndex();
     this.backgroundImage.deserialize(dataInputStream, m3gVersion);
     this.backgroundImageModeX = dataInputStream.readByte();
     this.backgroundImageModeY = dataInputStream.readByte();

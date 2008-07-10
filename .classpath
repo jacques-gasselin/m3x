@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="tools/src"/>
+	<classpathentry kind="src" path="tools/build/src"/>
 	<classpathentry kind="src" path="tools/test"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-api.jar"/>

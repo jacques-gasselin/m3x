@@ -31,4 +31,9 @@ public class ObjectIndex implements M3GSerializable
   {
     M3GSupport.writeInt(dataOutputStream, this.index);
   }
+
+  public Object getIndex()
+  {
+    return this.index;
+  }
 }

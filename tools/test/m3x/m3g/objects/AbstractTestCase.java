@@ -11,6 +11,12 @@ import junit.framework.TestCase;
 
 public class AbstractTestCase extends TestCase
 {
+  /**
+   * TODO: make this work (with annotations) if possible with reflection 
+   * @param object1
+   * @param object2
+   * @throws Exception
+   */
   protected void doTestAccessors(M3GSerializable object1, M3GSerializable object2) throws Exception
   {
     Class<? extends M3GSerializable> clazz1 = object1.getClass();

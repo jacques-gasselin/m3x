@@ -41,7 +41,9 @@ public class World extends Group implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
+    this.activeCamera = new ObjectIndex();
     this.activeCamera.deserialize(dataInputStream, m3gVersion);
+    this.background = new ObjectIndex();
     this.background.deserialize(dataInputStream, m3gVersion);
   }
 

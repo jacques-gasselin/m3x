@@ -1,4 +1,4 @@
-package test;
+package m3x;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

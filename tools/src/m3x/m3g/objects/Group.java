@@ -38,10 +38,11 @@ public class Group extends Node implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     int childrenLength = M3GSupport.readInt(dataInputStream);
-    if (childrenLength <= 0)
+    if (childrenLength < 0)
     {
-      throw new FileFormatException("Number of children <= 0: " + childrenLength);
+      throw new FileFormatException("Number of children < 0: " + childrenLength);
     }
     this.children = new ObjectIndex[childrenLength];
     for (int i = 0; i < this.children.length; i++)
