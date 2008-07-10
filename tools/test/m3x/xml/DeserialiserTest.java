@@ -1,12 +1,9 @@
-package test.xml;
+package m3x.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import junit.framework.TestCase;
-import m3x.xml.SectionType;
-import m3x.xml.Deserialiser;
-import m3x.xml.M3G;
 
 /**Test case for m3x.xml.Deserialiser
  *

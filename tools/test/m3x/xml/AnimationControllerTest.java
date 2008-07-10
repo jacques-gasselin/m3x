@@ -1,7 +1,6 @@
-package test.xml;
+package m3x.xml;
 
 import junit.framework.TestCase;
-import m3x.xml.AnimationController;
 
 /**Test case for m3x.xml.AnimationController
  *

@@ -4,19 +4,36 @@
     <target name="test"
             description="runs the tests">
         <!-- run unit tests -->
-        <junit printsummary="on"
+        <property name="test.result.dir"
+                  location="${test.dir}/result"/>
+        <delete dir="${test.result.dir}"/>
+        <mkdir dir="${test.result.dir}"/>
+        <junit showoutput="true"
+               printsummary="on"
                haltonerror="true">
             <classpath>
                 <pathelement location="${build.dir}"/>
                 <fileset dir="${lib.dir}"/>
             </classpath>
-            <batchtest>
+            
+            <formatter usefile="false" type="brief"/>
+            <formatter type="xml"/>
+            
+            <batchtest fork="yes"
+                       todir="${test.result.dir}">
                 <fileset dir="${test.dir}">
                     <include name="**/*Test*.java"/>
                     <exclude name="**/AllTests.java"/>
+                    <exclude name="**/*AbstractTestCase*.java"/>
                     <exclude name="**/ConsoleTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${test.result.dir}">
+            <fileset dir="${test.result.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${test.result.dir}/html"/>
+        </junitreport>
     </target>
 </project>
