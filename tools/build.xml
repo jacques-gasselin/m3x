@@ -9,12 +9,13 @@
     <property name="res.xml.dir" location="${res.dir}/xml"/>
     <property name="src.dir" location="${basedir}/src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
-    <property name="src.test.dir" location="${src.dir}/test"/>
+    <property name="test.dir" location="${basedir}/test"/>
     <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
     <property name="build.dir" location="${basedir}/build"/>
     <property name="build.src.dir" location="${build.dir}/src"/>
     <property name="build.src.m3x.dir" location="${build.src.dir}/m3x"/>
     <property name="build.src.m3x.xml.dir" location="${build.src.m3x.dir}/xml"/>
+    <property name="build.test.dir" location="${build.dir}/test"/>
     <property name="build.m3x.dir" location="${build.dir}/m3x"/>
     <property name="build.m3x.xml.dir" location="${build.m3x.dir}/xml"/>
 
@@ -96,6 +97,19 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
+        <!--compile the tests-->
+        <depend srcdir="${test.dir}"
+                destdir="${build.dir}"
+                cache="depcache"
+                closure="yes"/>
+        <javac destdir="${build.dir}"
+               fork="true">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+            <src path="${test.dir}"/>
+            <classpath>
+                <fileset dir="${lib.dir}"/>
+            </classpath>
+        </javac>
     </target>
     
     <target name="javadoc" depends="pre-build, xml-build">
@@ -108,11 +122,9 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
             <fileset dir="${src.dir}" defaultexcludes="yes">
-                <exclude name="test/**"/>
                 <exclude name="**/*.html"/>
             </fileset>
             <fileset dir="${build.src.dir}" defaultexcludes="yes">
-                <exclude name="test/**"/>
                 <exclude name="**/*.html"/>
             </fileset>            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
@@ -129,7 +141,7 @@
             depends="build">
         <!-- run unit tests -->
         <ant antfile="build.xml"
-             dir="${src.test.dir}"
+             dir="${test.dir}"
              inheritall="true"
              inheritrefs="true"
              target="test"/>
