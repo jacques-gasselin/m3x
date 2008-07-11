@@ -32,16 +32,7 @@ public class BackgroundTest extends AbstractTestCase
     {   
       byte[] serialized = M3GSupport.objectToBytes(background);
       Background deserialized = (Background)M3GSupport.bytesToObject(serialized, Background.class);
-      assertTrue(background.getBackgroundColor().equals(deserialized.getBackgroundColor()));
-      assertTrue(background.getBackgroundImage().getIndex() == deserialized.getBackgroundImage().getIndex());
-      assertTrue(background.getBackgroundImageModeX() == deserialized.getBackgroundImageModeX());
-      assertTrue(background.getBackgroundImageModeY() == deserialized.getBackgroundImageModeY());
-      assertTrue(background.getCropX() == deserialized.getCropX());
-      assertTrue(background.getCropY() == deserialized.getCropY());   
-      assertTrue(background.getCropWidth() == deserialized.getCropWidth());
-      assertTrue(background.getCropHeight() == deserialized.getCropHeight());
-      assertTrue(background.isColorClearEnabled() == deserialized.isColorClearEnabled());
-      assertTrue(background.isDepthClearEnabled() == deserialized.isDepthClearEnabled());
+      this.doTestAccessors(background, deserialized);
     }
     catch (Exception e)
     {

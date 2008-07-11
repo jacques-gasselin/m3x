@@ -36,4 +36,17 @@ public class ObjectIndex implements M3GSerializable
   {
     return this.index;
   }
+
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (!(obj instanceof ObjectIndex))
+    {
+      return false;
+    }
+    return this.index == ((ObjectIndex)obj).index;
+  }
 }

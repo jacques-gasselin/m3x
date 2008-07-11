@@ -1,5 +1,6 @@
 package m3x.m3g.objects;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -12,25 +13,28 @@ import junit.framework.TestCase;
 public class AbstractTestCase extends TestCase
 {
   /**
-   * TODO: make this work (with annotations) if possible with reflection 
+   * Compares all accessors (getters) of two objects for
+   * having the same value. Reflection is used to achieve this.
+   * 
    * @param object1
    * @param object2
    * @throws Exception
    */
   protected void doTestAccessors(M3GSerializable object1, M3GSerializable object2) throws Exception
   {
+    assertTrue(object1.getClass().equals(object2.getClass()));
     Class<? extends M3GSerializable> clazz1 = object1.getClass();
-    Method[] methods1 = clazz1.getClass().getMethods();
-    Class<? extends M3GSerializable> clazz2 = object2.getClass();
-    Method[] methods2 = clazz2.getClass().getMethods();
-    for (int i = 0; i < methods1.length; i++)
+    Method[] methods = clazz1.getDeclaredMethods();
+
+    for (int i = 0; i < methods.length; i++)
     {
-      Method getter1 = methods1[i];
-      Method getter2 = methods2[i];
-      String methodName = getter1.getName();
+      Method getter = methods[i];
+      String methodName = getter.getName();
       if (methodName.startsWith("get"))
       {
-        assertTrue(getter1.invoke(object1, null).equals(getter2.invoke(object2, null)));
+        Object result1 = getter.invoke(object1, null);
+        Object result2 = getter.invoke(object2, null);        
+        assertTrue(result1.equals(result2));
       }
     }
   }

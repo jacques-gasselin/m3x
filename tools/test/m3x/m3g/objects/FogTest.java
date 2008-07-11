@@ -26,6 +26,7 @@ public class FogTest extends AbstractTestCase
       assertTrue(fog.getDensity() == deserialized.getDensity());
       assertTrue(fog.getFar() == 0.0f);
       assertTrue(fog.getNear() == 0.0f);
+      this.doTestAccessors(fog, deserialized);
     }
     catch (Exception e)
     {
