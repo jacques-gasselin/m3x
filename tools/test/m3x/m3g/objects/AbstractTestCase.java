@@ -23,8 +23,8 @@ public class AbstractTestCase extends TestCase
   protected void doTestAccessors(M3GSerializable object1, M3GSerializable object2) throws Exception
   {
     assertTrue(object1.getClass().equals(object2.getClass()));
-    Class<? extends M3GSerializable> clazz1 = object1.getClass();
-    Method[] methods = clazz1.getDeclaredMethods();
+    Class<? extends M3GSerializable> clazz = object1.getClass();
+    Method[] methods = clazz.getDeclaredMethods();
 
     for (int i = 0; i < methods.length; i++)
     {
@@ -32,8 +32,8 @@ public class AbstractTestCase extends TestCase
       String methodName = getter.getName();
       if (methodName.startsWith("get"))
       {
-        Object result1 = getter.invoke(object1, null);
-        Object result2 = getter.invoke(object2, null);        
+        Object result1 = getter.invoke(object1, (Object[])null);
+        Object result2 = getter.invoke(object2, (Object[])null);        
         assertTrue(result1.equals(result2));
       }
     }

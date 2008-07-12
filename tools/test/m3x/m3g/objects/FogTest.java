@@ -22,10 +22,6 @@ public class FogTest extends AbstractTestCase
     {   
       byte[] serialized = M3GSupport.objectToBytes(fog);
       Fog deserialized = (Fog)M3GSupport.bytesToObject(serialized, Fog.class);
-      assertTrue(fog.getColor().equals(deserialized.getColor()));
-      assertTrue(fog.getDensity() == deserialized.getDensity());
-      assertTrue(fog.getFar() == 0.0f);
-      assertTrue(fog.getNear() == 0.0f);
       this.doTestAccessors(fog, deserialized);
     }
     catch (Exception e)
@@ -50,10 +46,7 @@ public class FogTest extends AbstractTestCase
     {   
       byte[] serialized = M3GSupport.objectToBytes(fog);
       Fog deserialized = (Fog)M3GSupport.bytesToObject(serialized, Fog.class);
-      assertTrue(fog.getColor().equals(deserialized.getColor()));
-      assertTrue(fog.getDensity() == 0.0f);
-      assertTrue(fog.getFar() == deserialized.getFar());
-      assertTrue(fog.getNear() == deserialized.getNear());
+      this.doTestAccessors(fog, deserialized);
     }
     catch (Exception e)
     {
