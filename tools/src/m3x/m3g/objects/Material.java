@@ -48,6 +48,7 @@ public class Material extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     this.ambientColor = new ColorRGB();
     this.ambientColor.deserialize(dataInputStream, m3gVersion);
     this.diffuseColor = new ColorRGBA();

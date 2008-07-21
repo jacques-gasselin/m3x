@@ -64,6 +64,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     this.depthTestEnabled = dataInputStream.readBoolean();
     this.depthWriteEnabled = dataInputStream.readBoolean();
     this.colorWriteEnabled = dataInputStream.readBoolean();

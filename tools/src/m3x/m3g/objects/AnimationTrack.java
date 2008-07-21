@@ -64,6 +64,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     this.keyframeSequence = new ObjectIndex();
     this.keyframeSequence.deserialize(dataInputStream, m3gVersion);
     this.animationController = new ObjectIndex();

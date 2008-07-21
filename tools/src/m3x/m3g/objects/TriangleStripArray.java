@@ -157,6 +157,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         break;
 
       case 128:
+        M3GSupport.writeInt(dataOutputStream, this.intIndices.length);
         for (int index : this.intIndices)
         {
           M3GSupport.writeInt(dataOutputStream, index);
@@ -164,6 +165,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         break;
 
       case 129:
+        M3GSupport.writeInt(dataOutputStream, this.byteIndices.length);
         for (byte index : this.byteIndices)
         {
           dataOutputStream.write(index);
@@ -171,6 +173,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         break;
 
       case 130:
+        M3GSupport.writeInt(dataOutputStream, this.shortIndices.length);
         for (short index : this.shortIndices)
         {
           M3GSupport.writeShort(dataOutputStream, index);

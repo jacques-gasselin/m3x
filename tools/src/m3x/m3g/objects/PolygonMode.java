@@ -58,6 +58,7 @@ public class PolygonMode extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    
+    super.deserialize(dataInputStream, m3gVersion);
     this.culling = dataInputStream.readByte();
     this.shading = dataInputStream.readByte();
     this.winding = dataInputStream.readByte();

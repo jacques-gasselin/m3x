@@ -14,7 +14,7 @@ public class AnimationTrackTest extends AbstractTestCase
                                                        userParameters,
                                                        new ObjectIndex(1),
                                                        new ObjectIndex(2),
-                                                       666);
+                                                       AnimationTrack.DENSITY);
                                                                       
     try
     {   

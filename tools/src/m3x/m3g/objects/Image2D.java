@@ -69,6 +69,7 @@ public class Image2D extends Object3D implements M3GTypedObject
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
+    super.deserialize(dataInputStream, m3gVersion);
     this.format = dataInputStream.readByte();
     if (this.format != FORMAT_ALPHA &&
         this.format != FORMAT_LUMINANCE &&
