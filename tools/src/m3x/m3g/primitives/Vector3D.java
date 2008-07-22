@@ -53,4 +53,18 @@ public class Vector3D implements M3GSerializable
   {
     return this.z;
   }
+
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (!(obj instanceof Vector3D))
+    {
+      return false;
+    }
+    Vector3D another = (Vector3D)obj;
+    return this.x == another.x && this.y == another.y && this.z == another.z;
+  }
 }

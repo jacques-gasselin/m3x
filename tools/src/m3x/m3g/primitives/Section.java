@@ -1,4 +1,4 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -9,6 +9,10 @@ import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
+import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GSupport;
 
 
 /**
@@ -111,10 +115,12 @@ public class Section implements M3GSerializable
     
     this.objects = new byte[this.uncompressedLength];
     int objectsLengthInBytes = this.totalSectionLength - 1 - 4 - 4 - 4;
+    int checksum;
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
       byte[] compressedObjects = new byte[objectsLengthInBytes];
       dataInputStream.read(compressedObjects);
+      checksum = this.calculateChecksum(compressedObjects);
       Inflater inflater = new Inflater();
       inflater.setInput(compressedObjects);
       try
@@ -137,9 +143,9 @@ public class Section implements M3GSerializable
     {
       // uncompressed, just read the array
       dataInputStream.read(this.objects);
+      checksum = this.calculateChecksum(this.objects);
     }
     
-    int checksum = this.calculateChecksum();
     int checksumFromStream = M3GSupport.readInt(dataInputStream);
     if (checksum != checksumFromStream)
     {
@@ -160,7 +166,7 @@ public class Section implements M3GSerializable
     M3GSupport.writeInt(dataOutputStream, this.totalSectionLength);
     M3GSupport.writeInt(dataOutputStream, this.uncompressedLength);
     dataOutputStream.write(this.objects);
-    int checksum = calculateChecksum();
+    int checksum = calculateChecksum(this.objects);
     M3GSupport.writeInt(dataOutputStream, checksum);
   }
 
@@ -170,33 +176,43 @@ public class Section implements M3GSerializable
    * @return
    *  32 bits of Adler 32 checksum.
    *  
+   * @param objects
+   *  The array containing compressed or uncompressed object(s) data
    * @throws IOException
    */
-  private int calculateChecksum() throws IOException
+  private int calculateChecksum(byte[] objects) throws IOException
   {
     Adler32 adler32 = new Adler32();
     adler32.update(this.compressionScheme);
     adler32.update(M3GSupport.intToBytes(this.totalSectionLength));
     adler32.update(M3GSupport.intToBytes(this.uncompressedLength));
-    adler32.update(this.objects);
+    adler32.update(objects);
     int checksum = (int)adler32.getValue();
     return checksum;
   }
-  
-  public static void main(String[] args) throws Exception
+
+  public Section()
   {
-    int n = 100;
-    byte[] data = new byte[n];
-    for (int i = 0; i < n; i++)
-    {
-      data[i] = 123;
-    }
-    Section section = new Section(COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, data);
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    DataOutputStream dos = new DataOutputStream(baos);
-    section.serialize(dos, null);
-    dos.close();
-    data = baos.toByteArray();
-    System.out.println(new BigInteger(1, data).toString(16));
+    super();
+  }
+
+  public byte getCompressionScheme()
+  {
+    return this.compressionScheme;
+  }
+
+  public int getTotalSectionLength()
+  {
+    return this.totalSectionLength;
+  }
+
+  public int getUncompressedLength()
+  {
+    return this.uncompressedLength;
+  }
+
+  public byte[] getObjects()
+  {
+    return this.objects;
   }
 }
