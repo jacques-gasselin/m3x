@@ -49,6 +49,14 @@ public abstract class Object3D implements M3GSerializable
   private int userParameterCount;
   private UserParameter[] userParameters;
 
+  /**
+   * Constructor for the class. 
+   * 
+   * @param animationTracks
+   * @param userParameters
+   *  Not mandatory, can be null which means that there's no
+   *  user parameters.
+   */
   public Object3D(ObjectIndex[] animationTracks,
       UserParameter[] userParameters)
   {

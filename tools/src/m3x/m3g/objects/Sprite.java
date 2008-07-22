@@ -55,7 +55,9 @@ public class Sprite extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   { 
     super.deserialize(dataInputStream, m3gVersion);
+    this.image = new ObjectIndex();
     this.image.deserialize(dataInputStream, m3gVersion);
+    this.appearance = new ObjectIndex();
     this.appearance.deserialize(dataInputStream, m3gVersion);
     this.isScaled = dataInputStream.readBoolean();
     this.cropX = M3GSupport.readInt(dataInputStream);

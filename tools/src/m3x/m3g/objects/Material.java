@@ -45,6 +45,11 @@ public class Material extends Object3D implements M3GTypedObject
     this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
   }
 
+  public Material()
+  {
+    super();
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {    

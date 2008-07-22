@@ -86,4 +86,26 @@ public class Matrix implements M3GSerializable
   {
     this.matrix = matrix;
   }
+
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+    {
+      return true;
+    }
+    if (!(obj instanceof Matrix))
+    {
+      return false;
+    }
+    Matrix other = (Matrix)obj;
+    int size = this.matrix.length;
+    for (int i = 0; i < size; i++)
+    {
+      if (this.matrix[i] != other.matrix[i])
+      {
+        return false;
+      }
+    }
+    return true;
+  }
 }
