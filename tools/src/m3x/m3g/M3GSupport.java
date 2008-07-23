@@ -199,19 +199,4 @@ public final class M3GSupport
     dataInputStream.close();
     return serializable; 
   }
-  
-  public static void main(String[] args) throws Exception
-  {
-    float x = 666.0f;
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    DataOutputStream dos = new DataOutputStream(baos);
-    writeFloat(dos, x);
-    dos.close();
-    byte[] serialized = baos.toByteArray();
-    ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-    DataInputStream dis = new DataInputStream(bais);
-    float y = readFloat(dis);
-    dis.close();
-    assert(x == y);
-  }
 }

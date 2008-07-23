@@ -29,6 +29,12 @@ public class ObjectChunk implements M3GSerializable
    */
   private byte[] data;
 
+  public ObjectChunk()
+  {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   /**
    * 
    * @param objectType
@@ -60,5 +66,20 @@ public class ObjectChunk implements M3GSerializable
     dataOutputStream.write(this.objectType);
     M3GSupport.writeInt(dataOutputStream, this.length);
     dataOutputStream.write(this.data);
+  }
+
+  public byte getObjectType()
+  {
+    return this.objectType;
+  }
+
+  public int getLength()
+  {
+    return this.length;
+  }
+
+  public byte[] getData()
+  {
+    return this.data;
   }
 }

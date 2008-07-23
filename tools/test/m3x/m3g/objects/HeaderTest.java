@@ -8,14 +8,10 @@ public class HeaderTest extends AbstractTestCase
   {
     try
     {
-      Header serializaedHeader = new Header(false, 666, 666, "JUnit test case");
-      byte[] serialized = M3GSupport.objectToBytes(serializaedHeader);
+      Header serializedHeader = new Header(false, 666, 666, "JUnit test case");
+      byte[] serialized = M3GSupport.objectToBytes(serializedHeader);
       Header deserializedHeader = (Header)M3GSupport.bytesToObject(serialized, Header.class);
-      String authInfo1 = serializaedHeader.getAuthoringInformation();
-      String authInfo2 = deserializedHeader.getAuthoringInformation();
-      assertTrue(authInfo1.equals(authInfo2));
-      assertTrue(serializaedHeader.getApproximateContentSize() == deserializedHeader.getApproximateContentSize());
-      assertTrue(serializaedHeader.getTotalFileSize() == deserializedHeader.getTotalFileSize());
+      this.doTestAccessors(serializedHeader, deserializedHeader);
     }
     catch (Exception e)
     {

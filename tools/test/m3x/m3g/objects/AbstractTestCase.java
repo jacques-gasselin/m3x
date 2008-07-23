@@ -15,7 +15,7 @@ public class AbstractTestCase extends TestCase
 {
   /**
    * Compares all accessors (getters) of two objects for
-   * having the same value. Reflection is used to achieve this.
+   * having the same values. Reflection is used to achieve this.
    * 
    * @param object1
    * @param object2
