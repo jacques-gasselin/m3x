@@ -38,6 +38,7 @@ public class AbstractTestCase extends TestCase
         if (result1 == null && result2 == null)
         {
           // ok if both are null
+          assertTrue(true);
         }
         else
         {
@@ -47,7 +48,7 @@ public class AbstractTestCase extends TestCase
           }
           if (result2 == null)
           {
-            fail("result1 is null");
+            fail("result2 is null");
           }
           Class clazz1 = result1.getClass();
           Class clazz2 = result2.getClass();

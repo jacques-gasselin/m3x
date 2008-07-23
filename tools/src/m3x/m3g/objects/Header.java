@@ -8,8 +8,10 @@ import java.util.Arrays;
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.M3GTypedObject;
+import m3x.m3g.ObjectTypes;
 
-public class Header implements M3GSerializable
+public class Header implements M3GTypedObject
 {  
   private final static byte[] VERSION = {1, 0};
   private boolean hasExternalReferences;
@@ -75,5 +77,10 @@ public class Header implements M3GSerializable
   public String getAuthoringInformation()
   {
     return this.authoringInformation;
+  }
+
+  public byte getObjectType()
+  {
+    return ObjectTypes.OBJECT_HEADER;
   }  
 }

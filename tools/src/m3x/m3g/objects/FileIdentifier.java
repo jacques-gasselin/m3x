@@ -1,9 +1,11 @@
-package m3x.m3g;
+package m3x.m3g.objects;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
+import m3x.m3g.M3GSerializable;
 
 /**
  * See http://www.java2me.org/m3g/file-format.html#FileIdentifier
