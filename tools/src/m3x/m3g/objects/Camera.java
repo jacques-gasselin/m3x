@@ -81,7 +81,7 @@ public class Camera extends Node implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
-    this.projectionType = dataInputStream.readByte();
+    this.projectionType = dataInputStream.readByte() & 0xFF;
     if (this.projectionType == PROJECTION_TYPE_GENERIC)
     {
       this.projectionMatrix = new Matrix();

@@ -73,11 +73,11 @@ public class Texture2D extends Transformable implements M3GTypedObject
     this.texture.deserialize(dataInputStream, m3gVersion);
     this.blendColor = new ColorRGB();
     this.blendColor.deserialize(dataInputStream, m3gVersion);
-    this.blending = dataInputStream.readByte();
-    this.wrappingS = dataInputStream.readByte();
-    this.wrappingT = dataInputStream.readByte();
-    this.levelFilter = dataInputStream.readByte();
-    this.imageFilter = dataInputStream.readByte();
+    this.blending = dataInputStream.readByte() & 0xFF;
+    this.wrappingS = dataInputStream.readByte() & 0xFF;
+    this.wrappingT = dataInputStream.readByte() & 0xFF;
+    this.levelFilter = dataInputStream.readByte() & 0xFF;
+    this.imageFilter = dataInputStream.readByte() & 0xFF;
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

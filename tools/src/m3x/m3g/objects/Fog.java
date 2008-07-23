@@ -67,7 +67,7 @@ public class Fog extends Object3D implements M3GTypedObject
     super.deserialize(dataInputStream, m3gVersion);
     this.color = new ColorRGB();
     this.color.deserialize(dataInputStream, m3gVersion);
-    this.mode = dataInputStream.readByte();
+    this.mode = dataInputStream.readByte() & 0xFF;
     if (this.mode == MODE_EXPONENTIAL)
     {
       this.density = M3GSupport.readFloat(dataInputStream);

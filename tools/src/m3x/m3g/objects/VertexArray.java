@@ -43,6 +43,12 @@ public class VertexArray extends Object3D implements M3GTypedObject
   private byte[] byteComponentsOrDeltas;
   private short[] shortComponentsOrDeltas;
 
+  public VertexArray()
+  {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   /**
    * 
    * @param animationTracks
@@ -91,9 +97,9 @@ public class VertexArray extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
-    this.componentSize = dataInputStream.readByte();
-    this.componentCount = dataInputStream.readByte();
-    this.encoding = dataInputStream.readByte();
+    this.componentSize = dataInputStream.readByte() & 0xFF;
+    this.componentCount = dataInputStream.readByte() & 0xFF;
+    this.encoding = dataInputStream.readByte() & 0xFF;
     switch (this.componentSize)
     {
       case BYTE_SIZE_IN_BYTES:

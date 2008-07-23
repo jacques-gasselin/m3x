@@ -134,7 +134,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
-    this.encoding = dataInputStream.readByte();
+    this.encoding = dataInputStream.readByte() & 0xFF;
   }
 
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

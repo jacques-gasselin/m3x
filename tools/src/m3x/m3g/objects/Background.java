@@ -75,8 +75,8 @@ public class Background extends Object3D implements M3GTypedObject
     this.backgroundColor.deserialize(dataInputStream, m3gVersion);
     this.backgroundImage = new ObjectIndex();
     this.backgroundImage.deserialize(dataInputStream, m3gVersion);
-    this.backgroundImageModeX = dataInputStream.readByte();
-    this.backgroundImageModeY = dataInputStream.readByte();
+    this.backgroundImageModeX = dataInputStream.readByte() & 0xFF;
+    this.backgroundImageModeY = dataInputStream.readByte() & 0xFF;
     this.cropX = M3GSupport.readInt(dataInputStream);
     this.cropY = M3GSupport.readInt(dataInputStream);
     this.cropWidth = M3GSupport.readInt(dataInputStream);

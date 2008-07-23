@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 
 /**
@@ -28,13 +29,13 @@ public class FileIdentifier implements M3GSerializable
   private byte[] fileIdentifier;
   
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException
+      throws IOException, FileFormatException
   {
     this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
     dataInputStream.read(this.fileIdentifier);
     if (!Arrays.equals(this.fileIdentifier, FILE_IDENTIFIER))
     {
-      throw new IOException("Invalid M3G file header!");
+      throw new FileFormatException("Invalid M3G file header!");
     }
   }
 

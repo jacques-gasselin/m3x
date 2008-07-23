@@ -152,9 +152,9 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {
     super.deserialize(dataInputStream, m3gVersion);
-    this.interpolation = dataInputStream.readByte();
-    this.repeatMode = dataInputStream.readByte();
-    this.encoding = dataInputStream.readByte();
+    this.interpolation = dataInputStream.readByte() & 0xFF;
+    this.repeatMode = dataInputStream.readByte() & 0xFF;
+    this.encoding = dataInputStream.readByte() & 0xFF;
     this.duration = M3GSupport.readInt(dataInputStream);
     this.validRangeFirst = M3GSupport.readInt(dataInputStream);
     this.validRangeLast = M3GSupport.readInt(dataInputStream);
