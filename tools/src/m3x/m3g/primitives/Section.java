@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;

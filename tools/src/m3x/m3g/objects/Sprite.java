@@ -11,15 +11,15 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ObjectIndex   image;
-  ObjectIndex   appearance;
-
-  Boolean       isScaled;
-
-  Int32         cropX;
-  Int32         cropY;
-  Int32         cropWidth;
-
+  ObjectIndex   image;<br>
+  ObjectIndex   appearance;<br>
+  <br>
+  Boolean       isScaled;<br>
+  <br>
+  Int32         cropX;<br>
+  Int32         cropY;<br>
+  Int32         cropWidth;<br>
+  <br>
  * @author jsaarinen
  */
 public class Sprite extends Object3D implements M3GTypedObject

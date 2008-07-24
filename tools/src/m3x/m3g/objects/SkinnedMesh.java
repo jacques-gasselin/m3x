@@ -13,15 +13,15 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ObjectIndex   skeleton;
-  UInt32        transformReferenceCount;
-  FOR each bone reference...
-    ObjectIndex   transformNode;
-    UInt32        firstVertex;
-    UInt32        vertexCount;
-    Int32         weight;
-  END
-
+  ObjectIndex   skeleton;<br>
+  UInt32        transformReferenceCount;<br>
+  FOR each bone reference...<br>
+    ObjectIndex   transformNode;<br>
+    UInt32        firstVertex;<br>
+    UInt32        vertexCount;<br>
+    Int32         weight;<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public class SkinnedMesh extends Mesh implements M3GTypedObject
