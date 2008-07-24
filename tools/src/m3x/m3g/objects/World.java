@@ -24,7 +24,7 @@ public class World extends Group implements M3GTypedObject
   public World(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, ObjectIndex[] children,
-      ObjectIndex activeCamera, ObjectIndex background)
+      ObjectIndex activeCamera, ObjectIndex background) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope, children);

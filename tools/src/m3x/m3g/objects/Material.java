@@ -13,13 +13,13 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ColorRGB      ambientColor;
-  ColorRGBA     diffuseColor;
-  ColorRGB      emissiveColor;
-  ColorRGB      specularColor;
-  Float32       shininess;
-  Boolean       vertexColorTrackingEnabled;
-
+  ColorRGB      ambientColor;<br>
+  ColorRGBA     diffuseColor;<br>
+  ColorRGB      emissiveColor;<br>
+  ColorRGB      specularColor;<br>
+  Float32       shininess;<br>
+  Boolean       vertexColorTrackingEnabled;<br>
+  <br>
  * @author jsaarinen
  */
 public class Material extends Object3D implements M3GTypedObject

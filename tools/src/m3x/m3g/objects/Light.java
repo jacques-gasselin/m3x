@@ -13,15 +13,15 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Float32       attenuationConstant;
-  Float32       attenuationLinear;
-  Float32       attenuationQuadratic;
-  ColorRGB      color;
-  Byte          mode;
-  Float32       intensity;
-  Float32       spotAngle;
-  Float32       spotExponent;
-
+  Float32       attenuationConstant;<br>
+  Float32       attenuationLinear;<br>
+  Float32       attenuationQuadratic;<br>
+  ColorRGB      color;<br>
+  Byte          mode;<br>
+  Float32       intensity;<br>
+  Float32       spotAngle;<br>
+  Float32       spotExponent;<br>
+  <br>
  * @author jsaarinen
  */
 public class Light extends Node implements M3GTypedObject
@@ -44,7 +44,7 @@ public class Light extends Node implements M3GTypedObject
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, float attenuationConstant,
       float attenuationLinear, float attenuationQuadratic, ColorRGB color,
-      int mode, float intensity, float spotAngle, float spotExponent)
+      int mode, float intensity, float spotAngle, float spotExponent) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);
@@ -52,6 +52,10 @@ public class Light extends Node implements M3GTypedObject
     this.attenuationLinear = attenuationLinear;
     this.attenuationQuadratic = attenuationQuadratic;
     this.color = color;
+    if (mode < MODE_AMBIENT || mode > MODE_SPOT)
+    {
+      throw new FileFormatException("Invalid light mode: " + mode);
+    }
     this.mode = mode;
     this.intensity = intensity;
     this.spotAngle = spotAngle;

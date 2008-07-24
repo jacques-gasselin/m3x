@@ -62,7 +62,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
       UserParameter[] userParameters, Matrix transform,
       boolean enableRendering, boolean enablePicking, byte alphaFactor,
       int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes,
-      ObjectIndex skeleton, BoneReference[] boneReferences)
+      ObjectIndex skeleton, BoneReference[] boneReferences) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);

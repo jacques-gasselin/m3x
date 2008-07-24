@@ -11,17 +11,16 @@ public class Image2DTest extends AbstractTestCase
   public void testSerializationAndDeseriliazation1()
   {
     ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    Image2D image = new Image2D(animationTracks,
-                                userParameters,
-                                Image2D.FORMAT_ALPHA,
-                                42,
-                                66,
-                                new byte[256 * 3],
-                                new byte[42 * 66]);
-                            
+    UserParameter[] userParameters = getUserParameters();                           
     try
     {   
+      Image2D image = new Image2D(animationTracks,
+          userParameters,
+          Image2D.FORMAT_ALPHA,
+          42,
+          66,
+          new byte[256 * 3],
+          new byte[42 * 66]);
       byte[] serialized = M3GSupport.objectToBytes(image);
       Image2D deserialized = (Image2D)M3GSupport.bytesToObject(serialized, Image2D.class);
       this.doTestAccessors(image, deserialized);

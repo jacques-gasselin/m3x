@@ -11,7 +11,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import junit.framework.TestCase;
 
-public class AbstractTestCase extends TestCase
+public abstract class AbstractTestCase extends TestCase
 {
   /**
    * Compares all accessors (getters) of two objects for

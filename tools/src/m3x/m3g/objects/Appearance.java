@@ -11,12 +11,12 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Byte          layer;
-  ObjectIndex   compositingMode;
-  ObjectIndex   fog;
-  ObjectIndex   polygonMode;
-  ObjectIndex   material;
-  ObjectIndex[] textures;
+  Byte          layer;<br>
+  ObjectIndex   compositingMode;<br>
+  ObjectIndex   fog;<br>
+  ObjectIndex   polygonMode;<br>
+  ObjectIndex   material;<br>
+  ObjectIndex[] textures;<br>
 
  * @author jsaarinen
  */

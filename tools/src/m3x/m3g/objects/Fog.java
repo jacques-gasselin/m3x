@@ -12,14 +12,14 @@ import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ColorRGB      color;
-  Byte          mode;
-  IF mode==EXPONENTIAL, THEN
-    Float32       density;
-  ELSE IF mode==LINEAR, THEN
-    Float32       near;
-    Float32       far;
-  END
+  ColorRGB      color;<br>
+  Byte          mode;<br>
+  IF mode==EXPONENTIAL, THEN<br>
+    Float32       density;<br>
+  ELSE IF mode==LINEAR, THEN<br>
+    Float32       near;<br>
+    Float32       far;<br>
+  END<br>
 
  * @author jsaarinen
  */

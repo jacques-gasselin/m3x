@@ -17,23 +17,23 @@ public class LightTest extends AbstractTestCase
     UserParameter[] userParameters = getUserParameters();
     Matrix transform = getMatrix();
     ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
-    Light light = new Light(animationTracks, 
-                            userParameters, 
-                            transform, 
-                            true, 
-                            true, 
-                            (byte) 66, 
-                            1, 
-                            0.1f, 
-                            0.2f, 
-                            0.3f, 
-                            color, 
-                            Light.MODE_SPOT, 
-                            0.5f, 
-                            0.2f, 
-                            2.0f);
     try
     {   
+      Light light = new Light(animationTracks, 
+          userParameters, 
+          transform, 
+          true, 
+          true, 
+          (byte) 66, 
+          1, 
+          0.1f, 
+          0.2f, 
+          0.3f, 
+          color, 
+          Light.MODE_SPOT, 
+          0.5f, 
+          0.2f, 
+          2.0f);
       byte[] serialized = M3GSupport.objectToBytes(light);
       Light deserialized = (Light)M3GSupport.bytesToObject(serialized, Light.class);
       assertTrue(light.getAttenuationConstant() == deserialized.getAttenuationConstant());

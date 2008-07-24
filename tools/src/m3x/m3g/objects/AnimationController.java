@@ -11,12 +11,12 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-    Float32       speed;
-    Float32       weight;
-    Int32         activeIntervalStart;
-    Int32         activeIntervalEnd;
-    Float32       referenceSequenceTime;
-    Int32         referenceWorldTime;
+    Float32       speed;<br>
+    Float32       weight;<br>
+    Int32         activeIntervalStart;<br>
+    Int32         activeIntervalEnd;<br>
+    Float32       referenceSequenceTime;<br>
+    Int32         referenceWorldTime;<br>
 
  * @author jsaarinen
  *

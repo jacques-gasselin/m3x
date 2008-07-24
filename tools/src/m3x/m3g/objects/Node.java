@@ -46,7 +46,7 @@ public abstract class Node extends Transformable implements M3GSerializable
 
   public Node(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
-      byte alphaFactor, int scope)
+      byte alphaFactor, int scope) throws FileFormatException
   {
     super(animationTracks, userParameters, transform);
     this.enableRendering = enableRendering;

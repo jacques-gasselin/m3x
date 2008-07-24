@@ -12,16 +12,16 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ColorRGBA     backgroundColor;
-  ObjectIndex   backgroundImage;
-  Byte          backgroundImageModeX;
-  Byte          backgroundImageModeY;
-  Int32         cropX;
-  Int32         cropY;
-  Int32         cropWidth;
-  Int32         cropHeight;
-  Boolean       depthClearEnabled;
-  Boolean       colorClearEnabled;
+  ColorRGBA     backgroundColor;<br>
+  ObjectIndex   backgroundImage;<br>
+  Byte          backgroundImageModeX;<br>
+  Byte          backgroundImageModeY;<br>
+  Int32         cropX;<br>
+  Int32         cropY;<br>
+  Int32         cropWidth;<br>
+  Int32         cropHeight;<br>
+  Boolean       depthClearEnabled;<br>
+  Boolean       colorClearEnabled;<br>
 
  * @author jsaarinen
  */
@@ -45,11 +45,17 @@ public class Background extends Object3D implements M3GTypedObject
       UserParameter[] userParameters, ColorRGBA backgroundColor,
       ObjectIndex backgroundImage, int backgroundImageModeX,
       int backgroundImageModeY, int cropX, int cropY, int cropWidth,
-      int cropHeight, boolean depthClearEnabled, boolean colorClearEnabled)
+      int cropHeight, boolean depthClearEnabled, boolean colorClearEnabled) throws FileFormatException
   {
     super(animationTracks, userParameters);
-    assert (backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT);
-    assert (backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT);
+    if (!(backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT))
+    {
+      throw new FileFormatException("Invalid backgroudImageModeX: " + backgroundImageModeX);
+    }
+    if (!(backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT))
+    {
+      throw new FileFormatException("Invalid backgroudImageModeY: " + backgroundImageModeY);
+    }
     this.backgroundColor = backgroundColor;
     this.backgroundImage = backgroundImage;
     this.backgroundImageModeX = backgroundImageModeX;

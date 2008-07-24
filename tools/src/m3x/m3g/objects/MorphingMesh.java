@@ -13,11 +13,12 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  UInt32        morphTargetCount;
-  FOR each target buffer...
-    ObjectIndex   morphTarget;
-    Float32       initialWeight;
-  END
+  UInt32        morphTargetCount;<br>
+  FOR each target buffer...<br>
+    ObjectIndex   morphTarget;<br>
+    Float32       initialWeight;<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public class MorphingMesh extends Node implements M3GTypedObject
@@ -48,7 +49,7 @@ public class MorphingMesh extends Node implements M3GTypedObject
   public MorphingMesh(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, Matrix transform,
       boolean enableRendering, boolean enablePicking, byte alphaFactor,
-      int scope, TargetBuffer[] morphTargets)
+      int scope, TargetBuffer[] morphTargets) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);

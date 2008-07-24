@@ -12,7 +12,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
- * ObjectIndex[] children;
+ * ObjectIndex[] children;<br>
  * 
  * @author jsaarinen
  */
@@ -22,7 +22,7 @@ public class Group extends Node implements M3GTypedObject
 
   public Group(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
-      byte alphaFactor, int scope, ObjectIndex[] children)
+      byte alphaFactor, int scope, ObjectIndex[] children) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);

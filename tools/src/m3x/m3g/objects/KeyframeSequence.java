@@ -10,36 +10,37 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Byte          interpolation;
-  Byte          repeatMode;
-  Byte          encoding;
-  UInt32        duration;
-  UInt32        validRangeFirst;
-  UInt32        validRangeLast;
-
-  UInt32        componentCount;
-  UInt32        keyframeCount;
-
-  IF encoding == 0
-    FOR each key frame...
-        Int32                   time;
-        Float32[componentCount] vectorValue;
-    END
-  ELSE IF encoding == 1
-    Float32[componentCount] vectorBias;
-    Float32[componentCount] vectorScale;
-    FOR each key frame...
-        Int32                time;
-        Byte[componentCount] vectorValue;
-    END
-  ELSE IF encoding == 2
-    Float32[componentCount] vectorBias;
-    Float32[componentCount] vectorScale;
-    FOR each key frame...
-        Int32                  time;
-        UInt16[componentCount] vectorValue;
-    END
-  END
+  Byte          interpolation;<br>
+  Byte          repeatMode;<br>
+  Byte          encoding;<br>
+  UInt32        duration;<br>
+  UInt32        validRangeFirst;<br>
+  UInt32        validRangeLast;<br>
+  <br>
+  UInt32        componentCount;<br>
+  UInt32        keyframeCount;<br>
+  <br>
+  IF encoding == 0<br>
+    FOR each key frame...<br>
+        Int32                   time;<br>
+        Float32[componentCount] vectorValue;<br>
+    END<br>
+  ELSE IF encoding == 1<br>
+    Float32[componentCount] vectorBias;<br>
+    Float32[componentCount] vectorScale;<br>
+    FOR each key frame...<br>
+        Int32                time;<br>
+        Byte[componentCount] vectorValue;<br>
+    END<br>
+  ELSE IF encoding == 2<br>
+    Float32[componentCount] vectorBias;<br>
+    Float32[componentCount] vectorScale;<br>
+    FOR each key frame...<br>
+        Int32                  time;<br>
+        UInt16[componentCount] vectorValue;<br>
+    END<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public class KeyframeSequence extends Object3D implements M3GTypedObject

@@ -11,20 +11,20 @@ public class BackgroundTest extends AbstractTestCase
   {
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
-    Background background = new Background(animationTracks,
-                                           userParameters,
-                                           new ColorRGBA(1, 2, 3, 4),
-                                           new ObjectIndex(1),
-                                           Background.MODE_BORDER,
-                                           Background.MODE_REPEAT,
-                                           0,
-                                           0,
-                                           128,
-                                           128,
-                                           true,
-                                           true);
     try
     {   
+      Background background = new Background(animationTracks,
+          userParameters,
+          new ColorRGBA(1, 2, 3, 4),
+          new ObjectIndex(1),
+          Background.MODE_BORDER,
+          Background.MODE_REPEAT,
+          0,
+          0,
+          128,
+          128,
+          true,
+          true);
       byte[] serialized = M3GSupport.objectToBytes(background);
       Background deserialized = (Background)M3GSupport.bytesToObject(serialized, Background.class);
       this.doTestAccessors(background, deserialized);

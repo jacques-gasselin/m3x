@@ -14,16 +14,16 @@ import m3x.m3g.primitives.ObjectIndex;
 /**
  * This class is the data structure for Camera object in M3G format, see the URL
  * below for more information. http://www.java2me.org/m3g/file-format.htm
-
-  Byte          projectionType;
-  IF projectionType==GENERIC, THEN
-    Matrix        projectionMatrix;
-  ELSE
-    Float32       fovy;
-    Float32       AspectRatio;
-    Float32       near;
-    Float32       far;
-  END
+  <br>
+  Byte          projectionType;<br>
+  IF projectionType==GENERIC, THEN<br>
+    Matrix        projectionMatrix;<br>
+  ELSE<br>
+    Float32       fovy;<br>
+    Float32       AspectRatio;<br>
+    Float32       near;<br>
+    Float32       far;<br>
+  END<br>
  * 
  * @author jsaarinen
  */
@@ -59,11 +59,14 @@ public class Camera extends Node implements M3GTypedObject
   public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, int projectionType, float fovy,
-      float aspectRatio, float near, float far)
+      float aspectRatio, float near, float far) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);
-    assert (projectionType == PROJECTION_TYPE_PARALLEL || projectionType == PROJECTION_TYPE_PERSPECTIVE);
+    if (!(projectionType == PROJECTION_TYPE_PARALLEL || projectionType == PROJECTION_TYPE_PERSPECTIVE))
+    {
+      throw new FileFormatException("Invalid projectionType: " + projectionType);
+    }
     this.projectionType = projectionType;
     this.projectionMatrix = null;
     this.fovy = fovy;

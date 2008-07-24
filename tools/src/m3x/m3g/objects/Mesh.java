@@ -13,13 +13,13 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ObjectIndex   vertexBuffer;
-  UInt32        submeshCount;
-  FOR each submesh...
-    ObjectIndex   indexBuffer;
-    ObjectIndex   appearance;
-  END
-
+  ObjectIndex   vertexBuffer;<br>
+  UInt32        submeshCount;<br>
+  FOR each submesh...<br>
+    ObjectIndex   indexBuffer;<br>
+    ObjectIndex   appearance;<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public class Mesh extends Node implements M3GTypedObject
@@ -52,7 +52,7 @@ public class Mesh extends Node implements M3GTypedObject
 
   public Mesh(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
-      byte alphaFactor, int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes)
+      byte alphaFactor, int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);

@@ -11,9 +11,9 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-   ObjectIndex   keyframeSequence;
-   ObjectIndex   animationController;
-   UInt32        propertyID;
+   ObjectIndex   keyframeSequence;<br>
+   ObjectIndex   animationController;<br>
+   UInt32        propertyID;<br>
 
  * @author jsaarinen
  *
@@ -48,11 +48,15 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
 
   public AnimationTrack(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, ObjectIndex keyframeSequence,
-      ObjectIndex animationController, int propertyID)
+      ObjectIndex animationController, int propertyID) throws FileFormatException
   {
     super(animationTracks, userParameters);
     this.keyframeSequence = keyframeSequence;
     this.animationController = animationController;
+    if (propertyID < ALPHA || propertyID > VISIBILITY)
+    {
+      throw new FileFormatException("Invalid propertyID: " + propertyID);
+    }
     this.propertyID = propertyID;
   }
   

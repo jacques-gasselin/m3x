@@ -11,14 +11,14 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Byte          format;
-  Boolean       isMutable;
-  UInt32        width;
-  UInt32        height;
-  IF isMutable==false, THEN
-      Byte[]        palette;
-      Byte[]        pixels;
-  END
+  Byte          format;<br>
+  Boolean       isMutable;<br>
+  UInt32        width;<br>
+  UInt32        height;<br>
+  IF isMutable==false, THEN<br>
+      Byte[]        palette;<br>
+      Byte[]        pixels;<br>
+  END<br>
       
  * @author jsaarinen
  */
@@ -38,9 +38,13 @@ public class Image2D extends Object3D implements M3GTypedObject
   private byte[] pixels;
 
   public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
-      int format, int width, int height, byte[] palette, byte[] pixels)
+      int format, int width, int height, byte[] palette, byte[] pixels) throws FileFormatException
   {
     super(animationTracks, userParameters);
+    if (format < FORMAT_ALPHA || format > FORMAT_RGBA)
+    {
+      throw new FileFormatException("Invalid image format: " + format);
+    }
     this.format = format;
     this.isMutable = false;
     this.width = width;
@@ -50,9 +54,13 @@ public class Image2D extends Object3D implements M3GTypedObject
   }
 
   public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
-      byte format, int width, int height)
+      byte format, int width, int height) throws FileFormatException
   {
     super(animationTracks, userParameters);
+    if (!(format <= FORMAT_ALPHA && format >= FORMAT_RGBA))
+    {
+      throw new FileFormatException("Invalid image format: " + format);
+    }
     this.format = format;
     this.isMutable = true;
     this.width = width;

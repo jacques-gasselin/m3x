@@ -11,14 +11,14 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Boolean       depthTestEnabled;
-  Boolean       depthWriteEnabled;
-  Boolean       colorWriteEnabled;
-  Boolean       alphaWriteEnabled;
-  Byte          blending;
-  Byte          alphaThreshold;
-  Float32       depthOffsetFactor;
-  Float32       depthOffsetUnits;
+  Boolean       depthTestEnabled;<br>
+  Boolean       depthWriteEnabled;<br>
+  Boolean       colorWriteEnabled;<br>
+  Boolean       alphaWriteEnabled;<br>
+  Byte          blending;<br>
+  Byte          alphaThreshold;<br>
+  Float32       depthOffsetFactor;<br>
+  Float32       depthOffsetUnits;<br>
 
  * @author jsaarinen
  */
@@ -43,13 +43,17 @@ public class CompositingMode extends Object3D implements M3GTypedObject
       UserParameter[] userParameters, boolean depthTestEnabled,
       boolean depthWriteEnabled, boolean colorWriteEnabled,
       boolean alphaWriteEnabled, int blending, int alphaThreshold,
-      float depthOffsetFactor, float depthOffsetUnits)
+      float depthOffsetFactor, float depthOffsetUnits) throws FileFormatException
   {
     super(animationTracks, userParameters);
     this.depthTestEnabled = depthTestEnabled;
     this.depthWriteEnabled = depthWriteEnabled;
     this.colorWriteEnabled = colorWriteEnabled;
     this.alphaWriteEnabled = alphaWriteEnabled;
+    if (blending < ALPHA || blending > REPLACE)
+    {
+      throw new FileFormatException("Invalid blending: " + blending);
+    }
     this.blending = blending;
     this.alphaThreshold = alphaThreshold;
     this.depthOffsetFactor = depthOffsetFactor;
