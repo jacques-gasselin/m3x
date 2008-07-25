@@ -50,8 +50,8 @@ public abstract class AbstractTestCase extends TestCase
           {
             fail("result2 is null");
           }
-          Class clazz1 = result1.getClass();
-          Class clazz2 = result2.getClass();
+          Class<?> clazz1 = result1.getClass();
+          Class<?> clazz2 = result2.getClass();
           if (clazz1.isArray() && clazz2.isArray())
           {
             // we have two arrays, now we need to find out

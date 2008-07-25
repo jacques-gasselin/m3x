@@ -8,12 +8,12 @@ public class ColorRGBTest extends AbstractTestCase
 {
   public void testSerializationAndDeserialization()
   {
-    ColorRGBA color = new ColorRGBA(10, 20, 30, 128);
+    ObjectIndex index = new ObjectIndex(666);
     try
     {   
-      byte[] serialized = M3GSupport.objectToBytes(color);
-      ColorRGBA deserialized = (ColorRGBA)M3GSupport.bytesToObject(serialized, ColorRGBA.class);
-      this.doTestAccessors(color, deserialized);
+      byte[] serialized = M3GSupport.objectToBytes(index);
+      ObjectIndex deserialized = (ObjectIndex)M3GSupport.bytesToObject(serialized,  ObjectIndex.class);
+      this.doTestAccessors(index, deserialized);
     }
     catch (Exception e)
     {
