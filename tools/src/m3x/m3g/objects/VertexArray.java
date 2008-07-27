@@ -11,25 +11,26 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  Byte          componentSize;
-  Byte          componentCount;
-  Byte          encoding;
-  UInt16        vertexCount;
-  FOR each vertex...
-    IF componentSize==1, THEN
-        IF encoding==0, THEN
-              Byte[componentCount] components;
-        ELSE IF encoding==1, THEN
-              Byte[componentCount] componentDeltas;
-        END
-    ELSE
-        IF encoding==0, THEN
-              Int16[componentCount] components;
-        ELSE IF encoding==1, THEN
-              Int16[componentCount] componentDeltas;
-        END
-    END
-  END
+  Byte          componentSize;<br>
+  Byte          componentCount;<br>
+  Byte          encoding;<br>
+  UInt16        vertexCount;<br>
+  FOR each vertex...<br>
+    IF componentSize==1, THEN<br>
+        IF encoding==0, THEN<br>
+              Byte[componentCount] components;<br>
+        ELSE IF encoding==1, THEN<br>
+              Byte[componentCount] componentDeltas;<br>
+        END<br>
+    ELSE<br>
+        IF encoding==0, THEN<br>
+              Int16[componentCount] components;<br>
+        ELSE IF encoding==1, THEN<br>
+              Int16[componentCount] componentDeltas;<br>
+        END<br>
+    END<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public class VertexArray extends Object3D implements M3GTypedObject
@@ -46,7 +47,6 @@ public class VertexArray extends Object3D implements M3GTypedObject
   public VertexArray()
   {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   /**

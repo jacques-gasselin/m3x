@@ -4,7 +4,6 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.ObjectChunk;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.objects.AbstractTestCase;
-import m3x.m3g.primitives.Section;
 
 public class ObjectChunkTest extends AbstractTestCase
 {

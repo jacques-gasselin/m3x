@@ -1,11 +1,7 @@
 package m3x.m3g.objects;
 
-import junit.framework.TestCase;
-import java.io.*;
-
 import m3x.m3g.M3GSupport;
 import m3x.m3g.objects.Object3D.UserParameter;
-import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
@@ -16,7 +12,6 @@ public class WorldTest extends AbstractTestCase
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     Matrix transform = getMatrix();
-    ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
     ObjectIndex[] children = new ObjectIndex[0];
     ObjectIndex activeCamera = new ObjectIndex(1);
     ObjectIndex background = new ObjectIndex(2);                           

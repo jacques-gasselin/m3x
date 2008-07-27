@@ -1,7 +1,5 @@
 package m3x.m3g.objects;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -25,7 +23,7 @@ public abstract class AbstractTestCase extends TestCase
   {
     assertTrue(object1.getClass().equals(object2.getClass()));
     Class<? extends M3GSerializable> clazz = object1.getClass();
-    Method[] methods = clazz.getDeclaredMethods();
+    Method[] methods = clazz.getMethods();
 
     for (int i = 0; i < methods.length; i++)
     {
@@ -33,6 +31,7 @@ public abstract class AbstractTestCase extends TestCase
       String methodName = getter.getName();
       if (methodName.startsWith("get") || methodName.startsWith("is"))
       {
+        System.out.println(methodName);
         Object result1 = getter.invoke(object1, (Object[])null);
         Object result2 = getter.invoke(object2, (Object[])null);   
         if (result1 == null && result2 == null)

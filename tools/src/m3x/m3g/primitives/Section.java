@@ -1,6 +1,5 @@
 package m3x.m3g.primitives;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

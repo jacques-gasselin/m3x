@@ -33,7 +33,6 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     public int vertexCount;
     public int weight;
 
-        
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {      

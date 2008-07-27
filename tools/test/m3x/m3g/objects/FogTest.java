@@ -3,7 +3,6 @@ package m3x.m3g.objects;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class FogTest extends AbstractTestCase

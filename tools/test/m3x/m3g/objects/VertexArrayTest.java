@@ -2,8 +2,6 @@ package m3x.m3g.objects;
 
 import m3x.m3g.M3GSupport;
 import m3x.m3g.objects.Object3D.UserParameter;
-import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class VertexArrayTest extends AbstractTestCase
@@ -32,7 +30,7 @@ public class VertexArrayTest extends AbstractTestCase
     array = new VertexArray(animationTracks,
                             userParameters,
                             components2,
-                            false);                            
+                            true);                            
     try
     {   
       byte[] serialized = M3GSupport.objectToBytes(array);

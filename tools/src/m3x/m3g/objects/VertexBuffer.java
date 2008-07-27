@@ -13,17 +13,17 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ColorRGBA     defaultColor;
-  ObjectIndex   positions;
-  Float32[3]    positionBias;
-  Float32       positionScale;
-  ObjectIndex   normals;
-  ObjectIndex   colors;
-  UInt32        texcoordArrayCount;
-  FOR each texture coordinate array...
-       ObjectIndex   texCoords;
-       Float32[3]    texCoordBias;
-       Float32       texCoordScale;
+  ColorRGBA     defaultColor;<br>
+  ObjectIndex   positions;<br>
+  Float32[3]    positionBias;<br>
+  Float32       positionScale;<br>
+  ObjectIndex   normals;<br>
+  ObjectIndex   colors;<br>
+  UInt32        texcoordArrayCount;<br>
+  FOR each texture coordinate array...<br>
+       ObjectIndex   texCoords;<br>
+       Float32[3]    texCoordBias;<br>
+       Float32       texCoordScale;<br>
 
  * @author jsaarinen
  */

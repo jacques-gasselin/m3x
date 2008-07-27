@@ -21,23 +21,23 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class PolygonMode extends Object3D implements M3GTypedObject
 {
-  public static final byte CULL_BACK = (byte) 160;
-  public static final byte CULL_FRONT = (byte) 161;
-  public static final byte CULL_NONE = (byte) 162;
-  public static final byte SHADE_FLAT = (byte) 164;
-  public static final byte SHADE_SMOOTH = (byte) 165;
-  public static final byte WINDING_CCW = (byte) 168;
-  public static final byte WINDING_CW = (byte) 169;
+  public static final int CULL_BACK = 160;
+  public static final int CULL_FRONT = 161;
+  public static final int CULL_NONE = 162;
+  public static final int SHADE_FLAT =  164;
+  public static final int SHADE_SMOOTH = 165;
+  public static final int WINDING_CCW = 168;
+  public static final int WINDING_CW = 169;
 
-  private byte culling;
-  private byte shading;
-  private byte winding;
+  private int culling;
+  private int shading;
+  private int winding;
   private boolean twoSidedLightingEnabled;
   private boolean localCameraLightingEnabled;
   private boolean perspectiveCorrectionEnabled;
 
   public PolygonMode(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, byte culling, byte shading, byte winding,
+      UserParameter[] userParameters, int culling, int shading, int winding,
       boolean twoSidedLightingEnabled, boolean localCameraLightingEnabled,
       boolean perspectiveCorrectionEnabled)
   {
@@ -59,9 +59,9 @@ public class PolygonMode extends Object3D implements M3GTypedObject
       throws IOException, FileFormatException
   {    
     super.deserialize(dataInputStream, m3gVersion);
-    this.culling = dataInputStream.readByte();
-    this.shading = dataInputStream.readByte();
-    this.winding = dataInputStream.readByte();
+    this.culling = dataInputStream.readByte() & 0xFF;
+    this.shading = dataInputStream.readByte() & 0xFF;
+    this.winding = dataInputStream.readByte() & 0xFF;
     this.twoSidedLightingEnabled = dataInputStream.readBoolean();
     this.localCameraLightingEnabled = dataInputStream.readBoolean();
     this.perspectiveCorrectionEnabled = dataInputStream.readBoolean();
@@ -84,17 +84,17 @@ public class PolygonMode extends Object3D implements M3GTypedObject
     return ObjectTypes.POLYGON_MODE;
   }
 
-  public byte getCulling()
+  public int getCulling()
   {
     return this.culling;
   }
 
-  public byte getShading()
+  public int getShading()
   {
     return this.shading;
   }
 
-  public byte getWinding()
+  public int getWinding()
   {
     return this.winding;
   }

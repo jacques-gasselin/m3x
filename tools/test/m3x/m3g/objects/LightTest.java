@@ -1,8 +1,5 @@
 package m3x.m3g.objects;
 
-import junit.framework.TestCase;
-import java.io.*;
-
 import m3x.m3g.M3GSupport;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;

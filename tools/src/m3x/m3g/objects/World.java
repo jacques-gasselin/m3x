@@ -11,9 +11,9 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
-  ObjectIndex   activeCamera;
-  ObjectIndex   background;
-
+  ObjectIndex   activeCamera;<br>
+  ObjectIndex   background;<br>
+  <br>
  * @author jsaarinen
  */
 public class World extends Group implements M3GTypedObject

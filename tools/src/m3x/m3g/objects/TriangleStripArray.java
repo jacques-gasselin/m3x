@@ -8,7 +8,6 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
@@ -35,14 +34,12 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
   public TriangleStripArray()
   {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   public TriangleStripArray(ObjectIndex[] animationTracks,
       UserParameter[] userParameters)
   {
     super(animationTracks, userParameters);
-    // TODO Auto-generated constructor stub
   }
 
   private int encoding;

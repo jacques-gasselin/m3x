@@ -12,18 +12,18 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
 /**
-  Boolean       hasComponentTransform;
-  IF hasComponentTransform==TRUE, THEN
-  Vector3D      translation;
-  Vector3D      scale;
-  Float32       orientationAngle;
-  Vector3D      orientationAxis;
-  END
-  Boolean       hasGeneralTransform;
-  IF hasGeneralTransform==TRUE, THEN
-    Matrix        transform;
-  END
-
+  Boolean       hasComponentTransform;<br>
+  IF hasComponentTransform==TRUE, THEN<br>
+  Vector3D      translation;<br>
+  Vector3D      scale;<br>
+  Float32       orientationAngle;<br>
+  Vector3D      orientationAxis;<br>
+  END<br>
+  Boolean       hasGeneralTransform;<br>
+  IF hasGeneralTransform==TRUE, THEN<br>
+    Matrix        transform;<br>
+  END<br>
+  <br>
  * @author jsaarinen
  */
 public abstract class Transformable extends Object3D implements M3GSerializable
@@ -118,5 +118,40 @@ public abstract class Transformable extends Object3D implements M3GSerializable
       dataOutputStream.writeBoolean(true);
       this.transform.serialize(dataOutputStream, m3gVersion);
     }
+  }
+
+  public boolean isHasComponentTransform()
+  {
+    return this.hasComponentTransform;
+  }
+
+  public Vector3D getTranslation()
+  {
+    return this.translation;
+  }
+
+  public Vector3D getScale()
+  {
+    return this.scale;
+  }
+
+  public float getOrientationAngle()
+  {
+    return this.orientationAngle;
+  }
+
+  public Vector3D getOrientationAxis()
+  {
+    return this.orientationAxis;
+  }
+
+  public boolean isHasGeneralTransform()
+  {
+    return this.hasGeneralTransform;
+  }
+
+  public Matrix getTransform()
+  {
+    return this.transform;
   }
 }
