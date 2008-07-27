@@ -1,5 +1,6 @@
 package m3x.m3g.objects;
 
+import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
 
 public class HeaderTest extends AbstractTestCase

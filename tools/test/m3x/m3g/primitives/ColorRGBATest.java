@@ -1,7 +1,7 @@
 package m3x.m3g.primitives;
 
+import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.objects.AbstractTestCase;
 
 public class ColorRGBATest extends AbstractTestCase
 {
