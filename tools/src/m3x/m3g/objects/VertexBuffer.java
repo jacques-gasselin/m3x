@@ -29,7 +29,7 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class VertexBuffer extends Object3D implements M3GTypedObject
 {
-  public class TextureCoordinate implements M3GSerializable
+  public static class TextureCoordinate implements M3GSerializable
   {
     public ObjectIndex textureCoordinates;
     public float[] textureCoordinatesBias;
