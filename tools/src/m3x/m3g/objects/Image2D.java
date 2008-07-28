@@ -47,7 +47,15 @@ public class Image2D extends Object3D implements M3GTypedObject
     }
     this.format = format;
     this.isMutable = false;
+    if (width <= 0)
+    {
+      throw new FileFormatException("Invalid width: " + width);
+    }
     this.width = width;
+    if (height <= 0)
+    {
+      throw new FileFormatException("Invalid height: " + height);
+    }
     this.height = height;
     this.palette = palette;
     this.pixels = pixels;
@@ -57,13 +65,21 @@ public class Image2D extends Object3D implements M3GTypedObject
       byte format, int width, int height) throws FileFormatException
   {
     super(animationTracks, userParameters);
-    if (!(format <= FORMAT_ALPHA && format >= FORMAT_RGBA))
+    if (format < FORMAT_ALPHA || format > FORMAT_RGBA))
     {
       throw new FileFormatException("Invalid image format: " + format);
     }
     this.format = format;
     this.isMutable = true;
+    if (width <= 0)
+    {
+      throw new FileFormatException("Invalid width: " + width);
+    }
     this.width = width;
+    if (height <= 0)
+    {
+      throw new FileFormatException("Invalid height: " + height);
+    }
     this.height = height;
     this.palette = null;
     this.pixels = null;
