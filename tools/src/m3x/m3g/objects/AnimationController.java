@@ -11,6 +11,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#AnimationController<br>
     Float32       speed;<br>
     Float32       weight;<br>
     Int32         activeIntervalStart;<br>

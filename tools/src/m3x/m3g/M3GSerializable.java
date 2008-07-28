@@ -14,7 +14,7 @@ public interface M3GSerializable
 {  
   /**
    * Constructs a M3G object from a stream.
-   * The user is responsible for closing the stream.
+   * The user is responsible for handling the stream.
    * 
    * @param dataInputStream
    *  The stream which from the M3G object is read.

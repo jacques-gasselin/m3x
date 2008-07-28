@@ -25,6 +25,7 @@ public final class M3GSupport
    * 
    * @param x
    * @return
+   *  The float as bytes swapped.
    */
   private static int swapBytes(float x)
   {
@@ -37,6 +38,7 @@ public final class M3GSupport
    * 
    * @param x
    * @return
+   *  The integer bytes swapped.
    */
   private static int swapBytes(int x)
   {
@@ -52,6 +54,7 @@ public final class M3GSupport
    * 
    * @param x
    * @return
+   *  The short bytes swapped.
    */
   private static short swapBytes(short x)
   {
@@ -81,10 +84,11 @@ public final class M3GSupport
   }
   
   /**
-   * Returns the M3G object as a byte array.
+   * Converts the M3G object to a byte array.
    * 
    * @param object
    * @return
+   *  The deserialized object as byte array.
    * @throws IOException
    */
   public static byte[] objectToBytes(M3GSerializable object) throws IOException
@@ -98,8 +102,10 @@ public final class M3GSupport
   
   /**
    * A helper method for read an integer from the stream saved as little-endian byte order. 
+   *
    * @param dataInputStream
    * @return
+   *  The integer in big-endian.
    * @throws IOException
    */
   public static int readInt(DataInputStream dataInputStream) throws IOException
@@ -109,6 +115,7 @@ public final class M3GSupport
   
   /**
    * A helper method to write an integer as little-endian to the stream.
+   *
    * @param dataOutputStream
    * @param x
    * @throws IOException
@@ -120,8 +127,10 @@ public final class M3GSupport
 
   /**
    * A helper method for read a float from the stream saved as little-endian byte order. 
+   *
    * @param dataInputStream
    * @return
+   *  The float in big-endian.
    * @throws IOException
    */
   public static float readFloat(DataInputStream dataInputStream) throws IOException
@@ -131,8 +140,10 @@ public final class M3GSupport
   
   /**
    * A helper method to write a float as little-endian to the stream.
+   *
    * @param dataOutputStream
    * @param x
+   *  The float in big-endian.
    * @throws IOException
    */
   public static void writeFloat(DataOutputStream dataOutputStream, float x) throws IOException
@@ -141,7 +152,8 @@ public final class M3GSupport
   }
   
   /**
-   * 
+   * A helper method for writing a 16-bit integer as little-endian to the stream.
+   *  
    * @param dataOutputStream
    * @param x
    * @throws IOException
@@ -152,9 +164,11 @@ public final class M3GSupport
   }
 
   /**
+   * A helper method for reading a 16-bit integer as little-endian from the stream.
    * 
    * @param dataInputStream
    * @return
+   *  The short in big-endian.
    */
   public static short readShort(DataInputStream dataInputStream) throws IOException
   {
@@ -165,7 +179,10 @@ public final class M3GSupport
    * Reads an UTF-8 string terminated with \0 byte.
    * 
    * @param dataInputStream
+   *
    * @return
+   *  The String object from stream.
+   *  
    * @throws IOException
    */
   public static String readUTF8(DataInputStream dataInputStream) throws IOException
@@ -189,6 +206,7 @@ public final class M3GSupport
    *  Class of the object in the bytes given.
    *  
    * @return
+   *  The object constructed from the byte array.
    * @throws Exception
    */
   public static M3GSerializable bytesToObject(byte[] serialized, Class<? extends M3GSerializable> clazz) throws Exception
