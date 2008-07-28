@@ -11,6 +11,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See See http://java2me.org/m3g/file-format.html#Image2D<br>
   Byte          format;<br>
   Boolean       isMutable;<br>
   UInt32        width;<br>

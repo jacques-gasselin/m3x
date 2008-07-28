@@ -11,6 +11,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#CompositingMode<br>
   Boolean       depthTestEnabled;<br>
   Boolean       depthWriteEnabled;<br>
   Boolean       colorWriteEnabled;<br>

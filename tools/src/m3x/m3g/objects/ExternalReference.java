@@ -9,6 +9,11 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 
+/**
+ * See See http://java2me.org/m3g/file-format.html#ExternalReference 
+ * for more information.<br>
+ * @author jsaarinen
+ */
 public class ExternalReference implements M3GTypedObject
 {
   private String uri;

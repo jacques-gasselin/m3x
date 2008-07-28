@@ -10,6 +10,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#KeyframeSequence<br>
   Byte          interpolation;<br>
   Byte          repeatMode;<br>
   Byte          encoding;<br>

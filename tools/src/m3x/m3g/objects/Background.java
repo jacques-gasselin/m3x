@@ -12,6 +12,7 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#Background<br>
   ColorRGBA     backgroundColor;<br>
   ObjectIndex   backgroundImage;<br>
   Byte          backgroundImageModeX;<br>

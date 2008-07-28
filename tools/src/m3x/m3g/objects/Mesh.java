@@ -13,6 +13,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#Mesh<br>
   ObjectIndex   vertexBuffer;<br>
   UInt32        submeshCount;<br>
   FOR each submesh...<br>

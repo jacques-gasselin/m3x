@@ -12,6 +12,7 @@ import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See See http://java2me.org/m3g/file-format.html#Fog<br>
   ColorRGB      color;<br>
   Byte          mode;<br>
   IF mode==EXPONENTIAL, THEN<br>

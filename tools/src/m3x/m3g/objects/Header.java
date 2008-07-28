@@ -10,6 +10,11 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 
+/**
+ * See http://java2me.org/m3g/file-format.html#Header<br>
+ * 
+ * @author jsaarinen
+ */
 public class Header implements M3GTypedObject
 {  
   private final static byte[] VERSION = {1, 0};

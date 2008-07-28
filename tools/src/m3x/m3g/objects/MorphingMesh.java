@@ -13,6 +13,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#MorphingMesh<br>
   UInt32        morphTargetCount;<br>
   FOR each target buffer...<br>
     ObjectIndex   morphTarget;<br>
