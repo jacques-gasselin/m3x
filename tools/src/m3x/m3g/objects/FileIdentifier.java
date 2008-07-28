@@ -32,7 +32,11 @@ public class FileIdentifier implements M3GSerializable
       throws IOException, FileFormatException
   {
     this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
-    dataInputStream.read(this.fileIdentifier);
+    int n = dataInputStream.read(this.fileIdentifier);
+    if (n != FILE_IDENTIFIER.length)
+    {
+      throw new FileFormatException("Read invalid amount of bytes.");
+    }
     if (!Arrays.equals(this.fileIdentifier, FILE_IDENTIFIER))
     {
       throw new FileFormatException("Invalid M3G file header!");
