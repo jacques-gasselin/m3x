@@ -107,8 +107,6 @@ public abstract class AbstractTestCase extends TestCase
           }
           else
           {
-            System.out.println(result1);
-            System.out.println(result2);
             assertTrue(result1.equals(result2));
           }
         }
