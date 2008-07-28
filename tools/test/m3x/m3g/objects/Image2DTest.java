@@ -1,6 +1,7 @@
 package m3x.m3g.objects;
 
 import m3x.m3g.AbstractTestCase;
+import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.ObjectIndex;
@@ -29,5 +30,21 @@ public class Image2DTest extends AbstractTestCase
       e.printStackTrace();
       fail(e.getMessage());
     }    
+    try
+    {
+      Image2D image = new Image2D(animationTracks,
+          userParameters,
+          -1,
+          42,
+          66,
+          new byte[256 * 3],
+          new byte[42 * 66]);
+    }
+    catch (FileFormatException e)
+    {
+      // this is what should happen
+      return;
+    }
+    fail("Image2D constructor didn't throw FileFormatException.");
   }
 }

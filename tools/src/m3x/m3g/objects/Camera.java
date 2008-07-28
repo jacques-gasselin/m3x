@@ -43,7 +43,7 @@ public class Camera extends Node implements M3GTypedObject
   public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, byte zTarget, byte yTarget,
-      ObjectIndex zReference, ObjectIndex yReference, Matrix projectionMatrix)
+      ObjectIndex zReference, ObjectIndex yReference, Matrix projectionMatrix) throws FileFormatException
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope, zTarget, yTarget, zReference,
@@ -63,7 +63,7 @@ public class Camera extends Node implements M3GTypedObject
   {
     super(animationTracks, userParameters, transform, enableRendering,
         enablePicking, alphaFactor, scope);
-    if (!(projectionType == PROJECTION_TYPE_PARALLEL || projectionType == PROJECTION_TYPE_PERSPECTIVE))
+    if (projectionType != PROJECTION_TYPE_PARALLEL && projectionType != PROJECTION_TYPE_PERSPECTIVE)
     {
       throw new FileFormatException("Invalid projectionType: " + projectionType);
     }

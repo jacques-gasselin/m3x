@@ -38,6 +38,22 @@ public class Mesh extends Node implements M3GTypedObject
       this.appearance.deserialize(dataInputStream, m3gVersion);
     }
 
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof SubMesh))
+      {
+        return false;
+      }
+      SubMesh another = (SubMesh)obj;
+      return this.indexBuffer.equals(another.indexBuffer) && 
+             this.appearance.equals(another.appearance);
+    }
+
+
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -74,7 +90,7 @@ public class Mesh extends Node implements M3GTypedObject
     super.deserialize(dataInputStream, m3gVersion);
     this.vertexBuffer = new ObjectIndex();
     this.vertexBuffer.deserialize(dataInputStream, m3gVersion);
-    int subMeshCount = M3GSupport.readInt(dataInputStream);
+    this.subMeshCount = M3GSupport.readInt(dataInputStream);
     this.subMeshes = new SubMesh[subMeshCount];
     for (int i = 0; i < this.subMeshes.length; i++)
     {

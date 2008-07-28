@@ -63,7 +63,7 @@ public abstract class Node extends Transformable implements M3GSerializable
   public Node(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, byte zTarget, byte yTarget,
-      ObjectIndex zReference, ObjectIndex yReference)
+      ObjectIndex zReference, ObjectIndex yReference) throws FileFormatException
   {
     super(animationTracks, userParameters, transform);
     this.enableRendering = enableRendering;
@@ -71,7 +71,15 @@ public abstract class Node extends Transformable implements M3GSerializable
     this.alphaFactor = alphaFactor;
     this.scope = scope;
     this.hasAlignment = true;
+    if (zTarget < NONE || zTarget > Z_AXIS)
+    {
+      throw new FileFormatException("Invalid zTarget: " + zTarget);
+    }
     this.zTarget = zTarget;
+    if (yTarget < NONE || yTarget > Z_AXIS)
+    {
+      throw new FileFormatException("Invalid yTarget: " + yTarget);
+    }
     this.yTarget = yTarget;
     this.zReference = zReference;
     this.yReference = yReference;
