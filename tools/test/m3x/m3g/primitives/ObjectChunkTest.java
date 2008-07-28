@@ -3,8 +3,7 @@ package m3x.m3g.primitives;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.ObjectChunk;
 import m3x.m3g.ObjectTypes;
-import m3x.m3g.objects.AbstractTestCase;
-import m3x.m3g.primitives.Section;
+import m3x.m3g.AbstractTestCase;
 
 public class ObjectChunkTest extends AbstractTestCase
 {

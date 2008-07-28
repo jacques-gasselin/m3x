@@ -55,7 +55,7 @@ public abstract class AbstractTestCase extends TestCase
           if (clazz1.isArray() && clazz2.isArray())
           {
             // we have two arrays, now we need to find out
-            // if they are primitive types or Object[]
+            // if they are primitive type arrays or Object[]
             if (clazz1.equals(boolean[].class) && clazz2.equals(boolean[].class))
             {
               assertTrue(Arrays.equals((boolean[])result1, (boolean[])result2));

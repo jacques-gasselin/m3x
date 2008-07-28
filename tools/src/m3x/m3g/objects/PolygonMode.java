@@ -39,11 +39,23 @@ public class PolygonMode extends Object3D implements M3GTypedObject
   public PolygonMode(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int culling, int shading, int winding,
       boolean twoSidedLightingEnabled, boolean localCameraLightingEnabled,
-      boolean perspectiveCorrectionEnabled)
+      boolean perspectiveCorrectionEnabled) throws FileFormatException
   {
     super(animationTracks, userParameters);
+    if (culling < CULL_BACK || culling > CULL_NONE)
+    {
+      throw new FileFormatException("Invalid culling mode: " + culling);
+    }
     this.culling = culling;
+    if (shading < SHADE_FLAT || shading > SHADE_SMOOTH)
+    {
+      throw new FileFormatException("Invalid shading mode: " + shading);
+    }
     this.shading = shading;
+    if (winding < WINDING_CCW || winding > WINDING_CW)
+    {
+      throw new FileFormatException("Invalid winding mode: " + winding);
+    }
     this.winding = winding;
     this.twoSidedLightingEnabled = twoSidedLightingEnabled;
     this.localCameraLightingEnabled = localCameraLightingEnabled;
