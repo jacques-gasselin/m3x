@@ -150,6 +150,7 @@ public class Section implements M3GSerializable
       this.uncompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
       int compressedLength = deflater.deflate(buffer);
+      deflater.finish();
       byte[] compressedData = new byte[compressedLength];
       System.arraycopy(buffer, 0, compressedData, 0, compressedLength);
       buffers.add(compressedData);
