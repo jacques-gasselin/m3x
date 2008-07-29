@@ -3,6 +3,7 @@ package m3x.m3g.objects;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
@@ -75,17 +76,8 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
         return false;
       }
       TextureCoordinate another = (TextureCoordinate)obj;
-      boolean textureCoordinatesBiasEquals = true;
-      for (int i = 0; i < this.textureCoordinatesBias.length; i++)
-      {
-        if (this.textureCoordinatesBias[i] != another.textureCoordinatesBias[i])
-        {
-          textureCoordinatesBiasEquals = false;
-          break;
-        }
-      }
       return this.textureCoordinates.equals(another.textureCoordinates) &&
-             textureCoordinatesBiasEquals &&
+             Arrays.equals(this.textureCoordinatesBias, another.textureCoordinatesBias) &&
              this.textureCoordinatesScale == another.textureCoordinatesScale;
     }
   }
