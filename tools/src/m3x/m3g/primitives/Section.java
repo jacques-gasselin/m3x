@@ -1,8 +1,10 @@
 package m3x.m3g.primitives;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -59,33 +61,103 @@ public class Section implements M3GSerializable
    * @param compressionScheme
    *  Whether to compress or not?
    *  
-   * @param objects
+   * @param m3gObjects
    *  The actual data in this section.
    */
-  public Section(byte compressionScheme, byte[] objects)
+  public Section(byte compressionScheme, byte[] m3gObjects)
   {
     assert(compressionScheme == COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 || compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32);
-    assert(objects != null);
+    assert(m3gObjects != null);
     
     this.compressionScheme = compressionScheme;
-    this.uncompressedLength = objects.length;
+    this.uncompressedLength = m3gObjects.length;
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
-      byte[] compressedObjects = new byte[objects.length];
-      Deflater deflater = new Deflater();
-      deflater.setInput(objects);
-      deflater.finish();
-      int compressedLength = deflater.deflate(compressedObjects);
-      this.objects = new byte[compressedLength];
-      System.arraycopy(compressedObjects, 0, this.objects, 0, this.objects.length);
+      byte[] compressedObjects = new byte[m3gObjects.length];
+      compressObjects(m3gObjects, compressedObjects);
     }
     else
     {
-      this.objects = objects;
+      this.objects = m3gObjects;
     }
     // length of a section is compression scheme, total section length
     // uncompressed length, objects array length and Adler32 checksum
     this.totalSectionLength = 1 + 4 + 4 + this.objects.length + 4;
+  }
+
+  /**
+   * Creates a new Section object from given M3GSerializable objects.
+   *  
+   * @param compressionScheme
+   * @param m3gObjects
+   * @param m3gVersion
+   * @throws IOException
+   */
+  public Section(byte compressionScheme, M3GSerializable[] m3gObjects, String m3gVersion) throws IOException
+  {
+    assert(compressionScheme == COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 || compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32);
+    assert(m3gObjects != null);
+    
+    this.compressionScheme = compressionScheme;
+    if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+    {
+      serializeAndCompress(m3gObjects, m3gVersion); 
+    }
+    else
+    {
+      serialize(m3gObjects, m3gVersion);
+    }
+    // length of a section is compression scheme, total section length
+    // uncompressed length, objects array length and Adler32 checksum
+    this.totalSectionLength = 1 + 4 + 4 + this.objects.length + 4;
+  }
+
+  private void serialize(M3GSerializable[] m3gObjects, String m3gVersion) throws IOException
+  {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    DataOutputStream dos = new DataOutputStream(baos);
+    for (M3GSerializable object : m3gObjects)
+    {
+      object.serialize(dos, m3gVersion);
+    }
+    dos.close();
+    this.objects = baos.toByteArray();
+  }
+
+  private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
+      throws IOException
+  {
+    Deflater deflater = new Deflater();
+    int maxCompressedLength = 0;
+    for (M3GSerializable object : m3gObjects)
+    {
+      // compress one object at a time
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      DataOutputStream dos = new DataOutputStream(baos);
+      object.serialize(dos, m3gVersion);
+      dos.close();
+      byte[] serializedObject = baos.toByteArray();
+      maxCompressedLength += serializedObject.length;
+      deflater.setInput(serializedObject);
+    }
+    // deflate cannot make array bigger, so we allocate
+    // the maximum amount of byte that can be required
+    byte[] buffer = new byte[maxCompressedLength];
+    int compressedLength = deflater.deflate(buffer);
+    deflater.end();
+    // allocate space for the compressed data
+    this.objects = new byte[compressedLength];
+    System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
+  }
+  
+  private void compressObjects(byte[] objects, byte[] buffer)
+  {
+    Deflater deflater = new Deflater();
+    deflater.setInput(objects);
+    deflater.finish();
+    int compressedLength = deflater.deflate(buffer);
+    this.objects = new byte[compressedLength];
+    System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
   }
 
   
