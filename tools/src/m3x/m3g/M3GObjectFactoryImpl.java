@@ -10,7 +10,7 @@ import m3x.m3g.objects.*;
 public class M3GObjectFactoryImpl implements M3GObjectFactory
 {
 
-  public M3GTypedObject getInstance(byte objectType) throws M3GException
+  public static M3GTypedObject getInstance(byte objectType) throws M3GException
   {
     switch (objectType)
     {
