@@ -34,14 +34,7 @@ public class LightTest extends AbstractTestCase
           2.0f);
       byte[] serialized = M3GSupport.objectToBytes(light);
       Light deserialized = (Light)M3GSupport.bytesToObject(serialized, Light.class);
-      assertTrue(light.getAttenuationConstant() == deserialized.getAttenuationConstant());
-      assertTrue(light.getAttenuationLinear() == deserialized.getAttenuationLinear());
-      assertTrue(light.getAttenuationQuadratic() == deserialized.getAttenuationQuadratic());
-      assertTrue(light.getColor().equals(deserialized.getColor()));
-      assertTrue(light.getIntensity() == deserialized.getIntensity());
-      assertTrue(light.getMode() == deserialized.getMode());
-      assertTrue(light.getSpotAngle() == deserialized.getSpotAngle());
-      assertTrue(light.getSpotExponent() == deserialized.getSpotExponent());
+      this.doTestAccessors(deserialized, light);
     }
     catch (Exception e)
     {

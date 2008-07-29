@@ -9,6 +9,11 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import junit.framework.TestCase;
 
+/**
+ * A helper class for unit tests.
+ * 
+ * @author jsaarinen
+ */
 public abstract class AbstractTestCase extends TestCase
 {
   /**
@@ -112,7 +117,10 @@ public abstract class AbstractTestCase extends TestCase
       }
     }
   }
-  
+  /**
+   * Returns a 4x4 matrix filled with random floats in the set [-1, 1].
+   * @return
+   */
   protected Matrix getMatrix()
   {
     float[] matrix = new float[16];
