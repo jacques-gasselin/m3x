@@ -137,9 +137,9 @@ public class Section implements M3GSerializable
   {
     List<byte[]> buffers = new ArrayList<byte[]>();
     this.uncompressedLength = 0;
+    Deflater deflater = new Deflater();
     for (M3GSerializable object : m3gObjects)
     {
-      Deflater deflater = new Deflater();
       // compress one object at a time
       byte[] serializedObject = M3GSupport.objectToBytes(object);
       // we allocate maximum buffer size for compression,
@@ -150,11 +150,11 @@ public class Section implements M3GSerializable
       this.uncompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
       int compressedLength = deflater.deflate(buffer);
-      deflater.end();
       byte[] compressedData = new byte[compressedLength];
       System.arraycopy(buffer, 0, compressedData, 0, compressedLength);
       buffers.add(compressedData);
     }
+    deflater.end();
     // allocate space for the compressed data
     int compressedLength = 0;
     for (byte[] buf : buffers)
