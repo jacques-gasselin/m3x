@@ -130,6 +130,13 @@ public class Section implements M3GSerializable
     this.uncompressedLength = this.objects.length;
   }
 
+  /**
+   * Compresses M3GSerializable objects one at a time to the buffer.
+   * 
+   * @param m3gObjects
+   * @param m3gVersion
+   * @throws IOException
+   */
   private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
       throws IOException
   {
