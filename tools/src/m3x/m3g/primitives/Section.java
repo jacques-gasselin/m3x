@@ -122,6 +122,7 @@ public class Section implements M3GSerializable
     }
     dos.close();
     this.objects = baos.toByteArray();
+    this.uncompressedLength = this.objects.length;
   }
 
   private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
@@ -144,6 +145,7 @@ public class Section implements M3GSerializable
     // allocate space for the compressed data
     this.objects = new byte[compressedLength];
     System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
+    this.uncompressedLength = this.objects.length;
   }
   
   private void compressObjects(byte[] objects, byte[] buffer)
