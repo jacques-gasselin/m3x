@@ -7,9 +7,8 @@ import m3x.m3g.objects.*;
  * 
  * @author jsaarinen
  */
-public class M3GObjectFactoryImpl implements M3GObjectFactory
+public class M3GObjectFactory
 {
-
   public static M3GTypedObject getInstance(byte objectType) throws M3GException
   {
     switch (objectType)
