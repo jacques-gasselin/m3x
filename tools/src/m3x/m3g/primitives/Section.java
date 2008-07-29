@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -35,10 +37,11 @@ public class Section implements M3GSerializable
   public static final byte COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32 = 1;
 
   /**
-   * The compressed output cannot be larger than this constant.
+   * One individual M3G cannot be larger than this constant (in bytes)
+   * when serialized.
    */
-  private static final int MAXIMUM_M3G_OBJECT_SIZE = 128 * 1024;
-  
+  private static final int MAXIMUM_M3G_OBJECT_SIZE = 16 * 1024;
+ 
   /**
    * Either of the previous two enums.
    */
@@ -139,23 +142,36 @@ public class Section implements M3GSerializable
   private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
       throws IOException
   {
-    // deflate cannot make array bigger, so we allocate
-    // the maximum amount of byte that can be required
+    List<byte[]> buffers = new ArrayList<byte[]>();
+    this.uncompressedLength = 0;
     byte[] buffer = new byte[MAXIMUM_M3G_OBJECT_SIZE];
-    
-    Deflater deflater = new Deflater();
-    int compressedLength = 0;
     for (M3GSerializable object : m3gObjects)
     {
+      Deflater deflater = new Deflater();
       // compress one object at a time
       byte[] serializedObject = M3GSupport.objectToBytes(object);
+      this.uncompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
-      compressedLength += deflater.deflate(buffer, compressedLength, buffer.length - compressedLength);
+      int compressedLength = deflater.deflate(buffer);
+      deflater.end();
+      byte[] compressedData = new byte[compressedLength];
+      buffers.add(compressedData);
     }
-    deflater.end();
     // allocate space for the compressed data
+    int compressedLength = 0;
+    for (byte[] buf : buffers)
+    {
+      compressedLength += buf.length;
+    }
+    // allocate buffer for all individual buffers
     this.objects = new byte[compressedLength];
-    System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
+    int index = 0;
+    // "concatenate" individual buffers
+    for (byte[] buf : buffers)
+    {
+      System.arraycopy(buf, 0, this.objects, index, buf.length);
+      index += buf.length;
+    }
     this.uncompressedLength = this.objects.length;
   }
   
