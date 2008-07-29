@@ -12,7 +12,6 @@ public class AppearanceTest extends AbstractTestCase
   {
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
-    ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
     Appearance appearance = new Appearance(animationTracks,
                                            userParameters,
                                            (byte)127,

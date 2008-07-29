@@ -5,7 +5,7 @@ package m3x.m3g;
  * 
  * @author jsaarinen
  */
-public class FileFormatException extends Exception
+public class FileFormatException extends M3GException
 {
   /**
    * 

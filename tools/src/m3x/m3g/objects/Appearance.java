@@ -44,6 +44,12 @@ public class Appearance extends Object3D implements M3GTypedObject
     this.textures = textures;
   }
   
+  public Appearance()
+  {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {   

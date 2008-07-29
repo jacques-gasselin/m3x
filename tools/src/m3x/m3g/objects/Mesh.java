@@ -33,6 +33,7 @@ public class Mesh extends Node implements M3GTypedObject
     public SubMesh()
     {
     }
+    
     public SubMesh(ObjectIndex indexBuffer, ObjectIndex appearance)
     {
       this.indexBuffer = indexBuffer;
@@ -72,7 +73,6 @@ public class Mesh extends Node implements M3GTypedObject
       return this.indexBuffer.equals(another.indexBuffer) && 
              this.appearance.equals(another.appearance);
     }
-
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
