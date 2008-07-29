@@ -13,6 +13,7 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#VertexBuffer<br>
   ColorRGBA     defaultColor;<br>
   ObjectIndex   positions;<br>
   Float32[3]    positionBias;<br>
@@ -24,7 +25,7 @@ import m3x.m3g.primitives.ObjectIndex;
        ObjectIndex   texCoords;<br>
        Float32[3]    texCoordBias;<br>
        Float32       texCoordScale;<br>
-
+  <br>
  * @author jsaarinen
  */
 public class VertexBuffer extends Object3D implements M3GTypedObject

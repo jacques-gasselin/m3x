@@ -12,6 +12,7 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#Transformable<br>
   Boolean       hasComponentTransform;<br>
   IF hasComponentTransform==TRUE, THEN<br>
   Vector3D      translation;<br>

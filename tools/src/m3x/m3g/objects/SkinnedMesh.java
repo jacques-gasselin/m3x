@@ -13,6 +13,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#SkinnedMesh<br>
   ObjectIndex   skeleton;<br>
   UInt32        transformReferenceCount;<br>
   FOR each bone reference...<br>

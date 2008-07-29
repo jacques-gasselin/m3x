@@ -24,10 +24,28 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class MorphingMesh extends Node implements M3GTypedObject
 {
-  public class TargetBuffer implements M3GSerializable
+  public static class TargetBuffer implements M3GSerializable
   {
     public ObjectIndex morphTarget;
     public float initialWeight;
+
+    public TargetBuffer()
+    {
+    }
+
+    public boolean equals(Object obj)
+    {
+      if (obj == this)
+      {
+        return true;
+      }
+      if (!(obj instanceof TargetBuffer))
+      {
+        return false;
+      }
+      TargetBuffer another = (TargetBuffer)obj;
+      return this.morphTarget.equals(another.morphTarget) && this.initialWeight == another.initialWeight;
+    }
 
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException

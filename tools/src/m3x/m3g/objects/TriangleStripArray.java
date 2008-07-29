@@ -11,6 +11,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#TriangleStripArray<br>
   Byte       encoding;
   IF encoding == 0, THEN
     UInt32        startIndex;

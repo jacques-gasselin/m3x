@@ -10,6 +10,7 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.primitives.ObjectIndex;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#Object3D<br>
   UInt32           userID;<br>
   ObjectIndex[]    animationTracks;<br>
   UInt32           userParameterCount;<br>

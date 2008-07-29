@@ -12,6 +12,7 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
 /**
+ * See http://java2me.org/m3g/file-format.html#Texture2D<br>
   ObjectIndex   image;
   ColorRGB      blendColor;
   Byte          blending;
@@ -19,7 +20,7 @@ import m3x.m3g.primitives.Vector3D;
   Byte          wrappingT;
   Byte          levelFilter;
   Byte          imageFilter;
-
+  <br>
  * @author jsaarinen
  */
 public class Texture2D extends Transformable implements M3GTypedObject
