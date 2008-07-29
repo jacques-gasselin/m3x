@@ -50,6 +50,11 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class KeyframeSequence extends Object3D implements M3GTypedObject
 {
+  /**
+   * Abstract base class for all types of key frames.
+   * 
+   * @author jsaarinen
+   */
   public static abstract class KeyFrame
   {
     private int time;
@@ -78,6 +83,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
   }
 
+  /**
+   * Keyframe class in floating point.
+   * 
+   * @author jsaarinen
+   */
   public static class FloatKeyFrame extends KeyFrame
   {
     private float[] vectorValue;
@@ -108,6 +118,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
   }
 
+  /**
+   * Keyframe class in integer.
+   * 
+   * @author jsaarinen
+   */
   public static class ByteKeyFrame extends KeyFrame
   {
     private byte[] vectorValue;
@@ -138,6 +153,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
   }
 
+  /**
+   * Keyframe class in integer.
+   * 
+   * @author jsaarinen
+   */
   public static class ShortKeyFrame extends KeyFrame
   {
     private short[] vectorValue;
@@ -178,6 +198,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
 
   private static final Set<Integer> interpolationModes = new HashSet<Integer>();
   private static final Set<Integer> repeatModes = new HashSet<Integer>();
+  
   static
   {
     interpolationModes.add(LINEAR);
