@@ -53,7 +53,7 @@ public class Section implements M3GSerializable
    * The actual contents in this section, may be compressed.
    */
   private byte[] objects;
-  
+    
   /**
    * Creates a new Section object. 
    * Data compression - if TBD - is done here.
@@ -157,7 +157,6 @@ public class Section implements M3GSerializable
     this.objects = new byte[compressedLength];
     System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
   }
-
   
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
