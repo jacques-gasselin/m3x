@@ -171,7 +171,6 @@ public class Section implements M3GSerializable
       System.arraycopy(buf, 0, this.objects, index, buf.length);
       index += buf.length;
     }
-    this.uncompressedLength = this.objects.length;
   }
   
   private void compress(byte[] m3gObjects)
