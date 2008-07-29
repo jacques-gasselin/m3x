@@ -78,8 +78,7 @@ public class Section implements M3GSerializable
     this.uncompressedLength = m3gObjects.length;
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
-      byte[] compressedObjects = new byte[m3gObjects.length];
-      compressObjects(m3gObjects, compressedObjects);
+      compress(m3gObjects);
     }
     else
     {
@@ -131,7 +130,7 @@ public class Section implements M3GSerializable
   }
 
   /**
-   * Compresses M3GSerializable objects one at a time to the buffer.
+   * Compresses M3GSerializable objects one at a time to the this.objects;
    * 
    * @param m3gObjects
    * @param m3gVersion
@@ -160,12 +159,13 @@ public class Section implements M3GSerializable
     this.uncompressedLength = this.objects.length;
   }
   
-  private void compressObjects(byte[] objects, byte[] buffer)
+  private void compress(byte[] m3gObjects)
   {
+    byte[] buffer = new byte[m3gObjects.length];
     Deflater deflater = new Deflater();
-    deflater.setInput(objects);
-    deflater.finish();
+    deflater.setInput(m3gObjects);
     int compressedLength = deflater.deflate(buffer);
+    deflater.finish();
     this.objects = new byte[compressedLength];
     System.arraycopy(buffer, 0, this.objects, 0, this.objects.length);
   }
