@@ -27,12 +27,29 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class SkinnedMesh extends Mesh implements M3GTypedObject
 {
-  public class BoneReference implements M3GSerializable
+  public static class BoneReference implements M3GSerializable
   {
     public ObjectIndex transformNode;
     public int firstVertex;
     public int vertexCount;
     public int weight;
+
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof BoneReference))
+      {
+        return false;
+      }
+      BoneReference another = (BoneReference)obj;
+      return this.transformNode.equals(another.transformNode) &&
+             this.firstVertex == another.firstVertex &&
+             this.vertexCount == another.vertexCount &&
+             this.weight == another.weight;
+    }
 
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
