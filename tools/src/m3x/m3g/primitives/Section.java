@@ -33,6 +33,11 @@ public class Section implements M3GSerializable
    * Enum for this.objects being zlib compressed.
    */
   public static final byte COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32 = 1;
+
+  /**
+   * The compressed output cannot be larger than this constant.
+   */
+  private static final int MAXIMUM_M3G_OBJECT_SIZE = 128 * 1024;
   
   /**
    * Either of the previous two enums.
@@ -128,19 +133,19 @@ public class Section implements M3GSerializable
   private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
       throws IOException
   {
+    // deflate cannot make array bigger, so we allocate
+    // the maximum amount of byte that can be required
+    byte[] buffer = new byte[MAXIMUM_M3G_OBJECT_SIZE];
+    
     Deflater deflater = new Deflater();
-    int maxCompressedLength = 0;
+    int compressedLength = 0;
     for (M3GSerializable object : m3gObjects)
     {
       // compress one object at a time
       byte[] serializedObject = M3GSupport.objectToBytes(object);
-      maxCompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
+      compressedLength += deflater.deflate(buffer, compressedLength, buffer.length - compressedLength);
     }
-    // deflate cannot make array bigger, so we allocate
-    // the maximum amount of byte that can be required
-    byte[] buffer = new byte[maxCompressedLength];
-    int compressedLength = deflater.deflate(buffer);
     deflater.end();
     // allocate space for the compressed data
     this.objects = new byte[compressedLength];

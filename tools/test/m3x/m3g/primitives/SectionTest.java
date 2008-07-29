@@ -32,13 +32,29 @@ public class SectionTest extends AbstractTestCase
 
   public void testSerializationAndDeserialization2()
   {
-    M3GSerializable[] objects = this.getAnimationTracks();                                                                    
+    M3GSerializable[] objects = {this.getAnimationTracks()[0], this.getMatrix()};                                                                    
     try
     {   
       Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objects, null);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
       this.doTestAccessors(section, deserialized);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }  
+
+  public void testSerializationAndDeserialization3()
+  {
+    M3GSerializable[] objects = this.getAnimationTracks();                                                                    
+    try
+    {   
+      Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objects, null);
+      byte[] serialized = M3GSupport.objectToBytes(section);
+      Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
     }
     catch (Exception e)
     {
