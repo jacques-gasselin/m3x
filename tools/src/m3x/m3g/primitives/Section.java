@@ -132,11 +132,7 @@ public class Section implements M3GSerializable
     for (M3GSerializable object : m3gObjects)
     {
       // compress one object at a time
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      DataOutputStream dos = new DataOutputStream(baos);
-      object.serialize(dos, m3gVersion);
-      dos.close();
-      byte[] serializedObject = baos.toByteArray();
+      byte[] serializedObject = M3GSupport.objectToBytes(object);
       maxCompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
     }
