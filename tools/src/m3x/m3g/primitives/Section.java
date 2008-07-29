@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Adler32;
@@ -35,12 +34,6 @@ public class Section implements M3GSerializable
    * Enum for this.objects being zlib compressed.
    */
   public static final byte COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32 = 1;
-
-  /**
-   * One individual M3G cannot be larger than this constant (in bytes)
-   * when serialized.
-   */
-  private static final int MAXIMUM_M3G_OBJECT_SIZE = 16 * 1024;
  
   /**
    * Either of the previous two enums.
@@ -144,12 +137,16 @@ public class Section implements M3GSerializable
   {
     List<byte[]> buffers = new ArrayList<byte[]>();
     this.uncompressedLength = 0;
-    byte[] buffer = new byte[MAXIMUM_M3G_OBJECT_SIZE];
     for (M3GSerializable object : m3gObjects)
     {
       Deflater deflater = new Deflater();
       // compress one object at a time
       byte[] serializedObject = M3GSupport.objectToBytes(object);
+      // we allocate maximum buffer size for compression,
+      // deflate doesn't grow data in any case, so the max.
+      // required amount of memory is the same as the M3G object
+      // is when serialized
+      byte[] buffer = new byte[serializedObject.length];
       this.uncompressedLength += serializedObject.length;
       deflater.setInput(serializedObject);
       int compressedLength = deflater.deflate(buffer);
