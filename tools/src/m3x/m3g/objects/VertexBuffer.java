@@ -30,6 +30,11 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class VertexBuffer extends Object3D implements M3GTypedObject
 {
+  public VertexBuffer()
+  {
+    super();
+  }
+
   public static class TextureCoordinate implements M3GSerializable
   {
     public ObjectIndex textureCoordinates;
@@ -58,6 +63,31 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
       }
       M3GSupport.writeFloat(dataOutputStream, this.textureCoordinatesScale);
     }
+
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof TextureCoordinate))
+      {
+        return false;
+      }
+      TextureCoordinate another = (TextureCoordinate)obj;
+      boolean textureCoordinatesBiasEquals = true;
+      for (int i = 0; i < this.textureCoordinatesBias.length; i++)
+      {
+        if (this.textureCoordinatesBias[i] != another.textureCoordinatesBias[i])
+        {
+          textureCoordinatesBiasEquals = false;
+          break;
+        }
+      }
+      return this.textureCoordinates.equals(another.textureCoordinates) &&
+             textureCoordinatesBiasEquals &&
+             this.textureCoordinatesScale == another.textureCoordinatesScale;
+    }
   }
   
   private ColorRGBA defaultColor;
@@ -69,6 +99,23 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
   private int textureCoordinateArrayCount;
   private TextureCoordinate[] textureCoordinates;
   
+  public VertexBuffer(ObjectIndex[] animationTracks,
+      UserParameter[] userParameters, ColorRGBA defaultColor,
+      ObjectIndex positions, float[] positionBias, float positionScale,
+      ObjectIndex normals, ObjectIndex colors,
+      TextureCoordinate[] textureCoordinates)
+  {
+    super(animationTracks, userParameters);
+    this.defaultColor = defaultColor;
+    this.positions = positions;
+    this.positionBias = positionBias;
+    this.positionScale = positionScale;
+    this.normals = normals;
+    this.colors = colors;
+    this.textureCoordinateArrayCount = textureCoordinates.length;
+    this.textureCoordinates = textureCoordinates;
+  }
+
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
@@ -81,12 +128,13 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
     this.positionBias[0] = M3GSupport.readFloat(dataInputStream);
     this.positionBias[1] = M3GSupport.readFloat(dataInputStream);
     this.positionBias[2] = M3GSupport.readFloat(dataInputStream);
+    this.positionScale = M3GSupport.readFloat(dataInputStream);
     this.normals = new ObjectIndex();
     this.normals.deserialize(dataInputStream, m3gVersion);
     this.colors = new ObjectIndex();
     this.colors.deserialize(dataInputStream, m3gVersion);
     this.textureCoordinateArrayCount = M3GSupport.readInt(dataInputStream);
-    if (this.textureCoordinateArrayCount < 0)
+    if (this.textureCoordinateArrayCount <= 0)
     {
       throw new FileFormatException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);
     }
