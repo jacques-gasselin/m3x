@@ -155,6 +155,7 @@ public class Section implements M3GSerializable
       int compressedLength = deflater.deflate(buffer);
       deflater.end();
       byte[] compressedData = new byte[compressedLength];
+      System.arraycopy(buffer, 0, compressedData, 0, compressedLength);
       buffers.add(compressedData);
     }
     // allocate space for the compressed data
