@@ -15,15 +15,9 @@ public class SkinnedMeshTest extends AbstractTestCase
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     Matrix matrix = getMatrix();
-    SubMesh subMesh = new SubMesh();
-    subMesh.appearance = new ObjectIndex(1);
-    subMesh.indexBuffer = new ObjectIndex(2);
+    SubMesh subMesh = new SubMesh(new ObjectIndex(1), new ObjectIndex(2));
     SubMesh[] subMeshes = new SubMesh[] { subMesh };                    
-    BoneReference boneReference = new BoneReference();
-    boneReference.transformNode = new ObjectIndex(1);
-    boneReference.firstVertex = 0;
-    boneReference.vertexCount = 1;
-    boneReference.weight = 66;
+    BoneReference boneReference = new BoneReference(new ObjectIndex(1), 0, 1, 66);
     BoneReference[] boneReferences = new BoneReference[] {boneReference};                    
     
     try

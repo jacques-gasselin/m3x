@@ -38,9 +38,36 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
 
   public static class TextureCoordinate implements M3GSerializable
   {
-    public ObjectIndex textureCoordinates;
-    public float[] textureCoordinatesBias;
-    public float textureCoordinatesScale;
+    private ObjectIndex textureCoordinates;
+    private float[] textureCoordinatesBias;
+    private float textureCoordinatesScale;
+
+    public TextureCoordinate()
+    {
+    }
+
+    public TextureCoordinate(ObjectIndex textureCoordinates,
+        float[] textureCoordinatesBias, float textureCoordinatesScale)
+    {
+      this.textureCoordinates = textureCoordinates;
+      this.textureCoordinatesBias = textureCoordinatesBias;
+      this.textureCoordinatesScale = textureCoordinatesScale;
+    }
+
+    public ObjectIndex getTextureCoordinates()
+    {
+      return this.textureCoordinates;
+    }
+
+    public float[] getTextureCoordinatesBias()
+    {
+      return this.textureCoordinatesBias;
+    }
+
+    public float getTextureCoordinatesScale()
+    {
+      return this.textureCoordinatesScale;
+    }
 
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException

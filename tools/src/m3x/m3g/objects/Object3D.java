@@ -25,9 +25,29 @@ public abstract class Object3D implements M3GSerializable
 {
   public static class UserParameter implements M3GSerializable
   {
-    public int parameterID;
-    public byte[] parameterValue;
+    private int parameterID;
+    private byte[] parameterValue;
     
+    public UserParameter(int parameterID, byte[] parameterValue)
+    {
+      this.parameterID = parameterID;
+      this.parameterValue = parameterValue;
+    }
+
+    public UserParameter()
+    {
+    }
+
+    public int getParameterID()
+    {
+      return this.parameterID;
+    }
+
+    public byte[] getParameterValue()
+    {
+      return this.parameterValue;
+    }
+
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {

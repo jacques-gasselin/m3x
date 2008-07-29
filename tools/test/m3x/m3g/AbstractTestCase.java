@@ -128,9 +128,7 @@ public abstract class AbstractTestCase extends TestCase
   protected UserParameter[] getUserParameters()
   {
     UserParameter[] userParameters = new UserParameter[1];
-    userParameters[0] = new UserParameter();
-    userParameters[0].parameterID =  1;
-    userParameters[0].parameterValue = new byte[] {1, 2, 3, 4, 5, 6};
+    userParameters[0] = new UserParameter(1, new byte[] {1, 2, 3, 4, 5, 6});
     return userParameters;
   }
 

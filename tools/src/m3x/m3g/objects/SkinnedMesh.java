@@ -29,10 +29,43 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
 {
   public static class BoneReference implements M3GSerializable
   {
-    public ObjectIndex transformNode;
-    public int firstVertex;
-    public int vertexCount;
-    public int weight;
+    private ObjectIndex transformNode;
+    private int firstVertex;
+    private int vertexCount;
+    private int weight;
+
+    public BoneReference(ObjectIndex transformNode, int firstVertex,
+        int vertexCount, int weight)
+    {
+      this.transformNode = transformNode;
+      this.firstVertex = firstVertex;
+      this.vertexCount = vertexCount;
+      this.weight = weight;
+    }
+
+    public BoneReference()
+    {
+    }
+
+    public ObjectIndex getTransformNode()
+    {
+      return this.transformNode;
+    }
+
+    public int getFirstVertex()
+    {
+      return this.firstVertex;
+    }
+
+    public int getVertexCount()
+    {
+      return this.vertexCount;
+    }
+
+    public int getWeight()
+    {
+      return this.weight;
+    }
 
     public boolean equals(Object obj)
     {

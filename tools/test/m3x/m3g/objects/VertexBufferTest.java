@@ -13,10 +13,9 @@ public class VertexBufferTest extends AbstractTestCase
   {   
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
-    TextureCoordinate textureCoord = new TextureCoordinate();
-    textureCoord.textureCoordinates = new ObjectIndex(4);
-    textureCoord.textureCoordinatesBias = new float[] {1.0f, 1.1f, 1.2f};
-    textureCoord.textureCoordinatesScale = 0.5f;
+    TextureCoordinate textureCoord = new TextureCoordinate(new ObjectIndex(4),
+                                                           new float[] {1.0f, 1.1f, 1.2f},
+                                                           0.5f);
     TextureCoordinate[] textureCoords = {textureCoord};
     VertexBuffer buffer = new VertexBuffer(animationTracks,
                                            userParameters,

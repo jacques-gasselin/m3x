@@ -3,6 +3,10 @@ package m3x.m3g.objects;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
@@ -48,23 +52,120 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
 {
   public abstract class KeyFrame
   {
-    public int time;
+    private int time;
+
+    public KeyFrame(int time)
+    {
+      this.time = time;
+    }
+
+    public int getTime()
+    {
+      return this.time;
+    }
+
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof KeyFrame))
+      {
+        return false;
+      }
+      return this.time == ((KeyFrame)obj).time;
+    }
   }
 
   public class FloatKeyFrame extends KeyFrame
   {
-    public float[] vectorValue;
+    private float[] vectorValue;
 
+    public FloatKeyFrame(int time, float[] vectorValue)
+    {
+      super(time);
+      this.vectorValue = vectorValue;
+    }
+
+    public float[] getVectorValue()
+    {
+      return this.vectorValue;
+    }
+
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof FloatKeyFrame))
+      {
+        return false;
+      }
+      FloatKeyFrame another = (FloatKeyFrame)obj;
+      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+    }
   }
 
   public class ByteKeyFrame extends KeyFrame
   {
-    public byte[] vectorValue;
+    private byte[] vectorValue;
+  
+    public ByteKeyFrame(int time, byte[] vectorValue)
+    {
+      super(time);
+      this.vectorValue = vectorValue;
+    }
+
+    public byte[] getVectorValue()
+    {
+      return this.vectorValue;
+    }
+
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof ByteKeyFrame))
+      {
+        return false;
+      }
+      ByteKeyFrame another = (ByteKeyFrame)obj;
+      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+    }
   }
 
   public class ShortKeyFrame extends KeyFrame
   {
-    public short[] vectorValue;
+    private short[] vectorValue;
+
+    public ShortKeyFrame(int time, short[] vectorValue)
+    {
+      super(time);
+      this.vectorValue = vectorValue;
+    }
+
+    public short[] getVectorValue()
+    {
+      return this.vectorValue;
+    }
+    
+    public boolean equals(Object obj)
+    {
+      if (this == obj)
+      {
+        return true;
+      }
+      if (!(obj instanceof ShortKeyFrame))
+      {
+        return false;
+      }
+      ShortKeyFrame another = (ShortKeyFrame)obj;
+      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+    }
   }
 
   public static final int CONSTANT = 192;
@@ -75,6 +176,20 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
   public static final int SQUAD = 179;
   public static final int STEP = 180;
 
+  private static final Set<Integer> interpolationModes = new HashSet<Integer>();
+  private static final Set<Integer> repeatModes = new HashSet<Integer>();
+  static
+  {
+    interpolationModes.add(LINEAR);
+    interpolationModes.add(SLERP);
+    interpolationModes.add(SPLINE);
+    interpolationModes.add(SQUAD);
+    interpolationModes.add(STEP);
+    
+    repeatModes.add(CONSTANT);
+    repeatModes.add(LOOP);
+  }
+  
   private static final int ENCODING_FLOATS = 0;
   private static final int ENCODING_BYTES = 1;
   private static final int ENCODING_SHORTS = 2;
@@ -94,11 +209,13 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
   public KeyframeSequence(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int interpolation, int repeatMode,
       int duration, int validRangeFirst, int validRangeLast,
-      int componentCount, FloatKeyFrame[] keyFrames)
+      int componentCount, FloatKeyFrame[] keyFrames) throws FileFormatException
   {
     super(animationTracks, userParameters);
     assert (keyFrames != null);
+    validateInterpolationType(interpolation);
     this.interpolation = interpolation;
+    validateRepeatMode(repeatMode);
     this.repeatMode = repeatMode;
     this.encoding = ENCODING_FLOATS;
     this.duration = duration;
@@ -111,14 +228,33 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     this.vectorScale = null;
   }
 
+  private static void validateRepeatMode(int repeatMode) throws FileFormatException
+  {
+    if (!repeatModes.contains(repeatMode))
+    {
+      throw new FileFormatException("Invalid repeat mode: " + repeatMode);
+    }
+  }
+
+  private static void validateInterpolationType(int interpolation)
+      throws FileFormatException
+  {
+    if (!interpolationModes.contains(interpolation))
+    {
+      throw new FileFormatException("Invalid interpolation type: " + interpolation);
+    }
+  }
+
   public KeyframeSequence(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int interpolation, int repeatMode,
       int duration, int validRangeFirst, int validRangeLast,
-      ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale)
+      ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
   {
     super(animationTracks, userParameters);
     assert (keyFrames != null);
+    validateInterpolationType(interpolation);
     this.interpolation = interpolation;
+    validateRepeatMode(repeatMode);
     this.repeatMode = repeatMode;
     this.encoding = ENCODING_BYTES;
     this.duration = duration;
@@ -134,11 +270,12 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
   public KeyframeSequence(ObjectIndex[] animationTracks,
       UserParameter[] userParameters, int interpolation, int repeatMode,
       int duration, int validRangeFirst, int validRangeLast,
-      ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale)
+      ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
   {
     super(animationTracks, userParameters);
+    validateInterpolationType(interpolation);
     this.interpolation = interpolation;
-    this.repeatMode = repeatMode;
+    validateRepeatMode(repeatMode);
     this.encoding = ENCODING_SHORTS;
     this.duration = duration;
     this.validRangeFirst = validRangeFirst;
@@ -155,7 +292,9 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
   {
     super.deserialize(dataInputStream, m3gVersion);
     this.interpolation = dataInputStream.readByte() & 0xFF;
+    validateInterpolationType(this.interpolation);
     this.repeatMode = dataInputStream.readByte() & 0xFF;
+    validateRepeatMode(this.repeatMode);
     this.encoding = dataInputStream.readByte() & 0xFF;
     this.duration = M3GSupport.readInt(dataInputStream);
     this.validRangeFirst = M3GSupport.readInt(dataInputStream);
@@ -169,13 +308,13 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.floatKeyFrames = new FloatKeyFrame[keyFrameCount];
         for (int i = 0; i < keyFrameCount; i++)
         {
-          this.floatKeyFrames[i] = new FloatKeyFrame();
-          this.floatKeyFrames[i].time = M3GSupport.readInt(dataInputStream);
-          this.floatKeyFrames[i].vectorValue = new float[componentCount];
+          int time = M3GSupport.readInt(dataInputStream);
+          float vectorValue[] = new float[componentCount];
           for (int j = 0; j < componentCount; j++)
           {
-            this.floatKeyFrames[i].vectorValue[j] = M3GSupport.readFloat(dataInputStream);
+            vectorValue[j] = M3GSupport.readFloat(dataInputStream);
           }
+          this.floatKeyFrames[i] = new FloatKeyFrame(time, vectorValue);
         }
         break;
         
@@ -184,13 +323,13 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.byteKeyFrames = new ByteKeyFrame[keyFrameCount];
         for (int i = 0; i < keyFrameCount; i++)
         {
-          this.byteKeyFrames[i] = new ByteKeyFrame();
-          this.byteKeyFrames[i].time = M3GSupport.readInt(dataInputStream);
-          this.byteKeyFrames[i].vectorValue = new byte[componentCount];
+          int time = M3GSupport.readInt(dataInputStream);
+          byte vectorValue[] = new byte[componentCount];
           for (int j = 0; j < componentCount; j++)
           {
-            this.byteKeyFrames[i].vectorValue[j] = dataInputStream.readByte();
+            vectorValue[j] = dataInputStream.readByte();
           }
+          this.byteKeyFrames[i] = new ByteKeyFrame(time, vectorValue);
         }
         break;
         
@@ -199,13 +338,13 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.shortKeyFrames = new ShortKeyFrame[keyFrameCount];
         for (int i = 0; i < keyFrameCount; i++)
         {
-          this.shortKeyFrames[i] = new ShortKeyFrame();
-          this.shortKeyFrames[i].time = M3GSupport.readInt(dataInputStream);
-          this.shortKeyFrames[i].vectorValue = new short[componentCount];
+          int time = M3GSupport.readInt(dataInputStream);
+          short vectorValue[] = new short[componentCount];
           for (int j = 0; j < componentCount; j++)
           {
-            this.shortKeyFrames[i].vectorValue[j] = M3GSupport.readShort(dataInputStream);
+            vectorValue[j] = M3GSupport.readShort(dataInputStream);
           }
+          this.shortKeyFrames[i] = new ShortKeyFrame(time, vectorValue);
         }
         break;
         
@@ -242,17 +381,17 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     switch (this.encoding)
     {
       case ENCODING_FLOATS:
-        componentCount = this.floatKeyFrames[0].vectorValue.length;
+        componentCount = this.floatKeyFrames[0].getVectorValue().length;
         keyFrameCount = this.floatKeyFrames.length;
         break;
 
       case ENCODING_BYTES:
-        componentCount = this.byteKeyFrames[0].vectorValue.length;
+        componentCount = this.byteKeyFrames[0].getVectorValue().length;
         keyFrameCount = this.byteKeyFrames.length;
         break;
 
       case ENCODING_SHORTS:
-        componentCount = this.shortKeyFrames[0].vectorValue.length;
+        componentCount = this.shortKeyFrames[0].getVectorValue().length;
         keyFrameCount = this.shortKeyFrames.length;
         break;
 
@@ -268,8 +407,8 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
       case ENCODING_FLOATS:
         for (FloatKeyFrame keyFrame : this.floatKeyFrames)
         {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.time);
-          for (float component : keyFrame.vectorValue)
+          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+          for (float component : keyFrame.getVectorValue())
           {
             M3GSupport.writeFloat(dataOutputStream, component);
           }
@@ -280,8 +419,8 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         writeBiasAndScale(dataOutputStream);
         for (ByteKeyFrame keyFrame : this.byteKeyFrames)
         {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.time);
-          for (byte component : keyFrame.vectorValue)
+          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+          for (byte component : keyFrame.getVectorValue())
           {
             dataOutputStream.write(component);
           }
@@ -292,8 +431,8 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         writeBiasAndScale(dataOutputStream);
         for (ShortKeyFrame keyFrame : this.shortKeyFrames)
         {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.time);
-          for (short component : keyFrame.vectorValue)
+          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+          for (short component : keyFrame.getVectorValue())
           {
             M3GSupport.writeShort(dataOutputStream, component);
           }

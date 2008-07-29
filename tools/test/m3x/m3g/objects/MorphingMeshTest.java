@@ -18,9 +18,7 @@ public class MorphingMeshTest extends AbstractTestCase
                             
     try
     {   
-      TargetBuffer morphTarget = new TargetBuffer();
-      morphTarget.initialWeight = 1.0f;
-      morphTarget.morphTarget = new ObjectIndex(1);
+      TargetBuffer morphTarget = new TargetBuffer(new ObjectIndex(1), 1.0f);
       TargetBuffer[] targets = new TargetBuffer[] { morphTarget };
       MorphingMesh mesh = new MorphingMesh(animationTracks,
                                            userParameters,

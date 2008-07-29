@@ -53,14 +53,19 @@ public class Light extends Node implements M3GTypedObject
     this.attenuationLinear = attenuationLinear;
     this.attenuationQuadratic = attenuationQuadratic;
     this.color = color;
-    if (mode < MODE_AMBIENT || mode > MODE_SPOT)
-    {
-      throw new FileFormatException("Invalid light mode: " + mode);
-    }
+    validateMode(mode);
     this.mode = mode;
     this.intensity = intensity;
     this.spotAngle = spotAngle;
     this.spotExponent = spotExponent;
+  }
+
+  private static void validateMode(int mode) throws FileFormatException
+  {
+    if (mode < MODE_AMBIENT || mode > MODE_SPOT)
+    {
+      throw new FileFormatException("Invalid light mode: " + mode);
+    }
   }
   
   public Light()
@@ -78,6 +83,7 @@ public class Light extends Node implements M3GTypedObject
     this.color = new ColorRGB();
     this.color.deserialize(dataInputStream, m3gVersion);
     this.mode = dataInputStream.readByte() & 0xFF;
+    validateMode(this.mode);
     this.intensity = M3GSupport.readFloat(dataInputStream);
     this.spotAngle = M3GSupport.readFloat(dataInputStream);
     this.spotExponent = M3GSupport.readFloat(dataInputStream);

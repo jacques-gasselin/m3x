@@ -14,9 +14,7 @@ public class MeshTest extends AbstractTestCase
     ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     Matrix matrix = getMatrix();
-    SubMesh subMesh = new SubMesh();
-    subMesh.appearance = new ObjectIndex(1);
-    subMesh.indexBuffer = new ObjectIndex(2);
+    SubMesh subMesh = new SubMesh(new ObjectIndex(1), new ObjectIndex(2));
     SubMesh[] subMeshes = new SubMesh[] { subMesh };                    
                             
     try

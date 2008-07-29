@@ -72,18 +72,28 @@ public abstract class Node extends Transformable implements M3GSerializable
     this.alphaFactor = alphaFactor;
     this.scope = scope;
     this.hasAlignment = true;
-    if (zTarget < NONE || zTarget > Z_AXIS)
-    {
-      throw new FileFormatException("Invalid zTarget: " + zTarget);
-    }
+    validateZTarget(zTarget);
     this.zTarget = zTarget;
+    validateYTarget(yTarget);
+    this.yTarget = yTarget;
+    this.zReference = zReference;
+    this.yReference = yReference;
+  }
+
+  private static void validateYTarget(byte yTarget) throws FileFormatException
+  {
     if (yTarget < NONE || yTarget > Z_AXIS)
     {
       throw new FileFormatException("Invalid yTarget: " + yTarget);
     }
-    this.yTarget = yTarget;
-    this.zReference = zReference;
-    this.yReference = yReference;
+  }
+
+  private static void validateZTarget(byte zTarget) throws FileFormatException
+  {
+    if (zTarget < NONE || zTarget > Z_AXIS)
+    {
+      throw new FileFormatException("Invalid zTarget: " + zTarget);
+    }
   }
 
   public Node()
@@ -103,7 +113,9 @@ public abstract class Node extends Transformable implements M3GSerializable
     if (this.hasAlignment)
     {
       this.zTarget = dataInputStream.readByte();
+      validateZTarget(this.zTarget);
       this.yTarget = dataInputStream.readByte();
+      validateYTarget(this.yTarget);
       this.zReference = new ObjectIndex();
       this.zReference.deserialize(dataInputStream, m3gVersion);
       this.yReference = new ObjectIndex();

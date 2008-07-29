@@ -26,11 +26,27 @@ public class MorphingMesh extends Node implements M3GTypedObject
 {
   public static class TargetBuffer implements M3GSerializable
   {
-    public ObjectIndex morphTarget;
-    public float initialWeight;
+    private ObjectIndex morphTarget;
+    private float initialWeight;
 
     public TargetBuffer()
     {
+    }
+
+    public TargetBuffer(ObjectIndex morphTarget, float initialWeight)
+    {
+      this.morphTarget = morphTarget;
+      this.initialWeight = initialWeight;
+    }
+
+    public ObjectIndex getMorphTarget()
+    {
+      return this.morphTarget;
+    }
+
+    public float getInitialWeight()
+    {
+      return this.initialWeight;
     }
 
     public boolean equals(Object obj)

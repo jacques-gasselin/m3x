@@ -27,8 +27,27 @@ public class Mesh extends Node implements M3GTypedObject
 {
   public static class SubMesh implements M3GSerializable
   {
-    public ObjectIndex indexBuffer;
-    public ObjectIndex appearance;
+    private ObjectIndex indexBuffer;
+    private ObjectIndex appearance;
+
+    public SubMesh()
+    {
+    }
+    public SubMesh(ObjectIndex indexBuffer, ObjectIndex appearance)
+    {
+      this.indexBuffer = indexBuffer;
+      this.appearance = appearance;
+    }
+
+    public ObjectIndex getIndexBuffer()
+    {
+      return this.indexBuffer;
+    }
+
+    public ObjectIndex getAppearance()
+    {
+      return this.appearance;
+    }
 
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
