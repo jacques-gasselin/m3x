@@ -23,6 +23,11 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public abstract class Object3D implements M3GSerializable
 {
+  private int userID;
+  private ObjectIndex[] animationTracks;
+  private int userParameterCount;
+  private UserParameter[] userParameters;
+  
   public static class UserParameter implements M3GSerializable
   {
     private int parameterID;
@@ -66,10 +71,6 @@ public abstract class Object3D implements M3GSerializable
     }    
   }
 
-  private ObjectIndex[] animationTracks;
-  private int userParameterCount;
-  private UserParameter[] userParameters;
-
   /**
    * Constructor for the class. 
    * 
@@ -95,6 +96,7 @@ public abstract class Object3D implements M3GSerializable
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
       throws IOException, FileFormatException
   {
+    this.userID = M3GSupport.readInt(dataInputStream);
     int animationTracksLength = M3GSupport.readInt(dataInputStream);
     this.animationTracks = new ObjectIndex[animationTracksLength];
     for (int i = 0; i < this.animationTracks.length; i++)
@@ -115,6 +117,7 @@ public abstract class Object3D implements M3GSerializable
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
       throws IOException
   {
+    M3GSupport.writeInt(dataOutputStream, this.userID);
     M3GSupport.writeInt(dataOutputStream, this.animationTracks.length);
     for (int i = 0; i < this.animationTracks.length; i++)
     {
