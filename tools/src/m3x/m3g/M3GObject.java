@@ -102,7 +102,7 @@ public class M3GObject
     return this.header;
   }
 
-  private M3GTypedObject[] getObjects()
+  public M3GTypedObject[] getObjects()
   {
     return this.m3gObjects;
   }
