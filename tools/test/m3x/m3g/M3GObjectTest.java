@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,7 +15,9 @@ public class M3GObjectTest extends TestCase
   {
     try
     {
-      M3GObject object = new M3GObject(new FileInputStream("tools/test/data/teapot.m3g"));
+      M3GObject object = new M3GObject();
+      DataInputStream dataInputStream = new DataInputStream(new FileInputStream("tools/test/data/teapot.m3g"));
+      object.deserialize(dataInputStream, "1.0");
       System.out.println(object.getFileIdentifier());
       System.out.println(object.getHeader());
       for (M3GTypedObject typedObject : object.getObjects())
