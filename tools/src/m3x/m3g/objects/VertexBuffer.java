@@ -153,7 +153,7 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
     this.colors = new ObjectIndex();
     this.colors.deserialize(dataInputStream, m3gVersion);
     this.textureCoordinateArrayCount = M3GSupport.readInt(dataInputStream);
-    if (this.textureCoordinateArrayCount <= 0)
+    if (this.textureCoordinateArrayCount < 0)
     {
       throw new FileFormatException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);
     }

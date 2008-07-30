@@ -3,6 +3,11 @@ package m3x.m3g;
 public class M3GException extends Exception
 {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
   public M3GException()
   {
   }

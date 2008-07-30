@@ -93,11 +93,6 @@ public abstract class Transformable extends Object3D implements M3GSerializable
       this.transform = new Matrix();
       this.transform.deserialize(dataInputStream, m3gVersion);
     }
-    
-    if (this.hasGeneralTransform == false && this.hasComponentTransform == false)
-    {
-      throw new FileFormatException("Neither component transform or general transform present!");
-    }
   }
   
   public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
