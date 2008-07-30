@@ -24,9 +24,8 @@ public interface M3GSerializable
    * @throws IOException
    * @throws FileFormatException
    *  When the input data was somehow invalid from the M3G specification point of view.
-   * @throws M3GException 
    */
-  void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, FileFormatException, M3GException;
+  void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, FileFormatException;
   
   /**
    * Implementations of this method should output the corresponding

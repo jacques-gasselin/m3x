@@ -41,7 +41,6 @@ public class M3GObject implements M3GSerializable
     super();
   }
 
-
   public void serialize(DataOutputStream dataOutputStream, String version)
       throws IOException
   {    
@@ -66,7 +65,7 @@ public class M3GObject implements M3GSerializable
     m3gObjectsSection.serialize(dataOutputStream, M3G_VERSION);
   }
 
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, M3GException
+  public void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, FileFormatException
   {
     this.fileIdentifier = new FileIdentifier();
     this.fileIdentifier.deserialize(dataInputStream, M3G_VERSION);
@@ -82,7 +81,14 @@ public class M3GObject implements M3GSerializable
     {
       throw new FileFormatException("First section is not object header!");
     }
-    this.header = (Header)M3GObjectFactory.getInstance(objectType);
+    try
+    {
+      this.header = (Header)M3GObjectFactory.getInstance(objectType);
+    }
+    catch (M3GException e)
+    {
+      throw new FileFormatException(e);
+    }
     byte[] objectData = objectChunk.getData();
     DataInputStream chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
     this.header.deserialize(chunkInputStream, M3G_VERSION);
@@ -106,7 +112,15 @@ public class M3GObject implements M3GSerializable
             objectChunk = new ObjectChunk();
             objectChunk.deserialize(objectInputStream, M3G_VERSION);
             objectType = objectChunk.getObjectType();
-            M3GTypedObject object = M3GObjectFactory.getInstance(objectType);
+            M3GTypedObject object;
+            try
+            {
+              object = M3GObjectFactory.getInstance(objectType);
+            }
+            catch (M3GException e)
+            {
+              throw new FileFormatException(e);
+            }
             objectData = objectChunk.getData();
             chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
             object.deserialize(chunkInputStream, M3G_VERSION);
