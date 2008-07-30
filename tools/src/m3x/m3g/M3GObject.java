@@ -1,6 +1,7 @@
 package m3x.m3g;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -45,11 +46,24 @@ public class M3GObject implements M3GSerializable
       throws IOException
   {    
     this.fileIdentifier.serialize(dataOutputStream, M3G_VERSION);
-    this.header.serialize(dataOutputStream, M3G_VERSION);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    DataOutputStream sectionDataOutputStream = new DataOutputStream(baos);
+    byte[] headerByteArray = baos.toByteArray();
+    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, headerByteArray);
+    headerSection.serialize(dataOutputStream, M3G_VERSION);
+    sectionDataOutputStream.close();
+    
+    // serialize M3G objects into the same Section
+    baos = new ByteArrayOutputStream();
+    sectionDataOutputStream = new DataOutputStream(baos);
     for (M3GTypedObject object : this.m3gObjects)
     {
-      object.serialize(dataOutputStream, M3G_VERSION);
+      object.serialize(sectionDataOutputStream, M3G_VERSION);
     }
+    sectionDataOutputStream.close();
+    byte[] objectsByteArray = baos.toByteArray();
+    Section m3gObjectsSection = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectsByteArray);
+    m3gObjectsSection.serialize(dataOutputStream, M3G_VERSION);
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, M3GException
