@@ -28,10 +28,10 @@ public class M3GObject implements M3GSerializable
   private Header header;
   private M3GTypedObject[] m3gObjects;
   
-  public M3GObject(FileIdentifier fileIdentifier, Header header,
+  public M3GObject(Header header,
       M3GTypedObject[] objects)
   {
-    this.fileIdentifier = fileIdentifier;
+    this.fileIdentifier = new FileIdentifier();
     this.header = header;
     this.m3gObjects = objects;
   }
@@ -100,9 +100,7 @@ public class M3GObject implements M3GSerializable
       try
       {
         // there can be N sections, each containing 1..M M3G objects
-        Section section = new Section();
-        section.deserialize(dataInputStream, M3G_VERSION);
-        objectInputStream = new DataInputStream(new ByteArrayInputStream(section.getObjects()));
+        objectInputStream = loadSection(dataInputStream);
 
         while (true)
         {
@@ -143,6 +141,16 @@ public class M3GObject implements M3GSerializable
       }
     }
     this.m3gObjects = objects.toArray(new M3GTypedObject[objects.size()]);
+  }
+
+  private DataInputStream loadSection(DataInputStream dataInputStream)
+      throws IOException, FileFormatException
+  {
+    DataInputStream objectInputStream;
+    Section section = new Section();
+    section.deserialize(dataInputStream, M3G_VERSION);
+    objectInputStream = new DataInputStream(new ByteArrayInputStream(section.getObjects()));
+    return objectInputStream;
   }
   
   public FileIdentifier getFileIdentifier()

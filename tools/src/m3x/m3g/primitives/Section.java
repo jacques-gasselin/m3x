@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 
 import m3x.m3g.FileFormatException;
@@ -135,42 +136,18 @@ public class Section implements M3GSerializable
   private void serializeAndCompress(M3GSerializable[] m3gObjects, String m3gVersion)
       throws IOException
   {
-    List<byte[]> buffers = new ArrayList<byte[]>();
     this.uncompressedLength = 0;
-    Deflater deflater = new Deflater();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    DeflaterOutputStream dos = new DeflaterOutputStream(baos);
     for (M3GSerializable object : m3gObjects)
     {
       // compress one object at a time
       byte[] serializedObject = M3GSupport.objectToBytes(object);
-      // we allocate maximum buffer size for compression,
-      // deflate doesn't grow data in any case, so the max.
-      // required amount of memory is the same as the M3G object
-      // is when serialized
-      byte[] buffer = new byte[serializedObject.length];
+      dos.write(serializedObject, 0, serializedObject.length);
       this.uncompressedLength += serializedObject.length;
-      deflater.setInput(serializedObject);
-      int compressedLength = deflater.deflate(buffer);
-      deflater.finish();
-      byte[] compressedData = new byte[compressedLength];
-      System.arraycopy(buffer, 0, compressedData, 0, compressedLength);
-      buffers.add(compressedData);
     }
-    deflater.end();
-    // allocate space for the compressed data
-    int compressedLength = 0;
-    for (byte[] buf : buffers)
-    {
-      compressedLength += buf.length;
-    }
-    // allocate buffer for all individual buffers
-    this.objects = new byte[compressedLength];
-    int index = 0;
-    // "concatenate" individual buffers
-    for (byte[] buf : buffers)
-    {
-      System.arraycopy(buf, 0, this.objects, index, buf.length);
-      index += buf.length;
-    }
+    dos.close();
+    this.objects = baos.toByteArray();
   }
   
   private void compress(byte[] m3gObjects)
