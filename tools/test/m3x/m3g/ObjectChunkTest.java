@@ -1,8 +1,8 @@
 package m3x.m3g;
 
 import m3x.m3g.M3GSupport;
-import m3x.m3g.ObjectChunk;
 import m3x.m3g.ObjectTypes;
+import m3x.m3g.primitives.ObjectChunk;
 
 public class ObjectChunkTest extends AbstractTestCase
 {

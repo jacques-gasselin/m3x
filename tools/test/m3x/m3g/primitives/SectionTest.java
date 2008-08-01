@@ -1,16 +1,14 @@
 package m3x.m3g.primitives;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GObject;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
+import m3x.m3g.objects.Fog;
+import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Section;
 
 public class SectionTest extends AbstractTestCase
@@ -40,13 +38,29 @@ public class SectionTest extends AbstractTestCase
 
   public void testSerializationAndDeserialization2()
   {
-    M3GSerializable[] objects = new M3GSerializable[3];
-    objects[0] = this.getAnimationTracks()[0];
-    objects[1] = this.getMatrix(); 
-    objects[2] = this.getMatrix();                                                                    
     try
     {   
-      Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objects, null);
+      M3GTypedObject[] objects = new M3GTypedObject[1];
+      ObjectIndex[] animationTracks = getAnimationTracks();
+      UserParameter[] userParameters = getUserParameters();
+      ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
+      Fog fog = new Fog(animationTracks,
+                        userParameters,
+                        color,
+                        0.1f);
+      objects[0] = fog;    
+      ObjectChunk[] objectChunks = new ObjectChunk[objects.length];
+      for (int i = 0; i < objectChunks.length; i++)
+      {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        objects[i].serialize(dos, null);
+        dos.close();
+        byte[] objectBytes = baos.toByteArray();
+        objectChunks[i] = new ObjectChunk(objects[i].getObjectType(), objectBytes);
+      }
+      
+      Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objectChunks, null);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
       this.doTestAccessors(section, deserialized);
@@ -60,13 +74,29 @@ public class SectionTest extends AbstractTestCase
 
   public void testCompression()
   {
-    M3GSerializable[] objects = new M3GSerializable[3];
-    objects[0] = this.getAnimationTracks()[0];
-    objects[1] = this.getMatrix(); 
-    objects[2] = this.getMatrix(); 
     try
     {   
-      Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objects, null);
+      M3GTypedObject[] objects = new M3GTypedObject[1];
+      ObjectIndex[] animationTracks = getAnimationTracks();
+      UserParameter[] userParameters = getUserParameters();
+      ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
+      Fog fog = new Fog(animationTracks,
+                        userParameters,
+                        color,
+                        0.1f);
+      objects[0] = fog;    
+      ObjectChunk[] objectChunks = new ObjectChunk[objects.length];
+      for (int i = 0; i < objectChunks.length; i++)
+      {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        objects[i].serialize(dos, null);
+        dos.close();
+        byte[] objectBytes = baos.toByteArray();
+        objectChunks[i] = new ObjectChunk(objects[i].getObjectType(), objectBytes);
+      }
+      
+      Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectChunks, null);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
       System.out.println(section.getObjects().length);

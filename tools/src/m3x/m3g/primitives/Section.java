@@ -94,7 +94,7 @@ public class Section implements M3GSerializable
    * @param m3gVersion
    * @throws IOException
    */
-  public Section(byte compressionScheme, M3GSerializable[] m3gObjects, String m3gVersion) throws IOException
+  public Section(byte compressionScheme, ObjectChunk[] m3gObjects, String m3gVersion) throws IOException
   {
     assert(compressionScheme == COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 || compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32);
     assert(m3gObjects != null);

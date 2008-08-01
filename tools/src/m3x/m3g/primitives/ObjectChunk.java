@@ -1,8 +1,11 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import m3x.m3g.M3GSerializable;
+import m3x.m3g.M3GSupport;
 
 
 /**

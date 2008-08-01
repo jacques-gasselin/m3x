@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import m3x.m3g.objects.*;
+import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
 
 /**
