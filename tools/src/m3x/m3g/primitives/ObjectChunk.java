@@ -35,7 +35,6 @@ public class ObjectChunk implements M3GSerializable
   public ObjectChunk()
   {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   /**

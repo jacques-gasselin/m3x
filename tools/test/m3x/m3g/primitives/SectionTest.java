@@ -52,12 +52,7 @@ public class SectionTest extends AbstractTestCase
       ObjectChunk[] objectChunks = new ObjectChunk[objects.length];
       for (int i = 0; i < objectChunks.length; i++)
       {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        objects[i].serialize(dos, null);
-        dos.close();
-        byte[] objectBytes = baos.toByteArray();
-        objectChunks[i] = new ObjectChunk(objects[i].getObjectType(), objectBytes);
+        objectChunks[i] = M3GSupport.wrapSerializableToObjectChunk(objects[i]);
       }
       
       Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objectChunks, null);
@@ -88,12 +83,7 @@ public class SectionTest extends AbstractTestCase
       ObjectChunk[] objectChunks = new ObjectChunk[objects.length];
       for (int i = 0; i < objectChunks.length; i++)
       {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        objects[i].serialize(dos, null);
-        dos.close();
-        byte[] objectBytes = baos.toByteArray();
-        objectChunks[i] = new ObjectChunk(objects[i].getObjectType(), objectBytes);
+        objectChunks[i] = M3GSupport.wrapSerializableToObjectChunk(objects[i]);
       }
       
       Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectChunks, null);

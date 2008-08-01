@@ -87,7 +87,7 @@ public class Section implements M3GSerializable
   }
 
   /**
-   * Creates a new Section object from given M3GSerializable objects.
+   * Creates a new Section object from given ObjectChunk objects.
    *  
    * @param compressionScheme
    * @param m3gObjects

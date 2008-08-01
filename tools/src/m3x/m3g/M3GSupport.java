@@ -6,6 +6,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import m3x.m3g.primitives.ObjectChunk;
+
 
 /**
  * This class includes support methods for swapping the byte
@@ -216,5 +218,23 @@ public final class M3GSupport
     serializable.deserialize(dataInputStream, null);
     dataInputStream.close();
     return serializable; 
+  }
+ 
+  /**
+   * Wraps a M3G object to a ObjectChunk.
+   * 
+   * @param serializable
+   * @return
+   * @throws IOException
+   */
+  public static ObjectChunk wrapSerializableToObjectChunk(M3GTypedObject serializable) throws IOException
+  {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    DataOutputStream dos = new DataOutputStream(baos);
+    serializable.serialize(dos, null);
+    dos.close();
+    byte[] objectBytes = baos.toByteArray();
+    ObjectChunk objectChunk = new ObjectChunk(serializable.getObjectType(), objectBytes);
+    return objectChunk;
   }
 }
