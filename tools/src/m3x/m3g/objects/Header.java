@@ -23,7 +23,7 @@ public class Header implements M3GTypedObject
   public static final int LENGTH;
   static
   {
-    LENGTH = 1 + 4 + 4 + AUTHORING_INFORMATION.length();
+    LENGTH = 2 + AUTHORING_INFORMATION.length() + 1 + 4 + 4;
   }
   
   private boolean hasExternalReferences;
