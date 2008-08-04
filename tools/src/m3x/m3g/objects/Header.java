@@ -18,18 +18,25 @@ import m3x.m3g.ObjectTypes;
 public class Header implements M3GTypedObject
 {  
   private final static byte[] VERSION = {1, 0};
+  
+  private static final String AUTHORING_INFORMATION = "M3G <-> M3X converter";
+  public static final int LENGTH;
+  static
+  {
+    LENGTH = 1 + 4 + 4 + AUTHORING_INFORMATION.length();
+  }
+  
   private boolean hasExternalReferences;
   private int totalFileSize;
   private int approximateContentSize;
   private String authoringInformation;
-
+  
   public Header(boolean hasExternalReferences, int totalFileSize,
-      int approximateContentSize, String authoringInformation)
+      int approximateContentSize)
   {
     this.hasExternalReferences = hasExternalReferences;
     this.totalFileSize = totalFileSize;
     this.approximateContentSize = approximateContentSize;
-    this.authoringInformation = authoringInformation;
   }
 
   public Header()
@@ -59,7 +66,7 @@ public class Header implements M3GTypedObject
     dataOutputStream.writeBoolean(this.hasExternalReferences);
     M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
     M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
-    dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
+    dataOutputStream.write(this.AUTHORING_INFORMATION.getBytes("UTF-8"));
     dataOutputStream.write('\0');
   }
 
@@ -80,7 +87,7 @@ public class Header implements M3GTypedObject
 
   public String getAuthoringInformation()
   {
-    return this.authoringInformation;
+    return this.AUTHORING_INFORMATION;
   }
 
   public byte getObjectType()

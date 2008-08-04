@@ -36,7 +36,6 @@ public class M3GObjectTest extends TestCase
     M3GObject object = new M3GObject();
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filename));
     object.deserialize(dataInputStream, "1.0");
-    System.out.println(object.getFileIdentifier());
     System.out.println(object.getHeader());
     for (M3GTypedObject typedObject : object.getObjects())
     {

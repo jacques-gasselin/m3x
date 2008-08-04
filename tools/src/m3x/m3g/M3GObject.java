@@ -17,7 +17,7 @@ import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
 
 /**
- * Model a deserialized M3G file.
+ * Models a M3G file.
  * 
  * @author jsaarinen
  */
@@ -25,15 +25,11 @@ public class M3GObject implements M3GSerializable
 {
   private final static String M3G_VERSION = "1.0";
   
-  private FileIdentifier fileIdentifier;
-  private Header header;
   private M3GTypedObject[] m3gObjects;
+  private Header header;
   
-  public M3GObject(Header header,
-      M3GTypedObject[] objects)
+  public M3GObject(M3GTypedObject[] objects)
   {
-    this.fileIdentifier = new FileIdentifier();
-    this.header = header;
     this.m3gObjects = objects;
   }
   
@@ -45,31 +41,40 @@ public class M3GObject implements M3GSerializable
   public void serialize(DataOutputStream dataOutputStream, String version)
       throws IOException
   {    
-    this.fileIdentifier.serialize(dataOutputStream, M3G_VERSION);
+    // serialize file id.
+    FileIdentifier fileIdentifier = new FileIdentifier();
+    fileIdentifier.serialize(dataOutputStream, M3G_VERSION);
+    
+    // serialize M3G objects into a temp buffer so that the file
+    // total length can be calculated
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream sectionDataOutputStream = new DataOutputStream(baos);
-    byte[] headerByteArray = baos.toByteArray();
-    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, headerByteArray);
-    headerSection.serialize(dataOutputStream, M3G_VERSION);
-    sectionDataOutputStream.close();
-    
-    // serialize M3G objects into the same Section
-    baos = new ByteArrayOutputStream();
-    sectionDataOutputStream = new DataOutputStream(baos);
-    for (M3GTypedObject object : this.m3gObjects)
+    for (M3GTypedObject typedObject : this.m3gObjects)
     {
-      object.serialize(sectionDataOutputStream, M3G_VERSION);
+      ObjectChunk objectChunk = M3GSupport.wrapSerializableToObjectChunk(typedObject);
+      objectChunk.serialize(sectionDataOutputStream, M3G_VERSION);
     }
     sectionDataOutputStream.close();
-    byte[] objectsByteArray = baos.toByteArray();
-    Section m3gObjectsSection = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectsByteArray);
-    m3gObjectsSection.serialize(dataOutputStream, M3G_VERSION);
+    byte[] sectionByteArray = baos.toByteArray();
+    int totalFileLength = sectionByteArray.length + FileIdentifier.LENGTH + Header.LENGTH;
+    
+    // create header
+    this.header = new Header(false, totalFileLength, totalFileLength);
+    byte[] headerBytes = M3GSupport.objectToBytes(this.header);
+    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, headerBytes);
+    
+    // serialize header
+    headerSection.serialize(dataOutputStream, M3G_VERSION);
+    
+    // serialize all the rest objects into the same section, compressed
+    Section objectsSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, sectionByteArray);
+    objectsSection.serialize(dataOutputStream, M3G_VERSION);
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, FileFormatException
   {
-    this.fileIdentifier = new FileIdentifier();
-    this.fileIdentifier.deserialize(dataInputStream, M3G_VERSION);
+    FileIdentifier fileIdentifier = new FileIdentifier();
+    fileIdentifier.deserialize(dataInputStream, M3G_VERSION);
 
     Section headerSection = new Section();
     headerSection.deserialize(dataInputStream, M3G_VERSION);
@@ -154,11 +159,6 @@ public class M3GObject implements M3GSerializable
     return objectInputStream;
   }
   
-  public FileIdentifier getFileIdentifier()
-  {
-    return this.fileIdentifier;
-  }
-
   public Header getHeader()
   {
     return this.header;
@@ -174,7 +174,6 @@ public class M3GObject implements M3GSerializable
     M3GObject object = new M3GObject();
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream("tools/test/data/teapot.m3g"));
     object.deserialize(dataInputStream, M3G_VERSION);
-    System.out.println(object.getFileIdentifier());
     System.out.println(object.getHeader());
     for (M3GTypedObject typedObject : object.getObjects())
     {

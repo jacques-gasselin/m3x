@@ -26,6 +26,8 @@ public class FileIdentifier implements M3GSerializable
     0x0D, 0x0A, 0x1A, 0x0A 
   };
 
+  public static final int LENGTH = 12;
+
   private byte[] fileIdentifier;
   
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
