@@ -74,7 +74,9 @@ public class Section implements M3GSerializable
   
   /**
    * Creates a new Section object from ObjectChunks. A Section
-   * contains 1..N ObjectChunks.
+   * contains 1..N ObjectChunks.<br>
+   * The user of this constructor is responsible for giving objects
+   * in leaf-first order as specified by the M3G specification.
    * 
    * @param compressionScheme
    *  Whether to compress or not?
@@ -322,7 +324,7 @@ public class Section implements M3GSerializable
     return this.uncompressedLength;
   }
 
-  public ObjectChunk[] getObjects()
+  public ObjectChunk[] getObjectChunks()
   {
     return this.objects;
   }

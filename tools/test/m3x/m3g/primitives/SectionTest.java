@@ -67,8 +67,8 @@ public class SectionTest extends AbstractTestCase
       Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectChunks);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
-      System.out.println(new BigInteger(1, section.getObjects()[0].getData()).toString(16));
-      System.out.println(new BigInteger(1, deserialized.getObjects()[0].getData()).toString(16));
+      System.out.println(new BigInteger(1, section.getObjectChunks()[0].getData()).toString(16));
+      System.out.println(new BigInteger(1, deserialized.getObjectChunks()[0].getData()).toString(16));
       assertTrue(section.equals(deserialized));
       this.doTestAccessors(section, deserialized);
     }

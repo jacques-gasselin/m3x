@@ -82,7 +82,7 @@ public class M3GObject implements M3GSerializable
     Section headerSection = new Section();
     headerSection.deserialize(dataInputStream, M3G_VERSION);
   
-    ObjectChunk objectChunk = headerSection.getObjects()[0];
+    ObjectChunk objectChunk = headerSection.getObjectChunks()[0];
     byte objectType = objectChunk.getObjectType();
     if (objectType != ObjectTypes.OBJECT_HEADER)
     {
