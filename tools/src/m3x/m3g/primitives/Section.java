@@ -39,7 +39,7 @@ public class Section implements M3GSerializable
   public static final byte COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32 = 1;
  
   /**
-   * Either of the previous two enums.
+   * Either of the previous two "enums".
    */
   private byte compressionScheme;
   

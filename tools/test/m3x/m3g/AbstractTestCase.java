@@ -4,16 +4,12 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.objects.Object3D;
 import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import junit.framework.TestCase;
 
-/**
- * A helper class for unit tests.
- * 
- * @author jsaarinen
- */
 public abstract class AbstractTestCase extends TestCase
 {
   /**
@@ -59,7 +55,7 @@ public abstract class AbstractTestCase extends TestCase
           if (clazz1.isArray() && clazz2.isArray())
           {
             // we have two arrays, now we need to find out
-            // if they are primitive type arrays or Object[]
+            // if they are primitive types or Object[]
             if (clazz1.equals(boolean[].class) && clazz2.equals(boolean[].class))
             {
               assertTrue(Arrays.equals((boolean[])result1, (boolean[])result2));
@@ -117,10 +113,7 @@ public abstract class AbstractTestCase extends TestCase
       }
     }
   }
-  /**
-   * Returns a 4x4 matrix filled with random floats in the set [-1, 1].
-   * @return
-   */
+  
   protected Matrix getMatrix()
   {
     float[] matrix = new float[16];
