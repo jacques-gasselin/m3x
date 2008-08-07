@@ -14,7 +14,8 @@ public class MatrixTest extends AbstractTestCase
     {
       object[i] = (byte)i;
     }
-    Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, object);
+    ObjectChunk objectChunk = new ObjectChunk();
+    Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, new ObjectChunk[] {objectChunk});
                                                                     
     try
     {   

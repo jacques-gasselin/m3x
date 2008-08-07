@@ -8,6 +8,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import m3x.m3g.M3GException;
+import m3x.m3g.primitives.Section;
 
 public class M3GObjectTest extends TestCase
 {
@@ -36,11 +37,10 @@ public class M3GObjectTest extends TestCase
     M3GObject object = new M3GObject();
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filename));
     object.deserialize(dataInputStream, "1.0");
-    System.out.println(object.getHeader());
-    for (M3GTypedObject typedObject : object.getObjects())
+    for (Section section : object.getObjects())
     {
-      assertNotNull(typedObject);
-      System.out.println(typedObject);
+      assertNotNull(section);
+      System.out.println(section);
     }
   }
 }

@@ -25,12 +25,11 @@ public class M3GObject implements M3GSerializable
 {
   private final static String M3G_VERSION = "1.0";
   
-  private M3GTypedObject[] m3gObjects;
-  private Header header;
+  private Section[] sections;
   
-  public M3GObject(M3GTypedObject[] objects)
+  public M3GObject(Section[] objects)
   {
-    this.m3gObjects = objects;
+    this.sections = objects;
   }
   
   public M3GObject()
@@ -49,47 +48,50 @@ public class M3GObject implements M3GSerializable
     // total length can be calculated
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream sectionDataOutputStream = new DataOutputStream(baos);
-    for (M3GTypedObject typedObject : this.m3gObjects)
+    for (Section section : this.sections)
     {
-      ObjectChunk objectChunk = M3GSupport.wrapSerializableToObjectChunk(typedObject);
-      objectChunk.serialize(sectionDataOutputStream, M3G_VERSION);
+      section.serialize(sectionDataOutputStream, M3G_VERSION);
     }
     sectionDataOutputStream.close();
-    byte[] sectionByteArray = baos.toByteArray();
-    int totalFileLength = sectionByteArray.length + FileIdentifier.LENGTH + Header.LENGTH;
+    int sectionsLength = sectionDataOutputStream.size();
+    int totalFileLength = FileIdentifier.LENGTH + Header.LENGTH + sectionsLength;
     
     // create header
-    this.header = new Header(false, totalFileLength, totalFileLength);
-    byte[] headerBytes = M3GSupport.objectToBytes(this.header);
-    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, headerBytes);
+    Header header = new Header(false, totalFileLength, totalFileLength);
+    byte[] headerObjectBytes = M3GSupport.objectToBytes(header);
+    ObjectChunk headerObjectChunk = new ObjectChunk(ObjectTypes.OBJECT_HEADER, headerObjectBytes);    
+    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, new ObjectChunk[] { headerObjectChunk });
     
     // serialize header
     headerSection.serialize(dataOutputStream, M3G_VERSION);
     
-    // serialize all the rest objects into the same section, compressed
-    Section objectsSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, sectionByteArray);
-    objectsSection.serialize(dataOutputStream, M3G_VERSION);
+    // serialize Sections
+    for (Section section : this.sections)
+    {
+      section.serialize(dataOutputStream, M3G_VERSION);
+    }
   }
-
+  
   public void deserialize(DataInputStream dataInputStream, String m3gVersion) throws IOException, FileFormatException
   {
+    // read file identifier
     FileIdentifier fileIdentifier = new FileIdentifier();
     fileIdentifier.deserialize(dataInputStream, M3G_VERSION);
 
+    // read header
     Section headerSection = new Section();
     headerSection.deserialize(dataInputStream, M3G_VERSION);
-    byte[] headerObject = headerSection.getObjects();
-    ObjectChunk objectChunk = new ObjectChunk();
-    DataInputStream objectInputStream = new DataInputStream(new ByteArrayInputStream(headerObject));
-    objectChunk.deserialize(objectInputStream, M3G_VERSION);
+  
+    ObjectChunk objectChunk = headerSection.getObjects()[0];
     byte objectType = objectChunk.getObjectType();
     if (objectType != ObjectTypes.OBJECT_HEADER)
     {
       throw new FileFormatException("First section is not object header!");
     }
+    Header header;
     try
     {
-      this.header = (Header)M3GObjectFactory.getInstance(objectType);
+      header = (Header)M3GObjectFactory.getInstance(objectType);
     }
     catch (M3GException e)
     {
@@ -97,47 +99,20 @@ public class M3GObject implements M3GSerializable
     }
     byte[] objectData = objectChunk.getData();
     DataInputStream chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
-    this.header.deserialize(chunkInputStream, M3G_VERSION);
+    header.deserialize(chunkInputStream, M3G_VERSION);
     chunkInputStream.close();
-      
-    List<M3GTypedObject> objects = new ArrayList<M3GTypedObject>();
+    
+    // deserialize other sections
+    List<Section> sections = new ArrayList<Section>();
+    
     while (true)
     {
       try
       {
         // there can be N sections, each containing 1..M M3G objects
-        objectInputStream = loadSection(dataInputStream);
-
-        while (true)
-        {
-          // try to read next object chunk from the Section
-          try
-          {
-            objectChunk = new ObjectChunk();
-            objectChunk.deserialize(objectInputStream, M3G_VERSION);
-            objectType = objectChunk.getObjectType();
-            M3GTypedObject object;
-            try
-            {
-              object = M3GObjectFactory.getInstance(objectType);
-            }
-            catch (M3GException e)
-            {
-              throw new FileFormatException(e);
-            }
-            objectData = objectChunk.getData();
-            chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
-            object.deserialize(chunkInputStream, M3G_VERSION);
-            chunkInputStream.close();
-            objects.add(object);
-          }
-          catch (EOFException e)
-          {
-            // the Section ended, read next section
-            objectInputStream.close();
-            break;
-          }
-        }
+        Section section = new Section();
+        section.deserialize(dataInputStream, M3G_VERSION);
+        sections.add(section);
       }
       catch (EOFException e)
       {
@@ -146,27 +121,12 @@ public class M3GObject implements M3GSerializable
         break;
       }
     }
-    this.m3gObjects = objects.toArray(new M3GTypedObject[objects.size()]);
+    this.sections = sections.toArray(new Section[sections.size()]);
   }
 
-  private DataInputStream loadSection(DataInputStream dataInputStream)
-      throws IOException, FileFormatException
+  public Section[] getObjects()
   {
-    DataInputStream objectInputStream;
-    Section section = new Section();
-    section.deserialize(dataInputStream, M3G_VERSION);
-    objectInputStream = new DataInputStream(new ByteArrayInputStream(section.getObjects()));
-    return objectInputStream;
-  }
-  
-  public Header getHeader()
-  {
-    return this.header;
-  }
-
-  public M3GTypedObject[] getObjects()
-  {
-    return this.m3gObjects;
+    return this.sections;
   }
   
   public static void main(String[] args) throws Exception
@@ -174,10 +134,11 @@ public class M3GObject implements M3GSerializable
     M3GObject object = new M3GObject();
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream("tools/test/data/teapot.m3g"));
     object.deserialize(dataInputStream, M3G_VERSION);
-    System.out.println(object.getHeader());
-    for (M3GTypedObject typedObject : object.getObjects())
+    for (Section section : object.getObjects())
     {
-      System.out.println(typedObject);
+      System.out.println(section);
     }
+    DataOutputStream dataOutputStream = new DataOutputStream(new ByteArrayOutputStream());
+    object.serialize(dataOutputStream, M3G_VERSION);
   }
 }
