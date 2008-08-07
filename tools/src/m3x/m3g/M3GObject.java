@@ -23,7 +23,7 @@ import m3x.m3g.primitives.Section;
  */
 public class M3GObject implements M3GSerializable
 {
-  private final static String M3G_VERSION = "1.0";
+  public final static String M3G_VERSION = "1.0";
   
   private Section[] sections;
   

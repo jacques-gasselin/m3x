@@ -17,6 +17,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GObject;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 
@@ -60,7 +61,16 @@ public class Section implements M3GSerializable
    */
   private ObjectChunk[] objects;
 
+  /**
+   * Adler32 checksum of the section.
+   */
   private int checksum;
+  
+  /**
+   * If compression scheme was zlib, this array will contain the compressed bytes,
+   * otherwise it is null.
+   */
+  private byte[] compressedData;
   
   /**
    * Creates a new Section object from ObjectChunks. A Section
@@ -92,7 +102,10 @@ public class Section implements M3GSerializable
    
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
-      byte[] compressedData = this.serializeAndCompress(null);
+      // this is really redundant, but we need to figure out the length
+      // of the data when it is compressed
+      this.compressedData = this.serializeAndCompress(M3GObject.M3G_VERSION);
+      
       // length of a section is compression scheme, total section length
       // uncompressed length, objects array length (possibly compressed)
       // and Adler32 checksum
@@ -100,6 +113,7 @@ public class Section implements M3GSerializable
     }
     else
     {
+      this.compressedData = null;
       this.totalSectionLength = 1 + 4 + 4 + this.uncompressedLength + 4;      
     }
   }
@@ -254,8 +268,8 @@ public class Section implements M3GSerializable
     }
     else
     {
-      // first serialize and then compress all the serialized objects
-      objectsAsBytes = this.serializeAndCompress(m3gVersion);
+      // use the cached array when objects were compressed in the constructor
+      objectsAsBytes = this.compressedData;
     }
     this.uncompressedLength = 0;
     for (ObjectChunk objectChunk : this.objects)
