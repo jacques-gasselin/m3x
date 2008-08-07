@@ -3,6 +3,7 @@ package m3x.m3g.primitives;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
@@ -84,5 +85,19 @@ public class ObjectChunk implements M3GSerializable
   public byte[] getData()
   {
     return this.data;
+  }
+
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (!(obj instanceof ObjectChunk))
+    {
+      return false;
+    }
+    ObjectChunk another = (ObjectChunk)obj;
+    return this.objectType == another.objectType && Arrays.equals(this.data, another.data);
   }
 }

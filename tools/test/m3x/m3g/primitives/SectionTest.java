@@ -1,6 +1,7 @@
 package m3x.m3g.primitives;
 
 import java.io.*;
+import java.math.BigInteger;
 
 import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GObject;
@@ -12,31 +13,8 @@ import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Section;
 
 public class SectionTest extends AbstractTestCase
-{
+{ 
   public void testSerializationAndDeserialization1()
-  {
-    final int N = 1024;
-    byte[] object = new byte[N];
-    for (int i = 0; i < N; i++)
-    {
-      object[i] = (byte)i;
-    }
-    /*Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, object);
-                                                                    
-    try
-    {   
-      byte[] serialized = M3GSupport.objectToBytes(section);
-      Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
-      this.doTestAccessors(section, deserialized);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }  
-
-  public void testSerializationAndDeserialization2()
   {
     try
     {   
@@ -59,8 +37,7 @@ public class SectionTest extends AbstractTestCase
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
       this.doTestAccessors(section, deserialized);
-    
-      }
+    }
     catch (Exception e)
     {
       e.printStackTrace();
@@ -86,13 +63,14 @@ public class SectionTest extends AbstractTestCase
       {
         objectChunks[i] = M3GSupport.wrapSerializableToObjectChunk(objects[i]);
       }
-      /*
-      Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectChunks, null);
+      
+      Section section = new Section(Section.COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32, objectChunks);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
-      System.out.println(section.getObjects().length);
-      System.out.println(deserialized.getObjects().length);
-      */
+      System.out.println(new BigInteger(1, section.getObjects()[0].getData()).toString(16));
+      System.out.println(new BigInteger(1, deserialized.getObjects()[0].getData()).toString(16));
+      assertTrue(section.equals(deserialized));
+      this.doTestAccessors(section, deserialized);
     }
     catch (Exception e)
     {
