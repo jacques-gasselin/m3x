@@ -8,25 +8,17 @@ public class MatrixTest extends AbstractTestCase
 {
   public void testSerializationAndDeserialization()
   {
-    final int N = 1024;
-    byte[] object = new byte[N];
-    for (int i = 0; i < N; i++)
-    {
-      object[i] = (byte)i;
-    }
-    ObjectChunk objectChunk = new ObjectChunk();
-    /*Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, new ObjectChunk[] {objectChunk});
-                                                                    
+    Matrix matrix = this.getMatrix();                                                              
     try
     {   
-      byte[] serialized = M3GSupport.objectToBytes(section);
-      Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
-      this.doTestAccessors(section, deserialized);
+      byte[] serialized = M3GSupport.objectToBytes(matrix);
+      Matrix deserialized = (Matrix)M3GSupport.bytesToObject(serialized, Matrix.class);
+      this.doTestAccessors(matrix, deserialized);
     }
     catch (Exception e)
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }*/
+    }
   }  
 }

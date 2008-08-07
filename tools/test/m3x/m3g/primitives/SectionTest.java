@@ -54,12 +54,12 @@ public class SectionTest extends AbstractTestCase
       {
         objectChunks[i] = M3GSupport.wrapSerializableToObjectChunk(objects[i]);
       }
-      /*
-      Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objectChunks, null);
+      
+      Section section = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, objectChunks);
       byte[] serialized = M3GSupport.objectToBytes(section);
       Section deserialized = (Section)M3GSupport.bytesToObject(serialized, Section.class);
       this.doTestAccessors(section, deserialized);
-    */
+    
       }
     catch (Exception e)
     {
