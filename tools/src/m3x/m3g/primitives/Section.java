@@ -270,8 +270,16 @@ public class Section implements M3GSerializable
     }
     else
     {
-      // use the cached array when objects were compressed in the constructor
-      objectsAsBytes = this.compressedData;
+      if (this.compressedData == null)
+      {
+        this.compressedData = this.serializeAndCompress(M3GObject.M3G_VERSION);
+        objectsAsBytes = this.compressedData;
+      }
+      else
+      {
+        // use the cached array when objects were compressed in the constructor
+        objectsAsBytes = this.compressedData;
+      }
     }
     this.uncompressedLength = 0;
     for (ObjectChunk objectChunk : this.objects)
