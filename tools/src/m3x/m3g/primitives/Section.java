@@ -270,16 +270,14 @@ public class Section implements M3GSerializable
     }
     else
     {
+      // if the data hasn't been compressed yet, compress it now
+      // otherwise use the cached reference to compressed data
+      // (in this case compression was done in the constructor
       if (this.compressedData == null)
       {
         this.compressedData = this.serializeAndCompress(M3GObject.M3G_VERSION);
-        objectsAsBytes = this.compressedData;
       }
-      else
-      {
-        // use the cached array when objects were compressed in the constructor
-        objectsAsBytes = this.compressedData;
-      }
+      objectsAsBytes = this.compressedData;
     }
     this.uncompressedLength = 0;
     for (ObjectChunk objectChunk : this.objects)
