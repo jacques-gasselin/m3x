@@ -136,7 +136,10 @@ public class M3GObject implements M3GSerializable
     object.deserialize(dataInputStream, M3G_VERSION);
     for (Section section : object.getObjects())
     {
-      System.out.println(section);
+      for (ObjectChunk chunk : section.getObjectChunks())
+      {
+        System.out.println(chunk.getObjectType());
+      }
     }
     DataOutputStream dataOutputStream = new DataOutputStream(new ByteArrayOutputStream());
     object.serialize(dataOutputStream, M3G_VERSION);
