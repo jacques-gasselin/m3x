@@ -26,7 +26,7 @@ public class FileIdentifier implements M3GSerializable
     0x0D, 0x0A, 0x1A, 0x0A 
   };
 
-  public static final int LENGTH = 12;
+  public static final int LENGTH = FILE_IDENTIFIER.length;
 
   private byte[] fileIdentifier;
   

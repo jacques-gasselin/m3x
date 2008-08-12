@@ -97,15 +97,14 @@ public class Section implements M3GSerializable
     this.uncompressedLength = 0;
     for (ObjectChunk objectChunk : objects)
     {
-      this.uncompressedLength += objectChunk.getLength();
+      this.uncompressedLength += objectChunk.getTotalLength();
     }
     
     this.objects = objects;
    
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
-      // this is really redundant, but we need to figure out the length
-      // of the data when it is compressed
+      // compress
       this.compressedData = this.serializeAndCompress(M3GObject.M3G_VERSION);
       
       // length of a section is compression scheme, total section length
@@ -196,9 +195,17 @@ public class Section implements M3GSerializable
       byte[] compressedObjects = new byte[compressedLength];
       dataInputStream.read(compressedObjects);
       this.calculateChecksum(compressedObjects);
-      InflaterInputStream iis = new InflaterInputStream(new ByteArrayInputStream(compressedObjects));
-      iis.read(objectsAsBytes);
-      iis.close();
+      Inflater inflater = new Inflater();
+      inflater.setInput(compressedObjects);
+      try
+      {
+        inflater.inflate(objectsAsBytes);
+      }
+      catch (DataFormatException e)
+      {
+        throw new IOException(e);
+      }
+      inflater.end();
     }
     else
     {
@@ -282,7 +289,7 @@ public class Section implements M3GSerializable
     this.uncompressedLength = 0;
     for (ObjectChunk objectChunk : this.objects)
     {
-      this.uncompressedLength += objectChunk.getLength();
+      this.uncompressedLength += objectChunk.getTotalLength();
     }
     M3GSupport.writeInt(dataOutputStream, this.uncompressedLength);
     dataOutputStream.write(objectsAsBytes);

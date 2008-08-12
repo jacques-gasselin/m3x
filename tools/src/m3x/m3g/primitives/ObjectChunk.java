@@ -51,6 +51,7 @@ public class ObjectChunk implements M3GSerializable
     this.objectType = dataInputStream.readByte();
     int length = M3GSupport.readInt(dataInputStream);
     this.data = new byte[length];
+    System.out.print(this.objectType + "," + length + ",");
     dataInputStream.read(this.data);
   }
 
@@ -62,6 +63,7 @@ public class ObjectChunk implements M3GSerializable
   {
     dataOutputStream.write(this.objectType);
     M3GSupport.writeInt(dataOutputStream, this.data.length);
+    System.out.print(this.objectType + "," + this.data.length + ",");
     dataOutputStream.write(this.data);
   }
 
@@ -76,12 +78,17 @@ public class ObjectChunk implements M3GSerializable
    * @return
    *  The length in bytes.
    */
-  public int getLength()
+  public int getTotalLength()
   {
     // object length serialized is object type + object data length integer + objects
     return 1 + 4 + this.data.length;
   }
 
+  public int getLength()
+  {
+    return this.data != null ? this.data.length : 0;
+  }
+  
   public byte[] getData()
   {
     return this.data;

@@ -52,18 +52,10 @@ public class M3GObject implements M3GSerializable
     {
       section.serialize(sectionDataOutputStream, M3G_VERSION);
     }
+    System.out.println();
     sectionDataOutputStream.close();
     int sectionsLength = sectionDataOutputStream.size();
-    int totalFileLength = FileIdentifier.LENGTH + Header.LENGTH + sectionsLength;
-    
-    // create header
-    Header header = new Header(false, totalFileLength, totalFileLength);
-    byte[] headerObjectBytes = M3GSupport.objectToBytes(header);
-    ObjectChunk headerObjectChunk = new ObjectChunk(ObjectTypes.OBJECT_HEADER, headerObjectBytes);    
-    Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, new ObjectChunk[] { headerObjectChunk });
-    
-    // serialize header
-    headerSection.serialize(dataOutputStream, M3G_VERSION);
+    int totalFileLength = FileIdentifier.LENGTH + sectionsLength;
     
     // serialize Sections
     for (Section section : this.sections)
@@ -101,10 +93,12 @@ public class M3GObject implements M3GSerializable
     DataInputStream chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
     header.deserialize(chunkInputStream, M3G_VERSION);
     chunkInputStream.close();
-    
-    // deserialize other sections
+
     List<Section> sections = new ArrayList<Section>();
+
+    sections.add(headerSection);
     
+    // deserialize other sections    
     while (true)
     {
       try

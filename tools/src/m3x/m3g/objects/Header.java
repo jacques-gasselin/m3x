@@ -20,11 +20,6 @@ public class Header implements M3GTypedObject
   private final static byte[] VERSION = {1, 0};
   
   private static final String AUTHORING_INFORMATION = "M3G <-> M3X converter";
-  public static final int LENGTH;
-  static
-  {
-    LENGTH = 2 + AUTHORING_INFORMATION.length() + 1 + 4 + 4;
-  }
   
   private boolean hasExternalReferences;
   private int totalFileSize;
@@ -42,6 +37,7 @@ public class Header implements M3GTypedObject
   public Header()
   {
     super();
+    this.authoringInformation = AUTHORING_INFORMATION;
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
@@ -87,7 +83,7 @@ public class Header implements M3GTypedObject
 
   public String getAuthoringInformation()
   {
-    return this.AUTHORING_INFORMATION;
+    return this.authoringInformation;
   }
 
   public byte getObjectType()
