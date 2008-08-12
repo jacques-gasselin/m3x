@@ -19,8 +19,6 @@ public class Header implements M3GTypedObject
 {  
   private final static byte[] VERSION = {1, 0};
   
-  private static final String AUTHORING_INFORMATION = "M3G <-> M3X converter";
-  
   private boolean hasExternalReferences;
   private int totalFileSize;
   private int approximateContentSize;
