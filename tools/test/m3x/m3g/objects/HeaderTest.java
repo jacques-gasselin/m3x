@@ -9,7 +9,7 @@ public class HeaderTest extends AbstractTestCase
   {
     try
     {
-      Header serializedHeader = new Header(false, 666, 666);
+      Header serializedHeader = new Header(false, 666, 666, "evil");
       byte[] serialized = M3GSupport.objectToBytes(serializedHeader);
       Header deserializedHeader = (Header)M3GSupport.bytesToObject(serialized, Header.class);
       this.doTestAccessors(serializedHeader, deserializedHeader);

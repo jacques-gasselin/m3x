@@ -27,17 +27,17 @@ public class Header implements M3GTypedObject
   private String authoringInformation;
   
   public Header(boolean hasExternalReferences, int totalFileSize,
-      int approximateContentSize)
+      int approximateContentSize, String authoringInformation)
   {
     this.hasExternalReferences = hasExternalReferences;
     this.totalFileSize = totalFileSize;
     this.approximateContentSize = approximateContentSize;
+    this.authoringInformation = authoringInformation;
   }
 
   public Header()
   {
     super();
-    this.authoringInformation = AUTHORING_INFORMATION;
   }
 
   public void deserialize(DataInputStream dataInputStream, String m3gVersion)
@@ -62,7 +62,7 @@ public class Header implements M3GTypedObject
     dataOutputStream.writeBoolean(this.hasExternalReferences);
     M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
     M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
-    dataOutputStream.write(this.AUTHORING_INFORMATION.getBytes("UTF-8"));
+    dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
     dataOutputStream.write('\0');
   }
 

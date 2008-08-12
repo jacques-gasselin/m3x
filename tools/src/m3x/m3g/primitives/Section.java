@@ -192,14 +192,18 @@ public class Section implements M3GSerializable
     if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
     {
       int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
-      byte[] compressedObjects = new byte[compressedLength];
-      dataInputStream.read(compressedObjects);
-      this.calculateChecksum(compressedObjects);
+      this.compressedData = new byte[compressedLength];
+      dataInputStream.read(this.compressedData);
+      this.calculateChecksum(this.compressedData);
       Inflater inflater = new Inflater();
-      inflater.setInput(compressedObjects);
+      inflater.setInput(this.compressedData);
       try
       {
-        inflater.inflate(objectsAsBytes);
+        int n = inflater.inflate(objectsAsBytes);
+        if (n != objectsAsBytes.length)
+        {
+          throw new IOException("Decompression failed!");
+        }
       }
       catch (DataFormatException e)
       {

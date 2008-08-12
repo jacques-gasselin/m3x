@@ -10,7 +10,7 @@ public class M3GLoaderTest extends TestCase
 {
   private final static String[] dataFiles =
   {
-    "tools/test/data/helloworld.m3g",
+    //"tools/test/data/helloworld.m3g",
     "tools/test/data/teapot.m3g",
     "tools/test/data/nokia_on_ice.m3g",
     "tools/test/data/otokka_jump2.m3g",
@@ -28,18 +28,15 @@ public class M3GLoaderTest extends TestCase
   {
     try
     {
-      System.out.println();
       FileInputStream fis = new FileInputStream(fileName);
       int length = fis.available();
       byte[] fileBytes = new byte[length];
       fis.read(fileBytes);
       fis.close();
       M3GObject object1 = M3GLoader.load(fileBytes);
-      System.out.println();
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       M3GLoader.save(baos, object1);
       byte[] serializedBytes = baos.toByteArray();
-      System.out.println();
       assertTrue(Arrays.equals(fileBytes, serializedBytes));
     }
     catch (Exception e)
