@@ -10,7 +10,7 @@ public class M3GLoaderTest extends TestCase
 {
   private final static String[] dataFiles =
   {
-    //"tools/test/data/helloworld.m3g",
+    "tools/test/data/helloworld.m3g",
     "tools/test/data/teapot.m3g",
     "tools/test/data/nokia_on_ice.m3g",
     "tools/test/data/otokka_jump2.m3g",
@@ -38,6 +38,8 @@ public class M3GLoaderTest extends TestCase
       M3GLoader.save(baos, object1);
       byte[] serializedBytes = baos.toByteArray();
       assertTrue(Arrays.equals(fileBytes, serializedBytes));
+      M3GObject object2 = M3GLoader.load(serializedBytes);
+      assertTrue(object1.equals(object2));
     }
     catch (Exception e)
     {

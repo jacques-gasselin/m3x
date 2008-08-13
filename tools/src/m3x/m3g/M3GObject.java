@@ -7,9 +7,8 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import m3x.m3g.objects.*;
@@ -35,6 +34,20 @@ public class M3GObject implements M3GSerializable
   public M3GObject()
   {
     super();
+  }
+
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+    {
+      return true;
+    }
+    if (!(obj instanceof M3GObject))
+    {
+      return false;
+    }
+    M3GObject another = (M3GObject)obj;
+    return Arrays.equals(this.sections, another.sections);
   }
 
   public void serialize(DataOutputStream dataOutputStream, String version)
