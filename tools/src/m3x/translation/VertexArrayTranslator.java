@@ -9,7 +9,6 @@ import m3x.xml.Object3DType;
 
 public class VertexArrayTranslator extends AbstractTranslator
 {
-
   public void set(Object3DType object, Deserialiser deserialiser)
   {
     super.set((m3x.xml.VertexArray) object, deserialiser);
@@ -24,9 +23,9 @@ public class VertexArrayTranslator extends AbstractTranslator
   {
     if (this.m3gObject == null)
     {
-      m3x.xml.VertexArray va = (m3x.xml.VertexArray) m3xObject;
+      m3x.xml.VertexArray va = (m3x.xml.VertexArray)this.m3xObject;
       // FIXME: currently only 1 animationtrack?? Spec says there can be 0..n?
-      ObjectIndex[] animationTracks = null;
+      ObjectIndex[] animationTracks;
       if (va.getAnimationTrack() != null)
       {
         animationTracks = new ObjectIndex[1];
@@ -55,14 +54,14 @@ public class VertexArrayTranslator extends AbstractTranslator
           short[] shortComponents = new short[ints.size()];
           for (int i = 0; i < ints.size(); i++)
           {
-            shortComponents[i] = ints.get(i).byteValue();
+            shortComponents[i] = ints.get(i).shortValue();
           }
-          m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
+          this.m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
               userParameters, shortComponents, false);
       }
     }
     // else translation is done already
-    return m3gObject;
+    return this.m3gObject;
   }
 
   public Object3DType toXML()
