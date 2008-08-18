@@ -22,18 +22,21 @@ import m3x.xml.VertexArray;
 
 public class M3GTranslator
 {
-  
+
   private HashMap<Class, Translator> translators = new HashMap<Class, Translator>();
-  
-  public M3GTranslator(){
+
+  public M3GTranslator()
+  {
     translators.put(VertexArray.class, new VertexArrayTranslator());
   }
-  
-  public M3G toXML(M3GObject m3g){
+
+  public M3G toXML(M3GObject m3g)
+  {
     return null;
   }
-  
-  public M3GObject toM3G(M3G xml, Deserialiser deserializer) throws IOException{
+
+  public M3GObject toM3G(M3G xml, Deserialiser deserializer) throws IOException
+  {
     List<SectionType> sections = xml.getSection();
     Section[] m3gSections = new Section[sections.size()];
     for (SectionType sectionType : sections)
@@ -48,8 +51,8 @@ public class M3GTranslator
         Object3D object3d = translator.toM3G();
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         object3d.serialize(new DataOutputStream(bout), "1.0");
-        m3gObjects[i] = new ObjectChunk(((M3GTypedObject)object3d).getObjectType(),
-            bout.toByteArray());
+        m3gObjects[i] = new ObjectChunk(((M3GTypedObject) object3d)
+            .getObjectType(), bout.toByteArray());
       }
       Section section = new Section(
           Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, m3gObjects);
