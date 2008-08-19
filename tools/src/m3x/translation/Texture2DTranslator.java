@@ -8,13 +8,23 @@ import javax.xml.bind.JAXBContext;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
+import m3x.m3g.objects.Texture2D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
+import m3x.xml.Texture2DBlendModeType;
+import m3x.xml.Texture2DWrapModeType;
+import m3x.xml.TextureFilterModeType;
+import m3x.xml.TextureMipmapModeType;
 
+/**
+ * Translator for Texture2D object.
+ * 
+ * @author jsaarinen
+ */
 public class Texture2DTranslator extends AbstractTranslator
 {
 
@@ -63,12 +73,94 @@ public class Texture2DTranslator extends AbstractTranslator
           orientationAxis,
           new ObjectIndex(textureIndex),
           blendColor,
-          texture.getBlending().ordinal(),
-          texture.getWrappingS().ordinal(),
-          texture.getWrappingT().ordinal(),
-          texture.getLevelFilter().ordinal(),
-          texture.getImageFilter().ordinal());
+          toM3G(texture.getBlending()),
+          toM3G(texture.getWrappingS()),
+          toM3G(texture.getWrappingT()),
+          toM3G(texture.getLevelFilter()),
+          toM3G(texture.getImageFilter()));
     return this.m3gObject;
+  }
+
+  private int toM3G(TextureFilterModeType imageFilter)
+  {
+    if (imageFilter.toString().equals(TextureFilterModeType.ANISOTROPIC))
+    {
+      // TODO: what to return here?
+      //return Texture2D.
+    }
+    if (imageFilter.toString().equals(TextureFilterModeType.LINEAR))
+    {
+      return Texture2D.FILTER_LINEAR;
+    }
+    if (imageFilter.toString().equals(TextureFilterModeType.NEAREST))
+    {
+      return Texture2D.FILTER_NEAREST;
+    }
+    throw new IllegalArgumentException(imageFilter.toString());
+  }
+
+  private int toM3G(TextureMipmapModeType levelFilter)
+  {
+    if (levelFilter.toString().equals(TextureMipmapModeType.BASE_LEVEL))
+    {
+      return Texture2D.FILTER_BASE_LEVEL;
+    }
+    if (levelFilter.toString().equals(TextureMipmapModeType.LINEAR))
+    {
+      return Texture2D.FILTER_LINEAR;
+    }
+    if (levelFilter.toString().equals(TextureMipmapModeType.NEAREST))
+    {
+      return Texture2D.FILTER_NEAREST;
+    }
+    throw new IllegalArgumentException(levelFilter.toString());
+  }
+
+  private int toM3G(Texture2DWrapModeType wrapping)
+  {
+    if (wrapping.toString().equals(Texture2DWrapModeType.CLAMP))
+    {
+      return Texture2D.WRAP_CLAMP;
+    }
+    if (wrapping.toString().equals(Texture2DWrapModeType.MIRROR))
+    {
+      // TODO: what to return here? Is this M3G 2.0 feature?
+      //return Texture2D.WRAP_MIRROR;
+    }    
+    if (wrapping.toString().equals(Texture2DWrapModeType.REPEAT))
+    {
+      return Texture2D.WRAP_REPEAT;
+    }    
+    throw new IllegalArgumentException(wrapping.toString());
+  }
+
+  private int toM3G(Texture2DBlendModeType blending)
+  {
+    if (blending.toString().equals(Texture2DBlendModeType.ADD))
+    {
+      return Texture2D.FUNC_ADD;
+    }
+    if (blending.toString().equals(Texture2DBlendModeType.BLEND))
+    {
+      return Texture2D.FUNC_BLEND;
+    }
+    if (blending.toString().equals(Texture2DBlendModeType.DECAL))
+    {
+      return Texture2D.FUNC_DECAL;
+    }
+    if (blending.toString().equals(Texture2DBlendModeType.DOT_3))
+    {
+      // TODO: what to return here?
+    }
+    if (blending.toString().equals(Texture2DBlendModeType.MODULATE))
+    {
+      return Texture2D.FUNC_MODULATE;
+    }
+    if (blending.toString().equals(Texture2DBlendModeType.REPLACE))
+    {
+      return Texture2D.FUNC_REPLACE;
+    }
+    throw new IllegalArgumentException(blending.toString());
   }
 
   public Object3DType toXML()
