@@ -47,7 +47,7 @@ public class M3GTranslator
       for (Object3DType object : m3xObjects)
       {
         Translator translator = translators.get(object.getClass());
-        translator.set(object, deserializer);
+        translator.set(object, null, deserializer);
         Object3D object3d = translator.toM3G();
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         object3d.serialize(new DataOutputStream(bout), "1.0");
