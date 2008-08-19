@@ -60,10 +60,7 @@ public class Texture2DTranslator extends AbstractTranslator
     z = texture.getOrientation().getValue().get(2).floatValue();    
     Vector3D orientationAxis = new Vector3D(x, y, z);
     
-    byte r = texture.getBlendColor().get(0).byteValue();
-    byte g = texture.getBlendColor().get(1).byteValue();
-    byte b = texture.getBlendColor().get(2).byteValue();
-    ColorRGB blendColor = new ColorRGB(r, g, b);
+    ColorRGB blendColor = this.translateColorRGB(texture.getBlendColor());
     
     this.m3gObject = new m3x.m3g.objects.Texture2D(animationTracks, 
           userParameters,
