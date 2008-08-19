@@ -679,7 +679,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice>
-                <xs:element ref="AnimationTrack">
+                <xs:element ref="AnimationTrack" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>
                             An object can have any number of animation tracks targeting it.
