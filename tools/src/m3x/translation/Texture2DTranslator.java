@@ -84,6 +84,7 @@ public class Texture2DTranslator extends AbstractTranslator
     {
       // TODO: what to return here?
       //return Texture2D.
+      throw new IllegalArgumentException(imageFilter.toString());
     }
     if (imageFilter.toString().equals(TextureFilterModeType.LINEAR))
     {
@@ -123,6 +124,7 @@ public class Texture2DTranslator extends AbstractTranslator
     {
       // TODO: what to return here? Is this M3G 2.0 feature?
       //return Texture2D.WRAP_MIRROR;
+      throw new IllegalArgumentException(wrapping.toString());
     }    
     if (wrapping.toString().equals(Texture2DWrapModeType.REPEAT))
     {
@@ -148,6 +150,7 @@ public class Texture2DTranslator extends AbstractTranslator
     if (blending.toString().equals(Texture2DBlendModeType.DOT_3))
     {
       // TODO: what to return here?
+      throw new IllegalArgumentException(blending.toString());
     }
     if (blending.toString().equals(Texture2DBlendModeType.MODULATE))
     {
