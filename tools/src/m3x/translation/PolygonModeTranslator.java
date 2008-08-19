@@ -32,7 +32,6 @@ public class PolygonModeTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-  
     try
     {
       this.m3gObject = new m3x.m3g.objects.PolygonMode(animationTracks, 
