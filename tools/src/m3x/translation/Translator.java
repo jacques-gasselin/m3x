@@ -1,5 +1,7 @@
 package m3x.translation;
 
+import m3x.xml.M3G;
+
 /**
  * 
  * @author jgasseli
@@ -12,10 +14,12 @@ public interface Translator
    * 
    * @param object
    *          - the object to set from
+   * @param root
+   *          - the M3G root object
    * @param deserialiser
    *          - the deserialiser used to resolve references.
    */
-  public void set(m3x.xml.Object3DType object, m3x.xml.Deserialiser deserialiser);
+  public void set(m3x.xml.Object3DType object, M3G root, m3x.xml.Deserialiser deserialiser);
 
   /**
    * Sets the values from an M3G object May throw java.lang.ClassCastException -
