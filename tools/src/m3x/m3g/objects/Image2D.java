@@ -50,7 +50,7 @@ public class Image2D extends Object3D implements M3GTypedObject
   }
 
   public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
-      byte format, int width, int height) throws FileFormatException
+      int format, int width, int height) throws FileFormatException
   {
     super(animationTracks, userParameters);
     validateFormat(format);
