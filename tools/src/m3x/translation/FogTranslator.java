@@ -50,6 +50,7 @@ public class FogTranslator extends AbstractTranslator
     {
       throw new IllegalArgumentException("exp^2 fog is not supported by M3G 1.0.");
     }  
+    return this.m3gObject;
   }
   
   public Object3DType toXML()
