@@ -8,6 +8,7 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
+import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 
@@ -58,6 +59,20 @@ public class Camera extends Node implements M3GTypedObject
 
   public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
       Matrix transform, boolean enableRendering, boolean enablePicking,
+      byte alphaFactor, int scope, Matrix projectionMatrix) throws FileFormatException
+  {
+    super(animationTracks, userParameters, transform, enableRendering,
+        enablePicking, alphaFactor, scope);
+    this.projectionType = PROJECTION_TYPE_GENERIC;
+    this.projectionMatrix = projectionMatrix;
+    this.fovy = 0.0f;
+    this.aspectRatio = 0.0f;
+    this.near = 0.0f;
+    this.far = 0.0f;
+  }
+ 
+  public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+      Matrix transform, boolean enableRendering, boolean enablePicking,
       byte alphaFactor, int scope, int projectionType, float fovy,
       float aspectRatio, float near, float far) throws FileFormatException
   {
@@ -74,6 +89,7 @@ public class Camera extends Node implements M3GTypedObject
     this.near = near;
     this.far = far;
   }
+  
   
   public Camera()
   {
