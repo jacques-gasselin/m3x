@@ -1,0 +1,27 @@
+\documentclass[a4paper,twoside]{report}
+
+%setup the page layout
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[CE]{M3X}
+\fancyhead[CO]{\today}
+\fancyfoot[LE,RO]{\thepage}
+
+%setup the title page
+\title{M3X \\ Technical Design Document}
+\author{Jacques Gasselin de Richebourg\\
+   \texttt{jacques.gasselin@ironmonkeystudios.com}
+   }
+\date{\today}
+
+%start the document
+\begin{document}
+\maketitle
+
+\include{chapters/abstract}
+
+\include{chapters/api}
+
+
+\end{document}
