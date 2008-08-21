@@ -1,4 +1,4 @@
-\documentclass[a4paper,twoside]{report}
+\documentclass[a4paper,twoside]{article}
 
 %setup the page layout
 \usepackage{fancyhdr}
@@ -9,9 +9,9 @@
 \fancyfoot[LE,RO]{\thepage}
 
 %setup the title page
-\title{M3X \\ Technical Design Document}
-\author{Jacques Gasselin de Richebourg\\
-   \texttt{jacques.gasselin@ironmonkeystudios.com}
+\title{M3X \\ Implementation notes}
+\author{Jyrki Saarinen\\
+   \texttt{jyrki.saarinen@ardites.com}
    }
 \date{\today}
 
@@ -19,9 +19,52 @@
 \begin{document}
 \maketitle
 
-\include{chapters/abstract}
+\section{Introduction}
 
-\include{chapters/api}
+This document is meant mainly for the M3X project developers. 
+Currently (\date{\today}) it is briefly discussed how things 
+have been implemented, and what is missing.
 
+\section{The m3x.m3g package}
+
+This package follows the class hierarchy specified in the M3G 1.0 specification.
+
+\texttt{M3GObject}, \texttt{Section} classes and the abstract \texttt{Object3D} 
+class are the most important pieces. All concrete M3G classes are derived
+from the \texttt{Object3D}, as it is modeled in the specification.
+
+Between the \texttt{Section} and \texttt{Object3D} classes there is an
+\texttt{ObjectChunk} class 'layer'. The class serves as a data container only.
+The rationale between this design decision was that having the responsibilites
+of \texttt{ObjectChunk} in \texttt{Object3D} would have meant major amount
+of bookkeeping in \texttt{Object3D} class. Now the bookkeeping is done by the
+\texttt{java.io} streams instead of manual bookkeeping.
+Also this decision follows the M3G specification nicely.
+
+All M3G classes implement the interface \texttt{M3GSerializable}. This interface
+specifies serialization and deserialization to and from streams. Concrete classes
+implement \texttt{M3GTypedObject} which is derived from \texttt{M3GSerializable}.
+
+\subsection{What is implemented}
+
+All M3G 1.0 classes are implemented following the specification. There are
+also JUnit test cases for every M3G class, and an end-to-end test (from M3G object
+to serialized form and back).
+
+\subsection{What is to be done}
+
+Everything should be done by now (\date{\today}).
+
+\section{The m3x.translation package}
+
+\subsection{What is implemented}
+
+Translation from M3X to M3G is implemented for all classes.
+
+\subsection{What is to be done}
+
+All M3X to M3G translation classes do not have a JUnit test cases.
+All M3G to M3X translation methods are missing from the translator classes
+(returning \texttt{null}).
 
 \end{document}
