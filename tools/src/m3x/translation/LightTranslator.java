@@ -1,23 +1,16 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Light;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.LightType;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class LightTranslator extends AbstractTranslator
 {
-
   public Object3D toM3G()
   {
     if (this.m3gObject != null)
@@ -44,7 +37,7 @@ public class LightTranslator extends AbstractTranslator
           light.getAttenuationConstant().floatValue(),
           light.getAttenuationLinear().floatValue(),
           light.getAttenuationQuadratic().floatValue(),
-          this.translateColorRGB(light.getColor()),
+          AbstractTranslator.translateColorRGB(light.getColor()),
           toM3G(light.getMode()),
           light.getIntensity().floatValue(),
           light.getSpotAngle().floatValue(),

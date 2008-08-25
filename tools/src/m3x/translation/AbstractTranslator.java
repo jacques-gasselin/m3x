@@ -10,6 +10,7 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.AnimationTrack;
 import m3x.xml.Deserialiser;
+import m3x.xml.InstanceType;
 import m3x.xml.M3G;
 import m3x.xml.Object3DType;
 import m3x.xml.SectionType;
@@ -68,7 +69,7 @@ public abstract class AbstractTranslator implements Translator
     return animationTracks;
   }
 
-  protected Matrix getM3GTransformMatrix(m3x.xml.TransformableType transformable)
+  protected static Matrix getM3GTransformMatrix(m3x.xml.TransformableType transformable)
   {
     List<Float> list = transformable.getTransform();
     float[] matrixData = new float[16];
@@ -81,7 +82,7 @@ public abstract class AbstractTranslator implements Translator
     return transform;
   }
 
-  protected ColorRGB translateColorRGB(List<Short> components)
+  protected static ColorRGB translateColorRGB(List<Short> components)
   {
     byte r = components.get(0).byteValue();
     byte g = components.get(1).byteValue();
@@ -89,7 +90,7 @@ public abstract class AbstractTranslator implements Translator
     return new ColorRGB(r, g, b);
   }
 
-  protected ColorRGBA translateColorRGBA(List<Short> components)
+  protected static ColorRGBA translateColorRGBA(List<Short> components)
   {
     byte r = components.get(0).byteValue();
     byte g = components.get(1).byteValue();
@@ -104,20 +105,20 @@ public abstract class AbstractTranslator implements Translator
    * @param root
    *  Root of the M3X document.
    *  
-   * @param toBeFound
-   *  ID of the element to be found.
+   * @param searchKey
+   *  Element to be found
    *  
    * @return
    *  Index of the found Object3D inside Sections list or -1 if not found. 
    */
-  protected static int searchObjectIndex(M3G root, Object toBeFound)
+  protected static int searchObjectIndex(M3G root, Object searchKey)
   {
     int index = 1;
     for (SectionType section : root.getSection())
     {
       for (Object3DType object : section.getObjects())
       {
-        if (object.equals(toBeFound))
+        if (object.equals(searchKey))
         {
           return index;
         }

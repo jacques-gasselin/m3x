@@ -1,17 +1,9 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-
-import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.FogEquationType;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class FogTranslator extends AbstractTranslator
@@ -33,7 +25,7 @@ public class FogTranslator extends AbstractTranslator
     {
       this.m3gObject = new m3x.m3g.objects.Fog(animationTracks, 
           userParameters, 
-          this.translateColorRGB(fog.getColor()),
+          AbstractTranslator.translateColorRGB(fog.getColor()),
           fog.getDensity().floatValue());
     }
     else
@@ -41,7 +33,7 @@ public class FogTranslator extends AbstractTranslator
     {
       this.m3gObject = new m3x.m3g.objects.Fog(animationTracks, 
           userParameters, 
-          this.translateColorRGB(fog.getColor()),
+          AbstractTranslator.translateColorRGB(fog.getColor()),
           fog.getNear().floatValue(),
           fog.getFar().floatValue());
     }

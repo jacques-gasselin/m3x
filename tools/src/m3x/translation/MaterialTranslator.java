@@ -1,17 +1,10 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-
-import javax.xml.bind.JAXBContext;
-
-import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class MaterialTranslator extends AbstractTranslator
@@ -29,10 +22,10 @@ public class MaterialTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    ColorRGB ambient = this.translateColorRGB(material.getAmbientColor());
-    ColorRGBA diffuse = this.translateColorRGBA(material.getDiffuseColor());
-    ColorRGB emissive = this.translateColorRGB(material.getEmissiveColor());
-    ColorRGB specular = this.translateColorRGB(material.getSpecularColor());
+    ColorRGB ambient = translateColorRGB(material.getAmbientColor());
+    ColorRGBA diffuse = translateColorRGBA(material.getDiffuseColor());
+    ColorRGB emissive = translateColorRGB(material.getEmissiveColor());
+    ColorRGB specular = translateColorRGB(material.getSpecularColor());
 
     this.m3gObject = new m3x.m3g.objects.Material(animationTracks, 
           userParameters, 

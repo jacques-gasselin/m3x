@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import m3x.m3g.primitives.ObjectChunk;
 
 
@@ -237,4 +236,24 @@ public final class M3GSupport
     ObjectChunk objectChunk = new ObjectChunk(serializable.getObjectType(), objectBytes);
     return objectChunk;
   }
+  /*
+  public static ObjectIndex[] getDepthFirstOrdering(Object3D root)
+  {
+    List<ObjectIndex> referenceArray = new ArrayList<ObjectIndex>();
+    recurse(root, 1, referenceArray);
+    return referenceArray.toArray(new ObjectIndex[referenceArray.size()]);
+  }
+  
+  private static void recurse(Object3D node, int index, List<ObjectIndex> referenceArray)
+  {
+    Object3D[] children = node.getChildren();
+    if (children != null)
+    {
+      for (Object3D child : children)
+      {
+        recurse(child, ++index, referenceArray);
+      }
+    }
+    referenceArray.add(new ObjectIndex(index));
+  }*/
 }

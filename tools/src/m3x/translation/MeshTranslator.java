@@ -35,8 +35,8 @@ public class MeshTranslator extends AbstractTranslator
     SubMesh[] subMeshes = new SubMesh[list.size()];
     for (int i = 0; i < subMeshes.length; i++)
     {
-      int indexBufferIndex = searchObjectIndex(this.m3xRoot, mesh.getSubmesh().get(i).getTriangleStripArrayInstance());
-      int appearanceIndex = searchObjectIndex(this.m3xRoot, mesh.getSubmesh().get(i).getAppearanceInstance());
+      int indexBufferIndex = searchObjectIndex(this.m3xRoot, mesh.getSubmesh().get(i).getTriangleStripArrayInstance().getRef());
+      int appearanceIndex = searchObjectIndex(this.m3xRoot, mesh.getSubmesh().get(i).getAppearanceInstance().getRef());
       
       SubMesh subMesh = new SubMesh(new ObjectIndex(indexBufferIndex), new ObjectIndex(appearanceIndex));
       subMeshes[i] = subMesh;

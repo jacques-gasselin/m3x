@@ -4,8 +4,6 @@ package m3x.translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.Matrix;
@@ -34,8 +32,7 @@ public class GroupTranslator extends AbstractTranslator
     List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
     for (NodeType node : childNodes)
     {
-      Object toBeFound = node.getId();
-      int index = searchObjectIndex(this.m3xRoot, toBeFound);
+      int index = searchObjectIndex(this.m3xRoot, node);
       childObjectIndices.add(new ObjectIndex(index));
     }
     ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);

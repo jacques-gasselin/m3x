@@ -1,16 +1,9 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class AnimationTrackTranslator extends AbstractTranslator
@@ -28,8 +21,8 @@ public class AnimationTrackTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    int keyframeSequence = searchObjectIndex(this.m3xRoot, at.getKeyframeSequenceInstance());
-    int animationController = searchObjectIndex(this.m3xRoot, at.getAnimationControllerInstance());
+    int keyframeSequence = searchObjectIndex(this.m3xRoot, at.getKeyframeSequenceInstance().getRef());
+    int animationController = searchObjectIndex(this.m3xRoot, at.getAnimationControllerInstance().getRef());
     try
     {
       this.m3gObject = new m3x.m3g.objects.AnimationTrack(animationTracks, 

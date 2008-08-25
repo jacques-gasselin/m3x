@@ -11,7 +11,7 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
-public class WorldTranslator extends AbstractTranslator
+public class VertexBufferTranslator extends AbstractTranslator
 {
 
   public Object3D toM3G()
@@ -32,13 +32,12 @@ public class WorldTranslator extends AbstractTranslator
     List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
     for (NodeType node : childNodes)
     {
-      Object toBeFound = node.getId();
-      int index = AbstractTranslator.searchObjectIndex(this.m3xRoot, toBeFound);
+      int index = searchObjectIndex(this.m3xRoot, node);
       childObjectIndices.add(new ObjectIndex(index));
     }
     ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-    int activeCameraIndex = AbstractTranslator.searchObjectIndex(this.m3xRoot, world.getActiveCamera());
-    int backgroundIndex = AbstractTranslator.searchObjectIndex(this.m3xRoot, world.getBackground());
+    int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
+    int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
     
     try
     {

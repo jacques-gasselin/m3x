@@ -1,19 +1,11 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-
-import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.objects.Texture2D;
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 import m3x.xml.Texture2DBlendModeType;
 import m3x.xml.Texture2DWrapModeType;
@@ -40,7 +32,7 @@ public class Texture2DTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    int textureIndex = this.searchObjectIndex(this.m3xRoot, texture.getImage2D().getId());
+    int textureIndex = searchObjectIndex(this.m3xRoot, texture.getImage2DInstance().getRef());
     
     float x, y, z;
     x = texture.getTranslation().get(0).floatValue();
@@ -60,7 +52,7 @@ public class Texture2DTranslator extends AbstractTranslator
     z = texture.getOrientation().getValue().get(2).floatValue();    
     Vector3D orientationAxis = new Vector3D(x, y, z);
     
-    ColorRGB blendColor = this.translateColorRGB(texture.getBlendColor());
+    ColorRGB blendColor = AbstractTranslator.translateColorRGB(texture.getBlendColor());
     
     this.m3gObject = new m3x.m3g.objects.Texture2D(animationTracks, 
           userParameters,

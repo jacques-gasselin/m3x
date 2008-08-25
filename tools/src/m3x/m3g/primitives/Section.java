@@ -11,11 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GObject;
 import m3x.m3g.M3GSerializable;

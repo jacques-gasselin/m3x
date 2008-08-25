@@ -1,11 +1,8 @@
 package m3x.m3g.primitives;
 
-import java.io.*;
 import java.math.BigInteger;
 
 import m3x.m3g.AbstractTestCase;
-import m3x.m3g.M3GObject;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.objects.Fog;

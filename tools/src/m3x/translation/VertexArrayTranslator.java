@@ -5,13 +5,14 @@ import java.util.List;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.Deserialiser;
+import m3x.xml.M3G;
 import m3x.xml.Object3DType;
 
 public class VertexArrayTranslator extends AbstractTranslator
 {
-  public void set(Object3DType object, Deserialiser deserialiser)
+  public void set(Object3DType object, M3G root, Deserialiser deserialiser)
   {
-    super.set((m3x.xml.VertexArray) object, deserialiser);
+    super.set((m3x.xml.VertexArray) object, root, deserialiser);
   }
 
   public void set(Object3D object)
@@ -23,20 +24,8 @@ public class VertexArrayTranslator extends AbstractTranslator
   {
     if (this.m3gObject == null)
     {
-      m3x.xml.VertexArray va = (m3x.xml.VertexArray)this.m3xObject;
-      // FIXME: currently only 1 animationtrack?? Spec says there can be 0..n?
-      ObjectIndex[] animationTracks;
-      if (va.getAnimationTrack() != null)
-      {
-        animationTracks = new ObjectIndex[1];
-        animationTracks[0] = new ObjectIndex((int) va.getAnimationTrack()
-            .getUserID()); // TODO: check if userID is what makes the
-                           // reference....
-      }
-      else
-      {
-        animationTracks = new ObjectIndex[0];
-      }
+      m3x.xml.VertexArray va = (m3x.xml.VertexArray)m3xObject;
+      ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
       Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
       List<Integer> ints = va.getIntArray();
       switch (va.getComponentType())
@@ -56,12 +45,12 @@ public class VertexArrayTranslator extends AbstractTranslator
           {
             shortComponents[i] = ints.get(i).shortValue();
           }
-          this.m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
+          m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
               userParameters, shortComponents, false);
       }
     }
     // else translation is done already
-    return this.m3gObject;
+    return m3gObject;
   }
 
   public Object3DType toXML()

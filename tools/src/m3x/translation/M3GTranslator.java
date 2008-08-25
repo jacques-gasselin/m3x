@@ -5,12 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import m3x.m3g.M3GObject;
-import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GTypedObject;
-import m3x.m3g.objects.FileIdentifier;
-import m3x.m3g.objects.Header;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
@@ -22,8 +20,7 @@ import m3x.xml.VertexArray;
 
 public class M3GTranslator
 {
-
-  private HashMap<Class, Translator> translators = new HashMap<Class, Translator>();
+  private Map<Class, Translator> translators = new HashMap<Class, Translator>();
 
   public M3GTranslator()
   {

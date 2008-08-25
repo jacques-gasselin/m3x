@@ -1,16 +1,10 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-
-import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 import m3x.xml.Texture2DInstance;
 
@@ -29,10 +23,10 @@ public class AppearanceTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    int compositingModeIndex = searchObjectIndex(this.m3xRoot, appearance.getCompositingModeInstance());
-    int fogIndex = searchObjectIndex(this.m3xRoot, appearance.getFogInstance());
-    int polygonModeIndex = searchObjectIndex(this.m3xRoot, appearance.getPolygonModeInstance());
-    int materialIndex = searchObjectIndex(this.m3xRoot, appearance.getMaterialInstance());
+    int compositingModeIndex = searchObjectIndex(this.m3xRoot, appearance.getCompositingModeInstance().getRef());
+    int fogIndex = searchObjectIndex(this.m3xRoot, appearance.getFogInstance().getRef());
+    int polygonModeIndex = searchObjectIndex(this.m3xRoot, appearance.getPolygonModeInstance().getRef());
+    int materialIndex = searchObjectIndex(this.m3xRoot, appearance.getMaterialInstance().getRef());
     List<Texture2DInstance> list = appearance.getTexture2DInstance();
     ObjectIndex[] textureIndices = new ObjectIndex[list.size()];
     for (int i = 0; i < list.size(); i++)

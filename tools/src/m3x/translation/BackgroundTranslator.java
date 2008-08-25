@@ -1,18 +1,11 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Background;
 import m3x.m3g.objects.Object3D;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.BackgroundRepeatType;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class BackgroundTranslator extends AbstractTranslator
@@ -30,12 +23,12 @@ public class BackgroundTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-    int backgroundIndex = this.searchObjectIndex(this.m3xRoot, background.getImage2DInstance());
+    int backgroundIndex = searchObjectIndex(this.m3xRoot, background.getImage2DInstance().getRef());
     try
     {
       this.m3gObject = new m3x.m3g.objects.Background(animationTracks, 
           userParameters, 
-          this.translateColorRGBA(background.getBackgroundColor()),
+          translateColorRGBA(background.getBackgroundColor()),
           new ObjectIndex(backgroundIndex),
           toM3G(background.getBackgroundImageModeX()),
           toM3G(background.getBackgroundImageModeY()),
@@ -44,8 +37,7 @@ public class BackgroundTranslator extends AbstractTranslator
           background.getCropWidth().intValue(),
           background.getCropHeight().intValue(),
           background.isDepthClearEnabled().booleanValue(),
-          background.isColorClearEnabled().booleanValue());
-              
+          background.isColorClearEnabled().booleanValue());    
     }
     catch (FileFormatException e)
     {
