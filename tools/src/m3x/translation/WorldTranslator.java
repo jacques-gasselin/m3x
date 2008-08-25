@@ -37,8 +37,8 @@ public class WorldTranslator extends AbstractTranslator
       childObjectIndices.add(new ObjectIndex(index));
     }
     ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-    int activeCameraIndex = AbstractTranslator.searchObjectIndex(this.m3xRoot, world.getActiveCamera());
-    int backgroundIndex = AbstractTranslator.searchObjectIndex(this.m3xRoot, world.getBackground());
+    int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
+    int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
     
     try
     {

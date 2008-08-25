@@ -22,35 +22,15 @@ public class VertexBufferTranslator extends AbstractTranslator
     }
 
     // do translation
-    m3x.xml.World world = (m3x.xml.World)this.m3xObject;
+    m3x.xml.VertexBuffer vb = (m3x.xml.VertexBuffer)this.m3xObject;
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
-    m3x.xml.TransformableType transformable = (m3x.xml.TransformableType)world;
-    Matrix transform = getM3GTransformMatrix(transformable);
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    List<NodeType> childNodes = world.getChildNodes();
-    List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
-    for (NodeType node : childNodes)
-    {
-      int index = searchObjectIndex(this.m3xRoot, node);
-      childObjectIndices.add(new ObjectIndex(index));
-    }
-    ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-    int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
-    int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
-    
     try
     {
-      this.m3gObject = new m3x.m3g.objects.World(animationTracks, 
+      this.m3gObject = new m3x.m3g.objects.VertexBuffer(animationTracks, 
           userParameters, 
-          transform,
-          world.isRenderingEnabled(), 
-          world.isPickingEnabled(),
-          (byte)(world.getAlphaFactor() * 255.0f + 0.5f),
-          world.getScope(), 
-          children, 
-          new ObjectIndex(activeCameraIndex), 
-          new ObjectIndex(backgroundIndex));
+          
     }
     catch (FileFormatException e)
     {
