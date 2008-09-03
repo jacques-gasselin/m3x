@@ -69,16 +69,16 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
 
   private int toM3G(KeyframePlaybackType repeatMode)
   {
-    if (repeatMode.toString().equals(KeyframePlaybackType.ADDITIVE_LOOP))
+    if (repeatMode.equals(KeyframePlaybackType.ADDITIVE_LOOP))
     {
       // TODO: what to return here
       throw new IllegalArgumentException(repeatMode.toString());
     }
-    if (repeatMode.toString().equals(KeyframePlaybackType.CONSTANT))
+    if (repeatMode.equals(KeyframePlaybackType.CONSTANT))
     {
       return KeyframeSequence.CONSTANT;
     }    
-    if (repeatMode.toString().equals(KeyframePlaybackType.LOOP))
+    if (repeatMode.equals(KeyframePlaybackType.LOOP))
     {
       return KeyframeSequence.LOOP;
     }
@@ -87,23 +87,23 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
 
   private int toM3G(KeyframeInterpolationType interpolation)
   {
-    if (interpolation.toString().equals(KeyframeInterpolationType.LINEAR))
+    if (interpolation.equals(KeyframeInterpolationType.LINEAR))
     {
       return KeyframeSequence.LINEAR;
     }
-    if (interpolation.toString().equals(KeyframeInterpolationType.SLERP))
+    if (interpolation.equals(KeyframeInterpolationType.SLERP))
     {
       return KeyframeSequence.SLERP;
     }
-    if (interpolation.toString().equals(KeyframeInterpolationType.SPLINE))
+    if (interpolation.equals(KeyframeInterpolationType.SPLINE))
     {
       return KeyframeSequence.SPLINE;
     }
-    if (interpolation.toString().equals(KeyframeInterpolationType.SQUAD))
+    if (interpolation.equals(KeyframeInterpolationType.SQUAD))
     {
       return KeyframeSequence.SQUAD;
     }  
-    if (interpolation.toString().equals(KeyframeInterpolationType.STEP))
+    if (interpolation.equals(KeyframeInterpolationType.STEP))
     {
       return KeyframeSequence.STEP;
     }

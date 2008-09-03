@@ -21,7 +21,7 @@ public class FogTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
   
-    if (fog.getMode().toString().equals(FogEquationType.EXPONENTIAL))
+    if (fog.getMode().equals(FogEquationType.EXPONENTIAL))
     {
       this.m3gObject = new m3x.m3g.objects.Fog(animationTracks, 
           userParameters, 
@@ -29,7 +29,7 @@ public class FogTranslator extends AbstractTranslator
           fog.getDensity().floatValue());
     }
     else
-    if (fog.getMode().toString().equals(FogEquationType.LINEAR))
+    if (fog.getMode().equals(FogEquationType.LINEAR))
     {
       this.m3gObject = new m3x.m3g.objects.Fog(animationTracks, 
           userParameters, 
@@ -38,7 +38,7 @@ public class FogTranslator extends AbstractTranslator
           fog.getFar().floatValue());
     }
     else
-    if (fog.getMode().toString().equals(FogEquationType.EXPONENTIAL_SQUARED))
+    if (fog.getMode().equals(FogEquationType.EXPONENTIAL_SQUARED))
     {
       throw new IllegalArgumentException("exp^2 fog is not supported by M3G 1.0.");
     }  

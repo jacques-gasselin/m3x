@@ -45,11 +45,11 @@ public class PolygonModeTranslator extends AbstractTranslator
 
   private int toM3G(PolygonWindingModeType winding)
   {
-    if (winding.toString().equals(PolygonWindingModeType.CW))
+    if (winding.equals(PolygonWindingModeType.CW))
     {
       return PolygonMode.WINDING_CW;
     }
-    if (winding.toString().equals(PolygonWindingModeType.CCW))
+    if (winding.equals(PolygonWindingModeType.CCW))
     {
       return PolygonMode.WINDING_CCW;
     }
@@ -58,11 +58,11 @@ public class PolygonModeTranslator extends AbstractTranslator
 
   private int toM3G(PolygonShadingModeType shading)
   {
-    if (shading.toString().equals(PolygonShadingModeType.SMOOTH))
+    if (shading.equals(PolygonShadingModeType.SMOOTH))
     {
       return PolygonMode.SHADE_SMOOTH;
     }
-    if (shading.toString().equals(PolygonShadingModeType.FLAT))
+    if (shading.equals(PolygonShadingModeType.FLAT))
     {
       return PolygonMode.SHADE_FLAT;
     }
@@ -71,15 +71,15 @@ public class PolygonModeTranslator extends AbstractTranslator
 
   private int toM3G(PolygonCullingModeType culling)
   {
-    if (culling.toString().equals(PolygonCullingModeType.FRONT))
+    if (culling.equals(PolygonCullingModeType.FRONT))
     {
       return PolygonMode.CULL_FRONT;
     }
-    if (culling.toString().equals(PolygonCullingModeType.BACK))
+    if (culling.equals(PolygonCullingModeType.BACK))
     {
       return PolygonMode.CULL_BACK;
     }
-    if (culling.toString().equals(PolygonCullingModeType.NONE))
+    if (culling.equals(PolygonCullingModeType.NONE))
     {
       return PolygonMode.CULL_NONE;
     }

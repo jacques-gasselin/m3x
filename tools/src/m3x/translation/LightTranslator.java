@@ -52,19 +52,19 @@ public class LightTranslator extends AbstractTranslator
 
   private int toM3G(LightType mode)
   {
-    if (mode.toString().equals(LightType.AMBIENT))
+    if (mode.equals(LightType.AMBIENT))
     {
       return Light.MODE_AMBIENT;
     }
-    if (mode.toString().equals(LightType.DIRECTIONAL))
+    if (mode.equals(LightType.DIRECTIONAL))
     {
       return Light.MODE_DIRECTIONAL;
     }
-    if (mode.toString().equals(LightType.OMNI))
+    if (mode.equals(LightType.OMNI))
     {
       return Light.MODE_OMNI;
     }
-    if (mode.toString().equals(LightType.SPOT))
+    if (mode.equals(LightType.SPOT))
     {
       return Light.MODE_SPOT;
     }    

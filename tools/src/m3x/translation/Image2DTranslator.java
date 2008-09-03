@@ -44,42 +44,42 @@ public class Image2DTranslator extends AbstractTranslator
 
   private int toM3G(ImageBaseColorType format)
   {
-    if (format.toString().equals(ImageBaseColorType.ALPHA))
+    if (format.equals(ImageBaseColorType.ALPHA))
     {
       return Image2D.FORMAT_ALPHA;
     }
-    if (format.toString().equals(ImageBaseColorType.LUMINANCE))
+    if (format.equals(ImageBaseColorType.LUMINANCE))
     {
       return Image2D.FORMAT_LUMINANCE;
     }
-    if (format.toString().equals(ImageBaseColorType.LUMINANCE_ALPHA))
+    if (format.equals(ImageBaseColorType.LUMINANCE_ALPHA))
     {
       return Image2D.FORMAT_LUMINANCE_ALPHA;
     }
-    if (format.toString().equals(ImageBaseColorType.RGB))
+    if (format.equals(ImageBaseColorType.RGB))
     {
       return Image2D.FORMAT_RGB;
     }
-    if (format.toString().equals(ImageBaseColorType.RGBA))
+    if (format.equals(ImageBaseColorType.RGBA))
     {
       return Image2D.FORMAT_RGBA;
     }
-    if (format.toString().equals(ImageBaseColorType.RGB_565))
+    if (format.equals(ImageBaseColorType.RGB_565))
     {
       // TODO: what to return here?
       throw new IllegalArgumentException(format.toString());
     }
-    if (format.toString().equals(ImageBaseColorType.RGB_ETC))
+    if (format.equals(ImageBaseColorType.RGB_ETC))
     {
       // TODO: what to return here?
       throw new IllegalArgumentException(format.toString());
     }
-    if (format.toString().equals(ImageBaseColorType.RGBA_4444))
+    if (format.equals(ImageBaseColorType.RGBA_4444))
     {
       // TODO: what to return here?
       throw new IllegalArgumentException(format.toString());
     }
-    if (format.toString().equals(ImageBaseColorType.RGBA_5551))
+    if (format.equals(ImageBaseColorType.RGBA_5551))
     {
       // TODO: what to return here?
       throw new IllegalArgumentException(format.toString());

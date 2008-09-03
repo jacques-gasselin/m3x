@@ -66,19 +66,19 @@ public class CameraTranslator extends AbstractTranslator
 
   private int toM3G(CameraProjectionModeType projectionType)
   {
-    if (projectionType.toString().equals(CameraProjectionModeType.GENERIC))
+    if (projectionType.equals(CameraProjectionModeType.GENERIC))
     {
       return Camera.PROJECTION_TYPE_GENERIC;
     }
-    if (projectionType.toString().equals(CameraProjectionModeType.PARALLEL))
+    if (projectionType.equals(CameraProjectionModeType.PARALLEL))
     {
       return Camera.PROJECTION_TYPE_PARALLEL;
     }
-    if (projectionType.toString().equals(CameraProjectionModeType.PERSPECTIVE))
+    if (projectionType.equals(CameraProjectionModeType.PERSPECTIVE))
     {
       return Camera.PROJECTION_TYPE_PERSPECTIVE;
     }
-    if (projectionType.toString().equals(CameraProjectionModeType.SCREEN))
+    if (projectionType.equals(CameraProjectionModeType.SCREEN))
     {
       throw new IllegalArgumentException(projectionType.toString());
       // TODO: what to return here?

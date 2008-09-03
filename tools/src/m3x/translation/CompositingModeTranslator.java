@@ -45,41 +45,41 @@ public class CompositingModeTranslator extends AbstractTranslator
 
   private int toM3G(CompositingModeType blending)
   {
-    if (blending.toString().equals(CompositingModeType.ALPHA))
+    if (blending.equals(CompositingModeType.ALPHA))
     {
       return CompositingMode.ALPHA;
     }
-    if (blending.toString().equals(CompositingModeType.ALPHA_ADD))
+    if (blending.equals(CompositingModeType.ALPHA_ADD))
     {
       return CompositingMode.ALPHA_ADD;
     }
-    if (blending.toString().equals(CompositingModeType.ALPHA_DARKEN))
+    if (blending.equals(CompositingModeType.ALPHA_DARKEN))
     {
       // TODO: what to return here?
       //return CompositingMode.ALPHA_ADD;
       throw new IllegalArgumentException(blending.toString());
     }
-    if (blending.toString().equals(CompositingModeType.ALPHA_PREMULTIPLY))
+    if (blending.equals(CompositingModeType.ALPHA_PREMULTIPLY))
     {
       // TODO: what to return here?
       //return CompositingMode.ALPHA_ADD;
       throw new IllegalArgumentException(blending.toString());
     }
-    if (blending.toString().equals(CompositingModeType.MODULATE))
+    if (blending.equals(CompositingModeType.MODULATE))
     {
       return CompositingMode.MODULATE;
     }
-    if (blending.toString().equals(CompositingModeType.MODULATE_INV))
+    if (blending.equals(CompositingModeType.MODULATE_INV))
     {
       // TODO: what to return here?
       //return CompositingMode.MODULATE_INV;
       throw new IllegalArgumentException(blending.toString());
     }
-    if (blending.toString().equals(CompositingModeType.MODULATE_X_2))
+    if (blending.equals(CompositingModeType.MODULATE_X_2))
     {
       return CompositingMode.MODULATE_X2;
     }
-    if (blending.toString().equals(CompositingModeType.REPLACE))
+    if (blending.equals(CompositingModeType.REPLACE))
     {
       return CompositingMode.REPLACE;
     }

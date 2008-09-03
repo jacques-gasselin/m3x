@@ -91,15 +91,15 @@ public class Texture2DTranslator extends AbstractTranslator
 
   private int toM3G(TextureMipmapModeType levelFilter)
   {
-    if (levelFilter.toString().equals(TextureMipmapModeType.BASE_LEVEL))
+    if (levelFilter.equals(TextureMipmapModeType.BASE_LEVEL))
     {
       return Texture2D.FILTER_BASE_LEVEL;
     }
-    if (levelFilter.toString().equals(TextureMipmapModeType.LINEAR))
+    if (levelFilter.equals(TextureMipmapModeType.LINEAR))
     {
       return Texture2D.FILTER_LINEAR;
     }
-    if (levelFilter.toString().equals(TextureMipmapModeType.NEAREST))
+    if (levelFilter.equals(TextureMipmapModeType.NEAREST))
     {
       return Texture2D.FILTER_NEAREST;
     }
@@ -108,17 +108,17 @@ public class Texture2DTranslator extends AbstractTranslator
 
   private int toM3G(Texture2DWrapModeType wrapping)
   {
-    if (wrapping.toString().equals(Texture2DWrapModeType.CLAMP))
+    if (wrapping.equals(Texture2DWrapModeType.CLAMP))
     {
       return Texture2D.WRAP_CLAMP;
     }
-    if (wrapping.toString().equals(Texture2DWrapModeType.MIRROR))
+    if (wrapping.equals(Texture2DWrapModeType.MIRROR))
     {
       // TODO: what to return here? Is this M3G 2.0 feature?
       //return Texture2D.WRAP_MIRROR;
       throw new IllegalArgumentException(wrapping.toString());
     }    
-    if (wrapping.toString().equals(Texture2DWrapModeType.REPEAT))
+    if (wrapping.equals(Texture2DWrapModeType.REPEAT))
     {
       return Texture2D.WRAP_REPEAT;
     }    
@@ -127,28 +127,28 @@ public class Texture2DTranslator extends AbstractTranslator
 
   private int toM3G(Texture2DBlendModeType blending)
   {
-    if (blending.toString().equals(Texture2DBlendModeType.ADD))
+    if (blending.equals(Texture2DBlendModeType.ADD))
     {
       return Texture2D.FUNC_ADD;
     }
-    if (blending.toString().equals(Texture2DBlendModeType.BLEND))
+    if (blending.equals(Texture2DBlendModeType.BLEND))
     {
       return Texture2D.FUNC_BLEND;
     }
-    if (blending.toString().equals(Texture2DBlendModeType.DECAL))
+    if (blending.equals(Texture2DBlendModeType.DECAL))
     {
       return Texture2D.FUNC_DECAL;
     }
-    if (blending.toString().equals(Texture2DBlendModeType.DOT_3))
+    if (blending.equals(Texture2DBlendModeType.DOT_3))
     {
       // TODO: what to return here?
       throw new IllegalArgumentException(blending.toString());
     }
-    if (blending.toString().equals(Texture2DBlendModeType.MODULATE))
+    if (blending.equals(Texture2DBlendModeType.MODULATE))
     {
       return Texture2D.FUNC_MODULATE;
     }
-    if (blending.toString().equals(Texture2DBlendModeType.REPLACE))
+    if (blending.equals(Texture2DBlendModeType.REPLACE))
     {
       return Texture2D.FUNC_REPLACE;
     }
