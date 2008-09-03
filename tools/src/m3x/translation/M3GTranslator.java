@@ -13,6 +13,8 @@ import m3x.m3g.objects.AnimationController;
 import m3x.m3g.objects.AnimationTrack;
 import m3x.m3g.objects.Appearance;
 import m3x.m3g.objects.Background;
+import m3x.m3g.objects.Camera;
+import m3x.m3g.objects.CompositingMode;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
@@ -32,6 +34,8 @@ public class M3GTranslator
     translators.put(AnimationTrack.class, new AnimationTrackTranslator());
     translators.put(Appearance.class, new AppearanceTranslator());
     translators.put(Background.class, new BackgroundTranslator());
+    translators.put(Camera.class, new CameraTranslator());
+    translators.put(CompositingMode.class, new CompositingModeTranslator());
     translators.put(VertexArray.class, new VertexArrayTranslator());
   }
 
