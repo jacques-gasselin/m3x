@@ -10,7 +10,6 @@ import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.AnimationTrack;
 import m3x.xml.Deserialiser;
-import m3x.xml.InstanceType;
 import m3x.xml.M3G;
 import m3x.xml.Object3DType;
 import m3x.xml.SectionType;

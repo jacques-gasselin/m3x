@@ -29,6 +29,11 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public abstract class Node extends Transformable implements M3GSerializable
 {
+  public int getScope()
+  {
+    return this.scope;
+  }
+
   public static final int NONE = 144;
   public static final int ORIGIN = 145;
   public static final int X_AXIS = 146;
@@ -66,11 +71,8 @@ public abstract class Node extends Transformable implements M3GSerializable
       byte alphaFactor, int scope, byte zTarget, byte yTarget,
       ObjectIndex zReference, ObjectIndex yReference) throws FileFormatException
   {
-    super(animationTracks, userParameters, transform);
-    this.enableRendering = enableRendering;
-    this.enablePicking = enablePicking;
-    this.alphaFactor = alphaFactor;
-    this.scope = scope;
+    this(animationTracks, userParameters, transform,
+        enableRendering, enablePicking, alphaFactor, scope);
     this.hasAlignment = true;
     validateZTarget(zTarget);
     this.zTarget = zTarget;
@@ -139,5 +141,20 @@ public abstract class Node extends Transformable implements M3GSerializable
       this.zReference.serialize(dataOutputStream, m3gVersion);
       this.yReference.serialize(dataOutputStream, m3gVersion);
     }
+  }
+
+  public boolean isEnableRendering()
+  {
+    return this.enableRendering;
+  }
+
+  public boolean isEnablePicking()
+  {
+    return this.enablePicking;
+  }
+
+  public byte getAlphaFactor()
+  {
+    return this.alphaFactor;
   }
 }

@@ -21,14 +21,16 @@ public class AnimationTrackTranslator extends AbstractTranslator
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
-    int keyframeSequence = searchObjectIndex(this.m3xRoot, at.getKeyframeSequenceInstance().getRef());
     int animationController = searchObjectIndex(this.m3xRoot, at.getAnimationControllerInstance().getRef());
+    int keyframeSequence = searchObjectIndex(this.m3xRoot, at.getKeyframeSequenceInstance().getRef());
     try
     {
       this.m3gObject = new m3x.m3g.objects.AnimationTrack(animationTracks, 
           userParameters, 
           new ObjectIndex(keyframeSequence),
           new ObjectIndex(animationController),
+          // TODO: this should be getProperty() and converted
+          // to an integer enum from a string
           (int)at.getUserID());
     }
     catch (FileFormatException e)

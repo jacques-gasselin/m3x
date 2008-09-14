@@ -21,8 +21,7 @@ public class LightTranslator extends AbstractTranslator
     // do translation
     m3x.xml.Light light = (m3x.xml.Light)this.m3xObject;
     ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
-    m3x.xml.TransformableType transformable = (m3x.xml.TransformableType)light;
-    Matrix transform = getM3GTransformMatrix(transformable);
+    Matrix transform = getM3GTransformMatrix(light);
     Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
    
     try

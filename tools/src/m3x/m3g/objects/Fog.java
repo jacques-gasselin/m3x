@@ -26,8 +26,8 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class Fog extends Object3D implements M3GTypedObject
 {
-  private final static int MODE_EXPONENTIAL = 80;
-  private final static int MODE_LINEAR = 81;
+  public final static int MODE_EXPONENTIAL = 80;
+  public final static int MODE_LINEAR = 81;
 
   private ColorRGB color;
   private int mode;

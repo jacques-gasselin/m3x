@@ -15,7 +15,21 @@ import m3x.m3g.objects.Appearance;
 import m3x.m3g.objects.Background;
 import m3x.m3g.objects.Camera;
 import m3x.m3g.objects.CompositingMode;
+import m3x.m3g.objects.Fog;
+import m3x.m3g.objects.Group;
+import m3x.m3g.objects.Image2D;
+import m3x.m3g.objects.KeyframeSequence;
+import m3x.m3g.objects.Light;
+import m3x.m3g.objects.Material;
+import m3x.m3g.objects.Mesh;
+import m3x.m3g.objects.MorphingMesh;
 import m3x.m3g.objects.Object3D;
+import m3x.m3g.objects.PolygonMode;
+import m3x.m3g.objects.SkinnedMesh;
+import m3x.m3g.objects.Texture2D;
+import m3x.m3g.objects.TriangleStripArray;
+import m3x.m3g.objects.VertexBuffer;
+import m3x.m3g.objects.World;
 import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
 import m3x.xml.Deserialiser;
@@ -36,7 +50,21 @@ public class M3GTranslator
     translators.put(Background.class, new BackgroundTranslator());
     translators.put(Camera.class, new CameraTranslator());
     translators.put(CompositingMode.class, new CompositingModeTranslator());
+    translators.put(Fog.class, new FogTranslator());
+    translators.put(Group.class, new GroupTranslator());
+    translators.put(Image2D.class, new Image2DTranslator());
+    translators.put(KeyframeSequence.class, new KeyframeSequenceTranslator());
+    translators.put(Light.class, new LightTranslator());
+    translators.put(Material.class, new MaterialTranslator());
+    translators.put(Mesh.class, new MeshTranslator());
+    translators.put(MorphingMesh.class, new MorphingMeshTranslator());
+    translators.put(PolygonMode.class, new PolygonModeTranslator());
+    translators.put(SkinnedMesh.class, new SkinnedMeshTranslator());
+    translators.put(Texture2D.class, new Texture2DTranslator());
+    translators.put(TriangleStripArray.class, new TriangleStripArrayTranslator());
     translators.put(VertexArray.class, new VertexArrayTranslator());
+    translators.put(VertexBuffer.class, new VertexBufferTranslator());
+    translators.put(World.class, new WorldTranslator());
   }
 
   public M3G toXML(M3GObject m3g)
