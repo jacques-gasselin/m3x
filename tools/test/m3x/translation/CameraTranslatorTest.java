@@ -1,8 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Background;
 import m3x.m3g.objects.Camera;
-import m3x.xml.BackgroundRepeatType;
 import m3x.xml.CameraProjectionModeType;
 
 public class CameraTranslatorTest extends TranslatorSupport

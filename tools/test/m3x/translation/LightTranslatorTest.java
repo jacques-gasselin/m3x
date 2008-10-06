@@ -1,6 +1,5 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Appearance;
 import m3x.m3g.objects.Light;
 import m3x.xml.LightType;
 

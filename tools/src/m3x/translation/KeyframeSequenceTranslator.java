@@ -1,19 +1,16 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.KeyframeSequence;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.objects.KeyframeSequence.FloatKeyFrame;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.KeyframeInterpolationType;
 import m3x.xml.KeyframePlaybackType;
 import m3x.xml.Keyframes;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 
 public class KeyframeSequenceTranslator extends AbstractTranslator
@@ -53,8 +50,8 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
   private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Long> keyTimes)
   {
     List<Float> list = keyframes.getValue();
-    FloatKeyFrame[] keyFrames = new FloatKeyFrame[list.size()];
     int componentCount = keyframes.getComponentSize();
+    FloatKeyFrame[] keyFrames = new FloatKeyFrame[list.size() / componentCount];
     for (int i = 0; i < keyFrames.length; i+= componentCount)
     {
       float[] components = new float[componentCount];

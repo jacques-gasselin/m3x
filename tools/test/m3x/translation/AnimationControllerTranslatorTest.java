@@ -1,9 +1,6 @@
 package m3x.translation;
 
 import m3x.m3g.objects.AnimationController;
-import m3x.m3g.objects.Fog;
-import m3x.m3g.objects.Object3D;
-import m3x.xml.Object3DType;
 
 public class AnimationControllerTranslatorTest extends TranslatorSupport
 {

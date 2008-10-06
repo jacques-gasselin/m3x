@@ -1,17 +1,11 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.Object3D.UserParameter;
 import m3x.m3g.objects.VertexBuffer.TextureCoordinate;
-import m3x.m3g.primitives.ColorRGBA;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 import m3x.xml.VertexBuffer.Texcoords;
 

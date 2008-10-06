@@ -1,7 +1,6 @@
 package m3x.translation;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
@@ -10,7 +9,6 @@ import m3x.m3g.objects.Mesh.SubMesh;
 import m3x.m3g.objects.SkinnedMesh.BoneReference;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.NodeType;
 import m3x.xml.Object3DType;
 import m3x.xml.MeshType.Submesh;
 import m3x.xml.SkinnedMesh.Bone;

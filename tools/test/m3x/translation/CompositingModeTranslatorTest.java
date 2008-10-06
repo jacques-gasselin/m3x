@@ -1,8 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Camera;
 import m3x.m3g.objects.CompositingMode;
-import m3x.xml.CameraProjectionModeType;
 import m3x.xml.CompositingModeType;
 
 public class CompositingModeTranslatorTest extends TranslatorSupport

@@ -1,8 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Fog;
 import m3x.m3g.objects.Group;
-import m3x.xml.FogEquationType;
 
 public class GroupTranslatorText extends TranslatorSupport
 {

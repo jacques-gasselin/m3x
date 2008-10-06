@@ -1,11 +1,7 @@
 package m3x.translation;
 
-import m3x.m3g.objects.AnimationController;
 import m3x.m3g.objects.AnimationTrack;
-import m3x.m3g.objects.Fog;
-import m3x.m3g.objects.Object3D;
 import m3x.xml.AnimationTargetType;
-import m3x.xml.Object3DType;
 
 /**
  * TODO: add comp. of values between m3x and m3g if possible.
