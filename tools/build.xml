@@ -110,8 +110,6 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
-        
-        <jar basedir="${build.m3x.dir}" destfile="${build.dir}/m3x.jar"/>
     </target>
     
     <target name="javadoc" depends="pre-build, xml-build">
