@@ -204,7 +204,7 @@ public class Section implements M3GSerializable
       }
       catch (DataFormatException e)
       {
-        throw new IOException(e);
+        throw new IOException(e.toString());
       }
       inflater.end();
     }
