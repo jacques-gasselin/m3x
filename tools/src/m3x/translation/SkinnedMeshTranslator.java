@@ -9,7 +9,6 @@ import m3x.m3g.objects.Mesh.SubMesh;
 import m3x.m3g.objects.SkinnedMesh.BoneReference;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.Object3DType;
 import m3x.xml.MeshType.Submesh;
 import m3x.xml.SkinnedMesh.Bone;
 
@@ -78,7 +77,7 @@ public class SkinnedMeshTranslator extends AbstractTranslator
         return references;
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

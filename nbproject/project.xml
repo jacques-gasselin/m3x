@@ -33,6 +33,12 @@
                     <location>tools/build/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>tools/test</label>
+                    <type>java</type>
+                    <location>tools/test</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -55,6 +61,16 @@
                     <target>build</target>
                 </action>
             </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>tools/build</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>tools/build</location>
+                <build-target>build</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -68,6 +84,10 @@
                     <source-folder style="packages">
                         <label>tools/build/src</label>
                         <location>tools/build/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>tools/test</label>
+                        <location>tools/test</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -84,12 +104,28 @@
             </view>
             <subprojects/>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>www</package-root>
+                <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
                 <package-root>tools/src</package-root>
+                <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar</classpath>
+                <built-to>tools/build</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
                 <package-root>tools/build/src</package-root>
                 <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>tools/test</package-root>
+                <unit-tests/>
+                <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar</classpath>
+                <built-to>tools/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

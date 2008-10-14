@@ -45,8 +45,11 @@
     <xs:simpleType name="Boolean">
         <xs:restriction base="xs:boolean"/>
     </xs:simpleType>
-    <xs:simpleType name="ObjectReference">
+    <xs:simpleType name="Object3DReference">
         <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="Object3D"/>
+            </xs:appinfo>
             <xs:documentation>
                 This type is used for referencing other nodes in the same document
             </xs:documentation>
@@ -663,7 +666,7 @@
                 The Instance type declares a base for M3G instance elements.
             </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="ref" type="ObjectReference">
+        <xs:attribute name="ref" type="Object3DReference">
             <xs:annotation>
                 <xs:documentation>
                     The ref attribute is a text string containing the unique reference id of the target element.
@@ -671,7 +674,7 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType name="Object3DType" abstract="true">
+    <xs:complexType name="Object3D" abstract="true">
         <xs:annotation>
             <xs:documentation>
                 The Object3D type declares the basic storage of a serializable object for an M3G file.
@@ -714,7 +717,7 @@
     </xs:complexType>
     <xs:complexType name="TransformableType">
         <xs:complexContent>
-            <xs:extension base="Object3DType">
+            <xs:extension base="Object3D">
                 <xs:sequence>
                     <xs:element ref="translation" minOccurs="0" maxOccurs="1"/>
                     <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
@@ -751,7 +754,7 @@
     </xs:complexType>
     <xs:complexType name="ImageBaseType">
         <xs:complexContent>
-            <xs:extension base="Object3DType">
+            <xs:extension base="Object3D">
                 <xs:attribute name="format" type="ImageBaseColorType"/>
                 <xs:attribute name="mutable" type="Boolean"/>
                 <xs:attribute name="width" type="UInt32"/>
@@ -761,7 +764,7 @@
     </xs:complexType>
     <xs:complexType name="IndexBufferType">
         <xs:complexContent>
-            <xs:extension base="Object3DType">
+            <xs:extension base="Object3D">
                 <xs:sequence>
                     <xs:element name="indices" minOccurs="1" maxOccurs="1">
                         <xs:simpleType>
@@ -794,7 +797,7 @@
     <xs:element name="AnimationController">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:attribute name="speed" type="Float32" default="1.0"/>
                     <xs:attribute name="weight" type="Float32" default="1.0"/>
                     <xs:attribute name="activeIntervalStart" type="Int32" default="0"/>
@@ -815,7 +818,7 @@
     <xs:element name="AnimationTrack">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:element ref="KeyframeSequenceInstance" minOccurs="0" maxOccurs="1"/>
                         <xs:element ref="AnimationControllerInstance" minOccurs="0" maxOccurs="1"/>
@@ -835,7 +838,7 @@
     <xs:element name="Appearance">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:element ref="CompositingModeInstance" minOccurs="0" maxOccurs="1"/>
                         <xs:element ref="FogInstance" minOccurs="0" maxOccurs="1"/>
@@ -858,7 +861,7 @@
     <xs:element name="Background">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
@@ -894,7 +897,7 @@
     <xs:element name="CompositingMode">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:attribute name="depthTestEnabled" type="Boolean"/>
                     <xs:attribute name="depthWriteEnabled" type="Boolean"/>
                     <xs:attribute name="colorWriteEnabled" type="Boolean"/>
@@ -917,7 +920,7 @@
     <xs:element name="Fog">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:attribute name="color" type="ColorRGB"/>
                     <xs:attribute name="mode" type="FogEquationType"/>
                     <xs:attribute name="density" type="Float32"/>
@@ -978,7 +981,7 @@
     <xs:element name="KeyframeSequence">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:element ref="keytimes" minOccurs="1" maxOccurs="1"/>
                         <xs:element ref="keyframes" minOccurs="1" maxOccurs="1"/>
@@ -1020,7 +1023,7 @@
     <xs:element name="Material">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:attribute name="ambientColor" type="ColorRGB"/>
                     <xs:attribute name="diffuseColor" type="ColorRGBA"/>
                     <xs:attribute name="emissiveColor" type="ColorRGB"/>
@@ -1066,7 +1069,7 @@
     <xs:element name="PolygonMode">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:attribute name="culling" type="PolygonCullingModeType"/>
                     <xs:attribute name="shading" type="PolygonShadingModeType"/>
                     <xs:attribute name="winding" type="PolygonWindingModeType"/>
@@ -1154,7 +1157,7 @@
     <xs:element name="VertexArray">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:choice>
                             <xs:element ref="float_array" minOccurs="1" maxOccurs="1"/>
@@ -1177,7 +1180,7 @@
     <xs:element name="VertexBuffer">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="Object3DType">
+                <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:element name="positions" minOccurs="1" maxOccurs="1">
                             <xs:complexType>
@@ -1236,8 +1239,8 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="GroupType">
-                    <xs:attribute name="activeCamera" type="ObjectReference"/>
-                    <xs:attribute name="background" type="ObjectReference"/>
+                    <xs:attribute name="activeCamera" type="Object3DReference"/>
+                    <xs:attribute name="background" type="Object3DReference"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

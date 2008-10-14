@@ -8,7 +8,7 @@ import m3x.m3g.objects.Image2D;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.ImageBaseColorType;
-import m3x.xml.Object3DType;
+;
 
 public class Image2DTranslator extends AbstractTranslator
 {
@@ -97,7 +97,7 @@ public class Image2DTranslator extends AbstractTranslator
         return bytes;
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

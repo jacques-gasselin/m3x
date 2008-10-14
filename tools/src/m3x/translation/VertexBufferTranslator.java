@@ -6,7 +6,6 @@ import java.util.List;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.objects.VertexBuffer.TextureCoordinate;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.Object3DType;
 import m3x.xml.VertexBuffer.Texcoords;
 
 public class VertexBufferTranslator extends AbstractTranslator
@@ -62,7 +61,7 @@ public class VertexBufferTranslator extends AbstractTranslator
         return array;
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

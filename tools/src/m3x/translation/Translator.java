@@ -19,7 +19,7 @@ public interface Translator
      * @param deserialiser
      *          - the deserialiser used to resolve references.
      */
-    public void set(m3x.xml.Object3DType object, M3G root, m3x.xml.Deserialiser deserialiser);
+    public void set(m3x.xml.Object3D object, M3G root, m3x.xml.Deserialiser deserialiser);
 
     /**
      * Sets the values from an M3G object May throw java.lang.ClassCastException -
@@ -35,7 +35,7 @@ public interface Translator
      *
      * @return an XML representation
      */
-    public m3x.xml.Object3DType toXML();
+    public m3x.xml.Object3D toXML();
 
     /**
      * Convert to an M3G object.

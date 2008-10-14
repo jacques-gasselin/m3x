@@ -6,7 +6,6 @@ import m3x.m3g.objects.CompositingMode;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.CompositingModeType;
-import m3x.xml.Object3DType;
 
 public class CompositingModeTranslator extends AbstractTranslator
 {
@@ -86,7 +85,7 @@ public class CompositingModeTranslator extends AbstractTranslator
         throw new IllegalArgumentException(blending.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

@@ -6,11 +6,11 @@ import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.Deserialiser;
 import m3x.xml.M3G;
-import m3x.xml.Object3DType;
+;
 
 public class VertexArrayTranslator extends AbstractTranslator
 {
-    public void set(Object3DType object, M3G root, Deserialiser deserialiser)
+    public void set(m3x.xml.Object3D object, M3G root, Deserialiser deserialiser)
     {
         super.set((m3x.xml.VertexArray) object, root, deserialiser);
     }
@@ -53,7 +53,7 @@ public class VertexArrayTranslator extends AbstractTranslator
         return m3gObject;
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         if (this.m3xObject == null)
         {

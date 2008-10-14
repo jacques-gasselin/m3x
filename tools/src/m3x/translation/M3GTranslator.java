@@ -34,7 +34,6 @@ import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
 import m3x.xml.Deserialiser;
 import m3x.xml.M3G;
-import m3x.xml.Object3DType;
 import m3x.xml.SectionType;
 import m3x.xml.VertexArray;
 
@@ -78,10 +77,10 @@ public class M3GTranslator
         Section[] m3gSections = new Section[sections.size()];
         for (SectionType sectionType : sections)
         {
-            List<Object3DType> m3xObjects = sectionType.getObjects();
+            List<m3x.xml.Object3D> m3xObjects = sectionType.getObjects();
             ObjectChunk[] m3gObjects = new ObjectChunk[m3xObjects.size()];
             int i = 0;
-            for (Object3DType object : m3xObjects)
+            for (m3x.xml.Object3D object : m3xObjects)
             {
                 Translator translator = translators.get(object.getClass());
                 translator.set(object, null, deserializer);

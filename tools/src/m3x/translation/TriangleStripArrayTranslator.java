@@ -3,7 +3,7 @@ package m3x.translation;
 
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.Object3DType;
+;
 
 public class TriangleStripArrayTranslator extends AbstractTranslator
 {
@@ -38,7 +38,7 @@ public class TriangleStripArrayTranslator extends AbstractTranslator
         return this.m3gObject;
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

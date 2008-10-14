@@ -18,6 +18,7 @@
     <property name="build.test.dir" location="${build.dir}/test"/>
     <property name="build.m3x.dir" location="${build.dir}/m3x"/>
     <property name="build.m3x.xml.dir" location="${build.m3x.dir}/xml"/>
+    <property name="dist.dir" location="${basedir}/dist"/>
 
     <property name="m3x.xml.package" value="m3x.xml"/>
     <property name="m3x.m3g.package" value="m3x.m3g"/>
@@ -69,6 +70,7 @@
         <delete>
             <fileset dir="${build.dir}" includes="**/*.class"/>
             <fileset dir="${build.dir}" includes="**/*.java"/>
+            <fileset dir="${dist.dir}" includes="**/*.jar"/>
         </delete>
     </target>
 
@@ -110,6 +112,16 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
+        <!--build the distributable jar-->
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/m3x.jar"
+             basedir="${build.dir}">
+             <exclude name="src/**/*"/>
+             <exclude name="**/Test*.class"/>
+             <exclude name="**/Demo*.class"/>
+             <exclude name="**/*Test.class"/>
+             <exclude name="**/*Demo.class"/>
+        </jar>
     </target>
     
     <target name="javadoc" depends="pre-build, xml-build">

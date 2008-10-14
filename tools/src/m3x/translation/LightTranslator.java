@@ -7,7 +7,7 @@ import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.LightType;
-import m3x.xml.Object3DType;
+;
 
 public class LightTranslator extends AbstractTranslator
 {
@@ -70,7 +70,7 @@ public class LightTranslator extends AbstractTranslator
         throw new IllegalArgumentException(mode.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

@@ -5,7 +5,6 @@ import java.util.List;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.xml.M3G;
-import m3x.xml.Object3DType;
 import m3x.xml.SectionType;
 import junit.framework.TestCase;
 
@@ -23,12 +22,12 @@ public abstract class TranslatorSupport extends TestCase
    * @return
    *  Found Object3D inside Sections list or null if not found. 
    */
-  protected static Object3DType searchObjectIndex(M3G root, int searchKey)
+  protected static m3x.xml.Object3D searchObjectIndex(M3G root, int searchKey)
   {
     int index = 1;
     for (SectionType section : root.getSection())
     {
-      for (Object3DType object : section.getObjects())
+      for (m3x.xml.Object3D object : section.getObjects())
       {
         if (index == searchKey)
         {

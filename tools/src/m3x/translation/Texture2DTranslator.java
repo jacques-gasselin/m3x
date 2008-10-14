@@ -6,7 +6,6 @@ import m3x.m3g.objects.Texture2D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
-import m3x.xml.Object3DType;
 import m3x.xml.Texture2DBlendModeType;
 import m3x.xml.Texture2DWrapModeType;
 import m3x.xml.TextureFilterModeType;
@@ -155,7 +154,7 @@ public class Texture2DTranslator extends AbstractTranslator
         throw new IllegalArgumentException(blending.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

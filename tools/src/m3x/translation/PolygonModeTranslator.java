@@ -5,7 +5,6 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.objects.PolygonMode;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.Object3DType;
 import m3x.xml.PolygonCullingModeType;
 import m3x.xml.PolygonShadingModeType;
 import m3x.xml.PolygonWindingModeType;
@@ -86,7 +85,7 @@ public class PolygonModeTranslator extends AbstractTranslator
         throw new IllegalArgumentException(culling.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

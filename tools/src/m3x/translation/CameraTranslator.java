@@ -9,7 +9,6 @@ import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.CameraProjectionModeType;
-import m3x.xml.Object3DType;
 
 public class CameraTranslator extends AbstractTranslator
 {
@@ -97,7 +96,7 @@ public class CameraTranslator extends AbstractTranslator
         return new Matrix(floats);
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

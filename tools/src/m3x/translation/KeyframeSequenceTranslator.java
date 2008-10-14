@@ -11,7 +11,7 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.KeyframeInterpolationType;
 import m3x.xml.KeyframePlaybackType;
 import m3x.xml.Keyframes;
-import m3x.xml.Object3DType;
+;
 
 public class KeyframeSequenceTranslator extends AbstractTranslator
 {
@@ -107,7 +107,7 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
         throw new IllegalArgumentException(interpolation.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }

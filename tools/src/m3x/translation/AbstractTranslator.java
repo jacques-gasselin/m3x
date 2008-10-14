@@ -11,12 +11,11 @@ import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.AnimationTrack;
 import m3x.xml.Deserialiser;
 import m3x.xml.M3G;
-import m3x.xml.Object3DType;
 import m3x.xml.SectionType;
 
 public abstract class AbstractTranslator implements Translator
 {
-    protected Object3DType m3xObject;
+    protected m3x.xml.Object3D m3xObject;
     protected Object3D m3gObject;
     protected M3G m3xRoot;
     protected Deserialiser deserializer;
@@ -30,7 +29,7 @@ public abstract class AbstractTranslator implements Translator
      * @param deserialiser
      *          - the deserialiser used to resolve references.
      */
-    public void set(Object3DType object, M3G root, Deserialiser deserialiser)
+    public void set(m3x.xml.Object3D object, M3G root, Deserialiser deserialiser)
     {
         this.m3xObject = object;
         this.m3xRoot = root;
@@ -114,7 +113,7 @@ public abstract class AbstractTranslator implements Translator
         int index = 1;
         for (SectionType section : root.getSection())
         {
-            for (Object3DType object : section.getObjects())
+            for (m3x.xml.Object3D object : section.getObjects())
             {
                 if (object.equals(searchKey))
                 {

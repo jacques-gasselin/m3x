@@ -6,7 +6,6 @@ import m3x.m3g.objects.Background;
 import m3x.m3g.objects.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.BackgroundRepeatType;
-import m3x.xml.Object3DType;
 
 public class BackgroundTranslator extends AbstractTranslator
 {
@@ -58,7 +57,7 @@ public class BackgroundTranslator extends AbstractTranslator
         throw new IllegalArgumentException(backgroundImageMode.toString());
     }
 
-    public Object3DType toXML()
+    public m3x.xml.Object3D toXML()
     {
         return null;
     }
