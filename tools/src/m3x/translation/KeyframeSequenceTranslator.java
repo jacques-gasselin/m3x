@@ -18,33 +18,25 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.KeyframeSequence seq = (m3x.xml.KeyframeSequence) this.m3xObject;
+        m3x.xml.KeyframeSequence seq = (m3x.xml.KeyframeSequence) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.KeyframeSequence(animationTracks,
-                userParameters,
-                toM3G(seq.getInterpolation()),
-                toM3G(seq.getRepeatMode()),
-                seq.getDuration().intValue(),
-                seq.getValidRangeFirst().intValue(),
-                seq.getValidRangeLast().intValue(),
-                seq.getKeyframeCount().intValue(),
-                toM3G(seq.getKeyframes(), seq.getKeytimes()));
+            this.setBinaryObject(new m3x.m3g.objects.KeyframeSequence(animationTracks, userParameters, toM3G(seq.getInterpolation()), toM3G(seq.getRepeatMode()), seq.getDuration().intValue(), seq.getValidRangeFirst().intValue(), seq.getValidRangeLast().intValue(), seq.getKeyframeCount().intValue(), toM3G(seq.getKeyframes(), seq.getKeytimes())));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Long> keyTimes)

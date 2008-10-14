@@ -14,13 +14,13 @@ public class CameraTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Camera camera = (m3x.xml.Camera) this.m3xObject;
+        m3x.xml.Camera camera = (m3x.xml.Camera) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         m3x.xml.TransformableType transformable = (m3x.xml.TransformableType) camera;
         Matrix transform = getM3GTransformMatrix(transformable);
@@ -30,36 +30,18 @@ public class CameraTranslator extends AbstractTranslator
         {
             if (camera.getProjectionTransform().size() == 0)
             {
-                this.m3gObject = new m3x.m3g.objects.Camera(animationTracks,
-                    userParameters,
-                    transform,
-                    camera.isRenderingEnabled(),
-                    camera.isPickingEnabled(),
-                    (byte) (camera.getAlphaFactor() * 255.0f + 0.5f),
-                    camera.getScope(),
-                    toM3G(camera.getProjectionType()),
-                    camera.getFovy().floatValue(),
-                    camera.getAspectRatio().floatValue(),
-                    camera.getNear().floatValue(),
-                    camera.getFar().floatValue());
+                this.setBinaryObject(new m3x.m3g.objects.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionType()), camera.getFovy().floatValue(), camera.getAspectRatio().floatValue(), camera.getNear().floatValue(), camera.getFar().floatValue()));
             }
             else
             {
-                this.m3gObject = new m3x.m3g.objects.Camera(animationTracks,
-                    userParameters,
-                    transform,
-                    camera.isRenderingEnabled(),
-                    camera.isPickingEnabled(),
-                    (byte) (camera.getAlphaFactor() * 255.0f + 0.5f),
-                    camera.getScope(),
-                    toM3G(camera.getProjectionTransform()));
+                this.setBinaryObject(new m3x.m3g.objects.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionTransform())));
             }
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(CameraProjectionModeType projectionType)

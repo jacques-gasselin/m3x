@@ -13,42 +13,34 @@ public class VertexBufferTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.VertexBuffer vb = (m3x.xml.VertexBuffer) this.m3xObject;
+        m3x.xml.VertexBuffer vb = (m3x.xml.VertexBuffer) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        int positionsIndex = searchObjectIndex(this.m3xRoot, vb.getPositions());
-        int normalsIndex = searchObjectIndex(this.m3xRoot, vb.getNormals());
-        int colorsIndex = searchObjectIndex(this.m3xRoot, vb.getColors());
+        int positionsIndex = searchObjectIndex(this.getXmlRootObject(), vb.getPositions());
+        int normalsIndex = searchObjectIndex(this.getXmlRootObject(), vb.getNormals());
+        int colorsIndex = searchObjectIndex(this.getXmlRootObject(), vb.getColors());
 
         List<Texcoords> list = vb.getTexcoords();
         TextureCoordinate[] textureCoordinates = new TextureCoordinate[list.size()];
         for (int i = 0; i < textureCoordinates.length; i++)
         {
             Texcoords tc = list.get(i);
-            int index = searchObjectIndex(this.m3xRoot, tc.getVertexArray());
+            int index = searchObjectIndex(this.getXmlRootObject(), tc.getVertexArray());
             float[] bias = this.translateFloatArray(tc.getBias());
             float scale = tc.getScale().floatValue();
             textureCoordinates[i] = new TextureCoordinate(new ObjectIndex(index), bias, scale);
         }
 
-        this.m3gObject = new m3x.m3g.objects.VertexBuffer(animationTracks,
-            userParameters,
-            translateColorRGBA(vb.getDefaultColor()),
-            new ObjectIndex(positionsIndex),
-            this.translateFloatArray(vb.getPositions().getBias()),
-            vb.getPositions().getScale().floatValue(),
-            new ObjectIndex(normalsIndex),
-            new ObjectIndex(colorsIndex),
-            textureCoordinates);
+        this.setBinaryObject(new m3x.m3g.objects.VertexBuffer(animationTracks, userParameters, translateColorRGBA(vb.getDefaultColor()), new ObjectIndex(positionsIndex), this.translateFloatArray(vb.getPositions().getBias()), vb.getPositions().getScale().floatValue(), new ObjectIndex(normalsIndex), new ObjectIndex(colorsIndex), textureCoordinates));
 
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private float[] translateFloatArray(List<Float> floats)

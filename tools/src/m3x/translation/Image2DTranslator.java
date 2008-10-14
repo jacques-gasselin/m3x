@@ -15,31 +15,25 @@ public class Image2DTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Image2D image = (m3x.xml.Image2D) this.m3xObject;
+        m3x.xml.Image2D image = (m3x.xml.Image2D) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.Image2D(animationTracks,
-                userParameters,
-                toM3G(image.getFormat()),
-                image.getWidth().intValue(),
-                image.getHeight().intValue(),
-                toBytes(image.getPalette()),
-                toBytes(image.getPixels()));
+            this.setBinaryObject(new m3x.m3g.objects.Image2D(animationTracks, userParameters, toM3G(image.getFormat()), image.getWidth().intValue(), image.getHeight().intValue(), toBytes(image.getPalette()), toBytes(image.getPixels())));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(ImageBaseColorType format)

@@ -16,13 +16,13 @@ public class WorldTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.World world = (m3x.xml.World) this.m3xObject;
+        m3x.xml.World world = (m3x.xml.World) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         m3x.xml.TransformableType transformable = (m3x.xml.TransformableType) world;
         Matrix transform = getM3GTransformMatrix(transformable);
@@ -33,31 +33,22 @@ public class WorldTranslator extends AbstractTranslator
         for (NodeType node : childNodes)
         {
             Object toBeFound = node.getId();
-            int index = AbstractTranslator.searchObjectIndex(this.m3xRoot, toBeFound);
+            int index = AbstractTranslator.searchObjectIndex(this.getXmlRootObject(), toBeFound);
             childObjectIndices.add(new ObjectIndex(index));
         }
         ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-        int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
-        int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
+        int activeCameraIndex = searchObjectIndex(this.getXmlRootObject(), world.getActiveCamera());
+        int backgroundIndex = searchObjectIndex(this.getXmlRootObject(), world.getBackground());
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.World(animationTracks,
-                userParameters,
-                transform,
-                world.isRenderingEnabled(),
-                world.isPickingEnabled(),
-                (byte) (world.getAlphaFactor() * 255.0f + 0.5f),
-                world.getScope(),
-                children,
-                new ObjectIndex(activeCameraIndex),
-                new ObjectIndex(backgroundIndex));
+            this.setBinaryObject(new m3x.m3g.objects.World(animationTracks, userParameters, transform, world.isRenderingEnabled(), world.isPickingEnabled(), (byte) (world.getAlphaFactor() * 255.0f + 0.5f), world.getScope(), children, new ObjectIndex(activeCameraIndex), new ObjectIndex(backgroundIndex)));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

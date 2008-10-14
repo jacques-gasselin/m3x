@@ -12,34 +12,25 @@ public class CompositingModeTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.CompositingMode cm = (m3x.xml.CompositingMode) this.m3xObject;
+        m3x.xml.CompositingMode cm = (m3x.xml.CompositingMode) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.CompositingMode(animationTracks,
-                userParameters,
-                cm.isDepthTestEnabled(),
-                cm.isDepthWriteEnabled(),
-                cm.isColorWriteEnabled(),
-                cm.isAlphaWriteEnabled(),
-                toM3G(cm.getBlending()),
-                (int) (cm.getAlphaThreshold() * 255.0f + 0.5f),
-                cm.getDepthOffsetFactor().floatValue(),
-                cm.getDepthOffsetUnits().floatValue());
+            this.setBinaryObject(new m3x.m3g.objects.CompositingMode(animationTracks, userParameters, cm.isDepthTestEnabled(), cm.isDepthWriteEnabled(), cm.isColorWriteEnabled(), cm.isAlphaWriteEnabled(), toM3G(cm.getBlending()), (int) (cm.getAlphaThreshold() * 255.0f + 0.5f), cm.getDepthOffsetFactor().floatValue(), cm.getDepthOffsetUnits().floatValue()));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(CompositingModeType blending)

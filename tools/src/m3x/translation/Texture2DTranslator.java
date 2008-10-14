@@ -21,17 +21,17 @@ public class Texture2DTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Texture2D texture = (m3x.xml.Texture2D) this.m3xObject;
+        m3x.xml.Texture2D texture = (m3x.xml.Texture2D) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        int textureIndex = searchObjectIndex(this.m3xRoot, texture.getImage2DInstance().getRef());
+        int textureIndex = searchObjectIndex(this.getXmlRootObject(), texture.getImage2DInstance().getRef());
 
         float x, y, z;
         x = texture.getTranslation().get(0).floatValue();
@@ -53,20 +53,8 @@ public class Texture2DTranslator extends AbstractTranslator
 
         ColorRGB blendColor = AbstractTranslator.translateColorRGB(texture.getBlendColor());
 
-        this.m3gObject = new m3x.m3g.objects.Texture2D(animationTracks,
-            userParameters,
-            translation,
-            scale,
-            orientationAngle,
-            orientationAxis,
-            new ObjectIndex(textureIndex),
-            blendColor,
-            toM3G(texture.getBlending()),
-            toM3G(texture.getWrappingS()),
-            toM3G(texture.getWrappingT()),
-            toM3G(texture.getLevelFilter()),
-            toM3G(texture.getImageFilter()));
-        return this.m3gObject;
+        this.setBinaryObject(new m3x.m3g.objects.Texture2D(animationTracks, userParameters, translation, scale, orientationAngle, orientationAxis, new ObjectIndex(textureIndex), blendColor, toM3G(texture.getBlending()), toM3G(texture.getWrappingS()), toM3G(texture.getWrappingT()), toM3G(texture.getLevelFilter()), toM3G(texture.getImageFilter())));
+        return this.getBinaryObject();
     }
 
     private int toM3G(TextureFilterModeType imageFilter)

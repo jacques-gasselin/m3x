@@ -11,37 +11,26 @@ public class BackgroundTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Background background = (m3x.xml.Background) this.m3xObject;
+        m3x.xml.Background background = (m3x.xml.Background) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        int backgroundIndex = searchObjectIndex(this.m3xRoot, background.getImage2DInstance().getRef());
+        int backgroundIndex = searchObjectIndex(this.getXmlRootObject(), background.getImage2DInstance().getRef());
         try
         {
-            this.m3gObject = new m3x.m3g.objects.Background(animationTracks,
-                userParameters,
-                translateColorRGBA(background.getBackgroundColor()),
-                new ObjectIndex(backgroundIndex),
-                toM3G(background.getBackgroundImageModeX()),
-                toM3G(background.getBackgroundImageModeY()),
-                background.getCropX().intValue(),
-                background.getCropY().intValue(),
-                background.getCropWidth().intValue(),
-                background.getCropHeight().intValue(),
-                background.isDepthClearEnabled().booleanValue(),
-                background.isColorClearEnabled().booleanValue());
+            this.setBinaryObject(new m3x.m3g.objects.Background(animationTracks, userParameters, translateColorRGBA(background.getBackgroundColor()), new ObjectIndex(backgroundIndex), toM3G(background.getBackgroundImageModeX()), toM3G(background.getBackgroundImageModeY()), background.getCropX().intValue(), background.getCropY().intValue(), background.getCropWidth().intValue(), background.getCropHeight().intValue(), background.isDepthClearEnabled().booleanValue(), background.isColorClearEnabled().booleanValue()));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(BackgroundRepeatType backgroundImageMode)

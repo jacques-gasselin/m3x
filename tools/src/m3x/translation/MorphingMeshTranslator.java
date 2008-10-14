@@ -15,13 +15,13 @@ public class MorphingMeshTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.MorphingMesh mm = (m3x.xml.MorphingMesh) this.m3xObject;
+        m3x.xml.MorphingMesh mm = (m3x.xml.MorphingMesh) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         m3x.xml.TransformableType transformable = (m3x.xml.TransformableType) mm;
         Matrix transform = getM3GTransformMatrix(transformable);
@@ -32,25 +32,18 @@ public class MorphingMeshTranslator extends AbstractTranslator
         for (int i = 0; i < morphTargets.length; i++)
         {
             Morphtarget target = list.get(i);
-            morphTargets[i] = new TargetBuffer(new ObjectIndex(searchObjectIndex(this.m3xRoot, target.getVertexBufferInstance().getRef())),
+            morphTargets[i] = new TargetBuffer(new ObjectIndex(searchObjectIndex(this.getXmlRootObject(), target.getVertexBufferInstance().getRef())),
                 target.getWeight().floatValue());
         }
         try
         {
-            this.m3gObject = new m3x.m3g.objects.MorphingMesh(animationTracks,
-                userParameters,
-                transform,
-                mm.isRenderingEnabled(),
-                mm.isPickingEnabled(),
-                (byte) (mm.getAlphaFactor() * 255.0f + 0.5f),
-                mm.getScope(),
-                morphTargets);
+            this.setBinaryObject(new m3x.m3g.objects.MorphingMesh(animationTracks, userParameters, transform, mm.isRenderingEnabled(), mm.isPickingEnabled(), (byte) (mm.getAlphaFactor() * 255.0f + 0.5f), mm.getScope(), morphTargets));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

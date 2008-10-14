@@ -9,16 +9,14 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.AnimationTrack;
-import m3x.xml.Deserialiser;
-import m3x.xml.M3G;
 import m3x.xml.SectionType;
 
 public abstract class AbstractTranslator implements Translator
 {
-    protected m3x.xml.Object3D m3xObject;
-    protected Object3D m3gObject;
-    protected M3G m3xRoot;
-    protected Deserialiser deserializer;
+    private m3x.xml.Object3D xmlObject;
+    private Object3D binaryObject;
+    private m3x.xml.M3G xmlRootObject;
+    private m3x.xml.Deserialiser xmlDeserializer;
 
     /**
      * Sets the values from an XML object May throw java.lang.ClassCastException -
@@ -29,11 +27,13 @@ public abstract class AbstractTranslator implements Translator
      * @param deserialiser
      *          - the deserialiser used to resolve references.
      */
-    public void set(m3x.xml.Object3D object, M3G root, Deserialiser deserialiser)
+    public void set(m3x.xml.Object3D object,
+            m3x.xml.M3G root,
+            m3x.xml.Deserialiser deserialiser)
     {
-        this.m3xObject = object;
-        this.m3xRoot = root;
-        this.deserializer = deserialiser;
+        this.setXmlObject(object);
+        this.setXmlRootObject(root);
+        this.setXmlDeserializer(deserialiser);
     }
 
     /**
@@ -45,13 +45,13 @@ public abstract class AbstractTranslator implements Translator
      */
     public void set(Object3D object)
     {
-        this.m3gObject = object;
+        this.setBinaryObject(object);
 
     }
 
     protected ObjectIndex[] getM3GAnimationTracks()
     {
-        List<AnimationTrack> list = this.m3xObject.getAnimationTrack();
+        List<AnimationTrack> list = this.getXmlObject().getAnimationTrack();
         List<Integer> animationTracksList = new ArrayList<Integer>(list.size());
         for (AnimationTrack at : list)
         {
@@ -108,7 +108,7 @@ public abstract class AbstractTranslator implements Translator
      * @return
      *  Index of the found Object3D inside Sections list or -1 if not found.
      */
-    protected static int searchObjectIndex(M3G root, Object searchKey)
+    protected static int searchObjectIndex(m3x.xml.M3G root, Object searchKey)
     {
         int index = 1;
         for (SectionType section : root.getSection())
@@ -123,5 +123,45 @@ public abstract class AbstractTranslator implements Translator
             }
         }
         return -1;
+    }
+
+    public m3x.xml.Object3D getXmlObject()
+    {
+        return xmlObject;
+    }
+
+    public void setXmlObject(m3x.xml.Object3D object)
+    {
+        this.xmlObject = object;
+    }
+
+    public Object3D getBinaryObject()
+    {
+        return binaryObject;
+    }
+
+    public void setBinaryObject(Object3D binaryObject)
+    {
+        this.binaryObject = binaryObject;
+    }
+
+    public m3x.xml.M3G getXmlRootObject()
+    {
+        return xmlRootObject;
+    }
+
+    public void setXmlRootObject(m3x.xml.M3G xmlRootObject)
+    {
+        this.xmlRootObject = xmlRootObject;
+    }
+
+    public m3x.xml.Deserialiser getXmlDeserializer()
+    {
+        return xmlDeserializer;
+    }
+
+    public void setXmlDeserializer(m3x.xml.Deserialiser xmlDeserializer)
+    {
+        this.xmlDeserializer = xmlDeserializer;
     }
 }

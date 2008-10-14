@@ -14,32 +14,25 @@ public class PolygonModeTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.PolygonMode polygonMode = (m3x.xml.PolygonMode) this.m3xObject;
+        m3x.xml.PolygonMode polygonMode = (m3x.xml.PolygonMode) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.PolygonMode(animationTracks,
-                userParameters,
-                toM3G(polygonMode.getCulling()),
-                toM3G(polygonMode.getShading()),
-                toM3G(polygonMode.getWinding()),
-                polygonMode.isTwoSidedLightingEnabled().booleanValue(),
-                polygonMode.isLocalCameraLightingEnabled().booleanValue(),
-                polygonMode.isPerspectiveCorrectionEnabled().booleanValue());
+            this.setBinaryObject(new m3x.m3g.objects.PolygonMode(animationTracks, userParameters, toM3G(polygonMode.getCulling()), toM3G(polygonMode.getShading()), toM3G(polygonMode.getWinding()), polygonMode.isTwoSidedLightingEnabled().booleanValue(), polygonMode.isLocalCameraLightingEnabled().booleanValue(), polygonMode.isPerspectiveCorrectionEnabled().booleanValue()));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(PolygonWindingModeType winding)

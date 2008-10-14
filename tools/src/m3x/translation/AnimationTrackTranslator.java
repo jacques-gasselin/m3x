@@ -9,33 +9,27 @@ public class AnimationTrackTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.AnimationTrack at = (m3x.xml.AnimationTrack) this.m3xObject;
+        m3x.xml.AnimationTrack at = (m3x.xml.AnimationTrack) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        int animationController = searchObjectIndex(this.m3xRoot, at.getAnimationControllerInstance().getRef());
-        int keyframeSequence = searchObjectIndex(this.m3xRoot, at.getKeyframeSequenceInstance().getRef());
+        int animationController = searchObjectIndex(this.getXmlRootObject(), at.getAnimationControllerInstance().getRef());
+        int keyframeSequence = searchObjectIndex(this.getXmlRootObject(), at.getKeyframeSequenceInstance().getRef());
         try
         {
-            this.m3gObject = new m3x.m3g.objects.AnimationTrack(animationTracks,
-                userParameters,
-                new ObjectIndex(keyframeSequence),
-                new ObjectIndex(animationController),
-                // TODO: this should be getProperty() and converted
-                // to an integer enum from a string
-                (int) at.getUserID());
+            this.setBinaryObject(new m3x.m3g.objects.AnimationTrack(animationTracks, userParameters, new ObjectIndex(keyframeSequence), new ObjectIndex(animationController), (int) at.getUserID()));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

@@ -12,13 +12,13 @@ public class MaterialTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Material material = (m3x.xml.Material) this.m3xObject;
+        m3x.xml.Material material = (m3x.xml.Material) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
@@ -27,16 +27,9 @@ public class MaterialTranslator extends AbstractTranslator
         ColorRGB emissive = translateColorRGB(material.getEmissiveColor());
         ColorRGB specular = translateColorRGB(material.getSpecularColor());
 
-        this.m3gObject = new m3x.m3g.objects.Material(animationTracks,
-            userParameters,
-            ambient,
-            diffuse,
-            emissive,
-            specular,
-            material.getShininess().floatValue(),
-            material.isVertexColorTrackingEnabled().booleanValue());
+        this.setBinaryObject(new m3x.m3g.objects.Material(animationTracks, userParameters, ambient, diffuse, emissive, specular, material.getShininess().floatValue(), material.isVertexColorTrackingEnabled().booleanValue()));
 
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

@@ -11,38 +11,31 @@ public class AppearanceTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Appearance appearance = (m3x.xml.Appearance) this.m3xObject;
+        m3x.xml.Appearance appearance = (m3x.xml.Appearance) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        int compositingModeIndex = searchObjectIndex(this.m3xRoot, appearance.getCompositingModeInstance().getRef());
-        int fogIndex = searchObjectIndex(this.m3xRoot, appearance.getFogInstance().getRef());
-        int polygonModeIndex = searchObjectIndex(this.m3xRoot, appearance.getPolygonModeInstance().getRef());
-        int materialIndex = searchObjectIndex(this.m3xRoot, appearance.getMaterialInstance().getRef());
+        int compositingModeIndex = searchObjectIndex(this.getXmlRootObject(), appearance.getCompositingModeInstance().getRef());
+        int fogIndex = searchObjectIndex(this.getXmlRootObject(), appearance.getFogInstance().getRef());
+        int polygonModeIndex = searchObjectIndex(this.getXmlRootObject(), appearance.getPolygonModeInstance().getRef());
+        int materialIndex = searchObjectIndex(this.getXmlRootObject(), appearance.getMaterialInstance().getRef());
         List<Texture2DInstance> list = appearance.getTexture2DInstance();
         ObjectIndex[] textureIndices = new ObjectIndex[list.size()];
         for (int i = 0; i < list.size(); i++)
         {
             Texture2DInstance texture = list.get(i);
-            textureIndices[i] = new ObjectIndex(searchObjectIndex(this.m3xRoot, texture.getRef()));
+            textureIndices[i] = new ObjectIndex(searchObjectIndex(this.getXmlRootObject(), texture.getRef()));
         }
 
-        this.m3gObject = new m3x.m3g.objects.Appearance(animationTracks,
-            userParameters,
-            appearance.getLayer().byteValue(),
-            new ObjectIndex(compositingModeIndex),
-            new ObjectIndex(fogIndex),
-            new ObjectIndex(polygonModeIndex),
-            new ObjectIndex(materialIndex),
-            textureIndices);
+        this.setBinaryObject(new m3x.m3g.objects.Appearance(animationTracks, userParameters, appearance.getLayer().byteValue(), new ObjectIndex(compositingModeIndex), new ObjectIndex(fogIndex), new ObjectIndex(polygonModeIndex), new ObjectIndex(materialIndex), textureIndices));
 
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

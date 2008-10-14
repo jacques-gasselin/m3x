@@ -8,26 +8,19 @@ public class AnimationControllerTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.AnimationController ac = (m3x.xml.AnimationController) this.m3xObject;
+        m3x.xml.AnimationController ac = (m3x.xml.AnimationController) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        this.m3gObject = new m3x.m3g.objects.AnimationController(animationTracks,
-            userParameters,
-            ac.getSpeed(),
-            ac.getWeight(),
-            ac.getActiveIntervalStart(),
-            ac.getActiveIntervalEnd(),
-            ac.getReferenceSequenceTime(),
-            ac.getReferenceWorldTime());
+        this.setBinaryObject(new m3x.m3g.objects.AnimationController(animationTracks, userParameters, ac.getSpeed(), ac.getWeight(), ac.getActiveIntervalStart(), ac.getActiveIntervalEnd(), ac.getReferenceSequenceTime(), ac.getReferenceWorldTime()));
 
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

@@ -22,9 +22,9 @@ public class VertexArrayTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject == null)
+        if (this.getBinaryObject() == null)
         {
-            m3x.xml.VertexArray va = (m3x.xml.VertexArray) m3xObject;
+            m3x.xml.VertexArray va = (m3x.xml.VertexArray) this.getXmlObject();
             ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
             Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
             List<Integer> ints = va.getIntArray();
@@ -37,27 +37,25 @@ public class VertexArrayTranslator extends AbstractTranslator
                     {
                         byteComponents[i] = ints.get(i).byteValue();
                     }
-                    m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
-                        userParameters, byteComponents, false);
+                    setBinaryObject(new m3x.m3g.objects.VertexArray(animationTracks, userParameters, byteComponents, false));
                 case SHORT:
                     short[] shortComponents = new short[ints.size()];
                     for (int i = 0; i < ints.size(); i++)
                     {
                         shortComponents[i] = ints.get(i).shortValue();
                     }
-                    m3gObject = new m3x.m3g.objects.VertexArray(animationTracks,
-                        userParameters, shortComponents, false);
+                    setBinaryObject(new m3x.m3g.objects.VertexArray(animationTracks, userParameters, shortComponents, false));
             }
         }
         // else translation is done already
-        return m3gObject;
+        return getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()
     {
-        if (this.m3xObject == null)
+        if (this.getXmlObject() == null)
         {
         }
-        return m3xObject;
+        return this.getXmlObject();
     }
 }

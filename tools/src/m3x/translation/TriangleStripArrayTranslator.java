@@ -10,13 +10,13 @@ public class TriangleStripArrayTranslator extends AbstractTranslator
 
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.TriangleStripArray tsa = (m3x.xml.TriangleStripArray) this.m3xObject;
+        m3x.xml.TriangleStripArray tsa = (m3x.xml.TriangleStripArray) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
@@ -31,11 +31,8 @@ public class TriangleStripArrayTranslator extends AbstractTranslator
             stripLengths[i] = tsa.getStripLengths().get(i);
         }
 
-        this.m3gObject = new m3x.m3g.objects.TriangleStripArray(animationTracks,
-            userParameters,
-            indices,
-            stripLengths);
-        return this.m3gObject;
+        this.setBinaryObject(new m3x.m3g.objects.TriangleStripArray(animationTracks, userParameters, indices, stripLengths));
+        return this.getBinaryObject();
     }
 
     public m3x.xml.Object3D toXML()

@@ -13,40 +13,26 @@ public class LightTranslator extends AbstractTranslator
 {
     public Object3D toM3G()
     {
-        if (this.m3gObject != null)
+        if (this.getBinaryObject() != null)
         {
-            return this.m3gObject;
+            return this.getBinaryObject();
         }
 
         // do translation
-        m3x.xml.Light light = (m3x.xml.Light) this.m3xObject;
+        m3x.xml.Light light = (m3x.xml.Light) this.getXmlObject();
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Matrix transform = getM3GTransformMatrix(light);
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
         try
         {
-            this.m3gObject = new m3x.m3g.objects.Light(animationTracks,
-                userParameters,
-                transform,
-                light.isRenderingEnabled(),
-                light.isPickingEnabled(),
-                (byte) (light.getAlphaFactor() * 255.0f + 0.5f),
-                light.getScope(),
-                light.getAttenuationConstant().floatValue(),
-                light.getAttenuationLinear().floatValue(),
-                light.getAttenuationQuadratic().floatValue(),
-                AbstractTranslator.translateColorRGB(light.getColor()),
-                toM3G(light.getMode()),
-                light.getIntensity().floatValue(),
-                light.getSpotAngle().floatValue(),
-                light.getSpotExponent().floatValue());
+            this.setBinaryObject(new m3x.m3g.objects.Light(animationTracks, userParameters, transform, light.isRenderingEnabled(), light.isPickingEnabled(), (byte) (light.getAlphaFactor() * 255.0f + 0.5f), light.getScope(), light.getAttenuationConstant().floatValue(), light.getAttenuationLinear().floatValue(), light.getAttenuationQuadratic().floatValue(), AbstractTranslator.translateColorRGB(light.getColor()), toM3G(light.getMode()), light.getIntensity().floatValue(), light.getSpotAngle().floatValue(), light.getSpotExponent().floatValue()));
         }
         catch (FileFormatException e)
         {
             throw new IllegalArgumentException(e);
         }
-        return this.m3gObject;
+        return this.getBinaryObject();
     }
 
     private int toM3G(LightType mode)
