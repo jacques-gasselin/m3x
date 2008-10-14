@@ -22,8 +22,9 @@ public class Serialiser
      */
     private Marshaller xmlMarshaller = null;
 
-    /**Creates a new Serialser that is bound to the m3x.xml JAXB context.
-     * 
+    /**Creates a new Serialiser that is bound to the m3x.xml JAXB context.
+     * @throws NoClassDefFoundError - if unable to bind the xml schema
+     * @throws IllegalArgumentException - if unable to create a marshaller
      */
     public Serialiser()
     {
@@ -35,7 +36,7 @@ public class Serialiser
         }
         catch (JAXBException e)
         {
-            throw new IllegalArgumentException("unable to bind schema: " + e.getMessage());
+            throw new NoClassDefFoundError("unable to bind schema: " + e.getMessage());
         }
         
         try
@@ -52,9 +53,21 @@ public class Serialiser
      * 
      * @param object - the object to write.
      * @param stream - the inout stream to write to.
+     * @throws NullPointerException - if object is null
+     * @throws NullPointerException - if stream is null
+     * @throws IllegalArgumentException - if there is an error in serialising
+     * the object to the stream
      */
     public void serialise(m3x.xml.M3G object, OutputStream stream)
     {
+        if (object == null)
+        {
+            throw new NullPointerException("m3g object is null");
+        }
+        if (stream == null)
+        {
+            throw new NullPointerException("stream is null");
+        }
         try
         {
             xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(false));
@@ -70,9 +83,20 @@ public class Serialiser
      * 
      * @param object - the object to write.
      * @param stream - the inout stream to write to.
+     * @throws NullPointerException - if object is null
+     * @throws NullPointerException - if stream is null
+     * @throws IllegalArgumentException - if there is an error in serialising
      */
     public void serialiseFormatted(m3x.xml.M3G object, OutputStream stream)
     {
+        if (object == null)
+        {
+            throw new NullPointerException("m3g object is null");
+        }
+        if (stream == null)
+        {
+            throw new NullPointerException("stream is null");
+        }
         try
         {
             xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(true));
