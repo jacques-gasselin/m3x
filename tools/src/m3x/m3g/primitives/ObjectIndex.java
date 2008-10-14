@@ -10,43 +10,43 @@ import m3x.m3g.M3GSupport;
 
 public class ObjectIndex implements M3GSerializable
 {
-  private int index;
+    private int index;
 
-  public ObjectIndex(int index)
-  {
-    this.index = index;
-  }
-
-  public ObjectIndex()
-  {
-  }
-
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException, FileFormatException
-  {
-    this.index = M3GSupport.readInt(dataInputStream);
-  }
-
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
-  {
-    M3GSupport.writeInt(dataOutputStream, this.index);
-  }
-
-  public Object getIndex()
-  {
-    return this.index;
-  }
-
-  public boolean equals(Object obj)
-  {
-    if (obj == this)
+    public ObjectIndex(int index)
     {
-      return true;
+        this.index = index;
     }
-    if (!(obj instanceof ObjectIndex))
+
+    public ObjectIndex()
     {
-      return false;
     }
-    return this.index == ((ObjectIndex)obj).index;
-  }
+
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        throws IOException, FileFormatException
+    {
+        this.index = M3GSupport.readInt(dataInputStream);
+    }
+
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+    {
+        M3GSupport.writeInt(dataOutputStream, this.index);
+    }
+
+    public Object getIndex()
+    {
+        return this.index;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+        {
+            return true;
+        }
+        if (!(obj instanceof ObjectIndex))
+        {
+            return false;
+        }
+        return this.index == ((ObjectIndex) obj).index;
+    }
 }

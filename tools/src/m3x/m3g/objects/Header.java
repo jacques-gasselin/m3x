@@ -17,75 +17,77 @@ import m3x.m3g.ObjectTypes;
  */
 public class Header implements M3GTypedObject
 {  
-  private final static byte[] VERSION = {1, 0};
-  
-  private boolean hasExternalReferences;
-  private int totalFileSize;
-  private int approximateContentSize;
-  private String authoringInformation;
-  
-  public Header(boolean hasExternalReferences, int totalFileSize,
-      int approximateContentSize, String authoringInformation)
-  {
-    this.hasExternalReferences = hasExternalReferences;
-    this.totalFileSize = totalFileSize;
-    this.approximateContentSize = approximateContentSize;
-    this.authoringInformation = authoringInformation;
-  }
-
-  public Header()
-  {
-    super();
-  }
-
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException, FileFormatException
-  {
-    byte[] version = new byte[2];
-    dataInputStream.read(version);
-    if (!Arrays.equals(version, VERSION))
+    private final static byte[] VERSION =
     {
-      throw new FileFormatException("Invalid M3G version!");
+        1, 0
+    };
+    private boolean hasExternalReferences;
+    private int totalFileSize;
+    private int approximateContentSize;
+    private String authoringInformation;
+
+    public Header(boolean hasExternalReferences, int totalFileSize,
+        int approximateContentSize, String authoringInformation)
+    {
+        this.hasExternalReferences = hasExternalReferences;
+        this.totalFileSize = totalFileSize;
+        this.approximateContentSize = approximateContentSize;
+        this.authoringInformation = authoringInformation;
     }
-    this.hasExternalReferences = dataInputStream.readBoolean();
-    this.totalFileSize = M3GSupport.readInt(dataInputStream);
-    this.approximateContentSize = M3GSupport.readInt(dataInputStream);
-    this.authoringInformation = M3GSupport.readUTF8(dataInputStream);
-  }
 
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-      throws IOException
-  {
-    dataOutputStream.write(VERSION);
-    dataOutputStream.writeBoolean(this.hasExternalReferences);
-    M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
-    M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
-    dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
-    dataOutputStream.write('\0');
-  }
+    public Header()
+    {
+        super();
+    }
 
-  public boolean isHasExternalReferences()
-  {
-    return this.hasExternalReferences;
-  }
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        throws IOException, FileFormatException
+    {
+        byte[] version = new byte[2];
+        dataInputStream.read(version);
+        if (!Arrays.equals(version, VERSION))
+        {
+            throw new FileFormatException("Invalid M3G version!");
+        }
+        this.hasExternalReferences = dataInputStream.readBoolean();
+        this.totalFileSize = M3GSupport.readInt(dataInputStream);
+        this.approximateContentSize = M3GSupport.readInt(dataInputStream);
+        this.authoringInformation = M3GSupport.readUTF8(dataInputStream);
+    }
 
-  public int getTotalFileSize()
-  {
-    return this.totalFileSize;
-  }
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        throws IOException
+    {
+        dataOutputStream.write(VERSION);
+        dataOutputStream.writeBoolean(this.hasExternalReferences);
+        M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
+        M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
+        dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
+        dataOutputStream.write('\0');
+    }
 
-  public int getApproximateContentSize()
-  {
-    return this.approximateContentSize;
-  }
+    public boolean isHasExternalReferences()
+    {
+        return this.hasExternalReferences;
+    }
 
-  public String getAuthoringInformation()
-  {
-    return this.authoringInformation;
-  }
+    public int getTotalFileSize()
+    {
+        return this.totalFileSize;
+    }
 
-  public byte getObjectType()
-  {
-    return ObjectTypes.OBJECT_HEADER;
-  }  
+    public int getApproximateContentSize()
+    {
+        return this.approximateContentSize;
+    }
+
+    public String getAuthoringInformation()
+    {
+        return this.authoringInformation;
+    }
+
+    public byte getObjectType()
+    {
+        return ObjectTypes.OBJECT_HEADER;
+    }
 }

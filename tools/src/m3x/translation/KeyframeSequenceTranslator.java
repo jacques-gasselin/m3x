@@ -16,99 +16,99 @@ import m3x.xml.Object3DType;
 public class KeyframeSequenceTranslator extends AbstractTranslator
 {
 
-  public Object3D toM3G()
-  {
-    if (this.m3gObject != null)
+    public Object3D toM3G()
     {
-      return this.m3gObject;
+        if (this.m3gObject != null)
+        {
+            return this.m3gObject;
+        }
+
+        // do translation
+        m3x.xml.KeyframeSequence seq = (m3x.xml.KeyframeSequence) this.m3xObject;
+        ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
+        Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
+
+        try
+        {
+            this.m3gObject = new m3x.m3g.objects.KeyframeSequence(animationTracks,
+                userParameters,
+                toM3G(seq.getInterpolation()),
+                toM3G(seq.getRepeatMode()),
+                seq.getDuration().intValue(),
+                seq.getValidRangeFirst().intValue(),
+                seq.getValidRangeLast().intValue(),
+                seq.getKeyframeCount().intValue(),
+                toM3G(seq.getKeyframes(), seq.getKeytimes()));
+        }
+        catch (FileFormatException e)
+        {
+            throw new IllegalArgumentException(e);
+        }
+        return this.m3gObject;
     }
 
-    // do translation
-    m3x.xml.KeyframeSequence seq = (m3x.xml.KeyframeSequence)this.m3xObject;
-    ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
-    Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
-  
-    try
+    private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Long> keyTimes)
     {
-      this.m3gObject = new m3x.m3g.objects.KeyframeSequence(animationTracks, 
-          userParameters, 
-          toM3G(seq.getInterpolation()),
-          toM3G(seq.getRepeatMode()),
-          seq.getDuration().intValue(),
-          seq.getValidRangeFirst().intValue(),
-          seq.getValidRangeLast().intValue(),
-          seq.getKeyframeCount().intValue(),
-          toM3G(seq.getKeyframes(), seq.getKeytimes()));
+        List<Float> list = keyframes.getValue();
+        int componentCount = keyframes.getComponentSize();
+        FloatKeyFrame[] keyFrames = new FloatKeyFrame[list.size() / componentCount];
+        for (int i = 0; i < keyFrames.length; i += componentCount)
+        {
+            float[] components = new float[componentCount];
+            for (int j = 0; j < componentCount; j++)
+            {
+                components[j] = list.get(i + j).floatValue();
+            }
+            keyFrames[i] = new FloatKeyFrame(keyTimes.get(i).intValue(), components);
+        }
+        return keyFrames;
     }
-    catch (FileFormatException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
-    return this.m3gObject;
-  }
 
-  private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Long> keyTimes)
-  {
-    List<Float> list = keyframes.getValue();
-    int componentCount = keyframes.getComponentSize();
-    FloatKeyFrame[] keyFrames = new FloatKeyFrame[list.size() / componentCount];
-    for (int i = 0; i < keyFrames.length; i+= componentCount)
+    private int toM3G(KeyframePlaybackType repeatMode)
     {
-      float[] components = new float[componentCount];
-      for (int j = 0; j < componentCount; j++)
-      {
-        components[j] = list.get(i + j).floatValue();
-      }
-      keyFrames[i] = new FloatKeyFrame(keyTimes.get(i).intValue(), components);
+        if (repeatMode.equals(KeyframePlaybackType.ADDITIVE_LOOP))
+        {
+            // TODO: what to return here
+            throw new IllegalArgumentException(repeatMode.toString());
+        }
+        if (repeatMode.equals(KeyframePlaybackType.CONSTANT))
+        {
+            return KeyframeSequence.CONSTANT;
+        }
+        if (repeatMode.equals(KeyframePlaybackType.LOOP))
+        {
+            return KeyframeSequence.LOOP;
+        }
+        throw new IllegalArgumentException(repeatMode.toString());
     }
-    return keyFrames;
-  }
 
-  private int toM3G(KeyframePlaybackType repeatMode)
-  {
-    if (repeatMode.equals(KeyframePlaybackType.ADDITIVE_LOOP))
+    private int toM3G(KeyframeInterpolationType interpolation)
     {
-      // TODO: what to return here
-      throw new IllegalArgumentException(repeatMode.toString());
+        if (interpolation.equals(KeyframeInterpolationType.LINEAR))
+        {
+            return KeyframeSequence.LINEAR;
+        }
+        if (interpolation.equals(KeyframeInterpolationType.SLERP))
+        {
+            return KeyframeSequence.SLERP;
+        }
+        if (interpolation.equals(KeyframeInterpolationType.SPLINE))
+        {
+            return KeyframeSequence.SPLINE;
+        }
+        if (interpolation.equals(KeyframeInterpolationType.SQUAD))
+        {
+            return KeyframeSequence.SQUAD;
+        }
+        if (interpolation.equals(KeyframeInterpolationType.STEP))
+        {
+            return KeyframeSequence.STEP;
+        }
+        throw new IllegalArgumentException(interpolation.toString());
     }
-    if (repeatMode.equals(KeyframePlaybackType.CONSTANT))
-    {
-      return KeyframeSequence.CONSTANT;
-    }    
-    if (repeatMode.equals(KeyframePlaybackType.LOOP))
-    {
-      return KeyframeSequence.LOOP;
-    }
-    throw new IllegalArgumentException(repeatMode.toString());
-  }
 
-  private int toM3G(KeyframeInterpolationType interpolation)
-  {
-    if (interpolation.equals(KeyframeInterpolationType.LINEAR))
+    public Object3DType toXML()
     {
-      return KeyframeSequence.LINEAR;
+        return null;
     }
-    if (interpolation.equals(KeyframeInterpolationType.SLERP))
-    {
-      return KeyframeSequence.SLERP;
-    }
-    if (interpolation.equals(KeyframeInterpolationType.SPLINE))
-    {
-      return KeyframeSequence.SPLINE;
-    }
-    if (interpolation.equals(KeyframeInterpolationType.SQUAD))
-    {
-      return KeyframeSequence.SQUAD;
-    }  
-    if (interpolation.equals(KeyframeInterpolationType.STEP))
-    {
-      return KeyframeSequence.STEP;
-    }
-    throw new IllegalArgumentException(interpolation.toString());
-  }
-
-  public Object3DType toXML()
-  {
-    return null;
-  }
 }

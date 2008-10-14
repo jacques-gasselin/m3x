@@ -27,151 +27,151 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class SkinnedMesh extends Mesh implements M3GTypedObject
 {
-  public static class BoneReference implements M3GSerializable
-  {
-    private ObjectIndex transformNode;
-    private int firstVertex;
-    private int vertexCount;
-    private int weight;
-
-    public BoneReference(ObjectIndex transformNode, int firstVertex,
-        int vertexCount, int weight)
+    public static class BoneReference implements M3GSerializable
     {
-      this.transformNode = transformNode;
-      this.firstVertex = firstVertex;
-      this.vertexCount = vertexCount;
-      this.weight = weight;
+
+        private ObjectIndex transformNode;
+        private int firstVertex;
+        private int vertexCount;
+        private int weight;
+
+        public BoneReference(ObjectIndex transformNode, int firstVertex,
+            int vertexCount, int weight)
+        {
+            this.transformNode = transformNode;
+            this.firstVertex = firstVertex;
+            this.vertexCount = vertexCount;
+            this.weight = weight;
+        }
+
+        public BoneReference()
+        {
+        }
+
+        public ObjectIndex getTransformNode()
+        {
+            return this.transformNode;
+        }
+
+        public int getFirstVertex()
+        {
+            return this.firstVertex;
+        }
+
+        public int getVertexCount()
+        {
+            return this.vertexCount;
+        }
+
+        public int getWeight()
+        {
+            return this.weight;
+        }
+
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!(obj instanceof BoneReference))
+            {
+                return false;
+            }
+            BoneReference another = (BoneReference) obj;
+            return this.transformNode.equals(another.transformNode) &&
+                this.firstVertex == another.firstVertex &&
+                this.vertexCount == another.vertexCount &&
+                this.weight == another.weight;
+        }
+
+        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+            throws IOException, FileFormatException
+        {
+            this.transformNode = new ObjectIndex();
+            this.transformNode.deserialize(dataInputStream, m3gVersion);
+            this.firstVertex = M3GSupport.readInt(dataInputStream);
+            this.vertexCount = M3GSupport.readInt(dataInputStream);
+            this.weight = M3GSupport.readInt(dataInputStream);
+        }
+
+        public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+            throws IOException
+        {
+            this.transformNode.serialize(dataOutputStream, m3gVersion);
+            M3GSupport.writeInt(dataOutputStream, this.firstVertex);
+            M3GSupport.writeInt(dataOutputStream, this.vertexCount);
+            M3GSupport.writeInt(dataOutputStream, this.weight);
+        }
+    }
+    private ObjectIndex skeleton;
+    private int transformReferenceCount;
+    private BoneReference[] boneReferences;
+
+    public SkinnedMesh(ObjectIndex[] animationTracks,
+        UserParameter[] userParameters, Matrix transform,
+        boolean enableRendering, boolean enablePicking, byte alphaFactor,
+        int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes,
+        ObjectIndex skeleton, BoneReference[] boneReferences) throws FileFormatException
+    {
+        super(animationTracks, userParameters, transform, enableRendering,
+            enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
+        assert (skeleton != null);
+        assert (boneReferences != null);
+        this.skeleton = skeleton;
+        this.transformReferenceCount = boneReferences.length;
+        this.boneReferences = boneReferences;
     }
 
-    public BoneReference()
+    public SkinnedMesh()
     {
+        super();
     }
 
-    public ObjectIndex getTransformNode()
+    public byte getObjectType()
     {
-      return this.transformNode;
-    }
-
-    public int getFirstVertex()
-    {
-      return this.firstVertex;
-    }
-
-    public int getVertexCount()
-    {
-      return this.vertexCount;
-    }
-
-    public int getWeight()
-    {
-      return this.weight;
-    }
-
-    public boolean equals(Object obj)
-    {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (!(obj instanceof BoneReference))
-      {
-        return false;
-      }
-      BoneReference another = (BoneReference)obj;
-      return this.transformNode.equals(another.transformNode) &&
-             this.firstVertex == another.firstVertex &&
-             this.vertexCount == another.vertexCount &&
-             this.weight == another.weight;
+        return ObjectTypes.SKINNED_MESH;
     }
 
     public void deserialize(DataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
-    {      
-      this.transformNode = new ObjectIndex();
-      this.transformNode.deserialize(dataInputStream, m3gVersion);
-      this.firstVertex = M3GSupport.readInt(dataInputStream);
-      this.vertexCount = M3GSupport.readInt(dataInputStream);
-      this.weight = M3GSupport.readInt(dataInputStream);
+    {
+        super.deserialize(dataInputStream, m3gVersion);
+        this.skeleton = new ObjectIndex();
+        this.skeleton.deserialize(dataInputStream, m3gVersion);
+        this.transformReferenceCount = M3GSupport.readInt(dataInputStream);
+        this.boneReferences = new BoneReference[this.transformReferenceCount];
+        for (int i = 0; i < this.boneReferences.length; i++)
+        {
+            this.boneReferences[i] = new BoneReference();
+            this.boneReferences[i].deserialize(dataInputStream, m3gVersion);
+        }
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
-      this.transformNode.serialize(dataOutputStream, m3gVersion);
-      M3GSupport.writeInt(dataOutputStream, this.firstVertex);
-      M3GSupport.writeInt(dataOutputStream, this.vertexCount);
-      M3GSupport.writeInt(dataOutputStream, this.weight);
+        super.serialize(dataOutputStream, m3gVersion);
+        this.skeleton.serialize(dataOutputStream, m3gVersion);
+        M3GSupport.writeInt(dataOutputStream, this.transformReferenceCount);
+        for (BoneReference boneReference : this.boneReferences)
+        {
+            boneReference.serialize(dataOutputStream, m3gVersion);
+        }
     }
-  }
 
-  private ObjectIndex skeleton;
-  private int transformReferenceCount;
-  private BoneReference[] boneReferences;
-
-  public SkinnedMesh(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, Matrix transform,
-      boolean enableRendering, boolean enablePicking, byte alphaFactor,
-      int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes,
-      ObjectIndex skeleton, BoneReference[] boneReferences) throws FileFormatException
-  {
-    super(animationTracks, userParameters, transform, enableRendering,
-        enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
-    assert (skeleton != null);
-    assert (boneReferences != null);
-    this.skeleton = skeleton;
-    this.transformReferenceCount = boneReferences.length;
-    this.boneReferences = boneReferences;
-  }
-
-  public SkinnedMesh()
-  {
-    super();
-  }
-
-  public byte getObjectType()
-  {
-    return ObjectTypes.SKINNED_MESH;
-  }
-  
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException, FileFormatException
-  {
-    super.deserialize(dataInputStream, m3gVersion);
-    this.skeleton = new ObjectIndex();
-    this.skeleton.deserialize(dataInputStream, m3gVersion);
-    this.transformReferenceCount = M3GSupport.readInt(dataInputStream);
-    this.boneReferences = new BoneReference[this.transformReferenceCount];
-    for (int i = 0; i < this.boneReferences.length; i++)
+    public ObjectIndex getSkeleton()
     {
-      this.boneReferences[i] = new BoneReference();
-      this.boneReferences[i].deserialize(dataInputStream, m3gVersion);
+        return this.skeleton;
     }
-  }
 
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-      throws IOException
-  {
-    super.serialize(dataOutputStream, m3gVersion);
-    this.skeleton.serialize(dataOutputStream, m3gVersion);
-    M3GSupport.writeInt(dataOutputStream, this.transformReferenceCount);
-    for (BoneReference boneReference : this.boneReferences)
+    public int getTransformReferenceCount()
     {
-      boneReference.serialize(dataOutputStream, m3gVersion);
+        return this.transformReferenceCount;
     }
-  }
 
-  public ObjectIndex getSkeleton()
-  {
-    return this.skeleton;
-  }
-
-  public int getTransformReferenceCount()
-  {
-    return this.transformReferenceCount;
-  }
-
-  public BoneReference[] getBoneReferences()
-  {
-    return this.boneReferences;
-  }
+    public BoneReference[] getBoneReferences()
+    {
+        return this.boneReferences;
+    }
 }

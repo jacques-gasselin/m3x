@@ -50,509 +50,512 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class KeyframeSequence extends Object3D implements M3GTypedObject
 {
-  /**
-   * Abstract base class for all types of key frames.
-   * 
-   * @author jsaarinen
-   */
-  public static abstract class KeyFrame
-  {
-    private int time;
-
-    public KeyFrame(int time)
+    /**
+     * Abstract base class for all types of key frames.
+     *
+     * @author jsaarinen
+     */
+    public static abstract class KeyFrame
     {
-      this.time = time;
+
+        private int time;
+
+        public KeyFrame(int time)
+        {
+            this.time = time;
+        }
+
+        public int getTime()
+        {
+            return this.time;
+        }
+
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!(obj instanceof KeyFrame))
+            {
+                return false;
+            }
+            return this.time == ((KeyFrame) obj).time;
+        }
     }
 
-    public int getTime()
+    /**
+     * Keyframe class in floating point.
+     *
+     * @author jsaarinen
+     */
+    public static class FloatKeyFrame extends KeyFrame
     {
-      return this.time;
+
+        private float[] vectorValue;
+
+        public FloatKeyFrame(int time, float[] vectorValue)
+        {
+            super(time);
+            this.vectorValue = vectorValue;
+        }
+
+        public float[] getVectorValue()
+        {
+            return this.vectorValue;
+        }
+
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!(obj instanceof FloatKeyFrame))
+            {
+                return false;
+            }
+            FloatKeyFrame another = (FloatKeyFrame) obj;
+            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+        }
     }
 
-    public boolean equals(Object obj)
+    /**
+     * Keyframe class in integer.
+     *
+     * @author jsaarinen
+     */
+    public static class ByteKeyFrame extends KeyFrame
     {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (!(obj instanceof KeyFrame))
-      {
-        return false;
-      }
-      return this.time == ((KeyFrame)obj).time;
-    }
-  }
 
-  /**
-   * Keyframe class in floating point.
-   * 
-   * @author jsaarinen
-   */
-  public static class FloatKeyFrame extends KeyFrame
-  {
-    private float[] vectorValue;
+        private byte[] vectorValue;
 
-    public FloatKeyFrame(int time, float[] vectorValue)
-    {
-      super(time);
-      this.vectorValue = vectorValue;
-    }
+        public ByteKeyFrame(int time, byte[] vectorValue)
+        {
+            super(time);
+            this.vectorValue = vectorValue;
+        }
 
-    public float[] getVectorValue()
-    {
-      return this.vectorValue;
-    }
+        public byte[] getVectorValue()
+        {
+            return this.vectorValue;
+        }
 
-    public boolean equals(Object obj)
-    {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (!(obj instanceof FloatKeyFrame))
-      {
-        return false;
-      }
-      FloatKeyFrame another = (FloatKeyFrame)obj;
-      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
-    }
-  }
-
-  /**
-   * Keyframe class in integer.
-   * 
-   * @author jsaarinen
-   */
-  public static class ByteKeyFrame extends KeyFrame
-  {
-    private byte[] vectorValue;
-  
-    public ByteKeyFrame(int time, byte[] vectorValue)
-    {
-      super(time);
-      this.vectorValue = vectorValue;
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!(obj instanceof ByteKeyFrame))
+            {
+                return false;
+            }
+            ByteKeyFrame another = (ByteKeyFrame) obj;
+            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+        }
     }
 
-    public byte[] getVectorValue()
+    /**
+     * Keyframe class in integer.
+     *
+     * @author jsaarinen
+     */
+    public static class ShortKeyFrame extends KeyFrame
     {
-      return this.vectorValue;
+
+        private short[] vectorValue;
+
+        public ShortKeyFrame(int time, short[] vectorValue)
+        {
+            super(time);
+            this.vectorValue = vectorValue;
+        }
+
+        public short[] getVectorValue()
+        {
+            return this.vectorValue;
+        }
+
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!(obj instanceof ShortKeyFrame))
+            {
+                return false;
+            }
+            ShortKeyFrame another = (ShortKeyFrame) obj;
+            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+        }
     }
 
-    public boolean equals(Object obj)
-    {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (!(obj instanceof ByteKeyFrame))
-      {
-        return false;
-      }
-      ByteKeyFrame another = (ByteKeyFrame)obj;
-      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
-    }
-  }
+    public static final int CONSTANT = 192;
+    public static final int LINEAR = 176;
+    public static final int LOOP = 193;
+    public static final int SLERP = 177;
+    public static final int SPLINE = 178;
+    public static final int SQUAD = 179;
+    public static final int STEP = 180;
+    private static final Set<Integer> INTERPOLATION_MODES = new HashSet<Integer>();
+    private static final Set<Integer> REPEAT_MODES = new HashSet<Integer>();
 
-  /**
-   * Keyframe class in integer.
-   * 
-   * @author jsaarinen
-   */
-  public static class ShortKeyFrame extends KeyFrame
-  {
-    private short[] vectorValue;
 
-    public ShortKeyFrame(int time, short[] vectorValue)
+    static
     {
-      super(time);
-      this.vectorValue = vectorValue;
-    }
+        INTERPOLATION_MODES.add(LINEAR);
+        INTERPOLATION_MODES.add(SLERP);
+        INTERPOLATION_MODES.add(SPLINE);
+        INTERPOLATION_MODES.add(SQUAD);
+        INTERPOLATION_MODES.add(STEP);
 
-    public short[] getVectorValue()
-    {
-      return this.vectorValue;
+        REPEAT_MODES.add(CONSTANT);
+        REPEAT_MODES.add(LOOP);
     }
     
-    public boolean equals(Object obj)
+    private static final int ENCODING_FLOATS = 0;
+    private static final int ENCODING_BYTES = 1;
+    private static final int ENCODING_SHORTS = 2;
+    private int interpolation;
+    private int repeatMode;
+    private int encoding;
+    private int duration;
+    private int validRangeFirst;
+    private int validRangeLast;
+    private int componentCount;
+    private int keyframeCount;
+    private FloatKeyFrame[] floatKeyFrames;
+    private ByteKeyFrame[] byteKeyFrames;
+    private ShortKeyFrame[] shortKeyFrames;
+    private float[] vectorBias;
+    private float[] vectorScale;
+
+    public KeyframeSequence(ObjectIndex[] animationTracks,
+        UserParameter[] userParameters, int interpolation, int repeatMode,
+        int duration, int validRangeFirst, int validRangeLast,
+        int componentCount, FloatKeyFrame[] keyFrames) throws FileFormatException
     {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (!(obj instanceof ShortKeyFrame))
-      {
-        return false;
-      }
-      ShortKeyFrame another = (ShortKeyFrame)obj;
-      return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
+        super(animationTracks, userParameters);
+        assert (keyFrames != null);
+        validateInterpolationType(interpolation);
+        this.interpolation = interpolation;
+        validateRepeatMode(repeatMode);
+        this.repeatMode = repeatMode;
+        this.encoding = ENCODING_FLOATS;
+        this.duration = duration;
+        this.validRangeFirst = validRangeFirst;
+        this.validRangeLast = validRangeLast;
+        this.componentCount = componentCount;
+        this.keyframeCount = keyFrames.length;
+        this.floatKeyFrames = keyFrames;
+        this.byteKeyFrames = null;
+        this.shortKeyFrames = null;
+        this.vectorBias = null;
+        this.vectorScale = null;
     }
-  }
 
-  public static final int CONSTANT = 192;
-  public static final int LINEAR = 176;
-  public static final int LOOP = 193;
-  public static final int SLERP = 177;
-  public static final int SPLINE = 178;
-  public static final int SQUAD = 179;
-  public static final int STEP = 180;
-
-  private static final Set<Integer> interpolationModes = new HashSet<Integer>();
-  private static final Set<Integer> repeatModes = new HashSet<Integer>();
-  
-  static
-  {
-    interpolationModes.add(LINEAR);
-    interpolationModes.add(SLERP);
-    interpolationModes.add(SPLINE);
-    interpolationModes.add(SQUAD);
-    interpolationModes.add(STEP);
-    
-    repeatModes.add(CONSTANT);
-    repeatModes.add(LOOP);
-  }
-  
-  private static final int ENCODING_FLOATS = 0;
-  private static final int ENCODING_BYTES = 1;
-  private static final int ENCODING_SHORTS = 2;
-
-  private int interpolation;
-  private int repeatMode;
-  private int encoding;
-  private int duration;
-  private int validRangeFirst;
-  private int validRangeLast;
-  private int componentCount;
-  private int keyframeCount;
-  private FloatKeyFrame[] floatKeyFrames;
-  private ByteKeyFrame[] byteKeyFrames;
-  private ShortKeyFrame[] shortKeyFrames;
-  private float[] vectorBias;
-  private float[] vectorScale;
-
-  public KeyframeSequence(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, int interpolation, int repeatMode,
-      int duration, int validRangeFirst, int validRangeLast,
-      int componentCount, FloatKeyFrame[] keyFrames) throws FileFormatException
-  {
-    super(animationTracks, userParameters);
-    assert (keyFrames != null);
-    validateInterpolationType(interpolation);
-    this.interpolation = interpolation;
-    validateRepeatMode(repeatMode);
-    this.repeatMode = repeatMode;
-    this.encoding = ENCODING_FLOATS;
-    this.duration = duration;
-    this.validRangeFirst = validRangeFirst;
-    this.validRangeLast = validRangeLast;
-    this.componentCount = componentCount;
-    this.keyframeCount = keyFrames.length;
-    this.floatKeyFrames = keyFrames;
-    this.byteKeyFrames = null;
-    this.shortKeyFrames = null;
-    this.vectorBias = null;
-    this.vectorScale = null;
-  }
-
-  private static void validateRepeatMode(int repeatMode) throws FileFormatException
-  {
-    if (!repeatModes.contains(repeatMode))
+    private static void validateRepeatMode(int repeatMode) throws FileFormatException
     {
-      throw new FileFormatException("Invalid repeat mode: " + repeatMode);
+        if (!REPEAT_MODES.contains(repeatMode))
+        {
+            throw new FileFormatException("Invalid repeat mode: " + repeatMode);
+        }
     }
-  }
 
-  private static void validateInterpolationType(int interpolation)
-      throws FileFormatException
-  {
-    if (!interpolationModes.contains(interpolation))
+    private static void validateInterpolationType(int interpolation)
+        throws FileFormatException
     {
-      throw new FileFormatException("Invalid interpolation type: " + interpolation);
+        if (!INTERPOLATION_MODES.contains(interpolation))
+        {
+            throw new FileFormatException("Invalid interpolation type: " + interpolation);
+        }
     }
-  }
 
-  public KeyframeSequence()
-  {
-    super();
+    public KeyframeSequence()
+    {
+        super();
     // TODO Auto-generated constructor stub
-  }
+    }
 
-  public KeyframeSequence(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, int interpolation, int repeatMode,
-      int duration, int validRangeFirst, int validRangeLast, int componentCount,
-      ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
-  {
-    super(animationTracks, userParameters);
-    assert (keyFrames != null);
-    validateInterpolationType(interpolation);
-    this.interpolation = interpolation;
-    validateRepeatMode(repeatMode);
-    this.repeatMode = repeatMode;
-    this.encoding = ENCODING_BYTES;
-    this.duration = duration;
-    this.validRangeFirst = validRangeFirst;
-    this.validRangeLast = validRangeLast;
-    this.componentCount = componentCount;
-    this.keyframeCount = keyFrames.length;
-    this.floatKeyFrames = null;
-    this.byteKeyFrames = keyFrames;
-    this.shortKeyFrames = null;
-    this.vectorBias = vectorBias;
-    this.vectorScale = vectorScale;
-  }
-
-  public KeyframeSequence(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, int interpolation, int repeatMode,
-      int duration, int validRangeFirst, int validRangeLast, int componentCount,
-      ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
-  {
-    super(animationTracks, userParameters);
-    validateInterpolationType(interpolation);
-    this.interpolation = interpolation;
-    validateRepeatMode(repeatMode);
-    this.repeatMode = repeatMode;
-    this.encoding = ENCODING_SHORTS;
-    this.duration = duration;
-    this.validRangeFirst = validRangeFirst;
-    this.validRangeLast = validRangeLast;
-    this.componentCount = componentCount;
-    this.keyframeCount = keyFrames.length;
-    this.floatKeyFrames = null;
-    this.byteKeyFrames = null;
-    this.shortKeyFrames = keyFrames;
-    this.vectorBias = vectorBias;
-    this.vectorScale = vectorScale;
-  }
-
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException, FileFormatException
-  {
-    super.deserialize(dataInputStream, m3gVersion);
-    this.interpolation = dataInputStream.readByte() & 0xFF;
-    validateInterpolationType(this.interpolation);
-    this.repeatMode = dataInputStream.readByte() & 0xFF;
-    validateRepeatMode(this.repeatMode);
-    this.encoding = dataInputStream.readByte() & 0xFF;
-    this.duration = M3GSupport.readInt(dataInputStream);
-    this.validRangeFirst = M3GSupport.readInt(dataInputStream);
-    this.validRangeLast = M3GSupport.readInt(dataInputStream);
-    this.componentCount = M3GSupport.readInt(dataInputStream);
-    this.keyframeCount = M3GSupport.readInt(dataInputStream);
-    
-    switch (this.encoding)
+    public KeyframeSequence(ObjectIndex[] animationTracks,
+        UserParameter[] userParameters, int interpolation, int repeatMode,
+        int duration, int validRangeFirst, int validRangeLast, int componentCount,
+        ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
     {
-      case ENCODING_FLOATS:
-        this.floatKeyFrames = new FloatKeyFrame[this.keyframeCount];
-        for (int i = 0; i < this.floatKeyFrames.length; i++)
+        super(animationTracks, userParameters);
+        assert (keyFrames != null);
+        validateInterpolationType(interpolation);
+        this.interpolation = interpolation;
+        validateRepeatMode(repeatMode);
+        this.repeatMode = repeatMode;
+        this.encoding = ENCODING_BYTES;
+        this.duration = duration;
+        this.validRangeFirst = validRangeFirst;
+        this.validRangeLast = validRangeLast;
+        this.componentCount = componentCount;
+        this.keyframeCount = keyFrames.length;
+        this.floatKeyFrames = null;
+        this.byteKeyFrames = keyFrames;
+        this.shortKeyFrames = null;
+        this.vectorBias = vectorBias;
+        this.vectorScale = vectorScale;
+    }
+
+    public KeyframeSequence(ObjectIndex[] animationTracks,
+        UserParameter[] userParameters, int interpolation, int repeatMode,
+        int duration, int validRangeFirst, int validRangeLast, int componentCount,
+        ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
+    {
+        super(animationTracks, userParameters);
+        validateInterpolationType(interpolation);
+        this.interpolation = interpolation;
+        validateRepeatMode(repeatMode);
+        this.repeatMode = repeatMode;
+        this.encoding = ENCODING_SHORTS;
+        this.duration = duration;
+        this.validRangeFirst = validRangeFirst;
+        this.validRangeLast = validRangeLast;
+        this.componentCount = componentCount;
+        this.keyframeCount = keyFrames.length;
+        this.floatKeyFrames = null;
+        this.byteKeyFrames = null;
+        this.shortKeyFrames = keyFrames;
+        this.vectorBias = vectorBias;
+        this.vectorScale = vectorScale;
+    }
+
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        throws IOException, FileFormatException
+    {
+        super.deserialize(dataInputStream, m3gVersion);
+        this.interpolation = dataInputStream.readByte() & 0xFF;
+        validateInterpolationType(this.interpolation);
+        this.repeatMode = dataInputStream.readByte() & 0xFF;
+        validateRepeatMode(this.repeatMode);
+        this.encoding = dataInputStream.readByte() & 0xFF;
+        this.duration = M3GSupport.readInt(dataInputStream);
+        this.validRangeFirst = M3GSupport.readInt(dataInputStream);
+        this.validRangeLast = M3GSupport.readInt(dataInputStream);
+        this.componentCount = M3GSupport.readInt(dataInputStream);
+        this.keyframeCount = M3GSupport.readInt(dataInputStream);
+
+        switch (this.encoding)
         {
-          int time = M3GSupport.readInt(dataInputStream);
-          float vectorValue[] = new float[this.componentCount];
-          for (int j = 0; j < this.componentCount; j++)
-          {
-            vectorValue[j] = M3GSupport.readFloat(dataInputStream);
-          }
-          this.floatKeyFrames[i] = new FloatKeyFrame(time, vectorValue);
+            case ENCODING_FLOATS:
+                this.floatKeyFrames = new FloatKeyFrame[this.keyframeCount];
+                for (int i = 0; i < this.floatKeyFrames.length; i++)
+                {
+                    int time = M3GSupport.readInt(dataInputStream);
+                    float vectorValue[] = new float[this.componentCount];
+                    for (int j = 0; j < this.componentCount; j++)
+                    {
+                        vectorValue[j] = M3GSupport.readFloat(dataInputStream);
+                    }
+                    this.floatKeyFrames[i] = new FloatKeyFrame(time, vectorValue);
+                }
+                break;
+
+            case ENCODING_BYTES:
+                readBiasAndScale(dataInputStream);
+                this.byteKeyFrames = new ByteKeyFrame[this.keyframeCount];
+                for (int i = 0; i < this.keyframeCount; i++)
+                {
+                    int time = M3GSupport.readInt(dataInputStream);
+                    byte vectorValue[] = new byte[this.componentCount];
+                    for (int j = 0; j < this.componentCount; j++)
+                    {
+                        vectorValue[j] = dataInputStream.readByte();
+                    }
+                    this.byteKeyFrames[i] = new ByteKeyFrame(time, vectorValue);
+                }
+                break;
+
+            case ENCODING_SHORTS:
+                readBiasAndScale(dataInputStream);
+                this.shortKeyFrames = new ShortKeyFrame[this.keyframeCount];
+                for (int i = 0; i < this.keyframeCount; i++)
+                {
+                    int time = M3GSupport.readInt(dataInputStream);
+                    short vectorValue[] = new short[this.componentCount];
+                    for (int j = 0; j < this.componentCount; j++)
+                    {
+                        vectorValue[j] = M3GSupport.readShort(dataInputStream);
+                    }
+                    this.shortKeyFrames[i] = new ShortKeyFrame(time, vectorValue);
+                }
+                break;
+
+            default:
+                throw new FileFormatException("Invalid encoding: " + this.encoding);
         }
-        break;
-        
-      case ENCODING_BYTES:
-        readBiasAndScale(dataInputStream);
-        this.byteKeyFrames = new ByteKeyFrame[this.keyframeCount];
-        for (int i = 0; i < this.keyframeCount; i++)
+    }
+
+    private void readBiasAndScale(DataInputStream dataInputStream) throws IOException
+    {
+        this.vectorBias = new float[this.componentCount];
+        for (int i = 0; i < this.componentCount; i++)
         {
-          int time = M3GSupport.readInt(dataInputStream);
-          byte vectorValue[] = new byte[this.componentCount];
-          for (int j = 0; j < this.componentCount; j++)
-          {
-            vectorValue[j] = dataInputStream.readByte();
-          }
-          this.byteKeyFrames[i] = new ByteKeyFrame(time, vectorValue);
+            this.vectorBias[i] = M3GSupport.readFloat(dataInputStream);
         }
-        break;
-        
-      case ENCODING_SHORTS:
-        readBiasAndScale(dataInputStream);
-        this.shortKeyFrames = new ShortKeyFrame[this.keyframeCount];
-        for (int i = 0; i < this.keyframeCount; i++)
+
+        this.vectorScale = new float[this.componentCount];
+        for (int i = 0; i < this.componentCount; i++)
         {
-          int time = M3GSupport.readInt(dataInputStream);
-          short vectorValue[] = new short[this.componentCount];
-          for (int j = 0; j < this.componentCount; j++)
-          {
-            vectorValue[j] = M3GSupport.readShort(dataInputStream);
-          }
-          this.shortKeyFrames[i] = new ShortKeyFrame(time, vectorValue);
+            this.vectorScale[i] = M3GSupport.readFloat(dataInputStream);
         }
-        break;
-        
-      default:
-        throw new FileFormatException("Invalid encoding: " + this.encoding);
-    }
-  }
-
-  private void readBiasAndScale(DataInputStream dataInputStream) throws IOException
-  {  
-    this.vectorBias = new float[this.componentCount];
-    for (int i = 0; i < this.componentCount; i++)
-    {
-      this.vectorBias[i] = M3GSupport.readFloat(dataInputStream);
-    }
-    
-    this.vectorScale = new float[this.componentCount];
-    for (int i = 0; i < this.componentCount; i++)
-    {
-      this.vectorScale[i] = M3GSupport.readFloat(dataInputStream);
-    }
-  }
-
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-      throws IOException
-  {
-    super.serialize(dataOutputStream, m3gVersion);
-    dataOutputStream.write(this.interpolation);
-    dataOutputStream.write(this.repeatMode);
-    dataOutputStream.write(this.encoding);
-    M3GSupport.writeInt(dataOutputStream, this.duration);
-    M3GSupport.writeInt(dataOutputStream, this.validRangeFirst);
-    M3GSupport.writeInt(dataOutputStream, this.validRangeLast);
-
-    int componentCount;
-    int keyFrameCount;
-    switch (this.encoding)
-    {
-      case ENCODING_FLOATS:
-        componentCount = this.floatKeyFrames[0].getVectorValue().length;
-        keyFrameCount = this.floatKeyFrames.length;
-        break;
-
-      case ENCODING_BYTES:
-        componentCount = this.byteKeyFrames[0].getVectorValue().length;
-        keyFrameCount = this.byteKeyFrames.length;
-        break;
-
-      case ENCODING_SHORTS:
-        componentCount = this.shortKeyFrames[0].getVectorValue().length;
-        keyFrameCount = this.shortKeyFrames.length;
-        break;
-
-      default:
-        throw new IOException("Invalid encoding: " + this.encoding);
     }
 
-    M3GSupport.writeInt(dataOutputStream, componentCount);
-    M3GSupport.writeInt(dataOutputStream, keyFrameCount);
-
-    switch (this.encoding)
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        throws IOException
     {
-      case ENCODING_FLOATS:
-        for (FloatKeyFrame keyFrame : this.floatKeyFrames)
+        super.serialize(dataOutputStream, m3gVersion);
+        dataOutputStream.write(this.interpolation);
+        dataOutputStream.write(this.repeatMode);
+        dataOutputStream.write(this.encoding);
+        M3GSupport.writeInt(dataOutputStream, this.duration);
+        M3GSupport.writeInt(dataOutputStream, this.validRangeFirst);
+        M3GSupport.writeInt(dataOutputStream, this.validRangeLast);
+
+        int componentCount;
+        int keyFrameCount;
+        switch (this.encoding)
         {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
-          for (float component : keyFrame.getVectorValue())
-          {
+            case ENCODING_FLOATS:
+                componentCount = this.floatKeyFrames[0].getVectorValue().length;
+                keyFrameCount = this.floatKeyFrames.length;
+                break;
+
+            case ENCODING_BYTES:
+                componentCount = this.byteKeyFrames[0].getVectorValue().length;
+                keyFrameCount = this.byteKeyFrames.length;
+                break;
+
+            case ENCODING_SHORTS:
+                componentCount = this.shortKeyFrames[0].getVectorValue().length;
+                keyFrameCount = this.shortKeyFrames.length;
+                break;
+
+            default:
+                throw new IOException("Invalid encoding: " + this.encoding);
+        }
+
+        M3GSupport.writeInt(dataOutputStream, componentCount);
+        M3GSupport.writeInt(dataOutputStream, keyFrameCount);
+
+        switch (this.encoding)
+        {
+            case ENCODING_FLOATS:
+                for (FloatKeyFrame keyFrame : this.floatKeyFrames)
+                {
+                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    for (float component : keyFrame.getVectorValue())
+                    {
+                        M3GSupport.writeFloat(dataOutputStream, component);
+                    }
+                }
+                break;
+
+            case ENCODING_BYTES:
+                writeBiasAndScale(dataOutputStream);
+                for (ByteKeyFrame keyFrame : this.byteKeyFrames)
+                {
+                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    for (byte component : keyFrame.getVectorValue())
+                    {
+                        dataOutputStream.write(component);
+                    }
+                }
+                break;
+
+            case ENCODING_SHORTS:
+                writeBiasAndScale(dataOutputStream);
+                for (ShortKeyFrame keyFrame : this.shortKeyFrames)
+                {
+                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    for (short component : keyFrame.getVectorValue())
+                    {
+                        M3GSupport.writeShort(dataOutputStream, component);
+                    }
+                }
+                break;
+
+            default:
+                assert (false);
+        }
+    }
+
+    public byte getObjectType()
+    {
+        return ObjectTypes.KEYFRAME_SEQUENCE;
+    }
+
+    public int getInterpolation()
+    {
+        return this.interpolation;
+    }
+
+    public int getRepeatMode()
+    {
+        return this.repeatMode;
+    }
+
+    public int getEncoding()
+    {
+        return this.encoding;
+    }
+
+    public int getDuration()
+    {
+        return this.duration;
+    }
+
+    public int getValidRangeFirst()
+    {
+        return this.validRangeFirst;
+    }
+
+    public int getValidRangeLast()
+    {
+        return this.validRangeLast;
+    }
+
+    public FloatKeyFrame[] getFloatKeyFrames()
+    {
+        return this.floatKeyFrames;
+    }
+
+    public ByteKeyFrame[] getByteKeyFrames()
+    {
+        return this.byteKeyFrames;
+    }
+
+    public ShortKeyFrame[] getShortKeyFrames()
+    {
+        return this.shortKeyFrames;
+    }
+
+    public float[] getVectorBias()
+    {
+        return this.vectorBias;
+    }
+
+    public float[] getVectorScale()
+    {
+        return this.vectorScale;
+    }
+
+    private void writeBiasAndScale(DataOutputStream dataOutputStream)
+        throws IOException
+    {
+        for (float component : this.vectorBias)
+        {
             M3GSupport.writeFloat(dataOutputStream, component);
-          }
         }
-        break;
-
-      case ENCODING_BYTES:
-        writeBiasAndScale(dataOutputStream);
-        for (ByteKeyFrame keyFrame : this.byteKeyFrames)
+        for (float component : this.vectorScale)
         {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
-          for (byte component : keyFrame.getVectorValue())
-          {
-            dataOutputStream.write(component);
-          }
+            M3GSupport.writeFloat(dataOutputStream, component);
         }
-        break;
-
-      case ENCODING_SHORTS:
-        writeBiasAndScale(dataOutputStream);
-        for (ShortKeyFrame keyFrame : this.shortKeyFrames)
-        {
-          M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
-          for (short component : keyFrame.getVectorValue())
-          {
-            M3GSupport.writeShort(dataOutputStream, component);
-          }
-        }
-        break;
-
-      default:
-        assert (false);
     }
-  }
-  
-  public byte getObjectType()
-  {
-    return ObjectTypes.KEYFRAME_SEQUENCE;
-  }
-
-  public int getInterpolation()
-  {
-    return this.interpolation;
-  }
-
-  public int getRepeatMode()
-  {
-    return this.repeatMode;
-  }
-
-  public int getEncoding()
-  {
-    return this.encoding;
-  }
-
-  public int getDuration()
-  {
-    return this.duration;
-  }
-
-  public int getValidRangeFirst()
-  {
-    return this.validRangeFirst;
-  }
-
-  public int getValidRangeLast()
-  {
-    return this.validRangeLast;
-  }
-
-  public FloatKeyFrame[] getFloatKeyFrames()
-  {
-    return this.floatKeyFrames;
-  }
-
-  public ByteKeyFrame[] getByteKeyFrames()
-  {
-    return this.byteKeyFrames;
-  }
-
-  public ShortKeyFrame[] getShortKeyFrames()
-  {
-    return this.shortKeyFrames;
-  }
-
-  public float[] getVectorBias()
-  {
-    return this.vectorBias;
-  }
-
-  public float[] getVectorScale()
-  {
-    return this.vectorScale;
-  }
-
-  private void writeBiasAndScale(DataOutputStream dataOutputStream)
-      throws IOException
-  {
-    for (float component : this.vectorBias)
-    {
-      M3GSupport.writeFloat(dataOutputStream, component);
-    }
-    for (float component : this.vectorScale)
-    {
-      M3GSupport.writeFloat(dataOutputStream, component);
-    }
-  }
 }

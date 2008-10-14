@@ -27,8 +27,11 @@
             <property name="option" value="nl"/>
             <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF"/>
         </module>
+        <module name="Indentation"/>
+        <module name="UpperEll"/>
         <!-- Enable these towards the end of the project -->
         <!--module name="JavadocType"/-->
         <!--module name="JavadocMethod"/-->
     </module>
+    <module name="NewlineAtEndOfFile"/>
 </module>

@@ -14,49 +14,49 @@ import m3x.xml.Object3DType;
 public class GroupTranslator extends AbstractTranslator
 {
 
-  public Object3D toM3G()
-  {
-    if (this.m3gObject != null)
+    public Object3D toM3G()
     {
-      return this.m3gObject;
+        if (this.m3gObject != null)
+        {
+            return this.m3gObject;
+        }
+
+        // do translation
+        m3x.xml.Group group = (m3x.xml.Group) this.m3xObject;
+        ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
+        m3x.xml.TransformableType transformable = (m3x.xml.TransformableType) group;
+        Matrix transform = getM3GTransformMatrix(transformable);
+        Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
+
+        List<NodeType> childNodes = group.getChildNodes();
+        List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
+        for (NodeType node : childNodes)
+        {
+            int index = searchObjectIndex(this.m3xRoot, node);
+            childObjectIndices.add(new ObjectIndex(index));
+        }
+        ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
+
+        try
+        {
+            this.m3gObject = new m3x.m3g.objects.Group(animationTracks,
+                userParameters,
+                transform,
+                group.isRenderingEnabled(),
+                group.isPickingEnabled(),
+                (byte) (group.getAlphaFactor() * 255.0f + 0.5f),
+                group.getScope(),
+                children);
+        }
+        catch (FileFormatException e)
+        {
+            throw new IllegalArgumentException(e);
+        }
+        return this.m3gObject;
     }
 
-    // do translation
-    m3x.xml.Group group = (m3x.xml.Group)this.m3xObject;
-    ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
-    m3x.xml.TransformableType transformable = (m3x.xml.TransformableType)group;
-    Matrix transform = getM3GTransformMatrix(transformable);
-    Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
-   
-    List<NodeType> childNodes = group.getChildNodes();
-    List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
-    for (NodeType node : childNodes)
+    public Object3DType toXML()
     {
-      int index = searchObjectIndex(this.m3xRoot, node);
-      childObjectIndices.add(new ObjectIndex(index));
+        return null;
     }
-    ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-    
-    try
-    {
-      this.m3gObject = new m3x.m3g.objects.Group(animationTracks, 
-          userParameters, 
-          transform,
-          group.isRenderingEnabled(),
-          group.isPickingEnabled(),
-          (byte)(group.getAlphaFactor() * 255.0f + 0.5f),
-          group.getScope(),
-          children);
-    }
-    catch (FileFormatException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
-    return this.m3gObject;
-  }
-
-  public Object3DType toXML()
-  {
-    return null;
-  }
 }

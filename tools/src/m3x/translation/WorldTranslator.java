@@ -14,54 +14,54 @@ import m3x.xml.Object3DType;
 public class WorldTranslator extends AbstractTranslator
 {
 
-  public Object3D toM3G()
-  {
-    if (this.m3gObject != null)
+    public Object3D toM3G()
     {
-      return this.m3gObject;
+        if (this.m3gObject != null)
+        {
+            return this.m3gObject;
+        }
+
+        // do translation
+        m3x.xml.World world = (m3x.xml.World) this.m3xObject;
+        ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
+        m3x.xml.TransformableType transformable = (m3x.xml.TransformableType) world;
+        Matrix transform = getM3GTransformMatrix(transformable);
+        Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
+
+        List<NodeType> childNodes = world.getChildNodes();
+        List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
+        for (NodeType node : childNodes)
+        {
+            Object toBeFound = node.getId();
+            int index = AbstractTranslator.searchObjectIndex(this.m3xRoot, toBeFound);
+            childObjectIndices.add(new ObjectIndex(index));
+        }
+        ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
+        int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
+        int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
+
+        try
+        {
+            this.m3gObject = new m3x.m3g.objects.World(animationTracks,
+                userParameters,
+                transform,
+                world.isRenderingEnabled(),
+                world.isPickingEnabled(),
+                (byte) (world.getAlphaFactor() * 255.0f + 0.5f),
+                world.getScope(),
+                children,
+                new ObjectIndex(activeCameraIndex),
+                new ObjectIndex(backgroundIndex));
+        }
+        catch (FileFormatException e)
+        {
+            throw new IllegalArgumentException(e);
+        }
+        return this.m3gObject;
     }
 
-    // do translation
-    m3x.xml.World world = (m3x.xml.World)this.m3xObject;
-    ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
-    m3x.xml.TransformableType transformable = (m3x.xml.TransformableType)world;
-    Matrix transform = getM3GTransformMatrix(transformable);
-    Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
-   
-    List<NodeType> childNodes = world.getChildNodes();
-    List<ObjectIndex> childObjectIndices = new ArrayList<ObjectIndex>();
-    for (NodeType node : childNodes)
+    public Object3DType toXML()
     {
-      Object toBeFound = node.getId();
-      int index = AbstractTranslator.searchObjectIndex(this.m3xRoot, toBeFound);
-      childObjectIndices.add(new ObjectIndex(index));
+        return null;
     }
-    ObjectIndex[] children = childObjectIndices.toArray(new ObjectIndex[childObjectIndices.size()]);
-    int activeCameraIndex = searchObjectIndex(this.m3xRoot, world.getActiveCamera());
-    int backgroundIndex = searchObjectIndex(this.m3xRoot, world.getBackground());
-    
-    try
-    {
-      this.m3gObject = new m3x.m3g.objects.World(animationTracks, 
-          userParameters, 
-          transform,
-          world.isRenderingEnabled(), 
-          world.isPickingEnabled(),
-          (byte)(world.getAlphaFactor() * 255.0f + 0.5f),
-          world.getScope(), 
-          children, 
-          new ObjectIndex(activeCameraIndex), 
-          new ObjectIndex(backgroundIndex));
-    }
-    catch (FileFormatException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
-    return this.m3gObject;
-  }
-
-  public Object3DType toXML()
-  {
-    return null;
-  }
 }

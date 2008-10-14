@@ -12,83 +12,91 @@ import java.io.OutputStream;
  * 
  * @author jsaarinen
  */
-public class M3GLoader
+public abstract class M3GLoader
 {
-  /**
-   * Instantiates a M3GObject from a given byte array.
-   * 
-   * @param bytes
-   * @return
-   * @throws IOException
-   * @throws FileFormatException
-   */
-  public static M3GObject load(byte[] bytes) throws IOException, FileFormatException
-  {
-    DataInputStream dis = null;
-    try
+    /**
+     * Hides the constructor for a Utility class.
+     */
+    private M3GLoader()
     {
-      dis = new DataInputStream(new ByteArrayInputStream(bytes));
-      M3GObject object = new M3GObject();
-      object.deserialize(dis, M3GObject.M3G_VERSION);
-      return object;
+
     }
-    finally
+
+    /**
+     * Instantiates a M3GObject from a given byte array.
+     *
+     * @param bytes
+     * @return
+     * @throws IOException
+     * @throws FileFormatException
+     */
+    public static M3GObject load(byte[] bytes) throws IOException, FileFormatException
     {
-      if (dis != null)
-      {
-        dis.close();
-      }
+        DataInputStream dis = null;
+        try
+        {
+            dis = new DataInputStream(new ByteArrayInputStream(bytes));
+            M3GObject object = new M3GObject();
+            object.deserialize(dis, M3GObject.M3G_VERSION);
+            return object;
+        }
+        finally
+        {
+            if (dis != null)
+            {
+                dis.close();
+            }
+        }
     }
-  }
- 
-  /**
-   * Instantiates a M3GObject from a given stream.
-   * 
-   * @param inputStream
-   * @return
-   * @throws IOException
-   * @throws FileFormatException
-   */
-  public static M3GObject load(InputStream inputStream) throws IOException, FileFormatException
-  {
-    DataInputStream dis = null;
-    try
+
+    /**
+     * Instantiates a M3GObject from a given stream.
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     * @throws FileFormatException
+     */
+    public static M3GObject load(InputStream inputStream) throws IOException, FileFormatException
     {
-      dis = new DataInputStream(inputStream);
-      M3GObject object = new M3GObject();
-      object.deserialize(dis, M3GObject.M3G_VERSION);
-      return object;
+        DataInputStream dis = null;
+        try
+        {
+            dis = new DataInputStream(inputStream);
+            M3GObject object = new M3GObject();
+            object.deserialize(dis, M3GObject.M3G_VERSION);
+            return object;
+        }
+        finally
+        {
+            if (dis != null)
+            {
+                dis.close();
+            }
+        }
     }
-    finally
+
+    /**
+     * Saves a M3GObject to a given stream.
+     *
+     * @param outputStream
+     * @param object
+     * @throws IOException
+     */
+    public static void save(OutputStream outputStream, M3GObject object) throws IOException
     {
-      if (dis != null)
-      {
-        dis.close();
-      }
+        DataOutputStream dos = null;
+        try
+        {
+            dos = new DataOutputStream(outputStream);
+            object.serialize(dos, M3GObject.M3G_VERSION);
+        }
+        finally
+        {
+            if (dos != null)
+            {
+                dos.close();
+            }
+        }
     }
-  }
-  
-  /**
-   * Saves a M3GObject to a given stream.
-   * 
-   * @param outputStream
-   * @param object
-   * @throws IOException
-   */
-  public static void save(OutputStream outputStream, M3GObject object) throws IOException
-  {
-    DataOutputStream dos = null;
-    try
-    {
-      dos = new DataOutputStream(outputStream);
-      object.serialize(dos, M3GObject.M3G_VERSION);
-    }
-    finally
-    {
-      if (dos != null)
-      {
-        dos.close();
-      }
-    }
-  }
 }

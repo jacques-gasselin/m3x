@@ -7,27 +7,27 @@ package m3x.m3g;
  */
 public class FileFormatException extends M3GException
 {
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+    /**
+    *
+    */
+    private static final long serialVersionUID = 1L;
 
-  public FileFormatException()
-  {
-  }
+    public FileFormatException()
+    {
+    }
 
-  public FileFormatException(String message)
-  {
-    super(message);
-  }
+    public FileFormatException(String message)
+    {
+        super(message);
+    }
 
-  public FileFormatException(Throwable cause)
-  {
-    super(cause);
-  }
+    public FileFormatException(Throwable cause)
+    {
+        super(cause);
+    }
 
-  public FileFormatException(String message, Throwable cause)
-  {
-    super(message, cause);
-  }
+    public FileFormatException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }

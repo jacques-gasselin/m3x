@@ -25,92 +25,92 @@ import m3x.m3g.primitives.ObjectIndex;
  */
 public class Material extends Object3D implements M3GTypedObject
 {
-  private ColorRGB ambientColor;
-  private ColorRGBA diffuseColor;
-  private ColorRGB emissiveColor;
-  private ColorRGB specularColor;
-  private float shininess;
-  private boolean vertexColorTrackingEnabled;
+    private ColorRGB ambientColor;
+    private ColorRGBA diffuseColor;
+    private ColorRGB emissiveColor;
+    private ColorRGB specularColor;
+    private float shininess;
+    private boolean vertexColorTrackingEnabled;
 
-  public Material(ObjectIndex[] animationTracks,
-      UserParameter[] userParameters, ColorRGB ambientColor,
-      ColorRGBA diffuseColor, ColorRGB emissiveColor, ColorRGB specularColor,
-      float shininess, boolean vertexColorTrackingEnabled)
-  {
-    super(animationTracks, userParameters);
-    this.ambientColor = ambientColor;
-    this.diffuseColor = diffuseColor;
-    this.emissiveColor = emissiveColor;
-    this.specularColor = specularColor;
-    this.shininess = shininess;
-    this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
-  }
+    public Material(ObjectIndex[] animationTracks,
+        UserParameter[] userParameters, ColorRGB ambientColor,
+        ColorRGBA diffuseColor, ColorRGB emissiveColor, ColorRGB specularColor,
+        float shininess, boolean vertexColorTrackingEnabled)
+    {
+        super(animationTracks, userParameters);
+        this.ambientColor = ambientColor;
+        this.diffuseColor = diffuseColor;
+        this.emissiveColor = emissiveColor;
+        this.specularColor = specularColor;
+        this.shininess = shininess;
+        this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
+    }
 
-  public Material()
-  {
-    super();
-  }
+    public Material()
+    {
+        super();
+    }
 
-  public void deserialize(DataInputStream dataInputStream, String m3gVersion)
-      throws IOException, FileFormatException
-  {    
-    super.deserialize(dataInputStream, m3gVersion);
-    this.ambientColor = new ColorRGB();
-    this.ambientColor.deserialize(dataInputStream, m3gVersion);
-    this.diffuseColor = new ColorRGBA();
-    this.diffuseColor.deserialize(dataInputStream, m3gVersion);
-    this.emissiveColor = new ColorRGB();
-    this.emissiveColor.deserialize(dataInputStream, m3gVersion);
-    this.specularColor = new ColorRGB();
-    this.specularColor.deserialize(dataInputStream, m3gVersion);
-    this.shininess = M3GSupport.readFloat(dataInputStream);
-    this.vertexColorTrackingEnabled = dataInputStream.readBoolean();
-  }
+    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        throws IOException, FileFormatException
+    {
+        super.deserialize(dataInputStream, m3gVersion);
+        this.ambientColor = new ColorRGB();
+        this.ambientColor.deserialize(dataInputStream, m3gVersion);
+        this.diffuseColor = new ColorRGBA();
+        this.diffuseColor.deserialize(dataInputStream, m3gVersion);
+        this.emissiveColor = new ColorRGB();
+        this.emissiveColor.deserialize(dataInputStream, m3gVersion);
+        this.specularColor = new ColorRGB();
+        this.specularColor.deserialize(dataInputStream, m3gVersion);
+        this.shininess = M3GSupport.readFloat(dataInputStream);
+        this.vertexColorTrackingEnabled = dataInputStream.readBoolean();
+    }
 
-  public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-      throws IOException
-  {
-    super.serialize(dataOutputStream, m3gVersion);
-    this.ambientColor.serialize(dataOutputStream, m3gVersion);
-    this.diffuseColor.serialize(dataOutputStream, m3gVersion);
-    this.emissiveColor.serialize(dataOutputStream, m3gVersion);
-    this.specularColor.serialize(dataOutputStream, m3gVersion);
-    M3GSupport.writeFloat(dataOutputStream, this.shininess);
-    dataOutputStream.writeBoolean(this.vertexColorTrackingEnabled);
-  }
- 
-  public byte getObjectType()
-  {
-    return ObjectTypes.MATERIAL;
-  }
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        throws IOException
+    {
+        super.serialize(dataOutputStream, m3gVersion);
+        this.ambientColor.serialize(dataOutputStream, m3gVersion);
+        this.diffuseColor.serialize(dataOutputStream, m3gVersion);
+        this.emissiveColor.serialize(dataOutputStream, m3gVersion);
+        this.specularColor.serialize(dataOutputStream, m3gVersion);
+        M3GSupport.writeFloat(dataOutputStream, this.shininess);
+        dataOutputStream.writeBoolean(this.vertexColorTrackingEnabled);
+    }
 
-  public ColorRGB getAmbientColor()
-  {
-    return this.ambientColor;
-  }
+    public byte getObjectType()
+    {
+        return ObjectTypes.MATERIAL;
+    }
 
-  public ColorRGBA getDiffuseColor()
-  {
-    return this.diffuseColor;
-  }
+    public ColorRGB getAmbientColor()
+    {
+        return this.ambientColor;
+    }
 
-  public ColorRGB getEmissiveColor()
-  {
-    return this.emissiveColor;
-  }
+    public ColorRGBA getDiffuseColor()
+    {
+        return this.diffuseColor;
+    }
 
-  public ColorRGB getSpecularColor()
-  {
-    return this.specularColor;
-  }
+    public ColorRGB getEmissiveColor()
+    {
+        return this.emissiveColor;
+    }
 
-  public float getShininess()
-  {
-    return this.shininess;
-  }
+    public ColorRGB getSpecularColor()
+    {
+        return this.specularColor;
+    }
 
-  public boolean isVertexColorTrackingEnabled()
-  {
-    return this.vertexColorTrackingEnabled;
-  }
+    public float getShininess()
+    {
+        return this.shininess;
+    }
+
+    public boolean isVertexColorTrackingEnabled()
+    {
+        return this.vertexColorTrackingEnabled;
+    }
 }

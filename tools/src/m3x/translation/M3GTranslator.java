@@ -40,63 +40,62 @@ import m3x.xml.VertexArray;
 
 public class M3GTranslator
 {
-  private Map<Class, Translator> translators = new HashMap<Class, Translator>();
+    private Map<Class, Translator> translators = new HashMap<Class, Translator>();
 
-  public M3GTranslator()
-  {
-    translators.put(AnimationController.class, new AnimationControllerTranslator());
-    translators.put(AnimationTrack.class, new AnimationTrackTranslator());
-    translators.put(Appearance.class, new AppearanceTranslator());
-    translators.put(Background.class, new BackgroundTranslator());
-    translators.put(Camera.class, new CameraTranslator());
-    translators.put(CompositingMode.class, new CompositingModeTranslator());
-    translators.put(Fog.class, new FogTranslator());
-    translators.put(Group.class, new GroupTranslator());
-    translators.put(Image2D.class, new Image2DTranslator());
-    translators.put(KeyframeSequence.class, new KeyframeSequenceTranslator());
-    translators.put(Light.class, new LightTranslator());
-    translators.put(Material.class, new MaterialTranslator());
-    translators.put(Mesh.class, new MeshTranslator());
-    translators.put(MorphingMesh.class, new MorphingMeshTranslator());
-    translators.put(PolygonMode.class, new PolygonModeTranslator());
-    translators.put(SkinnedMesh.class, new SkinnedMeshTranslator());
-    translators.put(Texture2D.class, new Texture2DTranslator());
-    translators.put(TriangleStripArray.class, new TriangleStripArrayTranslator());
-    translators.put(VertexArray.class, new VertexArrayTranslator());
-    translators.put(VertexBuffer.class, new VertexBufferTranslator());
-    translators.put(World.class, new WorldTranslator());
-  }
-
-  public M3G toXML(M3GObject m3g)
-  {
-    return null;
-  }
-
-  public M3GObject toM3G(M3G xml, Deserialiser deserializer) throws IOException
-  {
-    List<SectionType> sections = xml.getSection();
-    Section[] m3gSections = new Section[sections.size()];
-    for (SectionType sectionType : sections)
+    public M3GTranslator()
     {
-      List<Object3DType> m3xObjects = sectionType.getObjects();
-      ObjectChunk[] m3gObjects = new ObjectChunk[m3xObjects.size()];
-      int i = 0;
-      for (Object3DType object : m3xObjects)
-      {
-        Translator translator = translators.get(object.getClass());
-        translator.set(object, null, deserializer);
-        Object3D object3d = translator.toM3G();
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        object3d.serialize(new DataOutputStream(bout), "1.0");
-        m3gObjects[i] = new ObjectChunk(((M3GTypedObject) object3d)
-            .getObjectType(), bout.toByteArray());
-      }
-      Section section = new Section(
-          Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, m3gObjects);
-      m3gSections[i] = section;
-      i++;
+        translators.put(AnimationController.class, new AnimationControllerTranslator());
+        translators.put(AnimationTrack.class, new AnimationTrackTranslator());
+        translators.put(Appearance.class, new AppearanceTranslator());
+        translators.put(Background.class, new BackgroundTranslator());
+        translators.put(Camera.class, new CameraTranslator());
+        translators.put(CompositingMode.class, new CompositingModeTranslator());
+        translators.put(Fog.class, new FogTranslator());
+        translators.put(Group.class, new GroupTranslator());
+        translators.put(Image2D.class, new Image2DTranslator());
+        translators.put(KeyframeSequence.class, new KeyframeSequenceTranslator());
+        translators.put(Light.class, new LightTranslator());
+        translators.put(Material.class, new MaterialTranslator());
+        translators.put(Mesh.class, new MeshTranslator());
+        translators.put(MorphingMesh.class, new MorphingMeshTranslator());
+        translators.put(PolygonMode.class, new PolygonModeTranslator());
+        translators.put(SkinnedMesh.class, new SkinnedMeshTranslator());
+        translators.put(Texture2D.class, new Texture2DTranslator());
+        translators.put(TriangleStripArray.class, new TriangleStripArrayTranslator());
+        translators.put(VertexArray.class, new VertexArrayTranslator());
+        translators.put(VertexBuffer.class, new VertexBufferTranslator());
+        translators.put(World.class, new WorldTranslator());
     }
-    M3GObject m3g = new M3GObject(m3gSections);
-    return m3g;
-  }
+
+    public M3G toXML(M3GObject m3g)
+    {
+        return null;
+    }
+
+    public M3GObject toM3G(M3G xml, Deserialiser deserializer) throws IOException
+    {
+        List<SectionType> sections = xml.getSection();
+        Section[] m3gSections = new Section[sections.size()];
+        for (SectionType sectionType : sections)
+        {
+            List<Object3DType> m3xObjects = sectionType.getObjects();
+            ObjectChunk[] m3gObjects = new ObjectChunk[m3xObjects.size()];
+            int i = 0;
+            for (Object3DType object : m3xObjects)
+            {
+                Translator translator = translators.get(object.getClass());
+                translator.set(object, null, deserializer);
+                Object3D object3d = translator.toM3G();
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                object3d.serialize(new DataOutputStream(bout), "1.0");
+                m3gObjects[i] = new ObjectChunk(((M3GTypedObject) object3d).getObjectType(), bout.toByteArray());
+            }
+            Section section = new Section(
+                Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32, m3gObjects);
+            m3gSections[i] = section;
+            i++;
+        }
+        M3GObject m3g = new M3GObject(m3gSections);
+        return m3g;
+    }
 }
