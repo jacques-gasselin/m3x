@@ -9,7 +9,6 @@ import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.AnimationTrack;
-import m3x.xml.SectionType;
 
 public abstract class AbstractTranslator implements Translator
 {
@@ -111,7 +110,7 @@ public abstract class AbstractTranslator implements Translator
     protected static int searchObjectIndex(m3x.xml.M3G root, Object searchKey)
     {
         int index = 1;
-        for (SectionType section : root.getSection())
+        for (m3x.xml.Section section : root.getSection())
         {
             for (m3x.xml.Object3D object : section.getObjects())
             {

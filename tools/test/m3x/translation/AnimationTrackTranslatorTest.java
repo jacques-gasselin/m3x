@@ -18,7 +18,7 @@ public class AnimationTrackTranslatorTest extends TranslatorSupport
     at.setProperty(AnimationTargetType.ALPHA);
 
     m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.SectionType section = new m3x.xml.SectionType();
+    m3x.xml.Section section = new m3x.xml.Section();
     m3xRoot.getSection().add(section);
     
     m3x.xml.AnimationController ac = new m3x.xml.AnimationController();

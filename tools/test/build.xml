@@ -10,10 +10,12 @@
         <mkdir dir="${test.result.dir}"/>
         <junit showoutput="true"
                printsummary="on"
-               haltonerror="true">
-        	<!-- jaxb-api.jar included in ${lib.dir} causes error with some 
-        	     environments, if not included into endorsed dirs path-->
-        	<sysproperty key="java.endorsed.dirs" value="${lib.dir}"/>
+               haltonerror="true"
+               dir="${test.dir}"
+               fork="true">
+            <!-- jaxb-api.jar included in ${lib.dir} causes error with some
+                 environments, if not included into endorsed dirs path -->
+            <sysproperty key="java.endorsed.dirs" value="${lib.dir}"/>
             <classpath>
                 <pathelement location="${build.dir}"/>
                 <fileset dir="${lib.dir}"/>

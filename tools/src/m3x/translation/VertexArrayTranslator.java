@@ -53,9 +53,6 @@ public class VertexArrayTranslator extends AbstractTranslator
 
     public m3x.xml.Object3D toXML()
     {
-        if (this.getXmlObject() == null)
-        {
-        }
         return this.getXmlObject();
     }
 }

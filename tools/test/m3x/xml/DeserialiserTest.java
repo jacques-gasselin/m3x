@@ -29,7 +29,7 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should throw here
-            M3G root = deserialiser.deserialise(in);
+            m3x.xml.M3G root = deserialiser.deserialise(in);
         }
         catch (IllegalArgumentException unused)
         {
@@ -54,8 +54,8 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should not throw here
-            M3G root = deserialiser.deserialise(in);
-            List<SectionType> sections = root.getSection();
+            m3x.xml.M3G root = deserialiser.deserialise(in);
+            List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
         {
@@ -73,12 +73,12 @@ public class DeserialiserTest extends TestCase
                 + "    </section>\n"
                 + "</m3g>";
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
-        M3G root = null;
+        m3x.xml.M3G root = null;
         try
         {
             //Should not throw here
             root = deserialiser.deserialise(in);
-            List<SectionType> sections = root.getSection();
+            List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
         {

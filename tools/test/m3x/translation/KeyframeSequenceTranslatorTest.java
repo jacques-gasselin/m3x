@@ -37,7 +37,7 @@ public class KeyframeSequenceTranslatorTest extends TranslatorSupport
     kfseq.setValidRangeLast(1L);
     
     m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.SectionType section = new m3x.xml.SectionType();
+    m3x.xml.Section section = new m3x.xml.Section();
     m3xRoot.getSection().add(section);
     
     m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();

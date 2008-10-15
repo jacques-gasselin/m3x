@@ -129,12 +129,14 @@
             <xs:attribute name="author" type="String"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="section" type="SectionType"/>
-    <xs:complexType name="SectionType">
+    <xs:element name="section" type="Section"/>
+    <xs:complexType name="Section">
         <xs:sequence maxOccurs="unbounded">
-            <xs:annotation><xs:appinfo>
-                <jaxb:property name="objects"/>
-            </xs:appinfo></xs:annotation>   
+            <xs:annotation>
+                <xs:appinfo>
+                    <jaxb:property name="objects"/>
+                </xs:appinfo>
+            </xs:annotation>   
             <xs:group ref="RootElementGroup">
             </xs:group>
         </xs:sequence>

@@ -74,7 +74,7 @@
         </delete>
     </target>
 
-    <target name="build" depends="pre-build, xml-build">
+    <target name="build-src" depends="pre-build, xml-build">
         <taskdef resource="checkstyletask.properties"
                  classpath="${lib.dir}/checkstyle-all-4.4.jar"/>        
         <checkstyle failOnViolation="false"
@@ -150,24 +150,18 @@
 
     <target name="test"
             description="runs the test target in all the subfolders"
-            depends="build">
+            depends="build-src">
         <!-- run unit tests -->
         <ant antfile="build.xml"
              dir="${test.dir}"
              inheritall="true"
              inheritrefs="true"
              target="test"/>
-        <!-- testing the console XML application -->
-        <echo>Testing Console input</echo>
-        <java classname="test.ConsoleTest"
-              fork="true"
-              dir="${build.dir}">
-              <classpath>
-                  <pathelement location="${build.dir}"/>
-                  <fileset dir="${lib.dir}"/>
-              </classpath>
-              <sysproperty key="java.endorsed.dirs" value="${lib.dir}" />
-              <arg value="${res.xml.dir}/quad.m3x"/>
-        </java>
+    </target>
+
+    <target name="build"
+            description="builds and tests the tools"
+            depends="test">
+
     </target>
 </project>
