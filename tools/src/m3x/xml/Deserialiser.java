@@ -1,13 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package m3x.xml;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import java.io.InputStream;
 
 /**The Deserialiser class hides the complexities of binding a JAXB context
  * and unmarshalling the classes. 
@@ -21,7 +12,7 @@ public class Deserialiser
     /**The JAXB unsmahaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
-    private Unmarshaller xmlUnmarshaller = null;
+    private javax.xml.bind.Unmarshaller xmlUnmarshaller = null;
 
     /**Creates a new Deserialser that is bound to the m3x.xml JAXB context.
      * 
@@ -29,12 +20,12 @@ public class Deserialiser
     public Deserialiser()
     {
         //create the unmarshaller
-        JAXBContext context = null;
+        javax.xml.bind.JAXBContext context = null;
         try
         {
-            context = JAXBContext.newInstance("m3x.xml");
+            context = javax.xml.bind.JAXBContext.newInstance("m3x.xml");
         }
-        catch (JAXBException e)
+        catch (javax.xml.bind.JAXBException e)
         {
             throw new IllegalArgumentException("unable to bind schema: " + e.getMessage());
         }
@@ -43,7 +34,7 @@ public class Deserialiser
         {
             xmlUnmarshaller = context.createUnmarshaller();
         }
-        catch (JAXBException e)
+        catch (javax.xml.bind.JAXBException e)
         {
             throw new IllegalArgumentException("unable to create unmarshaller: " + e.getMessage());
         }
@@ -54,13 +45,13 @@ public class Deserialiser
      * @param stream - the inout stream to read from.
      * @return - the root M3G object
      */
-    public m3x.xml.M3G deserialise(InputStream stream)
+    public m3x.xml.M3G deserialise(java.io.InputStream stream)
     {
         try
         {
             return (m3x.xml.M3G)xmlUnmarshaller.unmarshal(stream);
         }
-        catch (JAXBException e)
+        catch (javax.xml.bind.JAXBException e)
         {
             throw new IllegalArgumentException("unable to parse infile: " + e.getMessage());
         }       

@@ -47,9 +47,9 @@
     </xs:simpleType>
     <xs:simpleType name="Object3DReference">
         <xs:annotation>
-            <xs:appinfo>
+            <!--xs:appinfo>
                 <jaxb:class ref="Object3D"/>
-            </xs:appinfo>
+            </xs:appinfo-->
             <xs:documentation>
                 This type is used for referencing other nodes in the same document
             </xs:documentation>
