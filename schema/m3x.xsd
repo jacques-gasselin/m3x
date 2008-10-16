@@ -800,12 +800,24 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="speed" type="Float32" default="1.0"/>
-                    <xs:attribute name="weight" type="Float32" default="1.0"/>
-                    <xs:attribute name="activeIntervalStart" type="Int32" default="0"/>
-                    <xs:attribute name="activeIntervalEnd" type="Int32" default="0"/>
-                    <xs:attribute name="referenceSequenceTime" type="Float32" default="0.0"/>
-                    <xs:attribute name="referenceWorldTime" type="Int32" default="0"/>
+                    <xs:attribute name="speed"
+                                  type="Float32"
+                                  default="1.0"/>
+                    <xs:attribute name="weight"
+                                  type="Float32"
+                                  default="1.0"/>
+                    <xs:attribute name="activeIntervalStart"
+                                  type="Int32"
+                                  default="0"/>
+                    <xs:attribute name="activeIntervalEnd"
+                                  type="Int32"
+                                  default="0"/>
+                    <xs:attribute name="referenceSequenceTime"
+                                  type="Float32"
+                                  default="0.0"/>
+                    <xs:attribute name="referenceWorldTime"
+                                  type="Int32"
+                                  default="0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -842,13 +854,20 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="CompositingModeInstance" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="FogInstance" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="PolygonModeInstance" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="MaterialInstance" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="Texture2DInstance" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element ref="CompositingModeInstance"
+                                    minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="FogInstance"
+                                    minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="PolygonModeInstance"
+                                    minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="MaterialInstance"
+                                    minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="Texture2DInstance"
+                                    minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
-                    <xs:attribute name="layer" type="Byte"/>
+                    <xs:attribute name="layer"
+                                  type="Byte"
+                                  default="0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -867,15 +886,29 @@
                     <xs:sequence>
                         <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="backgroundColor" type="ColorRGBA" default="0 0 0 255"/>
-                    <xs:attribute name="backgroundImageModeX" type="BackgroundRepeatType"/>
-                    <xs:attribute name="backgroundImageModeY" type="BackgroundRepeatType"/>
-                    <xs:attribute name="cropX" type="Int32"/>
-                    <xs:attribute name="cropY" type="Int32"/>
-                    <xs:attribute name="cropWidth" type="Int32"/>
-                    <xs:attribute name="cropHeight" type="Int32"/>
-                    <xs:attribute name="depthClearEnabled" type="Boolean"/>
-                    <xs:attribute name="colorClearEnabled" type="Boolean"/>
+                    <xs:attribute name="backgroundColor"
+                                  type="ColorRGBA"
+                                  default="0 0 0 255"/>
+                    <xs:attribute name="backgroundImageModeX"
+                                  type="BackgroundRepeatType"
+                                  default="BORDER"/>
+                    <xs:attribute name="backgroundImageModeY"
+                                  type="BackgroundRepeatType"
+                                  default="BORDER"/>
+                    <xs:attribute name="cropX"
+                                  type="Int32"/>
+                    <xs:attribute name="cropY"
+                                  type="Int32"/>
+                    <xs:attribute name="cropWidth"
+                                  type="Int32"/>
+                    <xs:attribute name="cropHeight"
+                                  type="Int32"/>
+                    <xs:attribute name="depthClearEnabled"
+                                  type="Boolean"
+                                  default="true"/>
+                    <xs:attribute name="colorClearEnabled"
+                                  type="Boolean"
+                                  default="true"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -887,11 +920,17 @@
                     <xs:sequence>
                         <xs:element ref="ProjectionTransform" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="projectionType" type="CameraProjectionModeType"/>
-                    <xs:attribute name="fovy" type="Float32"/>
-                    <xs:attribute name="aspectRatio" type="Float32"/>
-                    <xs:attribute name="near" type="Float32"/>
-                    <xs:attribute name="far" type="Float32"/>
+                    <xs:attribute name="projectionType"
+                                  type="CameraProjectionModeType"
+                                  default="GENERIC"/>
+                    <xs:attribute name="fovy"
+                                  type="Float32"/>
+                    <xs:attribute name="aspectRatio"
+                                  type="Float32"/>
+                    <xs:attribute name="near"
+                                  type="Float32"/>
+                    <xs:attribute name="far"
+                                  type="Float32"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -900,14 +939,30 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="depthTestEnabled" type="Boolean"/>
-                    <xs:attribute name="depthWriteEnabled" type="Boolean"/>
-                    <xs:attribute name="colorWriteEnabled" type="Boolean"/>
-                    <xs:attribute name="alphaWriteEnabled" type="Boolean"/>
-                    <xs:attribute name="blending" type="CompositingModeType"/>
-                    <xs:attribute name="alphaThreshold" type="Float32"/>
-                    <xs:attribute name="depthOffsetFactor" type="Float32"/>
-                    <xs:attribute name="depthOffsetUnits" type="Float32"/>
+                    <xs:attribute name="depthTestEnabled"
+                                  type="Boolean"
+                                  default="true"/>
+                    <xs:attribute name="depthWriteEnabled"
+                                  type="Boolean"
+                                  default="true"/>
+                    <xs:attribute name="colorWriteEnabled"
+                                  type="Boolean"
+                                  default="true"/>
+                    <xs:attribute name="alphaWriteEnabled"
+                                  type="Boolean"
+                                  default="true"/>
+                    <xs:attribute name="blending"
+                                  type="CompositingModeType"
+                                  default="REPLACE"/>
+                    <xs:attribute name="alphaThreshold"
+                                  type="Float32"
+                                  default="0"/>
+                    <xs:attribute name="depthOffsetFactor"
+                                  type="Float32"
+                                  default="0"/>
+                    <xs:attribute name="depthOffsetUnits"
+                                  type="Float32"
+                                  default="0/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -923,7 +978,8 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="color" type="ColorRGB"/>
+                    <xs:attribute name="color"
+                                  type="ColorRGB"/>
                     <xs:attribute name="mode" type="FogEquationType"/>
                     <xs:attribute name="density" type="Float32"/>
                     <xs:attribute name="near" type="Float32"/>
@@ -1167,7 +1223,9 @@
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="componentCount" type="Byte"/>
-                    <xs:attribute name="componentType" default="FLOAT" type="VertexArrayDataType"/>
+                    <xs:attribute name="componentType"
+                                  type="VertexArrayDataType"
+                                  default="FLOAT"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
