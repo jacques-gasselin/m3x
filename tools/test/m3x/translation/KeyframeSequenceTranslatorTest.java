@@ -19,22 +19,21 @@ public class KeyframeSequenceTranslatorTest extends TranslatorSupport
     KeyframeSequenceTranslator translator = new KeyframeSequenceTranslator();
         
     m3x.xml.KeyframeSequence kfseq = new m3x.xml.KeyframeSequence();
-    kfseq.setComponentCount(1L);
-    kfseq.setDuration(2L);
+    kfseq.setDuration(2);
     kfseq.setInterpolation(KeyframeInterpolationType.SLERP);
-    kfseq.setKeyframeCount(3L);
+    kfseq.setKeyframeCount(3);
     Keyframes keyframes = new Keyframes();
-    keyframes.setComponentSize((short)1);
+    keyframes.setComponentCount(1);
     keyframes.getValue().add(0.1f);
     keyframes.getValue().add(0.2f);
     keyframes.getValue().add(0.3f);
     kfseq.setKeyframes(keyframes);
-    kfseq.getKeytimes().add(1L);
-    kfseq.getKeytimes().add(2L);
-    kfseq.getKeytimes().add(3L);
+    kfseq.getKeytimes().add(1);
+    kfseq.getKeytimes().add(2);
+    kfseq.getKeytimes().add(3);
     kfseq.setRepeatMode(KeyframePlaybackType.LOOP);
-    kfseq.setValidRangeFirst(0L);
-    kfseq.setValidRangeLast(1L);
+    kfseq.setValidRangeFirst(0);
+    kfseq.setValidRangeLast(1);
     
     m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
     m3x.xml.Section section = new m3x.xml.Section();

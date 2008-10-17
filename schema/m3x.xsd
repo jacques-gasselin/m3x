@@ -22,6 +22,15 @@
                schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
     <!-- Simple types -->
     <xs:simpleType name="Byte">
+        <xs:restriction base="xs:byte"/>
+    </xs:simpleType>
+    <xs:simpleType name="LayerByte">
+        <xs:restriction base="xs:byte">
+            <xs:minInclusive value="-63"/>
+            <xs:maxInclusive value="63"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="UByte">
         <xs:restriction base="xs:unsignedByte"/>
     </xs:simpleType>
     <xs:simpleType name="Int16">
@@ -33,9 +42,15 @@
     <xs:simpleType name="Int32">
         <xs:restriction base="xs:int"/>
     </xs:simpleType>
+    <xs:simpleType name="UInt31">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1073741823"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="UInt32">
         <xs:restriction base="xs:unsignedInt"/>
-    </xs:simpleType>    
+    </xs:simpleType>
     <xs:simpleType name="Float32">
         <xs:restriction base="xs:float"/>
     </xs:simpleType>
@@ -60,6 +75,9 @@
     <xs:simpleType name="ByteList">
         <xs:list itemType="Byte"/>
     </xs:simpleType>
+    <xs:simpleType name="UByteList">
+        <xs:list itemType="UByte"/>
+    </xs:simpleType>
     <xs:simpleType name="Float32List">
         <xs:list itemType="Float32"/>
     </xs:simpleType>
@@ -68,6 +86,9 @@
     </xs:simpleType>
     <xs:simpleType name="Int16List">
         <xs:list itemType="Int16"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt31List">
+        <xs:list itemType="UInt31"/>
     </xs:simpleType>
     <xs:simpleType name="UInt32List">
         <xs:list itemType="UInt32"/>
@@ -95,13 +116,13 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ColorRGB">
-        <xs:restriction base="ByteList">
+        <xs:restriction base="UByteList">
             <xs:minLength value="3"/>
             <xs:maxLength value="3"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ColorRGBA">
-        <xs:restriction base="ByteList">
+        <xs:restriction base="UByteList">
             <xs:minLength value="4"/>
             <xs:maxLength value="4"/>
         </xs:restriction>
@@ -620,26 +641,28 @@
     </xs:element>
     <xs:element name="palette">
         <xs:simpleType>
-            <xs:restriction base="ByteList"/>
+            <xs:restriction base="UByteList"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="pixels">
         <xs:simpleType>
-            <xs:restriction base="ByteList"/>
+            <xs:restriction base="UByteList"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="keyframes">
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="Float32List">
-                    <xs:attribute name="componentSize" type="Byte" use="required"/>
+                    <xs:attribute name="componentCount"
+                                  type="UInt31"
+                                  use="required"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="keytimes">
         <xs:simpleType>
-            <xs:restriction base="UInt32List"/>
+            <xs:restriction base="UInt31List"/>
         </xs:simpleType>
     </xs:element>
     <xs:element name="stripLengths">
@@ -708,7 +731,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="userID" type="UInt32" default="0">
+        <xs:attribute name="userID" type="Int32" default="0">
             <xs:annotation>
                 <xs:documentation>
                     The userID attribute is an integer that can be used by an application to find the object in the
@@ -754,13 +777,16 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="ImageBaseType">
+    <xs:complexType name="ImageBase">
         <xs:complexContent>
             <xs:extension base="Object3D">
-                <xs:attribute name="format" type="ImageBaseColorType"/>
-                <xs:attribute name="mutable" type="Boolean"/>
-                <xs:attribute name="width" type="UInt32"/>
-                <xs:attribute name="height" type="UInt32"/>
+                <xs:attribute name="format"
+                              type="ImageBaseColorType"/>
+                <xs:attribute name="mutable"
+                              type="Boolean"
+                              default="false"/>
+                <xs:attribute name="width" type="UInt31"/>
+                <xs:attribute name="height" type="UInt31"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -866,7 +892,7 @@
                                     minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                     <xs:attribute name="layer"
-                                  type="Byte"
+                                  type="LayerByte"
                                   default="0"/>
                 </xs:extension>
             </xs:complexContent>
@@ -962,7 +988,7 @@
                                   default="0"/>
                     <xs:attribute name="depthOffsetUnits"
                                   type="Float32"
-                                  default="0/>
+                                  default="0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1012,7 +1038,7 @@
     <xs:element name="Image2D">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="ImageBaseType">
+                <xs:extension base="ImageBase">
                     <xs:sequence>
                         <xs:element ref="palette" minOccurs="0" maxOccurs="1"/>
                         <xs:element ref="pixels" minOccurs="0" maxOccurs="1"/>
@@ -1044,13 +1070,18 @@
                         <xs:element ref="keytimes" minOccurs="1" maxOccurs="1"/>
                         <xs:element ref="keyframes" minOccurs="1" maxOccurs="1"/>
                     </xs:sequence>
-                    <xs:attribute name="componentCount" type="UInt32"/>
-                    <xs:attribute name="keyframeCount" type="UInt32"/>
-                    <xs:attribute name="duration" type="UInt32"/>
-                    <xs:attribute name="interpolation" type="KeyframeInterpolationType"/>
-                    <xs:attribute name="validRangeFirst" type="UInt32"/>
-                    <xs:attribute name="validRangeLast" type="UInt32"/>
-                    <xs:attribute name="repeatMode" type="KeyframePlaybackType"/>
+                    <xs:attribute name="keyframeCount"
+                                  type="UInt31"/>
+                    <xs:attribute name="duration"
+                                  type="UInt31"/>
+                    <xs:attribute name="interpolation"
+                                  type="KeyframeInterpolationType"/>
+                    <xs:attribute name="validRangeFirst"
+                                  type="UInt31"/>
+                    <xs:attribute name="validRangeLast"
+                                  type="UInt31"/>
+                    <xs:attribute name="repeatMode"
+                                  type="KeyframePlaybackType"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1155,9 +1186,9 @@
                             <xs:complexType>
                                 <xs:complexContent>
                                     <xs:extension base="InstanceType">
-                                        <xs:attribute name="firstVertex" type="UInt32"/>
-                                        <xs:attribute name="vertexCount" type="UInt32"/>
-                                        <xs:attribute name="weight" type="Int32"/>                                        
+                                        <xs:attribute name="firstVertex" type="UInt31"/>
+                                        <xs:attribute name="vertexCount" type="UInt31"/>
+                                        <xs:attribute name="weight" type="Int32"/>
                                     </xs:extension>
                                 </xs:complexContent>                         
                             </xs:complexType>

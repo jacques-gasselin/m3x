@@ -33,7 +33,7 @@ public class AppearanceTranslator extends AbstractTranslator
             textureIndices[i] = new ObjectIndex(searchObjectIndex(this.getXmlRootObject(), texture.getRef()));
         }
 
-        this.setBinaryObject(new m3x.m3g.objects.Appearance(animationTracks, userParameters, appearance.getLayer().byteValue(), new ObjectIndex(compositingModeIndex), new ObjectIndex(fogIndex), new ObjectIndex(polygonModeIndex), new ObjectIndex(materialIndex), textureIndices));
+        this.setBinaryObject(new m3x.m3g.objects.Appearance(animationTracks, userParameters, appearance.getLayer(), new ObjectIndex(compositingModeIndex), new ObjectIndex(fogIndex), new ObjectIndex(polygonModeIndex), new ObjectIndex(materialIndex), textureIndices));
 
         return this.getBinaryObject();
     }

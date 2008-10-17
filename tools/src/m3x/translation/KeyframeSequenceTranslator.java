@@ -30,7 +30,17 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.KeyframeSequence(animationTracks, userParameters, toM3G(seq.getInterpolation()), toM3G(seq.getRepeatMode()), seq.getDuration().intValue(), seq.getValidRangeFirst().intValue(), seq.getValidRangeLast().intValue(), seq.getKeyframeCount().intValue(), toM3G(seq.getKeyframes(), seq.getKeytimes())));
+            this.setBinaryObject(
+                new m3x.m3g.objects.KeyframeSequence(
+                    animationTracks,
+                    userParameters,
+                    toM3G(seq.getInterpolation()),
+                    toM3G(seq.getRepeatMode()),
+                    seq.getDuration().intValue(),
+                    seq.getValidRangeFirst().intValue(),
+                    seq.getValidRangeLast().intValue(),
+                    seq.getKeyframeCount().intValue(),
+                    toM3G(seq.getKeyframes(), seq.getKeytimes())));
         }
         catch (FileFormatException e)
         {
@@ -39,10 +49,10 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
         return this.getBinaryObject();
     }
 
-    private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Long> keyTimes)
+    private FloatKeyFrame[] toM3G(Keyframes keyframes, List<Integer> keyTimes)
     {
         List<Float> list = keyframes.getValue();
-        int componentCount = keyframes.getComponentSize();
+        int componentCount = keyframes.getComponentCount();
         FloatKeyFrame[] keyFrames = new FloatKeyFrame[list.size() / componentCount];
         for (int i = 0; i < keyFrames.length; i += componentCount)
         {
@@ -51,7 +61,7 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
             {
                 components[j] = list.get(i + j).floatValue();
             }
-            keyFrames[i] = new FloatKeyFrame(keyTimes.get(i).intValue(), components);
+            keyFrames[i] = new FloatKeyFrame(keyTimes.get(i), components);
         }
         return keyFrames;
     }

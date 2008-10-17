@@ -13,7 +13,7 @@ public class FogTranslatorTest extends TranslatorSupport
     m3xFog.setFar(1.0f);
     m3xFog.setMode(FogEquationType.LINEAR);
     m3xFog.setNear(0.1f);
-    m3xFog.setUserID(666L);
+    m3xFog.setUserID(666);
     m3xFog.getColor().clear();
     m3xFog.getColor().add((short)1);
     m3xFog.getColor().add((short)2);
@@ -29,7 +29,7 @@ public class FogTranslatorTest extends TranslatorSupport
     m3xFog = new m3x.xml.Fog();
     m3xFog.setMode(FogEquationType.EXPONENTIAL);
     m3xFog.setDensity(0.6f);
-    m3xFog.setUserID(666L);
+    m3xFog.setUserID(666);
     m3xFog.getColor().clear();
     m3xFog.getColor().add((short)4);
     m3xFog.getColor().add((short)5);

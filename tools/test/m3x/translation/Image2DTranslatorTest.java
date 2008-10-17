@@ -23,8 +23,8 @@ public class Image2DTranslatorTest extends TranslatorSupport
 
     image1.setFormat(ImageBaseColorType.RGB);
 
-    image1.setWidth(320L);
-    image1.setHeight(256L);
+    image1.setWidth(320);
+    image1.setHeight(256);
     image1.setMutable(true);
     
     translator.set(image1, m3xRoot, null);

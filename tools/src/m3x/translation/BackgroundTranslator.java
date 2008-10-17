@@ -24,7 +24,7 @@ public class BackgroundTranslator extends AbstractTranslator
         int backgroundIndex = searchObjectIndex(this.getXmlRootObject(), background.getImage2DInstance().getRef());
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.Background(animationTracks, userParameters, translateColorRGBA(background.getBackgroundColor()), new ObjectIndex(backgroundIndex), toM3G(background.getBackgroundImageModeX()), toM3G(background.getBackgroundImageModeY()), background.getCropX().intValue(), background.getCropY().intValue(), background.getCropWidth().intValue(), background.getCropHeight().intValue(), background.isDepthClearEnabled().booleanValue(), background.isColorClearEnabled().booleanValue()));
+            this.setBinaryObject(new m3x.m3g.objects.Background(animationTracks, userParameters, translateColorRGBA(background.getBackgroundColor()), new ObjectIndex(backgroundIndex), toM3G(background.getBackgroundImageModeX()), toM3G(background.getBackgroundImageModeY()), background.getCropX().intValue(), background.getCropY().intValue(), background.getCropWidth().intValue(), background.getCropHeight().intValue(), background.isDepthClearEnabled(), background.isColorClearEnabled()));
         }
         catch (FileFormatException e)
         {

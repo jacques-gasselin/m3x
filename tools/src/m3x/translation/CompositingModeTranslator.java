@@ -24,7 +24,18 @@ public class CompositingModeTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.CompositingMode(animationTracks, userParameters, cm.isDepthTestEnabled(), cm.isDepthWriteEnabled(), cm.isColorWriteEnabled(), cm.isAlphaWriteEnabled(), toM3G(cm.getBlending()), (int) (cm.getAlphaThreshold() * 255.0f + 0.5f), cm.getDepthOffsetFactor().floatValue(), cm.getDepthOffsetUnits().floatValue()));
+            this.setBinaryObject(
+                new m3x.m3g.objects.CompositingMode(
+                    animationTracks,
+                    userParameters,
+                    cm.isDepthTestEnabled(),
+                    cm.isDepthWriteEnabled(),
+                    cm.isColorWriteEnabled(),
+                    cm.isAlphaWriteEnabled(),
+                    toM3G(cm.getBlending()),
+                    (int) (cm.getAlphaThreshold() * 255.0f + 0.5f),
+                    cm.getDepthOffsetFactor(),
+                    cm.getDepthOffsetUnits()));
         }
         catch (FileFormatException e)
         {

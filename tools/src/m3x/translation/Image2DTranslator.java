@@ -27,7 +27,15 @@ public class Image2DTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.Image2D(animationTracks, userParameters, toM3G(image.getFormat()), image.getWidth().intValue(), image.getHeight().intValue(), toBytes(image.getPalette()), toBytes(image.getPixels())));
+            this.setBinaryObject(
+                new m3x.m3g.objects.Image2D(
+                    animationTracks,
+                    userParameters,
+                    toM3G(image.getFormat()),
+                    image.getWidth(),
+                    image.getHeight(),
+                    toBytes(image.getPalette()),
+                    toBytes(image.getPixels())));
         }
         catch (FileFormatException e)
         {
