@@ -34,7 +34,7 @@
     <target name="xjc-typedef">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
             <classpath>
-                <fileset dir="${lib.dir}"/>
+                <pathelement location="${lib.dir}/jaxb-xjc.jar"/>
             </classpath>
         </taskdef>        
     </target>
@@ -43,7 +43,8 @@
         <xjc package="${m3x.xml.package}"
              destdir="${build.src.dir}">
             <classpath>
-                <fileset dir="${lib.dir}"/>
+                <pathelement location="${lib.dir}/jaxb-api.jar"/>
+                <pathelement location="${lib.dir}/jsr173_api.jar"/>
                 <pathelement location="${src.dir}"/>
             </classpath>
             <arg value="-extension"/>

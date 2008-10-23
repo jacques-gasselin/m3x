@@ -37,6 +37,7 @@ public class ObjectIndex implements M3GSerializable
         return this.index;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)

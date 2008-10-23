@@ -3,8 +3,8 @@ package m3x.translation;
 
 import java.util.List;
 
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.VertexBuffer.TextureCoordinate;
+import m3x.m3g.Object3D;
+import m3x.m3g.VertexBuffer.TextureCoordinate;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.VertexBuffer.Texcoords;
 
@@ -38,7 +38,7 @@ public class VertexBufferTranslator extends AbstractTranslator
             textureCoordinates[i] = new TextureCoordinate(new ObjectIndex(index), bias, scale);
         }
 
-        this.setBinaryObject(new m3x.m3g.objects.VertexBuffer(animationTracks, userParameters, translateColorRGBA(vb.getDefaultColor()), new ObjectIndex(positionsIndex), this.translateFloatArray(vb.getPositions().getBias()), vb.getPositions().getScale().floatValue(), new ObjectIndex(normalsIndex), new ObjectIndex(colorsIndex), textureCoordinates));
+        this.setBinaryObject(new m3x.m3g.VertexBuffer(animationTracks, userParameters, translateColorRGBA(vb.getDefaultColor()), new ObjectIndex(positionsIndex), this.translateFloatArray(vb.getPositions().getBias()), vb.getPositions().getScale().floatValue(), new ObjectIndex(normalsIndex), new ObjectIndex(colorsIndex), textureCoordinates));
 
         return this.getBinaryObject();
     }

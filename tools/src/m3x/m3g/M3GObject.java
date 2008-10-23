@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import m3x.m3g.objects.FileIdentifier;
-import m3x.m3g.objects.Header;
+import m3x.m3g.FileIdentifier;
+import m3x.m3g.Header;
 import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
 
@@ -96,7 +96,7 @@ public class M3GObject implements M3GSerializable
         headerSection.deserialize(dataInputStream, M3G_VERSION);
 
         ObjectChunk objectChunk = headerSection.getObjectChunks()[0];
-        byte objectType = objectChunk.getObjectType();
+        int objectType = objectChunk.getObjectType();
         if (objectType != ObjectTypes.OBJECT_HEADER)
         {
             throw new FileFormatException("First section is not object header!");

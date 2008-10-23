@@ -2,7 +2,7 @@ package m3x.translation;
 
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class AnimationTrackTranslator extends AbstractTranslator
@@ -23,7 +23,7 @@ public class AnimationTrackTranslator extends AbstractTranslator
         int keyframeSequence = searchObjectIndex(this.getXmlRootObject(), at.getKeyframeSequenceInstance().getRef());
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.AnimationTrack(animationTracks, userParameters, new ObjectIndex(keyframeSequence), new ObjectIndex(animationController), (int) at.getUserID()));
+            this.setBinaryObject(new m3x.m3g.AnimationTrack(animationTracks, userParameters, new ObjectIndex(keyframeSequence), new ObjectIndex(animationController), (int) at.getUserID()));
         }
         catch (FileFormatException e)
         {

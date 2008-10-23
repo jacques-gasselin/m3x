@@ -1,7 +1,7 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Background;
-import m3x.m3g.objects.KeyframeSequence;
+import m3x.m3g.Background;
+import m3x.m3g.KeyframeSequence;
 import m3x.xml.BackgroundRepeatType;
 import m3x.xml.KeyframeInterpolationType;
 import m3x.xml.KeyframePlaybackType;

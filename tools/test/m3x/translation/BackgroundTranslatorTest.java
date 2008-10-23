@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Background;
+import m3x.m3g.Background;
 import m3x.xml.BackgroundRepeatType;
 
 /**

@@ -4,8 +4,8 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Camera;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Camera;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.CameraProjectionModeType;
@@ -30,11 +30,11 @@ public class CameraTranslator extends AbstractTranslator
         {
             if (camera.getProjectionTransform().size() == 0)
             {
-                this.setBinaryObject(new m3x.m3g.objects.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionType()), camera.getFovy().floatValue(), camera.getAspectRatio().floatValue(), camera.getNear().floatValue(), camera.getFar().floatValue()));
+                this.setBinaryObject(new m3x.m3g.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionType()), camera.getFovy().floatValue(), camera.getAspectRatio().floatValue(), camera.getNear().floatValue(), camera.getFar().floatValue()));
             }
             else
             {
-                this.setBinaryObject(new m3x.m3g.objects.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionTransform())));
+                this.setBinaryObject(new m3x.m3g.Camera(animationTracks, userParameters, transform, camera.isRenderingEnabled(), camera.isPickingEnabled(), (byte) (camera.getAlphaFactor() * 255.0f + 0.5f), camera.getScope(), toM3G(camera.getProjectionTransform())));
             }
         }
         catch (FileFormatException e)

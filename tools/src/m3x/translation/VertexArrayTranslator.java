@@ -2,7 +2,7 @@ package m3x.translation;
 
 import java.util.List;
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.Deserialiser;
 import m3x.xml.M3G;
@@ -17,7 +17,7 @@ public class VertexArrayTranslator extends AbstractTranslator
 
     public void set(Object3D object)
     {
-        super.set((m3x.m3g.objects.VertexArray) object);
+        super.set((m3x.m3g.VertexArray) object);
     }
 
     public Object3D toM3G()
@@ -37,14 +37,14 @@ public class VertexArrayTranslator extends AbstractTranslator
                     {
                         byteComponents[i] = ints.get(i).byteValue();
                     }
-                    setBinaryObject(new m3x.m3g.objects.VertexArray(animationTracks, userParameters, byteComponents, false));
+                    setBinaryObject(new m3x.m3g.VertexArray(animationTracks, userParameters, byteComponents, false));
                 case SHORT:
                     short[] shortComponents = new short[ints.size()];
                     for (int i = 0; i < ints.size(); i++)
                     {
                         shortComponents[i] = ints.get(i).shortValue();
                     }
-                    setBinaryObject(new m3x.m3g.objects.VertexArray(animationTracks, userParameters, shortComponents, false));
+                    setBinaryObject(new m3x.m3g.VertexArray(animationTracks, userParameters, shortComponents, false));
             }
         }
         // else translation is done already

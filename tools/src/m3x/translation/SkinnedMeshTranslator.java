@@ -4,9 +4,9 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.Mesh.SubMesh;
-import m3x.m3g.objects.SkinnedMesh.BoneReference;
+import m3x.m3g.Object3D;
+import m3x.m3g.Mesh.SubMesh;
+import m3x.m3g.SkinnedMesh.BoneReference;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.MeshType.Submesh;
@@ -44,7 +44,7 @@ public class SkinnedMeshTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.SkinnedMesh(animationTracks, userParameters, transform, sm.isRenderingEnabled(), sm.isPickingEnabled(), (byte) (sm.getAlphaFactor() * 255.0f + 0.5f), sm.getScope(), new ObjectIndex(vertexBufferIndex), subMeshes, new ObjectIndex(skeletonIndex), toM3G(sm.getBone())));
+            this.setBinaryObject(new m3x.m3g.SkinnedMesh(animationTracks, userParameters, transform, sm.isRenderingEnabled(), sm.isPickingEnabled(), (byte) (sm.getAlphaFactor() * 255.0f + 0.5f), sm.getScope(), new ObjectIndex(vertexBufferIndex), subMeshes, new ObjectIndex(skeletonIndex), toM3G(sm.getBone())));
         }
         catch (FileFormatException e)
         {

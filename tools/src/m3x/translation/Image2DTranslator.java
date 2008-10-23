@@ -4,8 +4,8 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Image2D;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Image2D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.ImageBaseColorType;
 ;
@@ -28,7 +28,7 @@ public class Image2DTranslator extends AbstractTranslator
         try
         {
             this.setBinaryObject(
-                new m3x.m3g.objects.Image2D(
+                new m3x.m3g.Image2D(
                     animationTracks,
                     userParameters,
                     toM3G(image.getFormat()),

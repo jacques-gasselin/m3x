@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Image2D;
+import m3x.m3g.Image2D;
 import m3x.xml.ImageBaseColorType;
 
 public class Image2DTranslatorTest extends TranslatorSupport

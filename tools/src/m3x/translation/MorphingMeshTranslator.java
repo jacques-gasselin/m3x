@@ -4,8 +4,8 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.MorphingMesh.TargetBuffer;
+import m3x.m3g.Object3D;
+import m3x.m3g.MorphingMesh.TargetBuffer;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.MorphingMesh.Morphtarget;
@@ -37,7 +37,7 @@ public class MorphingMeshTranslator extends AbstractTranslator
         }
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.MorphingMesh(animationTracks, userParameters, transform, mm.isRenderingEnabled(), mm.isPickingEnabled(), (byte) (mm.getAlphaFactor() * 255.0f + 0.5f), mm.getScope(), morphTargets));
+            this.setBinaryObject(new m3x.m3g.MorphingMesh(animationTracks, userParameters, transform, mm.isRenderingEnabled(), mm.isPickingEnabled(), (byte) (mm.getAlphaFactor() * 255.0f + 0.5f), mm.getScope(), morphTargets));
         }
         catch (FileFormatException e)
         {

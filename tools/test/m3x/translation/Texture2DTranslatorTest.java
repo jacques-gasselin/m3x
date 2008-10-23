@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Texture2D;
+import m3x.m3g.Texture2D;
 
 public class Texture2DTranslatorTest extends TranslatorSupport
 {

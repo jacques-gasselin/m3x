@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
-import m3x.m3g.objects.Fog;
-import m3x.m3g.objects.Object3D.UserParameter;
+import m3x.m3g.Fog;
+import m3x.m3g.Object3D.UserParameter;
 import m3x.m3g.primitives.Section;
 
 public class SectionTest extends AbstractTestCase

@@ -2,8 +2,8 @@ package m3x.translation;
 
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.CompositingMode;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.CompositingMode;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.CompositingModeType;
 
@@ -25,7 +25,7 @@ public class CompositingModeTranslator extends AbstractTranslator
         try
         {
             this.setBinaryObject(
-                new m3x.m3g.objects.CompositingMode(
+                new m3x.m3g.CompositingMode(
                     animationTracks,
                     userParameters,
                     cm.isDepthTestEnabled(),

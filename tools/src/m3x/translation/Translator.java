@@ -28,7 +28,7 @@ public interface Translator
      * @param object
      *          - the object to set from
      */
-    public void set(m3x.m3g.objects.Object3D object);
+    public void set(m3x.m3g.Object3D object);
 
     /**
      * Convert to an XML object.
@@ -42,5 +42,5 @@ public interface Translator
      *
      * @return an M3G representation
      */
-    public m3x.m3g.objects.Object3D toM3G();
+    public m3x.m3g.Object3D toM3G();
 }

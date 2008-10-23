@@ -4,8 +4,8 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.Mesh.SubMesh;
+import m3x.m3g.Object3D;
+import m3x.m3g.Mesh.SubMesh;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.MeshType.Submesh;
@@ -40,7 +40,7 @@ public class MeshTranslator extends AbstractTranslator
         }
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.Mesh(animationTracks, userParameters, transform, mesh.isRenderingEnabled(), mesh.isPickingEnabled(), (byte) (mesh.getAlphaFactor() * 255.0f + 0.5f), mesh.getScope(), new ObjectIndex(vertexBufferIndex), subMeshes));
+            this.setBinaryObject(new m3x.m3g.Mesh(animationTracks, userParameters, transform, mesh.isRenderingEnabled(), mesh.isPickingEnabled(), (byte) (mesh.getAlphaFactor() * 255.0f + 0.5f), mesh.getScope(), new ObjectIndex(vertexBufferIndex), subMeshes));
         }
         catch (FileFormatException e)
         {

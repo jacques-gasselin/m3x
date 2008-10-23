@@ -1,8 +1,8 @@
 package m3x.translation;
 
 
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.Texture2D;
+import m3x.m3g.Object3D;
+import m3x.m3g.Texture2D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
@@ -53,7 +53,7 @@ public class Texture2DTranslator extends AbstractTranslator
 
         ColorRGB blendColor = AbstractTranslator.translateColorRGB(texture.getBlendColor());
 
-        this.setBinaryObject(new m3x.m3g.objects.Texture2D(animationTracks, userParameters, translation, scale, orientationAngle, orientationAxis, new ObjectIndex(textureIndex), blendColor, toM3G(texture.getBlending()), toM3G(texture.getWrappingS()), toM3G(texture.getWrappingT()), toM3G(texture.getLevelFilter()), toM3G(texture.getImageFilter())));
+        this.setBinaryObject(new m3x.m3g.Texture2D(animationTracks, userParameters, translation, scale, orientationAngle, orientationAxis, new ObjectIndex(textureIndex), blendColor, toM3G(texture.getBlending()), toM3G(texture.getWrappingS()), toM3G(texture.getWrappingT()), toM3G(texture.getLevelFilter()), toM3G(texture.getImageFilter())));
         return this.getBinaryObject();
     }
 

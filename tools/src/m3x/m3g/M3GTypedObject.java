@@ -14,5 +14,5 @@ public interface M3GTypedObject extends M3GSerializable
      * @return
      *  The object type byte.
      */
-    byte getObjectType();
+    int getObjectType();
 } 

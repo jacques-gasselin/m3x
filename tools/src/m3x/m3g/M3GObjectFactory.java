@@ -1,29 +1,29 @@
 package m3x.m3g;
 
-import m3x.m3g.objects.AnimationController;
-import m3x.m3g.objects.AnimationTrack;
-import m3x.m3g.objects.Appearance;
-import m3x.m3g.objects.Background;
-import m3x.m3g.objects.Camera;
-import m3x.m3g.objects.CompositingMode;
-import m3x.m3g.objects.ExternalReference;
-import m3x.m3g.objects.Fog;
-import m3x.m3g.objects.Group;
-import m3x.m3g.objects.Image2D;
-import m3x.m3g.objects.KeyframeSequence;
-import m3x.m3g.objects.Light;
-import m3x.m3g.objects.Material;
-import m3x.m3g.objects.Mesh;
-import m3x.m3g.objects.MorphingMesh;
-import m3x.m3g.objects.Header;
-import m3x.m3g.objects.PolygonMode;
-import m3x.m3g.objects.SkinnedMesh;
-import m3x.m3g.objects.Sprite;
-import m3x.m3g.objects.Texture2D;
-import m3x.m3g.objects.TriangleStripArray;
-import m3x.m3g.objects.VertexArray;
-import m3x.m3g.objects.VertexBuffer;
-import m3x.m3g.objects.World;
+import m3x.m3g.AnimationController;
+import m3x.m3g.AnimationTrack;
+import m3x.m3g.Appearance;
+import m3x.m3g.Background;
+import m3x.m3g.Camera;
+import m3x.m3g.CompositingMode;
+import m3x.m3g.ExternalReference;
+import m3x.m3g.Fog;
+import m3x.m3g.Group;
+import m3x.m3g.Image2D;
+import m3x.m3g.KeyframeSequence;
+import m3x.m3g.Light;
+import m3x.m3g.Material;
+import m3x.m3g.Mesh;
+import m3x.m3g.MorphingMesh;
+import m3x.m3g.Header;
+import m3x.m3g.PolygonMode;
+import m3x.m3g.SkinnedMesh;
+import m3x.m3g.Sprite;
+import m3x.m3g.Texture2D;
+import m3x.m3g.TriangleStripArray;
+import m3x.m3g.VertexArray;
+import m3x.m3g.VertexBuffer;
+import m3x.m3g.World;
 
 
 /**
@@ -41,7 +41,7 @@ public abstract class M3GObjectFactory
 
     }
 
-    public static M3GTypedObject getInstance(byte objectType) throws M3GException
+    public static final M3GTypedObject getInstance(int objectType) throws M3GException
     {
         switch (objectType)
         {

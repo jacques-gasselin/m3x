@@ -691,7 +691,7 @@
                 The Instance type declares a base for M3G instance elements.
             </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="ref" type="Object3DReference">
+        <xs:attribute name="ref" type="Object3DReference" use="required">
             <xs:annotation>
                 <xs:documentation>
                     The ref attribute is a text string containing the unique reference id of the target element.

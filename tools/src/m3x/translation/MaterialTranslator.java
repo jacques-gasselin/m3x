@@ -1,7 +1,7 @@
 package m3x.translation;
 
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
@@ -27,7 +27,7 @@ public class MaterialTranslator extends AbstractTranslator
         ColorRGB emissive = translateColorRGB(material.getEmissiveColor());
         ColorRGB specular = translateColorRGB(material.getSpecularColor());
 
-        this.setBinaryObject(new m3x.m3g.objects.Material(animationTracks, userParameters, ambient, diffuse, emissive, specular, material.getShininess().floatValue(), material.isVertexColorTrackingEnabled().booleanValue()));
+        this.setBinaryObject(new m3x.m3g.Material(animationTracks, userParameters, ambient, diffuse, emissive, specular, material.getShininess().floatValue(), material.isVertexColorTrackingEnabled().booleanValue()));
 
         return this.getBinaryObject();
     }

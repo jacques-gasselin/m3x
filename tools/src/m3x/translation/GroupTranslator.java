@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.NodeType;
@@ -38,7 +38,7 @@ public class GroupTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.Group(animationTracks, userParameters, transform, group.isRenderingEnabled(), group.isPickingEnabled(), (byte) (group.getAlphaFactor() * 255.0f + 0.5f), group.getScope(), children));
+            this.setBinaryObject(new m3x.m3g.Group(animationTracks, userParameters, transform, group.isRenderingEnabled(), group.isPickingEnabled(), (byte) (group.getAlphaFactor() * 255.0f + 0.5f), group.getScope(), children));
         }
         catch (FileFormatException e)
         {

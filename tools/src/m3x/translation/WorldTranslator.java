@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.NodeType;
@@ -42,7 +42,7 @@ public class WorldTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.World(animationTracks, userParameters, transform, world.isRenderingEnabled(), world.isPickingEnabled(), (byte) (world.getAlphaFactor() * 255.0f + 0.5f), world.getScope(), children, new ObjectIndex(activeCameraIndex), new ObjectIndex(backgroundIndex)));
+            this.setBinaryObject(new m3x.m3g.World(animationTracks, userParameters, transform, world.isRenderingEnabled(), world.isPickingEnabled(), (byte) (world.getAlphaFactor() * 255.0f + 0.5f), world.getScope(), children, new ObjectIndex(activeCameraIndex), new ObjectIndex(backgroundIndex)));
         }
         catch (FileFormatException e)
         {

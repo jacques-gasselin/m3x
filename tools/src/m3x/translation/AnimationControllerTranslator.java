@@ -1,7 +1,7 @@
 package m3x.translation;
 
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 
 public class AnimationControllerTranslator extends AbstractTranslator
@@ -18,7 +18,7 @@ public class AnimationControllerTranslator extends AbstractTranslator
         ObjectIndex[] animationTracks = this.getM3GAnimationTracks();
         Object3D.UserParameter[] userParameters = new Object3D.UserParameter[0];
 
-        this.setBinaryObject(new m3x.m3g.objects.AnimationController(animationTracks, userParameters, ac.getSpeed(), ac.getWeight(), ac.getActiveIntervalStart(), ac.getActiveIntervalEnd(), ac.getReferenceSequenceTime(), ac.getReferenceWorldTime()));
+        this.setBinaryObject(new m3x.m3g.AnimationController(animationTracks, userParameters, ac.getSpeed(), ac.getWeight(), ac.getActiveIntervalStart(), ac.getActiveIntervalEnd(), ac.getReferenceSequenceTime(), ac.getReferenceWorldTime()));
 
         return this.getBinaryObject();
     }

@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Fog;
+import m3x.m3g.Fog;
 import m3x.xml.FogEquationType;
 
 public class FogTranslatorTest extends TranslatorSupport

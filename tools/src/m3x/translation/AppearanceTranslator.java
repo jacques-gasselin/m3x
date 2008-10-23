@@ -3,7 +3,7 @@ package m3x.translation;
 
 import java.util.List;
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.Texture2DInstance;
 
@@ -33,7 +33,7 @@ public class AppearanceTranslator extends AbstractTranslator
             textureIndices[i] = new ObjectIndex(searchObjectIndex(this.getXmlRootObject(), texture.getRef()));
         }
 
-        this.setBinaryObject(new m3x.m3g.objects.Appearance(animationTracks, userParameters, appearance.getLayer(), new ObjectIndex(compositingModeIndex), new ObjectIndex(fogIndex), new ObjectIndex(polygonModeIndex), new ObjectIndex(materialIndex), textureIndices));
+        this.setBinaryObject(new m3x.m3g.Appearance(animationTracks, userParameters, appearance.getLayer(), new ObjectIndex(compositingModeIndex), new ObjectIndex(fogIndex), new ObjectIndex(polygonModeIndex), new ObjectIndex(materialIndex), textureIndices));
 
         return this.getBinaryObject();
     }

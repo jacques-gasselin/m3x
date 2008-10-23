@@ -3,7 +3,7 @@ package m3x.translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.Matrix;

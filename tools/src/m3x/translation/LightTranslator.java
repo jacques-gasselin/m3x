@@ -2,8 +2,8 @@ package m3x.translation;
 
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Light;
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Light;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.LightType;
@@ -26,7 +26,7 @@ public class LightTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.Light(animationTracks, userParameters, transform, light.isRenderingEnabled(), light.isPickingEnabled(), (byte) (light.getAlphaFactor() * 255.0f + 0.5f), light.getScope(), light.getAttenuationConstant().floatValue(), light.getAttenuationLinear().floatValue(), light.getAttenuationQuadratic().floatValue(), AbstractTranslator.translateColorRGB(light.getColor()), toM3G(light.getMode()), light.getIntensity().floatValue(), light.getSpotAngle().floatValue(), light.getSpotExponent().floatValue()));
+            this.setBinaryObject(new m3x.m3g.Light(animationTracks, userParameters, transform, light.isRenderingEnabled(), light.isPickingEnabled(), (byte) (light.getAlphaFactor() * 255.0f + 0.5f), light.getScope(), light.getAttenuationConstant().floatValue(), light.getAttenuationLinear().floatValue(), light.getAttenuationQuadratic().floatValue(), AbstractTranslator.translateColorRGB(light.getColor()), toM3G(light.getMode()), light.getIntensity().floatValue(), light.getSpotAngle().floatValue(), light.getSpotExponent().floatValue()));
         }
         catch (FileFormatException e)
         {

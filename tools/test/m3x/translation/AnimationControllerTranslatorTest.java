@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.AnimationController;
+import m3x.m3g.AnimationController;
 
 public class AnimationControllerTranslatorTest extends TranslatorSupport
 {

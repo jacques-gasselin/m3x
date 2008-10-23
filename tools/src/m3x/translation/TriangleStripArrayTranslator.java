@@ -1,7 +1,7 @@
 package m3x.translation;
 
 
-import m3x.m3g.objects.Object3D;
+import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
 ;
 
@@ -31,7 +31,7 @@ public class TriangleStripArrayTranslator extends AbstractTranslator
             stripLengths[i] = tsa.getStripLengths().get(i);
         }
 
-        this.setBinaryObject(new m3x.m3g.objects.TriangleStripArray(animationTracks, userParameters, indices, stripLengths));
+        this.setBinaryObject(new m3x.m3g.TriangleStripArray(animationTracks, userParameters, indices, stripLengths));
         return this.getBinaryObject();
     }
 

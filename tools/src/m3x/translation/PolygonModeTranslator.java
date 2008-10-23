@@ -2,8 +2,8 @@ package m3x.translation;
 
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.PolygonMode;
+import m3x.m3g.Object3D;
+import m3x.m3g.PolygonMode;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.PolygonCullingModeType;
 import m3x.xml.PolygonShadingModeType;
@@ -26,7 +26,7 @@ public class PolygonModeTranslator extends AbstractTranslator
 
         try
         {
-            this.setBinaryObject(new m3x.m3g.objects.PolygonMode(animationTracks, userParameters, toM3G(polygonMode.getCulling()), toM3G(polygonMode.getShading()), toM3G(polygonMode.getWinding()), polygonMode.isTwoSidedLightingEnabled().booleanValue(), polygonMode.isLocalCameraLightingEnabled().booleanValue(), polygonMode.isPerspectiveCorrectionEnabled().booleanValue()));
+            this.setBinaryObject(new m3x.m3g.PolygonMode(animationTracks, userParameters, toM3G(polygonMode.getCulling()), toM3G(polygonMode.getShading()), toM3G(polygonMode.getWinding()), polygonMode.isTwoSidedLightingEnabled().booleanValue(), polygonMode.isLocalCameraLightingEnabled().booleanValue(), polygonMode.isPerspectiveCorrectionEnabled().booleanValue()));
         }
         catch (FileFormatException e)
         {

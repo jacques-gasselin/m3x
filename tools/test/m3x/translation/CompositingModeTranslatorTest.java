@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.CompositingMode;
+import m3x.m3g.CompositingMode;
 import m3x.xml.CompositingModeType;
 
 public class CompositingModeTranslatorTest extends TranslatorSupport

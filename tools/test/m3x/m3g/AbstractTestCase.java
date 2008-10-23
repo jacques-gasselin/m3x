@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.objects.Object3D.UserParameter;
+import m3x.m3g.Object3D.UserParameter;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import junit.framework.TestCase;

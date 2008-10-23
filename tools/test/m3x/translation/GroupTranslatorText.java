@@ -1,6 +1,6 @@
 package m3x.translation;
 
-import m3x.m3g.objects.Group;
+import m3x.m3g.Group;
 
 public class GroupTranslatorText extends TranslatorSupport
 {

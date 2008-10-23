@@ -4,9 +4,9 @@ package m3x.translation;
 import java.util.List;
 
 import m3x.m3g.FileFormatException;
-import m3x.m3g.objects.KeyframeSequence;
-import m3x.m3g.objects.Object3D;
-import m3x.m3g.objects.KeyframeSequence.FloatKeyFrame;
+import m3x.m3g.KeyframeSequence;
+import m3x.m3g.Object3D;
+import m3x.m3g.KeyframeSequence.FloatKeyFrame;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.xml.KeyframeInterpolationType;
 import m3x.xml.KeyframePlaybackType;
@@ -31,7 +31,7 @@ public class KeyframeSequenceTranslator extends AbstractTranslator
         try
         {
             this.setBinaryObject(
-                new m3x.m3g.objects.KeyframeSequence(
+                new m3x.m3g.KeyframeSequence(
                     animationTracks,
                     userParameters,
                     toM3G(seq.getInterpolation()),

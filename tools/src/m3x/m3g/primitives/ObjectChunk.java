@@ -21,7 +21,7 @@ public class ObjectChunk implements M3GSerializable
     /**
      * Object type, enumerated in ObjectTypes.
      */
-    private byte objectType;
+    private int objectType;
     /**
      * The actual object data.
      */
@@ -37,7 +37,7 @@ public class ObjectChunk implements M3GSerializable
      * @param objectType
      * @param data
      */
-    public ObjectChunk(byte objectType, byte[] data)
+    public ObjectChunk(int objectType, byte[] data)
     {
         assert (data != null);
         this.objectType = objectType;
@@ -64,7 +64,7 @@ public class ObjectChunk implements M3GSerializable
         dataOutputStream.write(this.data);
     }
 
-    public byte getObjectType()
+    public int getObjectType()
     {
         return this.objectType;
     }
@@ -91,6 +91,7 @@ public class ObjectChunk implements M3GSerializable
         return this.data;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)
