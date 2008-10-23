@@ -43,9 +43,7 @@
         <xjc package="${m3x.xml.package}"
              destdir="${build.src.dir}">
             <classpath>
-                <pathelement location="${lib.dir}/jaxb-api.jar"/>
-                <pathelement location="${lib.dir}/jsr173_api.jar"/>
-                <pathelement location="${src.dir}"/>
+                <pathelement location="${lib.dir}/jsr173_1.0_api.jar"/>
             </classpath>
             <arg value="-extension"/>
             <arg value="-xmlschema"/>
