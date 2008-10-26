@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 
 import m3x.m3g.M3GException;
 import m3x.m3g.primitives.Section;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class M3GObjectTest extends TestCase
 {
@@ -35,7 +36,7 @@ public class M3GObjectTest extends TestCase
         M3GException
     {
         M3GObject object = new M3GObject();
-        DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filename));
+        LittleEndianDataInputStream dataInputStream = new LittleEndianDataInputStream(new FileInputStream(filename));
         object.deserialize(dataInputStream, "1.0");
         for (Section section : object.getObjects())
         {

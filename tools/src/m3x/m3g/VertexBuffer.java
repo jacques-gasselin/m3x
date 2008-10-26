@@ -1,18 +1,13 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#VertexBuffer<br>
@@ -71,16 +66,16 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
             return this.textureCoordinatesScale;
         }
 
-        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
             throws IOException, FileFormatException
         {
             this.textureCoordinates = new ObjectIndex();
             this.textureCoordinates.deserialize(dataInputStream, m3gVersion);
             this.textureCoordinatesBias = new float[3];
-            this.textureCoordinatesBias[0] = M3GSupport.readFloat(dataInputStream);
-            this.textureCoordinatesBias[1] = M3GSupport.readFloat(dataInputStream);
-            this.textureCoordinatesBias[2] = M3GSupport.readFloat(dataInputStream);
-            this.textureCoordinatesScale = M3GSupport.readFloat(dataInputStream);
+            this.textureCoordinatesBias[0] = dataInputStream.readFloat();
+            this.textureCoordinatesBias[1] = dataInputStream.readFloat();
+            this.textureCoordinatesBias[2] = dataInputStream.readFloat();
+            this.textureCoordinatesScale = dataInputStream.readFloat();
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -136,7 +131,7 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
         this.textureCoordinates = textureCoordinates;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -145,15 +140,15 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
         this.positions = new ObjectIndex();
         this.positions.deserialize(dataInputStream, m3gVersion);
         this.positionBias = new float[3];
-        this.positionBias[0] = M3GSupport.readFloat(dataInputStream);
-        this.positionBias[1] = M3GSupport.readFloat(dataInputStream);
-        this.positionBias[2] = M3GSupport.readFloat(dataInputStream);
-        this.positionScale = M3GSupport.readFloat(dataInputStream);
+        this.positionBias[0] = dataInputStream.readFloat();
+        this.positionBias[1] = dataInputStream.readFloat();
+        this.positionBias[2] = dataInputStream.readFloat();
+        this.positionScale = dataInputStream.readFloat();
         this.normals = new ObjectIndex();
         this.normals.deserialize(dataInputStream, m3gVersion);
         this.colors = new ObjectIndex();
         this.colors.deserialize(dataInputStream, m3gVersion);
-        this.textureCoordinateArrayCount = M3GSupport.readInt(dataInputStream);
+        this.textureCoordinateArrayCount = dataInputStream.readInt();
         if (this.textureCoordinateArrayCount < 0)
         {
             throw new FileFormatException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);

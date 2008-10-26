@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Node<br>
@@ -94,14 +95,15 @@ public abstract class Node extends Transformable implements M3GSerializable
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
         this.enableRendering = dataInputStream.readBoolean();
         this.enablePicking = dataInputStream.readBoolean();
         this.alphaFactor = dataInputStream.readByte();
-        this.scope = M3GSupport.readInt(dataInputStream);
+        this.scope = dataInputStream.readInt();
         this.hasAlignment = dataInputStream.readBoolean();
         if (this.hasAlignment)
         {

@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#World<br>
@@ -36,7 +37,7 @@ public class World extends Group implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);

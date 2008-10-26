@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Object3D<br>
@@ -51,13 +52,13 @@ public abstract class Object3D implements M3GSerializable
             return this.parameterValue;
         }
 
-        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
             throws IOException, FileFormatException
         {
-            this.parameterID = M3GSupport.readInt(dataInputStream);
-            int parameterValueLength = M3GSupport.readInt(dataInputStream);
+            this.parameterID = dataInputStream.readInt();
+            int parameterValueLength = dataInputStream.readInt();
             this.parameterValue = new byte[parameterValueLength];
-            dataInputStream.read(this.parameterValue);
+            dataInputStream.readFully(this.parameterValue);
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -91,11 +92,11 @@ public abstract class Object3D implements M3GSerializable
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
-        this.userID = M3GSupport.readInt(dataInputStream);
-        int animationTracksLength = M3GSupport.readInt(dataInputStream);
+        this.userID = dataInputStream.readInt();
+        int animationTracksLength = dataInputStream.readInt();
         this.animationTracks = new ObjectIndex[animationTracksLength];
         for (int i = 0; i < this.animationTracks.length; i++)
         {
@@ -103,7 +104,7 @@ public abstract class Object3D implements M3GSerializable
             this.animationTracks[i].deserialize(dataInputStream, m3gVersion);
         }
 
-        this.userParameterCount = M3GSupport.readInt(dataInputStream);
+        this.userParameterCount = dataInputStream.readInt();
         this.userParameters = new UserParameter[this.userParameterCount];
         for (int i = 0; i < this.userParameters.length; i++)
         {

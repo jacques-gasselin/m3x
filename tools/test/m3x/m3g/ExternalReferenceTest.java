@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.util.LittleEndianDataInputStream;
 import m3x.m3g.ExternalReference;
 import junit.framework.TestCase;
 import java.io.*;
@@ -17,7 +18,7 @@ public class ExternalReferenceTest extends TestCase
       dos.close();
       byte[] serialized = baos.toByteArray();
       ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-      DataInputStream dis = new DataInputStream(bais);
+      LittleEndianDataInputStream dis = new LittleEndianDataInputStream(bais);
       ExternalReference deserialized = new ExternalReference();
       deserialized.deserialize(dis, "1.0");
       dis.close();

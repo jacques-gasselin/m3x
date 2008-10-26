@@ -10,6 +10,7 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#AnimationTrack<br>
@@ -65,7 +66,8 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -73,8 +75,9 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
         this.keyframeSequence.deserialize(dataInputStream, m3gVersion);
         this.animationController = new ObjectIndex();
         this.animationController.deserialize(dataInputStream, m3gVersion);
-        this.propertyID = M3GSupport.readInt(dataInputStream);
-        if (this.propertyID < ALPHA || this.propertyID > VISIBILITY) {
+        this.propertyID = dataInputStream.readInt();
+        if (this.propertyID < ALPHA || this.propertyID > VISIBILITY)
+        {
             throw new FileFormatException("Invalid property ID: " + this.propertyID);
         }
     }

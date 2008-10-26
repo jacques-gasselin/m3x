@@ -9,6 +9,7 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#PolygonMode<br>
@@ -68,13 +69,13 @@ public class PolygonMode extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.culling = dataInputStream.readByte() & 0xFF;
-        this.shading = dataInputStream.readByte() & 0xFF;
-        this.winding = dataInputStream.readByte() & 0xFF;
+        this.culling = dataInputStream.readUnsignedByte();
+        this.shading = dataInputStream.readUnsignedByte();
+        this.winding = dataInputStream.readUnsignedByte();
         this.twoSidedLightingEnabled = dataInputStream.readBoolean();
         this.localCameraLightingEnabled = dataInputStream.readBoolean();
         this.perspectiveCorrectionEnabled = dataInputStream.readBoolean();

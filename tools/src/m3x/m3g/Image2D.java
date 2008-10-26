@@ -10,6 +10,7 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See See http://java2me.org/m3g/file-format.html#Image2D<br>
@@ -89,7 +90,7 @@ public class Image2D extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -103,24 +104,24 @@ public class Image2D extends Object3D implements M3GTypedObject
             throw new FileFormatException("Invalid Image2D format: " + this.format);
         }
         this.isMutable = dataInputStream.readBoolean();
-        this.width = M3GSupport.readInt(dataInputStream);
+        this.width = dataInputStream.readInt();
         if (this.width <= 0)
         {
             throw new FileFormatException("Invalid Image2D width: " + this.width);
         }
-        this.height = M3GSupport.readInt(dataInputStream);
+        this.height = dataInputStream.readInt();
         if (this.height <= 0)
         {
             throw new FileFormatException("Invalid Image2D height: " + this.height);
         }
         if (this.isMutable == false)
         {
-            int paletteLength = M3GSupport.readInt(dataInputStream);
+            int paletteLength = dataInputStream.readInt();
             this.palette = new byte[paletteLength];
-            dataInputStream.read(this.palette);
-            int pixelsLength = M3GSupport.readInt(dataInputStream);
+            dataInputStream.readFully(this.palette);
+            int pixelsLength = dataInputStream.readInt();
             this.pixels = new byte[pixelsLength];
-            dataInputStream.read(this.pixels);
+            dataInputStream.readFully(this.pixels);
         }
     }
 

@@ -11,6 +11,7 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See See http://java2me.org/m3g/file-format.html#Fog<br>
@@ -62,7 +63,7 @@ public class Fog extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -71,12 +72,12 @@ public class Fog extends Object3D implements M3GTypedObject
         this.mode = dataInputStream.readByte() & 0xFF;
         if (this.mode == MODE_EXPONENTIAL)
         {
-            this.density = M3GSupport.readFloat(dataInputStream);
+            this.density = dataInputStream.readFloat();
         }
         else if (this.mode == MODE_LINEAR)
         {
-            this.near = M3GSupport.readFloat(dataInputStream);
-            this.far = M3GSupport.readFloat(dataInputStream);
+            this.near = dataInputStream.readFloat();
+            this.far = dataInputStream.readFloat();
         }
         else
         {

@@ -1,15 +1,10 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#VertexArray<br>
@@ -94,13 +89,13 @@ public class VertexArray extends Object3D implements M3GTypedObject
         this.shortComponentsOrDeltas = shortComponentsOrDeltas;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.componentSize = dataInputStream.readByte() & 0xFF;
-        this.componentCount = dataInputStream.readByte() & 0xFF;
-        this.encoding = dataInputStream.readByte() & 0xFF;
+        this.componentSize = dataInputStream.readUnsignedByte();
+        this.componentCount = dataInputStream.readUnsignedByte();
+        this.encoding = dataInputStream.readUnsignedByte();
         switch (this.componentSize)
         {
             case BYTE_SIZE_IN_BYTES:
@@ -115,7 +110,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
                 this.shortComponentsOrDeltas = new short[this.componentCount];
                 for (int i = 0; i < this.shortComponentsOrDeltas.length; i++)
                 {
-                    this.shortComponentsOrDeltas[i] = M3GSupport.readShort(dataInputStream);
+                    this.shortComponentsOrDeltas[i] = dataInputStream.readShort();
                 }
                 break;
 

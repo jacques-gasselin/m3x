@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 
 /**
@@ -44,13 +45,13 @@ public class ObjectChunk implements M3GSerializable
         this.data = data;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException
     {
         this.objectType = dataInputStream.readByte();
-        int length = M3GSupport.readInt(dataInputStream);
+        int length = dataInputStream.readInt();
         this.data = new byte[length];
-        dataInputStream.read(this.data);
+        dataInputStream.readFully(this.data);
     }
 
     /**

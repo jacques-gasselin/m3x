@@ -1,16 +1,12 @@
 package m3x.m3g;
 
-import m3x.m3g.Node;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * This class is the data structure for Camera object in M3G format, see the URL
@@ -94,11 +90,11 @@ public class Camera extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.projectionType = dataInputStream.readByte() & 0xFF;
+        this.projectionType = dataInputStream.readUnsignedByte();;
         if (this.projectionType == PROJECTION_TYPE_GENERIC)
         {
             this.projectionMatrix = new Matrix();
@@ -107,10 +103,10 @@ public class Camera extends Node implements M3GTypedObject
         else if (this.projectionType == PROJECTION_TYPE_PARALLEL ||
             this.projectionType == PROJECTION_TYPE_PERSPECTIVE)
         {
-            this.fovy = M3GSupport.readFloat(dataInputStream);
-            this.aspectRatio = M3GSupport.readFloat(dataInputStream);
-            this.near = M3GSupport.readFloat(dataInputStream);
-            this.far = M3GSupport.readFloat(dataInputStream);
+            this.fovy = dataInputStream.readFloat();
+            this.aspectRatio = dataInputStream.readFloat();
+            this.near = dataInputStream.readFloat();
+            this.far = dataInputStream.readFloat();
         }
         else
         {

@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * A wrapper class for loading/saving a M3GObject.
@@ -32,10 +33,10 @@ public abstract class M3GLoader
      */
     public static M3GObject load(byte[] bytes) throws IOException, FileFormatException
     {
-        DataInputStream dis = null;
+        LittleEndianDataInputStream dis = null;
         try
         {
-            dis = new DataInputStream(new ByteArrayInputStream(bytes));
+            dis = new LittleEndianDataInputStream(new ByteArrayInputStream(bytes));
             M3GObject object = new M3GObject();
             object.deserialize(dis, M3GObject.M3G_VERSION);
             return object;
@@ -59,10 +60,10 @@ public abstract class M3GLoader
      */
     public static M3GObject load(InputStream inputStream) throws IOException, FileFormatException
     {
-        DataInputStream dis = null;
+        LittleEndianDataInputStream dis = null;
         try
         {
-            dis = new DataInputStream(inputStream);
+            dis = new LittleEndianDataInputStream(inputStream);
             M3GObject object = new M3GObject();
             object.deserialize(dis, M3GObject.M3G_VERSION);
             return object;

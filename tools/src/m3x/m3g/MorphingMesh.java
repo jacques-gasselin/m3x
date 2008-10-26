@@ -12,6 +12,7 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#MorphingMesh<br>
@@ -65,12 +66,12 @@ public class MorphingMesh extends Node implements M3GTypedObject
             return this.morphTarget.equals(another.morphTarget) && this.initialWeight == another.initialWeight;
         }
 
-        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
             throws IOException, FileFormatException
         {
             this.morphTarget = new ObjectIndex();
             this.morphTarget.deserialize(dataInputStream, m3gVersion);
-            this.initialWeight = M3GSupport.readFloat(dataInputStream);
+            this.initialWeight = dataInputStream.readFloat();
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -101,11 +102,11 @@ public class MorphingMesh extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.morphTargetCount = M3GSupport.readInt(dataInputStream);
+        this.morphTargetCount = dataInputStream.readInt();
         this.morphTargets = new TargetBuffer[this.morphTargetCount];
         for (int i = 0; i < this.morphTargets.length; i++)
         {

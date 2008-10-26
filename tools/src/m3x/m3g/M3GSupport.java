@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import m3x.m3g.primitives.ObjectChunk;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 
 /**
@@ -211,7 +212,8 @@ public final class M3GSupport
      */
     public static M3GSerializable bytesToObject(byte[] serialized, Class<? extends M3GSerializable> clazz) throws Exception
     {
-        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(serialized));
+        LittleEndianDataInputStream dataInputStream =
+                new LittleEndianDataInputStream(new ByteArrayInputStream(serialized));
         M3GSerializable serializable = clazz.newInstance();
         serializable.deserialize(dataInputStream, null);
         dataInputStream.close();

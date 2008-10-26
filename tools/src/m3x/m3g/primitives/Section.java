@@ -17,6 +17,7 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GObject;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 
 /**
@@ -155,7 +156,7 @@ public class Section implements M3GSerializable
         return serializedBytes;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         this.compressionScheme = dataInputStream.readByte();
@@ -165,13 +166,13 @@ public class Section implements M3GSerializable
             throw new FileFormatException("Invalid compression scheme: " + this.compressionScheme);
         }
 
-        this.totalSectionLength = M3GSupport.readInt(dataInputStream);
+        this.totalSectionLength = dataInputStream.readInt();
         if (this.totalSectionLength <= 0)
         {
             throw new FileFormatException("Invalid total section length: " + this.totalSectionLength);
         }
 
-        this.uncompressedLength = M3GSupport.readInt(dataInputStream);
+        this.uncompressedLength = dataInputStream.readInt();
         if (this.uncompressedLength <= 0)
         {
             throw new FileFormatException("Invalid uncompressed length: " + this.uncompressedLength);
@@ -183,7 +184,7 @@ public class Section implements M3GSerializable
         {
             int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
             this.compressedData = new byte[compressedLength];
-            dataInputStream.read(this.compressedData);
+            dataInputStream.readFully(this.compressedData);
             this.calculateChecksum(this.compressedData);
             Inflater inflater = new Inflater();
             inflater.setInput(this.compressedData);
@@ -204,11 +205,11 @@ public class Section implements M3GSerializable
         else
         {
             // uncompressed, just read the array
-            dataInputStream.read(objectsAsBytes);
+            dataInputStream.readFully(objectsAsBytes);
             this.calculateChecksum(objectsAsBytes);
         }
 
-        int checksumFromStream = M3GSupport.readInt(dataInputStream);
+        int checksumFromStream = dataInputStream.readInt();
         if (this.checksum != checksumFromStream)
         {
             throw new FileFormatException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);
@@ -216,7 +217,7 @@ public class Section implements M3GSerializable
 
         // build ObjectChunk[] this.objectsAsBytes
         List<ObjectChunk> list = new ArrayList<ObjectChunk>();
-        dataInputStream = new DataInputStream(new ByteArrayInputStream(objectsAsBytes));
+        dataInputStream = new LittleEndianDataInputStream(new ByteArrayInputStream(objectsAsBytes));
         while (true)
         {
             try

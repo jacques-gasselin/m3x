@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://www.java2me.org/m3g/file-format.html#FileIdentifier
@@ -29,15 +30,11 @@ public class FileIdentifier implements M3GSerializable
     public static final int LENGTH = FILE_IDENTIFIER.length;
     private byte[] fileIdentifier;
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
-        int n = dataInputStream.read(this.fileIdentifier);
-        if (n != FILE_IDENTIFIER.length)
-        {
-            throw new FileFormatException("Read invalid amount of bytes.");
-        }
+        dataInputStream.readFully(this.fileIdentifier);
         if (!Arrays.equals(this.fileIdentifier, FILE_IDENTIFIER))
         {
             throw new FileFormatException("Invalid M3G file header!");

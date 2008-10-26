@@ -1,16 +1,12 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Background<br>
@@ -72,7 +68,7 @@ public class Background extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -82,10 +78,10 @@ public class Background extends Object3D implements M3GTypedObject
         this.backgroundImage.deserialize(dataInputStream, m3gVersion);
         this.backgroundImageModeX = dataInputStream.readByte() & 0xFF;
         this.backgroundImageModeY = dataInputStream.readByte() & 0xFF;
-        this.cropX = M3GSupport.readInt(dataInputStream);
-        this.cropY = M3GSupport.readInt(dataInputStream);
-        this.cropWidth = M3GSupport.readInt(dataInputStream);
-        this.cropHeight = M3GSupport.readInt(dataInputStream);
+        this.cropX = dataInputStream.readInt();
+        this.cropY = dataInputStream.readInt();
+        this.cropWidth = dataInputStream.readInt();
+        this.cropHeight = dataInputStream.readInt();
         this.depthClearEnabled = dataInputStream.readBoolean();
         this.colorClearEnabled = dataInputStream.readBoolean();
     }

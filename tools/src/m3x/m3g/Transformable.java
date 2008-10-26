@@ -11,6 +11,7 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Transformable<br>
@@ -70,7 +71,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
         this.transform = transform;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -81,7 +82,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
             this.translation.deserialize(dataInputStream, m3gVersion);
             this.scale = new Vector3D();
             this.scale.deserialize(dataInputStream, m3gVersion);
-            this.orientationAngle = M3GSupport.readFloat(dataInputStream);
+            this.orientationAngle = dataInputStream.readFloat();
             this.orientationAxis = new Vector3D();
             this.orientationAxis.deserialize(dataInputStream, m3gVersion);
             this.hasGeneralTransform = false;

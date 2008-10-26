@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#CompositingMode<br>
@@ -66,7 +67,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -76,8 +77,8 @@ public class CompositingMode extends Object3D implements M3GTypedObject
         this.setAlphaWriteEnabled(dataInputStream.readBoolean());
         this.setAlphaThreshold(dataInputStream.readUnsignedByte());
         this.setBlending(dataInputStream.readUnsignedByte());
-        this.setDepthOffsetFactor(M3GSupport.readFloat(dataInputStream));
-        this.setDepthOffsetUnits(M3GSupport.readFloat(dataInputStream));
+        this.setDepthOffsetFactor(dataInputStream.readFloat());
+        this.setDepthOffsetUnits(dataInputStream.readFloat());
     }
 
     @Override

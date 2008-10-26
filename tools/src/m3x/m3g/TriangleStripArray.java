@@ -10,6 +10,7 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#TriangleStripArray<br>
@@ -142,7 +143,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -150,11 +151,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         switch (this.encoding)
         {
             case 0:
-                this.intStartIndex = M3GSupport.readInt(dataInputStream);
+                this.intStartIndex = dataInputStream.readInt();
                 break;
 
             case 1:
-                this.shortStartIndex = M3GSupport.readShort(dataInputStream);
+                this.shortStartIndex = dataInputStream.readShort();
                 break;
 
             case 2:
@@ -162,16 +163,16 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 break;
 
             case 128:
-                int intIndicesLength = M3GSupport.readInt(dataInputStream);
+                int intIndicesLength = dataInputStream.readInt();
                 this.intIndices = new int[intIndicesLength];
                 for (int i = 0; i < this.intIndices.length; i++)
                 {
-                    this.intIndices[i] = M3GSupport.readInt(dataInputStream);
+                    this.intIndices[i] = dataInputStream.readInt();
                 }
                 break;
 
             case 129:
-                int byteIndicesLength = M3GSupport.readInt(dataInputStream);
+                int byteIndicesLength = dataInputStream.readInt();
                 this.byteIndices = new byte[byteIndicesLength];
                 for (int i = 0; i < this.byteIndices.length; i++)
                 {
@@ -180,11 +181,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 break;
 
             case 130:
-                int shortIndicesLength = M3GSupport.readInt(dataInputStream);
+                int shortIndicesLength = dataInputStream.readInt();
                 this.shortIndices = new short[shortIndicesLength];
                 for (int i = 0; i < this.shortIndices.length; i++)
                 {
-                    this.shortIndices[i] = M3GSupport.readShort(dataInputStream);
+                    this.shortIndices[i] = dataInputStream.readShort();
                 }
                 break;
 
@@ -192,11 +193,11 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 throw new FileFormatException("Invalid encoding: " + this.encoding);
         }
 
-        int stripLengths = M3GSupport.readInt(dataInputStream);
+        int stripLengths = dataInputStream.readInt();
         this.stripLengths = new int[stripLengths];
         for (int i = 0; i < this.stripLengths.length; i++)
         {
-            this.stripLengths[i] = M3GSupport.readInt(dataInputStream);
+            this.stripLengths[i] = dataInputStream.readInt();
         }
     }
 

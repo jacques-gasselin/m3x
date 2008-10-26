@@ -1,17 +1,13 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Material<br>
@@ -52,7 +48,7 @@ public class Material extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -64,7 +60,7 @@ public class Material extends Object3D implements M3GTypedObject
         this.emissiveColor.deserialize(dataInputStream, m3gVersion);
         this.specularColor = new ColorRGB();
         this.specularColor.deserialize(dataInputStream, m3gVersion);
-        this.shininess = M3GSupport.readFloat(dataInputStream);
+        this.shininess = dataInputStream.readFloat();
         this.vertexColorTrackingEnabled = dataInputStream.readBoolean();
     }
 

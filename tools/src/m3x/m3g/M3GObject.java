@@ -15,6 +15,7 @@ import m3x.m3g.FileIdentifier;
 import m3x.m3g.Header;
 import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * Models a M3G file.
@@ -84,7 +85,7 @@ public class M3GObject implements M3GSerializable
         }
     }
   
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         // read file identifier
@@ -111,7 +112,8 @@ public class M3GObject implements M3GSerializable
             throw new FileFormatException(e);
         }
         byte[] objectData = objectChunk.getData();
-        DataInputStream chunkInputStream = new DataInputStream(new ByteArrayInputStream(objectData));
+        LittleEndianDataInputStream chunkInputStream =
+                new LittleEndianDataInputStream(new ByteArrayInputStream(objectData));
         header.deserialize(chunkInputStream, M3G_VERSION);
         chunkInputStream.close();
 
@@ -148,7 +150,8 @@ public class M3GObject implements M3GSerializable
         throws Exception
     {
         M3GObject object = new M3GObject();
-        DataInputStream dataInputStream = new DataInputStream(new FileInputStream("tools/test/data/teapot.m3g"));
+        LittleEndianDataInputStream dataInputStream =
+                new LittleEndianDataInputStream(new FileInputStream("tools/test/data/teapot.m3g"));
         object.deserialize(dataInputStream, M3G_VERSION);
         for (Section section : object.getObjects())
         {

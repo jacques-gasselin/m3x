@@ -1,12 +1,12 @@
 package m3x.m3g.primitives;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class ObjectIndex implements M3GSerializable
 {
@@ -21,10 +21,10 @@ public class ObjectIndex implements M3GSerializable
     {
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
-        this.index = M3GSupport.readInt(dataInputStream);
+        this.index = dataInputStream.readInt();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException

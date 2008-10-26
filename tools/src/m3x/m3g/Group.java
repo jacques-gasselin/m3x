@@ -11,6 +11,7 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Group<br>
@@ -37,11 +38,11 @@ public class Group extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        int childrenLength = M3GSupport.readInt(dataInputStream);
+        int childrenLength = dataInputStream.readInt();
         if (childrenLength < 0)
         {
             throw new FileFormatException("Number of children < 0: " + childrenLength);

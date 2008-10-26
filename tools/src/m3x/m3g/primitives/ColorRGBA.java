@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GSerializable;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class ColorRGBA extends ColorRGB implements M3GSerializable
 {
@@ -41,7 +42,7 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
         return super.equals(obj) && this.a == ((ColorRGBA) obj).a;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);

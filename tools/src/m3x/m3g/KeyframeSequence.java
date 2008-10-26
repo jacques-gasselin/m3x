@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,11 +7,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#KeyframeSequence<br>
@@ -327,7 +323,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.vectorScale = vectorScale;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
@@ -336,11 +332,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.repeatMode = dataInputStream.readByte() & 0xFF;
         validateRepeatMode(this.repeatMode);
         this.encoding = dataInputStream.readByte() & 0xFF;
-        this.duration = M3GSupport.readInt(dataInputStream);
-        this.validRangeFirst = M3GSupport.readInt(dataInputStream);
-        this.validRangeLast = M3GSupport.readInt(dataInputStream);
-        this.componentCount = M3GSupport.readInt(dataInputStream);
-        this.keyframeCount = M3GSupport.readInt(dataInputStream);
+        this.duration = dataInputStream.readInt();
+        this.validRangeFirst = dataInputStream.readInt();
+        this.validRangeLast = dataInputStream.readInt();
+        this.componentCount = dataInputStream.readInt();
+        this.keyframeCount = dataInputStream.readInt();
 
         switch (this.encoding)
         {
@@ -348,11 +344,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
                 this.floatKeyFrames = new FloatKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.floatKeyFrames.length; i++)
                 {
-                    int time = M3GSupport.readInt(dataInputStream);
+                    int time = dataInputStream.readInt();
                     float vectorValue[] = new float[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
-                        vectorValue[j] = M3GSupport.readFloat(dataInputStream);
+                        vectorValue[j] = dataInputStream.readFloat();
                     }
                     this.floatKeyFrames[i] = new FloatKeyFrame(time, vectorValue);
                 }
@@ -363,7 +359,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
                 this.byteKeyFrames = new ByteKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.keyframeCount; i++)
                 {
-                    int time = M3GSupport.readInt(dataInputStream);
+                    int time = dataInputStream.readInt();
                     byte vectorValue[] = new byte[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
@@ -378,11 +374,11 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
                 this.shortKeyFrames = new ShortKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.keyframeCount; i++)
                 {
-                    int time = M3GSupport.readInt(dataInputStream);
+                    int time = dataInputStream.readInt();
                     short vectorValue[] = new short[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
-                        vectorValue[j] = M3GSupport.readShort(dataInputStream);
+                        vectorValue[j] = dataInputStream.readShort();
                     }
                     this.shortKeyFrames[i] = new ShortKeyFrame(time, vectorValue);
                 }
@@ -393,18 +389,18 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         }
     }
 
-    private void readBiasAndScale(DataInputStream dataInputStream) throws IOException
+    private void readBiasAndScale(LittleEndianDataInputStream dataInputStream) throws IOException
     {
         this.vectorBias = new float[this.componentCount];
         for (int i = 0; i < this.componentCount; i++)
         {
-            this.vectorBias[i] = M3GSupport.readFloat(dataInputStream);
+            this.vectorBias[i] = dataInputStream.readFloat();
         }
 
         this.vectorScale = new float[this.componentCount];
         for (int i = 0; i < this.componentCount; i++)
         {
-            this.vectorScale[i] = M3GSupport.readFloat(dataInputStream);
+            this.vectorScale[i] = dataInputStream.readFloat();
         }
     }
 

@@ -1,17 +1,12 @@
 package m3x.m3g;
 
-import m3x.m3g.Node;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Mesh<br>
@@ -52,7 +47,7 @@ public class Mesh extends Node implements M3GTypedObject
             return this.appearance;
         }
 
-        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
             throws IOException, FileFormatException
         {
             this.indexBuffer = new ObjectIndex();
@@ -105,13 +100,13 @@ public class Mesh extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
         this.vertexBuffer = new ObjectIndex();
         this.vertexBuffer.deserialize(dataInputStream, m3gVersion);
-        this.subMeshCount = M3GSupport.readInt(dataInputStream);
+        this.subMeshCount = dataInputStream.readInt();
         this.subMeshes = new SubMesh[subMeshCount];
         for (int i = 0; i < this.subMeshes.length; i++)
         {

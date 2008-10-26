@@ -12,6 +12,7 @@ import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Light<br>
@@ -73,20 +74,20 @@ public class Light extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.attenuationConstant = M3GSupport.readFloat(dataInputStream);
-        this.attenuationLinear = M3GSupport.readFloat(dataInputStream);
-        this.attenuationQuadratic = M3GSupport.readFloat(dataInputStream);
+        this.attenuationConstant = dataInputStream.readFloat();
+        this.attenuationLinear = dataInputStream.readFloat();
+        this.attenuationQuadratic = dataInputStream.readFloat();
         this.color = new ColorRGB();
         this.color.deserialize(dataInputStream, m3gVersion);
         this.mode = dataInputStream.readByte() & 0xFF;
         validateMode(this.mode);
-        this.intensity = M3GSupport.readFloat(dataInputStream);
-        this.spotAngle = M3GSupport.readFloat(dataInputStream);
-        this.spotExponent = M3GSupport.readFloat(dataInputStream);
+        this.intensity = dataInputStream.readFloat();
+        this.spotAngle = dataInputStream.readFloat();
+        this.spotExponent = dataInputStream.readFloat();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

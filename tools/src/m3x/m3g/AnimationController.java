@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#AnimationController<br>
@@ -48,18 +49,20 @@ public class AnimationController extends Object3D implements M3GTypedObject
 
     /**
      * Deserialization done as specified in the class JavaDoc.
+     * @throws IOException
+     * @throws FileFormatException
      */
     @Override
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
-        this.setSpeed(M3GSupport.readFloat(dataInputStream));
-        this.setWeight(M3GSupport.readFloat(dataInputStream));
-        this.setActiveIntervalStart(M3GSupport.readInt(dataInputStream));
-        this.setActiveIntervalEnd(M3GSupport.readInt(dataInputStream));
-        this.setReferenceSequenceTime(M3GSupport.readFloat(dataInputStream));
-        this.setReferenceWorldTime(M3GSupport.readInt(dataInputStream));
+        this.setSpeed(dataInputStream.readFloat());
+        this.setWeight(dataInputStream.readFloat());
+        this.setActiveIntervalStart(dataInputStream.readInt());
+        this.setActiveIntervalEnd(dataInputStream.readInt());
+        this.setReferenceSequenceTime(dataInputStream.readFloat());
+        this.setReferenceWorldTime(dataInputStream.readInt());
     }
 
     /**

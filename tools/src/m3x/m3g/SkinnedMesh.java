@@ -12,6 +12,7 @@ import m3x.m3g.M3GTypedObject;
 import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
 import m3x.m3g.primitives.ObjectIndex;
+import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#SkinnedMesh<br>
@@ -86,14 +87,14 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
                 this.weight == another.weight;
         }
 
-        public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
             throws IOException, FileFormatException
         {
             this.transformNode = new ObjectIndex();
             this.transformNode.deserialize(dataInputStream, m3gVersion);
-            this.firstVertex = M3GSupport.readInt(dataInputStream);
-            this.vertexCount = M3GSupport.readInt(dataInputStream);
-            this.weight = M3GSupport.readInt(dataInputStream);
+            this.firstVertex = dataInputStream.readInt();
+            this.vertexCount = dataInputStream.readInt();
+            this.weight = dataInputStream.readInt();
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -134,13 +135,13 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         return ObjectTypes.SKINNED_MESH;
     }
 
-    public void deserialize(DataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
         super.deserialize(dataInputStream, m3gVersion);
         this.skeleton = new ObjectIndex();
         this.skeleton.deserialize(dataInputStream, m3gVersion);
-        this.transformReferenceCount = M3GSupport.readInt(dataInputStream);
+        this.transformReferenceCount = dataInputStream.readInt();
         this.boneReferences = new BoneReference[this.transformReferenceCount];
         for (int i = 0; i < this.boneReferences.length; i++)
         {
