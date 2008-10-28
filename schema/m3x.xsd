@@ -24,8 +24,8 @@
     <xs:simpleType name="Byte">
         <xs:restriction base="xs:byte"/>
     </xs:simpleType>
-    <xs:simpleType name="LayerByte">
-        <xs:restriction base="xs:byte">
+    <xs:simpleType name="LayerInt">
+        <xs:restriction base="xs:int">
             <xs:minInclusive value="-63"/>
             <xs:maxInclusive value="63"/>
         </xs:restriction>
@@ -367,7 +367,7 @@
             <xs:enumeration value="SCREEN"/>
         </xs:restriction>
     </xs:simpleType>
-    <xs:simpleType name="CompositingModeType">
+    <xs:simpleType name="CompositingModeBlendType">
         <xs:annotation>
             <xs:documentation>
                 The allowed fragment composition modes in a compositing mode element
@@ -892,7 +892,7 @@
                                     minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                     <xs:attribute name="layer"
-                                  type="LayerByte"
+                                  type="LayerInt"
                                   default="0"/>
                 </xs:extension>
             </xs:complexContent>
@@ -978,7 +978,7 @@
                                   type="Boolean"
                                   default="true"/>
                     <xs:attribute name="blending"
-                                  type="CompositingModeType"
+                                  type="CompositingModeBlendType"
                                   default="REPLACE"/>
                     <xs:attribute name="alphaThreshold"
                                   type="Float32"

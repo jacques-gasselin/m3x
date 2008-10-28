@@ -5,7 +5,7 @@ import m3x.m3g.FileFormatException;
 import m3x.m3g.CompositingMode;
 import m3x.m3g.Object3D;
 import m3x.m3g.primitives.ObjectIndex;
-import m3x.xml.CompositingModeType;
+import m3x.xml.CompositingModeBlendType;
 
 public class CompositingModeTranslator extends AbstractTranslator
 {
@@ -44,43 +44,43 @@ public class CompositingModeTranslator extends AbstractTranslator
         return this.getBinaryObject();
     }
 
-    private int toM3G(CompositingModeType blending)
+    private int toM3G(CompositingModeBlendType blending)
     {
-        if (blending.equals(CompositingModeType.ALPHA))
+        if (blending.equals(CompositingModeBlendType.ALPHA))
         {
             return CompositingMode.ALPHA;
         }
-        if (blending.equals(CompositingModeType.ALPHA_ADD))
+        if (blending.equals(CompositingModeBlendType.ALPHA_ADD))
         {
             return CompositingMode.ALPHA_ADD;
         }
-        if (blending.equals(CompositingModeType.ALPHA_DARKEN))
+        if (blending.equals(CompositingModeBlendType.ALPHA_DARKEN))
         {
             // TODO: what to return here?
             //return CompositingMode.ALPHA_ADD;
             throw new IllegalArgumentException(blending.toString());
         }
-        if (blending.equals(CompositingModeType.ALPHA_PREMULTIPLY))
+        if (blending.equals(CompositingModeBlendType.ALPHA_PREMULTIPLY))
         {
             // TODO: what to return here?
             //return CompositingMode.ALPHA_ADD;
             throw new IllegalArgumentException(blending.toString());
         }
-        if (blending.equals(CompositingModeType.MODULATE))
+        if (blending.equals(CompositingModeBlendType.MODULATE))
         {
             return CompositingMode.MODULATE;
         }
-        if (blending.equals(CompositingModeType.MODULATE_INV))
+        if (blending.equals(CompositingModeBlendType.MODULATE_INV))
         {
             // TODO: what to return here?
             //return CompositingMode.MODULATE_INV;
             throw new IllegalArgumentException(blending.toString());
         }
-        if (blending.equals(CompositingModeType.MODULATE_X_2))
+        if (blending.equals(CompositingModeBlendType.MODULATE_X_2))
         {
             return CompositingMode.MODULATE_X2;
         }
-        if (blending.equals(CompositingModeType.REPLACE))
+        if (blending.equals(CompositingModeBlendType.REPLACE))
         {
             return CompositingMode.REPLACE;
         }

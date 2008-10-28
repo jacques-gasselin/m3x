@@ -1,7 +1,7 @@
 package m3x.translation;
 
 import m3x.m3g.CompositingMode;
-import m3x.xml.CompositingModeType;
+import m3x.xml.CompositingModeBlendType;
 
 public class CompositingModeTranslatorTest extends TranslatorSupport
 {
@@ -12,7 +12,7 @@ public class CompositingModeTranslatorTest extends TranslatorSupport
     m3x.xml.CompositingMode c1 = new m3x.xml.CompositingMode();
     c1.setAlphaThreshold(0.1f);
     c1.setAlphaWriteEnabled(false);
-    c1.setBlending(CompositingModeType.ALPHA);
+    c1.setBlending(CompositingModeBlendType.ALPHA);
     c1.setColorWriteEnabled(true);
     c1.setDepthOffsetFactor(0.1f);
     c1.setDepthOffsetUnits(1.0f);

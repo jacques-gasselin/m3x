@@ -20,7 +20,7 @@ import m3x.m3g.util.LittleEndianDataInputStream;
  */
 public class Appearance extends Object3D implements M3GTypedObject
 {
-    private byte layer;
+    private int layer;
     private ObjectIndex compositingMode;
     private ObjectIndex fog;
     private ObjectIndex polygonMode;
@@ -28,7 +28,7 @@ public class Appearance extends Object3D implements M3GTypedObject
     private ObjectIndex[] textures;
 
     public Appearance(ObjectIndex[] animationTracks,
-        UserParameter[] userParameters, byte layer, ObjectIndex compositingMode,
+        UserParameter[] userParameters, int layer, ObjectIndex compositingMode,
         ObjectIndex fog, ObjectIndex polygonMode, ObjectIndex material,
         ObjectIndex[] textures)
     {
@@ -72,7 +72,7 @@ public class Appearance extends Object3D implements M3GTypedObject
         throws IOException
     {
         super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.layer);
+        dataOutputStream.writeByte(this.layer);
         this.compositingMode.serialize(dataOutputStream, m3gVersion);
         this.fog.serialize(dataOutputStream, m3gVersion);
         this.polygonMode.serialize(dataOutputStream, m3gVersion);
@@ -88,7 +88,7 @@ public class Appearance extends Object3D implements M3GTypedObject
         return ObjectTypes.APPEARANCE;
     }
 
-    public byte getLayer()
+    public int getLayer()
     {
         return this.layer;
     }

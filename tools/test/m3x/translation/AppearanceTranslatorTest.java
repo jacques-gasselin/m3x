@@ -37,7 +37,7 @@ public class AppearanceTranslatorTest extends TranslatorSupport
     fi.setRef(f);
     app1.setFogInstance(fi);
         
-    app1.setLayer((byte)2);
+    app1.setLayer(2);
    
     m3x.xml.Material m = new m3x.xml.Material();
     section.getObjects().add(m);
