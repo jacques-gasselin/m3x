@@ -49,67 +49,78 @@ public abstract class AbstractTestCase extends TestCase
           {
             fail("result2 is null");
           }
-          Class<?> clazz1 = result1.getClass();
-          Class<?> clazz2 = result2.getClass();
-          if (clazz1.isArray() && clazz2.isArray())
-          {
-            // we have two arrays, now we need to find out
-            // if they are primitive types or Object[]
-            if (clazz1.equals(boolean[].class) && clazz2.equals(boolean[].class))
-            {
-              assertTrue(Arrays.equals((boolean[])result1, (boolean[])result2));
-            }
-            else
-            if (clazz1.equals(byte[].class) && clazz2.equals(byte[].class))
-            {
-              assertTrue(Arrays.equals((byte[])result1, (byte[])result2));
-            }
-            else
-            if (clazz1.equals(short[].class) && clazz2.equals(short[].class))
-            {
-              assertTrue(Arrays.equals((short[])result1, (short[])result2));
-            }
-            else
-            if (clazz1.equals(char[].class) && clazz2.equals(char[].class))
-            {
-              assertTrue(Arrays.equals((char[])result1, (char[])result2));
-            }
-            else
-            if (clazz1.equals(short[].class) && clazz2.equals(short[].class))
-            {
-              assertTrue(Arrays.equals((short[])result1, (short[])result2));
-            }
-            else
-            if (clazz1.equals(int[].class) && clazz2.equals(int[].class))
-            {
-              assertTrue(Arrays.equals((int[])result1, (int[])result2));
-            }
-            else
-            if (clazz1.equals(long[].class) && clazz2.equals(long[].class))
-            {
-              assertTrue(Arrays.equals((long[])result1, (long[])result2));
-            }
-            else
-            if (clazz1.equals(float[].class) && clazz2.equals(float[].class))
-            {
-              assertTrue(Arrays.equals((float[])result1, (float[])result2));
-            }
-            else
-            if (clazz1.equals(double[].class) && clazz2.equals(double[].class))
-            {
-              assertTrue(Arrays.equals((double[])result1, (double[])result2));
-            }
-            else
-            {
-              assertTrue(Arrays.equals((Object[])result1, (Object[])result2));              
-            }
-          }
-          else
-          {
-            assertTrue(result1.equals(result2));
-          }
+          compareClasses(result1, result2);
         }
       }
+    }
+  }
+
+  private void compareClasses(Object result1, Object result2)
+  {
+    Class<?> clazz1 = result1.getClass();
+    Class<?> clazz2 = result2.getClass();
+    if (clazz1.isArray() && clazz2.isArray())
+    {
+      // we have two arrays, now we need to find out
+      // if they are primitive types or Object[]
+      comparePrimitiveArrays(result1, result2, clazz1, clazz2);
+    }
+    else
+    {
+      assertTrue(result1.equals(result2));
+    }
+  }
+
+  private void comparePrimitiveArrays(Object result1, Object result2,
+      Class<?> clazz1, Class<?> clazz2)
+  {
+    if (clazz1.equals(boolean[].class) && clazz2.equals(boolean[].class))
+    {
+      assertTrue(Arrays.equals((boolean[])result1, (boolean[])result2));
+    }
+    else
+    if (clazz1.equals(byte[].class) && clazz2.equals(byte[].class))
+    {
+      assertTrue(Arrays.equals((byte[])result1, (byte[])result2));
+    }
+    else
+    if (clazz1.equals(short[].class) && clazz2.equals(short[].class))
+    {
+      assertTrue(Arrays.equals((short[])result1, (short[])result2));
+    }
+    else
+    if (clazz1.equals(char[].class) && clazz2.equals(char[].class))
+    {
+      assertTrue(Arrays.equals((char[])result1, (char[])result2));
+    }
+    else
+    if (clazz1.equals(short[].class) && clazz2.equals(short[].class))
+    {
+      assertTrue(Arrays.equals((short[])result1, (short[])result2));
+    }
+    else
+    if (clazz1.equals(int[].class) && clazz2.equals(int[].class))
+    {
+      assertTrue(Arrays.equals((int[])result1, (int[])result2));
+    }
+    else
+    if (clazz1.equals(long[].class) && clazz2.equals(long[].class))
+    {
+      assertTrue(Arrays.equals((long[])result1, (long[])result2));
+    }
+    else
+    if (clazz1.equals(float[].class) && clazz2.equals(float[].class))
+    {
+      assertTrue(Arrays.equals((float[])result1, (float[])result2));
+    }
+    else
+    if (clazz1.equals(double[].class) && clazz2.equals(double[].class))
+    {
+      assertTrue(Arrays.equals((double[])result1, (double[])result2));
+    }
+    else
+    {
+      assertTrue(Arrays.equals((Object[])result1, (Object[])result2));              
     }
   }
   
