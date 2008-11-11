@@ -52,13 +52,14 @@ public class Serialiser
     /**Serialise an M3G object and write it to the output stream given.
      * 
      * @param object - the object to write.
-     * @param stream - the inout stream to write to.
+     * @param stream - the output stream to write to.
+     * @param format - whether the output should be formatted.
      * @throws NullPointerException - if object is null
      * @throws NullPointerException - if stream is null
      * @throws IllegalArgumentException - if there is an error in serialising
      * the object to the stream
      */
-    public void serialise(m3x.xml.M3G object, OutputStream stream)
+    public void serialise(m3x.xml.M3G object, OutputStream stream, boolean formatted)
     {
         if (object == null)
         {
@@ -70,36 +71,7 @@ public class Serialiser
         }
         try
         {
-            xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(false));
-            xmlMarshaller.marshal(object, stream);
-        }
-        catch (JAXBException e)
-        {
-            throw new IllegalArgumentException("unable to write outfile: " + e.toString());
-        }       
-    }
-    
-    /**Serialise an M3G object and write it to the output stream given in a way that is more readable.
-     * 
-     * @param object - the object to write.
-     * @param stream - the inout stream to write to.
-     * @throws NullPointerException - if object is null
-     * @throws NullPointerException - if stream is null
-     * @throws IllegalArgumentException - if there is an error in serialising
-     */
-    public void serialiseFormatted(m3x.xml.M3G object, OutputStream stream)
-    {
-        if (object == null)
-        {
-            throw new NullPointerException("m3g object is null");
-        }
-        if (stream == null)
-        {
-            throw new NullPointerException("stream is null");
-        }
-        try
-        {
-            xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(true));
+            xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(formatted));
             xmlMarshaller.marshal(object, stream);
         }
         catch (JAXBException e)
