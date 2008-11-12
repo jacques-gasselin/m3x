@@ -34,24 +34,29 @@ public abstract class AbstractTestCase extends TestCase
         System.out.println(methodName);
         Object result1 = getter.invoke(object1, (Object[])null);
         Object result2 = getter.invoke(object2, (Object[])null);   
-        if (result1 == null && result2 == null)
-        {
-          // ok if both are null
-          assertTrue(true);
-        }
-        else
-        {
-          if (result1 == null)
-          {
-            fail("result1 is null");
-          }
-          if (result2 == null)
-          {
-            fail("result2 is null");
-          }
-          compareClasses(result1, result2);
-        }
+        handleResults(result1, result2);
       }
+    }
+  }
+
+  private void handleResults(Object result1, Object result2)
+  {
+    if (result1 == null && result2 == null)
+    {
+      // ok if both are null
+      assertTrue(true);
+    }
+    else
+    {
+      if (result1 == null)
+      {
+        fail("result1 is null");
+      }
+      if (result2 == null)
+      {
+        fail("result2 is null");
+      }
+      compareClasses(result1, result2);
     }
   }
 
