@@ -9,6 +9,10 @@ public class LittleEndianDataOutputStream implements DataOutput
 {
   private final DataOutputStream dos;
   
+  private LittleEndianDataOutputStream()
+  {    
+  }
+  
   public LittleEndianDataOutputStream(DataOutputStream dos)
   {
     this.dos = dos;
