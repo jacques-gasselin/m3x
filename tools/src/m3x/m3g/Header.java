@@ -53,7 +53,7 @@ public class Header implements M3GTypedObject
         this.hasExternalReferences = dataInputStream.readBoolean();
         this.totalFileSize = dataInputStream.readInt();
         this.approximateContentSize = dataInputStream.readInt();
-        this.authoringInformation = dataInputStream.readUTF();
+        this.authoringInformation = M3GSupport.readUTF8(dataInputStream.getDataInputStream());
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

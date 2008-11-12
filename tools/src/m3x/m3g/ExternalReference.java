@@ -27,7 +27,7 @@ public class ExternalReference implements M3GTypedObject
     public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
-        this.uri = dataInputStream.readUTF();
+        this.uri = M3GSupport.readUTF8(dataInputStream.getDataInputStream());
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

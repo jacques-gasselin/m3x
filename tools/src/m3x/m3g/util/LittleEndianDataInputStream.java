@@ -129,4 +129,9 @@ public class LittleEndianDataInputStream extends Object
     {
         return dataInputStream.readUTF();
     }
+
+    public DataInputStream getDataInputStream()
+    {
+      return this.dataInputStream;
+    }
 }
