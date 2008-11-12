@@ -33,10 +33,13 @@ public class ExternalReference implements M3GTypedObject
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
+      if (this.uri != null)
+      {
         // .. write the string data in raw UTF-8..
         dataOutputStream.write(this.uri.getBytes("UTF-8"));
         // .. and terminate it with a null byte
         dataOutputStream.write('\0');
+      }
     }
 
     public int getObjectType()
