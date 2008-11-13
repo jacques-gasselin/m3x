@@ -63,7 +63,10 @@ Translation from M3X to M3G is implemented for all classes.
 
 \subsection{What is to be done}
 
-All M3X to M3G translation classes do not have a JUnit test cases.
+All M3X to M3G translation classes do not have a JUnit test cases. In the
+test classes test only the fields defined in the subclass. Testing
+inherited fields does not make sense in all translation test classes.
+
 All M3G to M3X translation methods are missing from the translator classes
 (returning \texttt{null}).
 
