@@ -11,6 +11,7 @@ public class LittleEndianDataOutputStream implements DataOutput
   
   private LittleEndianDataOutputStream()
   {    
+    this.dos = null;
   }
   
   public LittleEndianDataOutputStream(DataOutputStream dos)
