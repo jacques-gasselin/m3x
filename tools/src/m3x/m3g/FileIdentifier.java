@@ -20,22 +20,19 @@ public class FileIdentifier implements M3GSerializable
     /**
      * The immutable bytes of the M3G file format header.
      */
-    private static final byte[] FILE_IDENTIFIER =
+    public static final byte[] BYTES =
     {
         (byte) 0xAB, 0x4A, 0x53, 0x52,
         0x31, 0x38, 0x34, (byte) 0xBB,
         0x0D, 0x0A, 0x1A, 0x0A
     };
     
-    public static final int LENGTH = FILE_IDENTIFIER.length;
-    private byte[] fileIdentifier;
-
     public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
         throws IOException, FileFormatException
     {
-        this.fileIdentifier = new byte[FILE_IDENTIFIER.length];
-        dataInputStream.readFully(this.fileIdentifier);
-        if (!Arrays.equals(this.fileIdentifier, FILE_IDENTIFIER))
+        byte[] fileIdentifier = new byte[BYTES.length];
+        dataInputStream.readFully(fileIdentifier);
+        if (!Arrays.equals(fileIdentifier, BYTES))
         {
             throw new FileFormatException("Invalid M3G file header!");
         }
@@ -46,6 +43,6 @@ public class FileIdentifier implements M3GSerializable
      */
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
     {
-        dataOutputStream.write(FILE_IDENTIFIER);
+        dataOutputStream.write(BYTES);
     }
 }

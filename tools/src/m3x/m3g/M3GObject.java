@@ -76,7 +76,7 @@ public class M3GObject implements M3GSerializable
         }
         sectionDataOutputStream.close();
         int sectionsLength = sectionDataOutputStream.size();
-        int totalFileLength = FileIdentifier.LENGTH + sectionsLength;
+        int totalFileLength = FileIdentifier.BYTES.length + sectionsLength;
 
         // serialize Sections
         for (Section section : this.sections)

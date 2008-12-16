@@ -1,7 +1,6 @@
 package m3x.m3g;
 
 import m3x.m3g.util.LittleEndianDataInputStream;
-import m3x.m3g.ExternalReference;
 import junit.framework.TestCase;
 import java.io.*;
 

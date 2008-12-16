@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * @author jgasseli
@@ -11,6 +12,7 @@ import java.io.InputStream;
 public class LittleEndianDataInputStream extends Object
         implements DataInput
 {
+
     private DataInputStream dataInputStream;
 
     private LittleEndianDataInputStream()
@@ -27,8 +29,7 @@ public class LittleEndianDataInputStream extends Object
      */
     public LittleEndianDataInputStream(InputStream in)
     {
-        if (in == null)
-        {
+        if (in == null) {
             throw new NullPointerException("in is null");
         }
         dataInputStream = new DataInputStream(in);
@@ -43,8 +44,7 @@ public class LittleEndianDataInputStream extends Object
      */
     public LittleEndianDataInputStream(DataInputStream in)
     {
-        if (in == null)
-        {
+        if (in == null) {
             throw new NullPointerException("in is null");
         }
         dataInputStream = in;
@@ -92,7 +92,7 @@ public class LittleEndianDataInputStream extends Object
 
     public int readUnsignedShort() throws IOException
     {
-        return ((int)readShort()) & 0x0000ffff;
+        return ((int) readShort()) & 0x0000ffff;
     }
 
     public char readChar() throws IOException
@@ -130,8 +130,36 @@ public class LittleEndianDataInputStream extends Object
         return dataInputStream.readUTF();
     }
 
+    public String readUTF8() throws IOException
+    {
+        byte[] buffer = new byte[256];
+        int index = 0;
+        while (true)
+        {
+            byte ch = dataInputStream.readByte();
+            if (ch == 0)
+            {
+                //terminating byte
+                break;
+            }
+            if (index == buffer.length)
+            {
+                //resize the buffer
+                byte[] newBuffer = new byte[buffer.length + 256];
+                System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
+                buffer = newBuffer;
+            }
+            buffer[index++] = ch;
+        }
+        if (index > 0)
+        {
+            return new String(buffer, 0, index, "UTF-8");
+        }
+        return new String();
+    }
+
     public DataInputStream getDataInputStream()
     {
-      return this.dataInputStream;
+        return this.dataInputStream;
     }
 }
