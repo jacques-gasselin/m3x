@@ -1,5 +1,7 @@
 package m3x.translation.m3g.xml;
 
+import m3x.translation.m3g.XmlToBinaryConverter;
+import m3x.translation.m3g.XmlTranslator;
 import m3x.translation.m3g.Translator;
 
 public abstract class Object3DConverter 
@@ -21,7 +23,7 @@ public abstract class Object3DConverter
         //animation tracks
         for (m3x.xml.AnimationTrack xmlAT : from.getAnimationTrack())
         {
-            m3x.m3g.AnimationTrack m3gAT = (m3x.m3g.AnimationTrack)translator.getObject(xmlAT);
+            m3x.m3g.AnimationTrack m3gAT = (m3x.m3g.AnimationTrack)translator.getReference(xmlAT);
             to.addAnimationTrack(m3gAT);
         }
     }

@@ -69,7 +69,7 @@ public class Section implements M3GSerializable
      *  Whether to compress or not?
      * @throws IOException
      */
-    public Section(byte compressionScheme) throws IOException
+    public Section(byte compressionScheme)
     {
         if (compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
             compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)

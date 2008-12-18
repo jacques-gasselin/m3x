@@ -1,5 +1,7 @@
 package m3x.translation.m3g.xml;
 
+import m3x.translation.m3g.XmlTranslator;
+
 
 public class AnimationTrackConverter extends Object3DConverter
 {

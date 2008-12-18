@@ -1,6 +1,6 @@
 package m3x.translation.m3g.xml;
 
-import m3x.translation.m3g.Translator;
+import m3x.translation.m3g.XmlTranslator;
 
 
 public class AnimationControllerConverter extends Object3DConverter

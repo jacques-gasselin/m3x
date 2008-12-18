@@ -3,6 +3,7 @@ package m3x.m3g.util;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class LittleEndianDataOutputStream implements DataOutput
 {
@@ -17,6 +18,11 @@ public class LittleEndianDataOutputStream implements DataOutput
     public LittleEndianDataOutputStream(DataOutputStream dos)
     {
         this.dos = dos;
+    }
+
+    public LittleEndianDataOutputStream(OutputStream out)
+    {
+        this.dos = new DataOutputStream(out);
     }
 
     public void write(byte[] b, int off, int len) throws IOException

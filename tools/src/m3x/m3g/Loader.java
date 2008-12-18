@@ -48,9 +48,7 @@ public abstract class Loader
             throw new FileFormatException("wrong file identifier");
         }
 
-        deserialiser.pushInputStream(inputStream);
-        deserialiser.deserialise();
-        deserialiser.popInputStream();
+        deserialiser.deserialise(inputStream);
 
         return deserialiser.getRootObjects();
     }

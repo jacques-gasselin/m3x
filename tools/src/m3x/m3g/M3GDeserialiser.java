@@ -57,9 +57,13 @@ public class M3GDeserialiser implements DataInput
         return Arrays.equals(fileIdentifier, bytes);
     }
 
-    public void deserialise()
+    public void deserialise(InputStream stream)
     {
-        
+        pushInputStream(stream);
+
+        //FIXME do the actual decoding here.
+
+        popInputStream();
     }
 
     public void pushInputStream(InputStream stream)

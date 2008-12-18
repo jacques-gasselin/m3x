@@ -1,6 +1,7 @@
 package m3x.translation.m3g;
 
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * 
@@ -10,11 +11,20 @@ public abstract class Translator
 {
     private Hashtable<Object, m3x.m3g.Object3D> objectToBinaryMap;
     private Hashtable<Class, BinaryConverter> objectClassToBinaryConverterMap;
+    private Vector<m3x.m3g.Object3D> objects;
+    private Vector<m3x.m3g.Object3D> rootObjects;
 
     public Translator()
     {
         objectToBinaryMap = new Hashtable<Object, m3x.m3g.Object3D>();
         objectClassToBinaryConverterMap = new Hashtable<Class, BinaryConverter>();
+        objects = new Vector<m3x.m3g.Object3D>();
+        rootObjects = new Vector<m3x.m3g.Object3D>();
+    }
+
+    public Vector<m3x.m3g.Object3D> getRootVector()
+    {
+        return rootObjects;
     }
 
     protected m3x.m3g.Object3D getObject(Object key)
@@ -32,9 +42,25 @@ public abstract class Translator
         return value;
     }
 
+    protected m3x.m3g.Object3D getReference(Object key)
+    {
+        m3x.m3g.Object3D value = getObject(key);
+        if (rootObjects.contains(value))
+        {
+            rootObjects.remove(value);
+        }
+        return value;
+    }
+
     protected void setObject(Object key, m3x.m3g.Object3D value)
     {
+        if (value == null)
+        {
+            throw new NullPointerException("value is null");
+        }
         objectToBinaryMap.put(key, value);
+        objects.add(value);
+        rootObjects.add(value);
     }
 
     protected abstract Class getConverterClass(Class objectClass);
