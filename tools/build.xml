@@ -88,7 +88,8 @@
                 cache="depcache"
                 closure="yes"/>
         <javac destdir="${build.dir}"
-               fork="true">
+               fork="true"
+               debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${src.dir}"/>
             <classpath>
@@ -101,7 +102,8 @@
                 cache="depcache"
                 closure="yes"/>
         <javac destdir="${build.dir}"
-               fork="true">
+               fork="true"
+               debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${test.dir}"/>
             <classpath>

@@ -28,13 +28,9 @@ public class LoaderTest extends TestCase
         try
         {
             FileInputStream fis = new FileInputStream(fileName);
-            int length = fis.available();
-            byte[] fileBytes = new byte[length];
-            fis.read(fileBytes);
-            fis.close();
-            Object3D objects[] = Loader.load(fileBytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            /*Loader.save(baos, object1);
+            Object3D objects[] = Loader.load(fis);
+            /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Loader.save(baos, object1);
             byte[] serializedBytes = baos.toByteArray();
             assertTrue(Arrays.equals(fileBytes, serializedBytes));
             M3GObject object2 = Loader.load(serializedBytes);
@@ -42,6 +38,7 @@ public class LoaderTest extends TestCase
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             fail(e.getMessage());
         }
     }

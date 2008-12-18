@@ -19,9 +19,12 @@ public class M3GDeserialiser implements DataInput
     private Vector<Object3D> objects;
     private Stack<LittleEndianDataInputStream> inputStreams;
     
-    
     public M3GDeserialiser()
     {
+        rootObjects = new Vector<Object3D>();
+        objects = new Vector<Object3D>();
+        inputStreams = new Stack<LittleEndianDataInputStream>();
+
         //always have the null object at index 0
         objects.add(null);
     }
