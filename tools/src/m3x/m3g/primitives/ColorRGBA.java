@@ -1,18 +1,17 @@
 package m3x.m3g.primitives;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GDeserialiser;
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class ColorRGBA extends ColorRGB implements M3GSerializable
 {
-    private byte a;
+    private int a;
 
-    public ColorRGBA(byte r, byte g, byte b, byte a)
+    public ColorRGBA(int r, int g, int b, int a)
     {
         super(r, g, b);
         this.a = a;
@@ -21,7 +20,7 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
     public ColorRGBA(float r, float g, float b, float a)
     {
         super(r, g, b);
-        this.a = (byte) (a * 255.0f + 0.5f);
+        this.a = (int) (a * 255.0f + 0.5f);
     }
 
     public ColorRGBA()
@@ -42,20 +41,21 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
         return super.equals(obj) && this.a == ((ColorRGBA) obj).a;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.a = dataInputStream.readByte();
+        super.deserialize(deserialiser);
+        this.a = deserialiser.readUnsignedByte();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        throws IOException
     {
         super.serialize(dataOutputStream, m3gVersion);
         dataOutputStream.write(this.a);
     }
 
-    public byte getA()
+    public int getA()
     {
         return this.a;
     }

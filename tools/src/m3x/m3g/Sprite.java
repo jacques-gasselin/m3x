@@ -1,11 +1,9 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
+import m3x.m3g.primitives.Matrix;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Sprite<br>
@@ -20,21 +18,23 @@ import m3x.m3g.util.LittleEndianDataInputStream;
   <br>
  * @author jsaarinen
  */
-public class Sprite extends Object3D implements M3GTypedObject
+public class Sprite extends Node implements M3GTypedObject
 {
-    private ObjectIndex image;
-    private ObjectIndex appearance;
+    private Image2D image;
+    private Appearance appearance;
     private boolean isScaled;
     private int cropX;
     private int cropY;
     private int cropWidth;
     private int cropHeight;
 
-    public Sprite(ObjectIndex[] animationTracks, UserParameter[] userParameters,
-        ObjectIndex image, ObjectIndex appearance, boolean isScaled, int cropX,
-        int cropY, int cropWidth, int cropHeight)
+    public Sprite(AnimationTrack[] animationTracks, UserParameter[] userParameters,
+        Matrix transform, boolean enableRendering, boolean enablePicking,
+        byte alphaFactor, int scope, Image2D image, Appearance appearance,
+        boolean isScaled, int cropX, int cropY, int cropWidth, int cropHeight)
     {
-        super(animationTracks, userParameters);
+        super(animationTracks, userParameters, transform, enableRendering,
+              enablePicking, alphaFactor, scope);
         this.image = image;
         this.appearance = appearance;
         this.isScaled = isScaled;
@@ -49,21 +49,21 @@ public class Sprite extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.image = new ObjectIndex();
-        this.image.deserialize(dataInputStream, m3gVersion);
-        this.appearance = new ObjectIndex();
-        this.appearance.deserialize(dataInputStream, m3gVersion);
-        this.isScaled = dataInputStream.readBoolean();
-        this.cropX = dataInputStream.readInt();
-        this.cropY = dataInputStream.readInt();
-        this.cropWidth = dataInputStream.readInt();
-        this.cropHeight = dataInputStream.readInt();
+        super.deserialize(deserialiser);
+        this.image = (Image2D)deserialiser.readObjectReference();
+        this.appearance = (Appearance)deserialiser.readObjectReference();
+        this.isScaled = deserialiser.readBoolean();
+        this.cropX = deserialiser.readInt();
+        this.cropY = deserialiser.readInt();
+        this.cropWidth = deserialiser.readInt();
+        this.cropHeight = deserialiser.readInt();
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -82,12 +82,12 @@ public class Sprite extends Object3D implements M3GTypedObject
         return ObjectTypes.SPRITE;
     }
 
-    public ObjectIndex getImage()
+    public Image2D getImage()
     {
         return this.image;
     }
 
-    public ObjectIndex getAppearance()
+    public Appearance getAppearance()
     {
         return this.appearance;
     }

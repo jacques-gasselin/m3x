@@ -1,11 +1,7 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Appearance<br>
@@ -21,16 +17,16 @@ import m3x.m3g.util.LittleEndianDataInputStream;
 public class Appearance extends Object3D implements M3GTypedObject
 {
     private int layer;
-    private ObjectIndex compositingMode;
-    private ObjectIndex fog;
-    private ObjectIndex polygonMode;
-    private ObjectIndex material;
-    private ObjectIndex[] textures;
+    private CompositingMode compositingMode;
+    private Fog fog;
+    private PolygonMode polygonMode;
+    private Material material;
+    private Texture2D[] textures;
 
-    public Appearance(ObjectIndex[] animationTracks,
-        UserParameter[] userParameters, int layer, ObjectIndex compositingMode,
-        ObjectIndex fog, ObjectIndex polygonMode, ObjectIndex material,
-        ObjectIndex[] textures)
+    public Appearance(AnimationTrack[] animationTracks,
+        UserParameter[] userParameters, int layer, CompositingMode compositingMode,
+        Fog fog, PolygonMode polygonMode, Material material,
+        Texture2D[] textures)
     {
         super(animationTracks, userParameters);
         this.layer = layer;
@@ -44,30 +40,27 @@ public class Appearance extends Object3D implements M3GTypedObject
     public Appearance()
     {
         super();
-    // TODO Auto-generated constructor stub
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.layer = dataInputStream.readByte();
-        this.compositingMode = new ObjectIndex();
-        this.compositingMode.deserialize(dataInputStream, m3gVersion);
-        this.fog = new ObjectIndex();
-        this.fog.deserialize(dataInputStream, m3gVersion);
-        this.polygonMode = new ObjectIndex();
-        this.polygonMode.deserialize(dataInputStream, m3gVersion);
-        this.material = new ObjectIndex();
-        this.material.deserialize(dataInputStream, m3gVersion);
-        int texturesLength = dataInputStream.readInt();
-        this.textures = new ObjectIndex[texturesLength];
-        for (int i = 0; i < this.textures.length; i++) {
-            this.textures[i] = new ObjectIndex();
-            this.textures[i].deserialize(dataInputStream, m3gVersion);
+        super.deserialize(deserialiser);
+        this.layer = deserialiser.readByte();
+        this.compositingMode = (CompositingMode)deserialiser.readObjectReference();
+        this.fog = (Fog)deserialiser.readObjectReference();
+        this.polygonMode = (PolygonMode)deserialiser.readObjectReference();
+        this.material = (Material)deserialiser.readObjectReference();
+        int texturesLength = deserialiser.readInt();
+        this.textures = new Texture2D[texturesLength];
+        for (int i = 0; i < this.textures.length; i++)
+        {
+            this.textures[i] = (Texture2D)deserialiser.readObjectReference();
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -93,27 +86,27 @@ public class Appearance extends Object3D implements M3GTypedObject
         return this.layer;
     }
 
-    public ObjectIndex getCompositingMode()
+    public CompositingMode getCompositingMode()
     {
         return this.compositingMode;
     }
 
-    public ObjectIndex getFog()
+    public Fog getFog()
     {
         return this.fog;
     }
 
-    public ObjectIndex getPolygonMode()
+    public PolygonMode getPolygonMode()
     {
         return this.polygonMode;
     }
 
-    public ObjectIndex getMaterial()
+    public Material getMaterial()
     {
         return this.material;
     }
 
-    public ObjectIndex[] getTextures()
+    public Texture2D[] getTextures()
     {
         return this.textures;
     }

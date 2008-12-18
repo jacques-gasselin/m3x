@@ -1,16 +1,7 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#AnimationTrack<br>
@@ -44,18 +35,21 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     public static final int SPOT_EXPONENT = 274;
     public static final int TRANSLATION = 275;
     public static final int VISIBILITY = 276;
-    private ObjectIndex keyframeSequence;
-    private ObjectIndex animationController;
+
+    private KeyframeSequence keyframeSequence;
+    private AnimationController animationController;
     private int propertyID;
 
-    public AnimationTrack(ObjectIndex[] animationTracks,
-        UserParameter[] userParameters, ObjectIndex keyframeSequence,
-        ObjectIndex animationController, int propertyID) throws FileFormatException
+    public AnimationTrack(AnimationTrack[] animationTracks,
+        UserParameter[] userParameters, KeyframeSequence keyframeSequence,
+        AnimationController animationController, int propertyID) throws FileFormatException
     {
         super(animationTracks, userParameters);
         this.keyframeSequence = keyframeSequence;
         this.animationController = animationController;
-        if (propertyID < ALPHA || propertyID > VISIBILITY) {
+
+        if (propertyID < ALPHA || propertyID > VISIBILITY)
+        {
             throw new FileFormatException("Invalid propertyID: " + propertyID);
         }
         this.propertyID = propertyID;
@@ -67,15 +61,13 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.keyframeSequence = new ObjectIndex();
-        this.keyframeSequence.deserialize(dataInputStream, m3gVersion);
-        this.animationController = new ObjectIndex();
-        this.animationController.deserialize(dataInputStream, m3gVersion);
-        this.propertyID = dataInputStream.readInt();
+        super.deserialize(deserialiser);
+        this.keyframeSequence = (KeyframeSequence)deserialiser.readObjectReference();
+        this.animationController = (AnimationController)deserialiser.readObjectReference();
+        this.propertyID = deserialiser.readInt();
         if (this.propertyID < ALPHA || this.propertyID > VISIBILITY)
         {
             throw new FileFormatException("Invalid property ID: " + this.propertyID);
@@ -96,12 +88,12 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
         return ObjectTypes.ANIMATION_TRACK;
     }
 
-    public ObjectIndex getKeyframeSequence()
+    public KeyframeSequence getKeyframeSequence()
     {
         return this.keyframeSequence;
     }
 
-    public ObjectIndex getAnimationController()
+    public AnimationController getAnimationController()
     {
         return this.animationController;
     }

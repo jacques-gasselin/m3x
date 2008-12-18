@@ -5,14 +5,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GDeserialiser;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class ColorRGB implements M3GSerializable
 {
-    private byte r,  g,  b;
+    private int r,  g,  b;
 
-    public ColorRGB(byte r, byte g, byte b)
+    public ColorRGB(int r, int g, int b)
     {
         this.r = r;
         this.g = g;
@@ -21,9 +22,9 @@ public class ColorRGB implements M3GSerializable
 
     public ColorRGB(float r, float g, float b)
     {
-        this.r = (byte) (r * 255.0f + 0.5f);
-        this.g = (byte) (g * 255.0f + 0.5f);
-        this.b = (byte) (b * 255.0f + 0.5f);
+        this.r = (int) (r * 255.0f + 0.5f);
+        this.g = (int) (g * 255.0f + 0.5f);
+        this.b = (int) (b * 255.0f + 0.5f);
     }
 
     public ColorRGB()
@@ -31,6 +32,7 @@ public class ColorRGB implements M3GSerializable
         super();
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)
@@ -52,25 +54,25 @@ public class ColorRGB implements M3GSerializable
         dataOutputStream.write(this.b);
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        this.r = dataInputStream.readByte();
-        this.g = dataInputStream.readByte();
-        this.b = dataInputStream.readByte();
+        this.r = deserialiser.readUnsignedByte();
+        this.g = deserialiser.readUnsignedByte();
+        this.b = deserialiser.readUnsignedByte();
     }
 
-    public byte getR()
+    public int getR()
     {
         return this.r;
     }
 
-    public byte getG()
+    public int getG()
     {
         return this.g;
     }
 
-    public byte getB()
+    public int getB()
     {
         return this.b;
     }

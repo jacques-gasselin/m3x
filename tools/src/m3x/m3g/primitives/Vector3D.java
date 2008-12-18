@@ -4,9 +4,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GDeserialiser;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class Vector3D implements M3GSerializable
 {
@@ -23,12 +23,12 @@ public class Vector3D implements M3GSerializable
     {
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        this.x = dataInputStream.readFloat();
-        this.y = dataInputStream.readFloat();
-        this.z = dataInputStream.readFloat();
+        this.x = deserialiser.readFloat();
+        this.y = deserialiser.readFloat();
+        this.z = deserialiser.readFloat();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException

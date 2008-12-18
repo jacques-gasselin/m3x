@@ -1,12 +1,9 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * This class is the data structure for Camera object in M3G format, see the URL
@@ -29,6 +26,7 @@ public class Camera extends Node implements M3GTypedObject
     public static final int PROJECTION_TYPE_GENERIC = 48;
     public static final int PROJECTION_TYPE_PARALLEL = 49;
     public static final int PROJECTION_TYPE_PERSPECTIVE = 50;
+
     private int projectionType;
     private Matrix projectionMatrix;
     private float fovy;
@@ -36,10 +34,10 @@ public class Camera extends Node implements M3GTypedObject
     private float near;
     private float far;
 
-    public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, byte zTarget, byte yTarget,
-        ObjectIndex zReference, ObjectIndex yReference, Matrix projectionMatrix) throws FileFormatException
+        byte alphaFactor, int scope, int zTarget, int yTarget,
+        Node zReference, Node yReference, Matrix projectionMatrix) throws FileFormatException
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, zTarget, yTarget, zReference,
@@ -52,9 +50,9 @@ public class Camera extends Node implements M3GTypedObject
         this.far = 0.0f;
     }
 
-    public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, Matrix projectionMatrix) throws FileFormatException
+        byte alphaFactor, int scope, Matrix projectionMatrix)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
@@ -66,7 +64,7 @@ public class Camera extends Node implements M3GTypedObject
         this.far = 0.0f;
     }
 
-    public Camera(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, int projectionType, float fovy,
         float aspectRatio, float near, float far) throws FileFormatException
@@ -90,23 +88,24 @@ public class Camera extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.projectionType = dataInputStream.readUnsignedByte();;
+        super.deserialize(deserialiser);
+        this.projectionType = deserialiser.readUnsignedByte();
         if (this.projectionType == PROJECTION_TYPE_GENERIC)
         {
             this.projectionMatrix = new Matrix();
-            this.projectionMatrix.deserialize(dataInputStream, m3gVersion);
+            this.projectionMatrix.deserialize(deserialiser);
         }
         else if (this.projectionType == PROJECTION_TYPE_PARALLEL ||
             this.projectionType == PROJECTION_TYPE_PERSPECTIVE)
         {
-            this.fovy = dataInputStream.readFloat();
-            this.aspectRatio = dataInputStream.readFloat();
-            this.near = dataInputStream.readFloat();
-            this.far = dataInputStream.readFloat();
+            this.fovy = deserialiser.readFloat();
+            this.aspectRatio = deserialiser.readFloat();
+            this.near = deserialiser.readFloat();
+            this.far = deserialiser.readFloat();
         }
         else
         {
@@ -114,6 +113,7 @@ public class Camera extends Node implements M3GTypedObject
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

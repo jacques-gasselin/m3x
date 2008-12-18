@@ -1,13 +1,10 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Material<br>
@@ -29,7 +26,7 @@ public class Material extends Object3D implements M3GTypedObject
     private float shininess;
     private boolean vertexColorTrackingEnabled;
 
-    public Material(ObjectIndex[] animationTracks,
+    public Material(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, ColorRGB ambientColor,
         ColorRGBA diffuseColor, ColorRGB emissiveColor, ColorRGB specularColor,
         float shininess, boolean vertexColorTrackingEnabled)
@@ -48,20 +45,20 @@ public class Material extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
+        super.deserialize(deserialiser);
         this.ambientColor = new ColorRGB();
-        this.ambientColor.deserialize(dataInputStream, m3gVersion);
+        this.ambientColor.deserialize(deserialiser);
         this.diffuseColor = new ColorRGBA();
-        this.diffuseColor.deserialize(dataInputStream, m3gVersion);
+        this.diffuseColor.deserialize(deserialiser);
         this.emissiveColor = new ColorRGB();
-        this.emissiveColor.deserialize(dataInputStream, m3gVersion);
+        this.emissiveColor.deserialize(deserialiser);
         this.specularColor = new ColorRGB();
-        this.specularColor.deserialize(dataInputStream, m3gVersion);
-        this.shininess = dataInputStream.readFloat();
-        this.vertexColorTrackingEnabled = dataInputStream.readBoolean();
+        this.specularColor.deserialize(deserialiser);
+        this.shininess = deserialiser.readFloat();
+        this.vertexColorTrackingEnabled = deserialiser.readBoolean();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

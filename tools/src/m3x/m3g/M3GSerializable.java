@@ -2,7 +2,6 @@ package m3x.m3g;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * All M3G objects that can be serialized will implement
@@ -25,7 +24,7 @@ public interface M3GSerializable
      * @throws FileFormatException
      *  When the input data was somehow invalid from the M3G specification point of view.
      */
-    void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException;
   
     /**

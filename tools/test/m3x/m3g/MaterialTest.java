@@ -6,13 +6,12 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.ColorRGBA;
-import m3x.m3g.primitives.ObjectIndex;
 
 public class MaterialTest extends AbstractTestCase
 {
   public void testSerializationAndDeseriliazation1()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     ColorRGB ambient = new ColorRGB(0.1f, 0.2f, 0.3f);
     ColorRGBA diffuse = new ColorRGBA(0.4f, 0.5f, 0.6f, 0.2f);
@@ -39,6 +38,6 @@ public class MaterialTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 }

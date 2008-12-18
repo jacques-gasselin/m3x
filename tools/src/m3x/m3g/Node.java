@@ -1,12 +1,9 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Node<br>
@@ -37,14 +34,14 @@ public abstract class Node extends Transformable implements M3GSerializable
     private byte alphaFactor;
     private int scope;
     private boolean hasAlignment;
-    private byte zTarget;
-    private byte yTarget;
-    private ObjectIndex zReference;
-    private ObjectIndex yReference;
+    private int zTarget;
+    private int yTarget;
+    private Node zReference;
+    private Node yReference;
 
-    public Node(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope) throws FileFormatException
+        byte alphaFactor, int scope)
     {
         super(animationTracks, userParameters, transform);
         this.enableRendering = enableRendering;
@@ -58,10 +55,10 @@ public abstract class Node extends Transformable implements M3GSerializable
         this.yReference = null;
     }
 
-    public Node(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, byte zTarget, byte yTarget,
-        ObjectIndex zReference, ObjectIndex yReference) throws FileFormatException
+        byte alphaFactor, int scope, int zTarget, int yTarget,
+        Node zReference, Node yReference) throws FileFormatException
     {
         this(animationTracks, userParameters, transform,
             enableRendering, enablePicking, alphaFactor, scope);
@@ -74,7 +71,7 @@ public abstract class Node extends Transformable implements M3GSerializable
         this.yReference = yReference;
     }
 
-    private static void validateYTarget(byte yTarget) throws FileFormatException
+    private static void validateYTarget(int yTarget) throws FileFormatException
     {
         if (yTarget < NONE || yTarget > Z_AXIS)
         {
@@ -82,7 +79,7 @@ public abstract class Node extends Transformable implements M3GSerializable
         }
     }
 
-    private static void validateZTarget(byte zTarget) throws FileFormatException
+    private static void validateZTarget(int zTarget) throws FileFormatException
     {
         if (zTarget < NONE || zTarget > Z_AXIS)
         {
@@ -96,25 +93,23 @@ public abstract class Node extends Transformable implements M3GSerializable
     }
 
     @Override
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.enableRendering = dataInputStream.readBoolean();
-        this.enablePicking = dataInputStream.readBoolean();
-        this.alphaFactor = dataInputStream.readByte();
-        this.scope = dataInputStream.readInt();
-        this.hasAlignment = dataInputStream.readBoolean();
+        super.deserialize(deserialiser);
+        this.enableRendering = deserialiser.readBoolean();
+        this.enablePicking = deserialiser.readBoolean();
+        this.alphaFactor = deserialiser.readByte();
+        this.scope = deserialiser.readInt();
+        this.hasAlignment = deserialiser.readBoolean();
         if (this.hasAlignment)
         {
-            this.zTarget = dataInputStream.readByte();
+            this.zTarget = deserialiser.readUnsignedByte();
             validateZTarget(this.zTarget);
-            this.yTarget = dataInputStream.readByte();
+            this.yTarget = deserialiser.readUnsignedByte();
             validateYTarget(this.yTarget);
-            this.zReference = new ObjectIndex();
-            this.zReference.deserialize(dataInputStream, m3gVersion);
-            this.yReference = new ObjectIndex();
-            this.yReference.deserialize(dataInputStream, m3gVersion);
+            this.zReference = (Node)deserialiser.readWeakObjectReference();
+            this.yReference = (Node)deserialiser.readWeakObjectReference();
         }
     }
 

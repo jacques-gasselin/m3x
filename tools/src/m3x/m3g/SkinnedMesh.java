@@ -4,8 +4,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#SkinnedMesh<br>
@@ -25,12 +23,12 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     public static class BoneReference implements M3GSerializable
     {
 
-        private ObjectIndex transformNode;
+        private Node transformNode;
         private int firstVertex;
         private int vertexCount;
         private int weight;
 
-        public BoneReference(ObjectIndex transformNode, int firstVertex,
+        public BoneReference(Node transformNode, int firstVertex,
             int vertexCount, int weight)
         {
             this.transformNode = transformNode;
@@ -43,7 +41,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         {
         }
 
-        public ObjectIndex getTransformNode()
+        public Node getTransformNode()
         {
             return this.transformNode;
         }
@@ -80,14 +78,13 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
                 this.weight == another.weight;
         }
 
-        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(M3GDeserialiser deserialiser)
             throws IOException, FileFormatException
         {
-            this.transformNode = new ObjectIndex();
-            this.transformNode.deserialize(dataInputStream, m3gVersion);
-            this.firstVertex = dataInputStream.readInt();
-            this.vertexCount = dataInputStream.readInt();
-            this.weight = dataInputStream.readInt();
+            this.transformNode = (Node)deserialiser.readObjectReference();
+            this.firstVertex = deserialiser.readInt();
+            this.vertexCount = deserialiser.readInt();
+            this.weight = deserialiser.readInt();
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -99,22 +96,20 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
             M3GSupport.writeInt(dataOutputStream, this.weight);
         }
     }
-    private ObjectIndex skeleton;
-    private int transformReferenceCount;
+    private Group skeleton;
     private BoneReference[] boneReferences;
 
-    public SkinnedMesh(ObjectIndex[] animationTracks,
+    public SkinnedMesh(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, Matrix transform,
         boolean enableRendering, boolean enablePicking, byte alphaFactor,
-        int scope, ObjectIndex vertexBuffer, SubMesh[] subMeshes,
-        ObjectIndex skeleton, BoneReference[] boneReferences) throws FileFormatException
+        int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
+        Group skeleton, BoneReference[] boneReferences) throws FileFormatException
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
         assert (skeleton != null);
         assert (boneReferences != null);
         this.skeleton = skeleton;
-        this.transformReferenceCount = boneReferences.length;
         this.boneReferences = boneReferences;
     }
 
@@ -123,23 +118,23 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         super();
     }
 
+    @Override
     public int getObjectType()
     {
         return ObjectTypes.SKINNED_MESH;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.skeleton = new ObjectIndex();
-        this.skeleton.deserialize(dataInputStream, m3gVersion);
-        this.transformReferenceCount = dataInputStream.readInt();
-        this.boneReferences = new BoneReference[this.transformReferenceCount];
+        super.deserialize(deserialiser);
+        this.skeleton = (Group)deserialiser.readObjectReference();
+        int transformReferenceCount = deserialiser.readInt();
+        this.boneReferences = new BoneReference[transformReferenceCount];
         for (int i = 0; i < this.boneReferences.length; i++)
         {
             this.boneReferences[i] = new BoneReference();
-            this.boneReferences[i].deserialize(dataInputStream, m3gVersion);
+            this.boneReferences[i].deserialize(deserialiser);
         }
     }
 
@@ -148,21 +143,21 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
     {
         super.serialize(dataOutputStream, m3gVersion);
         this.skeleton.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.transformReferenceCount);
+        M3GSupport.writeInt(dataOutputStream, this.boneReferences.length);
         for (BoneReference boneReference : this.boneReferences)
         {
             boneReference.serialize(dataOutputStream, m3gVersion);
         }
     }
 
-    public ObjectIndex getSkeleton()
+    public Group getSkeleton()
     {
         return this.skeleton;
     }
 
     public int getTransformReferenceCount()
     {
-        return this.transformReferenceCount;
+        return this.boneReferences.length;
     }
 
     public BoneReference[] getBoneReferences()

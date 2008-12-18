@@ -1,17 +1,9 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See See http://java2me.org/m3g/file-format.html#Fog<br>
@@ -36,7 +28,7 @@ public class Fog extends Object3D implements M3GTypedObject
     private float near;
     private float far;
 
-    public Fog(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Fog(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         ColorRGB color, float density)
     {
         super(animationTracks, userParameters);
@@ -47,7 +39,7 @@ public class Fog extends Object3D implements M3GTypedObject
         this.far = 0.0f;
     }
 
-    public Fog(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Fog(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         ColorRGB color, float near, float far)
     {
         super(animationTracks, userParameters);
@@ -63,21 +55,22 @@ public class Fog extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
+        super.deserialize(deserialiser);
         this.color = new ColorRGB();
-        this.color.deserialize(dataInputStream, m3gVersion);
-        this.mode = dataInputStream.readByte() & 0xFF;
+        this.color.deserialize(deserialiser);
+        this.mode = deserialiser.readUnsignedByte();
         if (this.mode == MODE_EXPONENTIAL)
         {
-            this.density = dataInputStream.readFloat();
+            this.density = deserialiser.readFloat();
         }
         else if (this.mode == MODE_LINEAR)
         {
-            this.near = dataInputStream.readFloat();
-            this.far = dataInputStream.readFloat();
+            this.near = deserialiser.readFloat();
+            this.far = deserialiser.readFloat();
         }
         else
         {
@@ -85,6 +78,7 @@ public class Fog extends Object3D implements M3GTypedObject
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

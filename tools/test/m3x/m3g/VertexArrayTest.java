@@ -4,13 +4,12 @@ import m3x.m3g.VertexArray;
 import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.Object3D.UserParameter;
-import m3x.m3g.primitives.ObjectIndex;
 
 public class VertexArrayTest extends AbstractTestCase
 {
   public void testSerializationAndDeseriliazation1()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     byte[] components1 = new byte[] {1, 2, 3, 4, 5, 6};
     VertexArray array = new VertexArray(animationTracks,
@@ -43,6 +42,6 @@ public class VertexArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    } 
+    }*/
   }
 }

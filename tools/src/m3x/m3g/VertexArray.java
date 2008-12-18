@@ -3,8 +3,6 @@ package m3x.m3g;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#VertexArray<br>
@@ -54,7 +52,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
      *          If true, this constructor is given deltas in the previous
      *          parameter, i.e. the user of this class must calculate them.
      */
-    public VertexArray(ObjectIndex[] animationTracks,
+    public VertexArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, byte[] byteComponentsOrDeltas,
         boolean isDeltas)
     {
@@ -76,7 +74,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
      *          If true, this constructor is given deltas in the previous
      *          parameter, i.e. the user of this class must calculate them.
      */
-    public VertexArray(ObjectIndex[] animationTracks,
+    public VertexArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, short[] shortComponentsOrDeltas,
         boolean isDeltas)
     {
@@ -89,20 +87,21 @@ public class VertexArray extends Object3D implements M3GTypedObject
         this.shortComponentsOrDeltas = shortComponentsOrDeltas;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.componentSize = dataInputStream.readUnsignedByte();
-        this.componentCount = dataInputStream.readUnsignedByte();
-        this.encoding = dataInputStream.readUnsignedByte();
+        super.deserialize(deserialiser);
+        this.componentSize = deserialiser.readUnsignedByte();
+        this.componentCount = deserialiser.readUnsignedByte();
+        this.encoding = deserialiser.readUnsignedByte();
         switch (this.componentSize)
         {
             case BYTE_SIZE_IN_BYTES:
                 this.byteComponentsOrDeltas = new byte[this.componentCount];
                 for (int i = 0; i < this.byteComponentsOrDeltas.length; i++)
                 {
-                    this.byteComponentsOrDeltas[i] = dataInputStream.readByte();
+                    this.byteComponentsOrDeltas[i] = deserialiser.readByte();
                 }
                 break;
 
@@ -110,7 +109,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
                 this.shortComponentsOrDeltas = new short[this.componentCount];
                 for (int i = 0; i < this.shortComponentsOrDeltas.length; i++)
                 {
-                    this.shortComponentsOrDeltas[i] = dataInputStream.readShort();
+                    this.shortComponentsOrDeltas[i] = deserialiser.readShort();
                 }
                 break;
 
@@ -119,6 +118,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

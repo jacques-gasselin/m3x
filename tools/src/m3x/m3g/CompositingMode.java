@@ -1,11 +1,7 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#CompositingMode<br>
@@ -36,7 +32,7 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     private float depthOffsetFactor;
     private float depthOffsetUnits;
 
-    public CompositingMode(ObjectIndex[] animationTracks,
+    public CompositingMode(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, boolean depthTestEnabled,
         boolean depthWriteEnabled, boolean colorWriteEnabled,
         boolean alphaWriteEnabled, int blending, int alphaThreshold,
@@ -67,18 +63,18 @@ public class CompositingMode extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.setDepthTestEnabled(dataInputStream.readBoolean());
-        this.setDepthWriteEnabled(dataInputStream.readBoolean());
-        this.setColorWriteEnabled(dataInputStream.readBoolean());
-        this.setAlphaWriteEnabled(dataInputStream.readBoolean());
-        this.setAlphaThreshold(dataInputStream.readUnsignedByte());
-        this.setBlending(dataInputStream.readUnsignedByte());
-        this.setDepthOffsetFactor(dataInputStream.readFloat());
-        this.setDepthOffsetUnits(dataInputStream.readFloat());
+        super.deserialize(deserialiser);
+        this.setDepthTestEnabled(deserialiser.readBoolean());
+        this.setDepthWriteEnabled(deserialiser.readBoolean());
+        this.setColorWriteEnabled(deserialiser.readBoolean());
+        this.setAlphaWriteEnabled(deserialiser.readBoolean());
+        this.setAlphaThreshold(deserialiser.readUnsignedByte());
+        this.setBlending(deserialiser.readUnsignedByte());
+        this.setDepthOffsetFactor(deserialiser.readFloat());
+        this.setDepthOffsetUnits(deserialiser.readFloat());
     }
 
     @Override

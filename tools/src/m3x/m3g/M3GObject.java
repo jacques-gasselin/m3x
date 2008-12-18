@@ -1,21 +1,10 @@
 package m3x.m3g;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import m3x.m3g.FileIdentifier;
-import m3x.m3g.Header;
-import m3x.m3g.primitives.ObjectChunk;
 import m3x.m3g.primitives.Section;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * Models a M3G file.
@@ -63,7 +52,7 @@ public class M3GObject implements M3GSerializable
         throws IOException
     {
         // serialize file id.
-        FileIdentifier fileIdentifier = new FileIdentifier();
+        /*FileIdentifier fileIdentifier = new FileIdentifier();
         fileIdentifier.serialize(dataOutputStream, M3G_VERSION);
 
         // serialize M3G objects into a temp buffer so that the file
@@ -82,14 +71,14 @@ public class M3GObject implements M3GSerializable
         for (Section section : this.sections)
         {
             section.serialize(dataOutputStream, M3G_VERSION);
-        }
+        }*/
     }
   
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
         // read file identifier
-        FileIdentifier fileIdentifier = new FileIdentifier();
+        /*FileIdentifier fileIdentifier = new FileIdentifier();
         fileIdentifier.deserialize(dataInputStream, M3G_VERSION);
 
         // read header
@@ -139,6 +128,7 @@ public class M3GObject implements M3GSerializable
             }
         }
         this.sections = sections.toArray(new Section[sections.size()]);
+        */
     }
 
     public Section[] getObjects()
@@ -146,7 +136,7 @@ public class M3GObject implements M3GSerializable
         return this.sections;
     }
   
-    public static void main(String[] args)
+    /*public static void main(String[] args)
         throws Exception
     {
         M3GObject object = new M3GObject();
@@ -162,5 +152,5 @@ public class M3GObject implements M3GSerializable
         }
         DataOutputStream dataOutputStream = new DataOutputStream(new ByteArrayOutputStream());
         object.serialize(dataOutputStream, M3G_VERSION);
-    }
+    }*/
 }

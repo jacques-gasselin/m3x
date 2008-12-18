@@ -1,17 +1,10 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Transformable<br>
@@ -39,7 +32,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
     private boolean hasGeneralTransform;
     private Matrix transform;
 
-    public Transformable(ObjectIndex[] animationTracks,
+    public Transformable(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, Vector3D translation, Vector3D scale,
         float orientationAngle, Vector3D orientationAxis)
     {
@@ -58,7 +51,7 @@ public abstract class Transformable extends Object3D implements M3GSerializable
         super();
     }
 
-    public Transformable(ObjectIndex[] animationTracks,
+    public Transformable(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, Matrix transform)
     {
         super(animationTracks, userParameters);
@@ -71,28 +64,28 @@ public abstract class Transformable extends Object3D implements M3GSerializable
         this.transform = transform;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.hasComponentTransform = dataInputStream.readBoolean();
+        super.deserialize(deserialiser);
+        this.hasComponentTransform = deserialiser.readBoolean();
         if (this.hasComponentTransform)
         {
             this.translation = new Vector3D();
-            this.translation.deserialize(dataInputStream, m3gVersion);
+            this.translation.deserialize(deserialiser);
             this.scale = new Vector3D();
-            this.scale.deserialize(dataInputStream, m3gVersion);
-            this.orientationAngle = dataInputStream.readFloat();
+            this.scale.deserialize(deserialiser);
+            this.orientationAngle = deserialiser.readFloat();
             this.orientationAxis = new Vector3D();
-            this.orientationAxis.deserialize(dataInputStream, m3gVersion);
+            this.orientationAxis.deserialize(deserialiser);
             this.hasGeneralTransform = false;
         }
-        this.hasGeneralTransform = dataInputStream.readBoolean();
+        this.hasGeneralTransform = deserialiser.readBoolean();
         if (this.hasGeneralTransform)
         {
             this.hasComponentTransform = false;
             this.transform = new Matrix();
-            this.transform.deserialize(dataInputStream, m3gVersion);
+            this.transform.deserialize(deserialiser);
         }
     }
 

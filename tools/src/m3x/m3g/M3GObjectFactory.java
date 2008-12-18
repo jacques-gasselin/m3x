@@ -1,31 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.AnimationController;
-import m3x.m3g.AnimationTrack;
-import m3x.m3g.Appearance;
-import m3x.m3g.Background;
-import m3x.m3g.Camera;
-import m3x.m3g.CompositingMode;
-import m3x.m3g.ExternalReference;
-import m3x.m3g.Fog;
-import m3x.m3g.Group;
-import m3x.m3g.Image2D;
-import m3x.m3g.KeyframeSequence;
-import m3x.m3g.Light;
-import m3x.m3g.Material;
-import m3x.m3g.Mesh;
-import m3x.m3g.MorphingMesh;
-import m3x.m3g.Header;
-import m3x.m3g.PolygonMode;
-import m3x.m3g.SkinnedMesh;
-import m3x.m3g.Sprite;
-import m3x.m3g.Texture2D;
-import m3x.m3g.TriangleStripArray;
-import m3x.m3g.VertexArray;
-import m3x.m3g.VertexBuffer;
-import m3x.m3g.World;
-
-
 /**
  * A factory class that creates M3G objects.
  * 
@@ -41,7 +15,7 @@ public abstract class M3GObjectFactory
 
     }
 
-    public static final M3GTypedObject getInstance(int objectType) throws M3GException
+    public static final M3GTypedObject getInstance(int objectType)
     {
         switch (objectType)
         {
@@ -94,7 +68,7 @@ public abstract class M3GObjectFactory
             case ObjectTypes.WORLD:
                 return new World();
             default:
-                throw new M3GException("Unknown object type: " + objectType);
+                throw new IllegalArgumentException("Unknown object type: " + objectType);
         }
     }
 }

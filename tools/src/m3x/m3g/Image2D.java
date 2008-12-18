@@ -1,16 +1,8 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See See http://java2me.org/m3g/file-format.html#Image2D<br>
@@ -39,8 +31,9 @@ public class Image2D extends Object3D implements M3GTypedObject
     private byte[] palette;
     private byte[] pixels;
 
-    public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
-        int format, int width, int height, byte[] palette, byte[] pixels) throws FileFormatException
+    public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
+        int format, int width, int height, byte[] palette, byte[] pixels)
+        throws FileFormatException
     {
         super(animationTracks, userParameters);
         validateFormat(format);
@@ -50,7 +43,7 @@ public class Image2D extends Object3D implements M3GTypedObject
         this.pixels = pixels;
     }
 
-    public Image2D(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         int format, int width, int height) throws FileFormatException
     {
         super(animationTracks, userParameters);
@@ -90,11 +83,11 @@ public class Image2D extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.format = dataInputStream.readByte() & 0xFF;
+        super.deserialize(deserialiser);
+        this.format = deserialiser.readUnsignedByte();
         if (this.format != FORMAT_ALPHA &&
             this.format != FORMAT_LUMINANCE &&
             this.format != FORMAT_LUMINANCE_ALPHA &&
@@ -103,25 +96,25 @@ public class Image2D extends Object3D implements M3GTypedObject
         {
             throw new FileFormatException("Invalid Image2D format: " + this.format);
         }
-        this.isMutable = dataInputStream.readBoolean();
-        this.width = dataInputStream.readInt();
+        this.isMutable = deserialiser.readBoolean();
+        this.width = deserialiser.readInt();
         if (this.width <= 0)
         {
             throw new FileFormatException("Invalid Image2D width: " + this.width);
         }
-        this.height = dataInputStream.readInt();
+        this.height = deserialiser.readInt();
         if (this.height <= 0)
         {
             throw new FileFormatException("Invalid Image2D height: " + this.height);
         }
         if (this.isMutable == false)
         {
-            int paletteLength = dataInputStream.readInt();
+            int paletteLength = deserialiser.readInt();
             this.palette = new byte[paletteLength];
-            dataInputStream.readFully(this.palette);
-            int pixelsLength = dataInputStream.readInt();
+            deserialiser.readFully(this.palette);
+            int pixelsLength = deserialiser.readInt();
             this.pixels = new byte[pixelsLength];
-            dataInputStream.readFully(this.pixels);
+            deserialiser.readFully(this.pixels);
         }
     }
 

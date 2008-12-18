@@ -5,14 +5,13 @@ import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.Object3D.UserParameter;
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
 
 public class Texture2DTest extends AbstractTestCase
 {
   public void testSerializationAndDeseriliazation1()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();                           
     try
     {   
@@ -38,6 +37,6 @@ public class Texture2DTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 }

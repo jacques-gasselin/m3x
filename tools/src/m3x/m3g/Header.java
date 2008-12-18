@@ -1,15 +1,8 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Header<br>
@@ -41,19 +34,19 @@ public class Header implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
         byte[] version = new byte[2];
-        dataInputStream.readFully(version);
+        deserialiser.readFully(version);
         if (!Arrays.equals(version, VERSION))
         {
             throw new FileFormatException("Invalid M3G version!");
         }
-        this.hasExternalReferences = dataInputStream.readBoolean();
-        this.totalFileSize = dataInputStream.readInt();
-        this.approximateContentSize = dataInputStream.readInt();
-        this.authoringInformation = dataInputStream.readUTF8();
+        this.hasExternalReferences = deserialiser.readBoolean();
+        this.totalFileSize = deserialiser.readInt();
+        this.approximateContentSize = deserialiser.readInt();
+        this.authoringInformation = deserialiser.readUTF8();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

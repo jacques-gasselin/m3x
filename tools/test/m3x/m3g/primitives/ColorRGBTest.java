@@ -7,7 +7,7 @@ public class ColorRGBTest extends AbstractTestCase
 {
   public void testSerializationAndDeserialization()
   {
-    ObjectIndex index = new ObjectIndex(666);
+    /*ObjectIndex index = new ObjectIndex(666);
     try
     {   
       byte[] serialized = M3GSupport.objectToBytes(index);
@@ -18,6 +18,6 @@ public class ColorRGBTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }
+    }*/
   }  
 }

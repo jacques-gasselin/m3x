@@ -4,13 +4,12 @@ import m3x.m3g.KeyframeSequence.FloatKeyFrame;
 import m3x.m3g.KeyframeSequence.ByteKeyFrame;
 import m3x.m3g.KeyframeSequence.ShortKeyFrame;
 import m3x.m3g.Object3D.UserParameter;
-import m3x.m3g.primitives.ObjectIndex;
 
 public class KeyframeSequenceTest extends AbstractTestCase
 {
   public void testSerializationAndDeserialization1()
   {       
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     FloatKeyFrame[] keyFrames = new FloatKeyFrame[1];
     float[] vectorValue = new float[] {0.1f, 0.2f, 0.3f};
@@ -34,12 +33,12 @@ public class KeyframeSequenceTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }
+    }*/
   }
 
   public void testSerializationAndDeserialization2()
   {       
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     ByteKeyFrame[] keyFrames = new ByteKeyFrame[1];
     byte[] vectorValue = new byte[] {1, 2, 3};
@@ -65,12 +64,12 @@ public class KeyframeSequenceTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }
+    }*/
   }
 
   public void testSerializationAndDeserialization3()
   {       
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
     short[] vectorValue = new short[] {1, 2, 3};
@@ -96,12 +95,12 @@ public class KeyframeSequenceTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }
+    }*/
   }
 
   public void testFileFormatException1()
   {       
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
     short[] vectorValue = new short[] {1, 2, 3};
@@ -127,12 +126,12 @@ public class KeyframeSequenceTest extends AbstractTestCase
     {
       return;
     }
-    fail("FileFormatException not thrown!");
+    fail("FileFormatException not thrown!");*/
   }
 
   public void testFileFormatException2()
   {       
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
     short[] vectorValue = new short[] {1, 2, 3};
@@ -158,6 +157,6 @@ public class KeyframeSequenceTest extends AbstractTestCase
     {
       return;
     }
-    fail("FileFormatException not thrown!");
+    fail("FileFormatException not thrown!");*/
   }
 }

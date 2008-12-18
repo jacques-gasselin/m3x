@@ -1,13 +1,12 @@
 package m3x.m3g.primitives;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GDeserialiser;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * A normal 4x4 matrix using floating point elements.
@@ -56,13 +55,13 @@ public class Matrix implements M3GSerializable
     {
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
         this.matrix = new float[MATRIX_LENGTH];
         for (int i = 0; i < MATRIX_LENGTH; i++)
         {
-            this.matrix[i] = dataInputStream.readFloat();
+            this.matrix[i] = deserialiser.readFloat();
         }
     }
 

@@ -1,17 +1,9 @@
 package m3x.m3g;
 
-import m3x.m3g.Node;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Group<br>
@@ -21,11 +13,11 @@ import m3x.m3g.util.LittleEndianDataInputStream;
  */
 public class Group extends Node implements M3GTypedObject
 {
-    private ObjectIndex[] children;
+    private Node[] children;
 
-    public Group(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Group(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, ObjectIndex[] children) throws FileFormatException
+        byte alphaFactor, int scope, Node[] children)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
@@ -38,29 +30,35 @@ public class Group extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        int childrenLength = dataInputStream.readInt();
+        super.deserialize(deserialiser);
+        int childrenLength = deserialiser.readInt();
         if (childrenLength < 0)
         {
             throw new FileFormatException("Number of children < 0: " + childrenLength);
         }
-        this.children = new ObjectIndex[childrenLength];
+        this.children = new Node[childrenLength];
         for (int i = 0; i < this.children.length; i++)
         {
-            this.children[i] = new ObjectIndex();
-            this.children[i].deserialize(dataInputStream, m3gVersion);
+            Node child = (Node)deserialiser.readObjectReference();
+            if (child == null)
+            {
+                throw new FileFormatException("null child in group");
+            }
+            this.children[i] = child;
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
         super.serialize(dataOutputStream, m3gVersion);
         M3GSupport.writeInt(dataOutputStream, this.children.length);
-        for (ObjectIndex child : this.children)
+        for (Node child : this.children)
         {
             child.serialize(dataOutputStream, m3gVersion);
         }
@@ -71,7 +69,7 @@ public class Group extends Node implements M3GTypedObject
         return ObjectTypes.GROUP;
     }
 
-    public ObjectIndex[] getChildren()
+    public Node[] getChildren()
     {
         return this.children;
     }

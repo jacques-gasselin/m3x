@@ -1,11 +1,8 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
+import java.util.Vector;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Object3D<br>
@@ -22,7 +19,7 @@ import m3x.m3g.util.LittleEndianDataInputStream;
 public abstract class Object3D implements M3GSerializable
 {
     private int userID;
-    private ObjectIndex[] animationTracks;
+    private Vector<AnimationTrack> animationTracks;
     private int userParameterCount;
     private UserParameter[] userParameters;
 
@@ -52,13 +49,13 @@ public abstract class Object3D implements M3GSerializable
             return this.parameterValue;
         }
 
-        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(M3GDeserialiser deserialiser)
             throws IOException, FileFormatException
         {
-            this.parameterID = dataInputStream.readInt();
-            int parameterValueLength = dataInputStream.readInt();
+            this.parameterID = deserialiser.readInt();
+            int parameterValueLength = deserialiser.readInt();
             this.parameterValue = new byte[parameterValueLength];
-            dataInputStream.readFully(this.parameterValue);
+            deserialiser.readFully(this.parameterValue);
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -78,11 +75,15 @@ public abstract class Object3D implements M3GSerializable
      *  Not mandatory, can be null which means that there's no
      *  user parameters.
      */
-    public Object3D(ObjectIndex[] animationTracks,
+    public Object3D(AnimationTrack[] animationTracks,
         UserParameter[] userParameters)
     {
         assert (animationTracks != null);
-        this.animationTracks = animationTracks;
+        this.animationTracks = new Vector<AnimationTrack>();
+        for (AnimationTrack at : animationTracks)
+        {
+            addAnimationTrack(at);
+        }
         this.userParameterCount = userParameters != null ? userParameters.length : 0;
         this.userParameters = userParameters;
     }
@@ -90,26 +91,25 @@ public abstract class Object3D implements M3GSerializable
     public Object3D()
     {
         super();
+        this.animationTracks = new Vector<AnimationTrack>();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        this.userID = dataInputStream.readInt();
-        int animationTracksLength = dataInputStream.readInt();
-        this.animationTracks = new ObjectIndex[animationTracksLength];
-        for (int i = 0; i < this.animationTracks.length; i++)
+        this.userID = deserialiser.readInt();
+        final int animationTracksLength = deserialiser.readInt();
+        for (int i = 0; i < animationTracksLength; ++i)
         {
-            this.animationTracks[i] = new ObjectIndex();
-            this.animationTracks[i].deserialize(dataInputStream, m3gVersion);
+            addAnimationTrack((AnimationTrack)deserialiser.readObjectReference());
         }
 
-        this.userParameterCount = dataInputStream.readInt();
+        this.userParameterCount = deserialiser.readInt();
         this.userParameters = new UserParameter[this.userParameterCount];
-        for (int i = 0; i < this.userParameters.length; i++)
+        for (int i = 0; i < this.userParameters.length; ++i)
         {
             this.userParameters[i] = new UserParameter();
-            this.userParameters[i].deserialize(dataInputStream, m3gVersion);
+            this.userParameters[i].deserialize(deserialiser);
         }
     }
 
@@ -117,10 +117,10 @@ public abstract class Object3D implements M3GSerializable
         throws IOException
     {
         M3GSupport.writeInt(dataOutputStream, this.userID);
-        M3GSupport.writeInt(dataOutputStream, this.animationTracks.length);
-        for (int i = 0; i < this.animationTracks.length; i++)
+        M3GSupport.writeInt(dataOutputStream, getAnimationTrackCount());
+        for (int i = 0; i < getAnimationTrackCount(); ++i)
         {
-            this.animationTracks[i].serialize(dataOutputStream, null);
+            getAnimationTrack(i).serialize(dataOutputStream, null);
         }
         M3GSupport.writeInt(dataOutputStream, this.userParameterCount);
         for (int i = 0; i < this.userParameterCount; i++)
@@ -128,5 +128,34 @@ public abstract class Object3D implements M3GSerializable
             UserParameter userParameter = this.userParameters[i];
             userParameter.serialize(dataOutputStream, m3gVersion);
         }
+    }
+
+    public int getUserID()
+    {
+        return this.userID;
+    }
+
+    public void setUserID(int userID)
+    {
+        this.userID = userID;
+    }
+
+    public void addAnimationTrack(AnimationTrack animationTrack)
+    {
+        if (animationTrack == null)
+        {
+            throw new NullPointerException("animationTrack is null");
+        }
+        animationTracks.add(animationTrack);
+    }
+
+    public AnimationTrack getAnimationTrack(int trackIndex)
+    {
+        return animationTracks.get(trackIndex);
+    }
+
+    public int getAnimationTrackCount()
+    {
+        return animationTracks.size();
     }
 }

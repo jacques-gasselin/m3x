@@ -2,7 +2,6 @@ package m3x.m3g;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See See http://java2me.org/m3g/file-format.html#ExternalReference 
@@ -23,10 +22,10 @@ public class ExternalReference implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        this.uri = dataInputStream.readUTF8();
+        this.uri = deserialiser.readUTF8();
     }
 
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)

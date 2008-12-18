@@ -1,16 +1,7 @@
 package m3x.m3g;
 
-import m3x.m3g.IndexBuffer;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#TriangleStripArray<br>
@@ -39,7 +30,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         super();
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters)
     {
         super(animationTracks, userParameters);
@@ -53,7 +44,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     private short[] shortIndices;
     private int[] stripLengths;
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int intStartIndex,
         int[] stripLengths)
     {
@@ -68,7 +59,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, byte byteStartIndex,
         int[] stripLengths)
     {
@@ -83,7 +74,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, short shortStartIndex,
         int[] stripLengths)
     {
@@ -98,7 +89,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int[] intIndices,
         int[] stripLengths)
     {
@@ -113,7 +104,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, byte[] byteIndices,
         int[] stripLengths)
     {
@@ -128,7 +119,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public TriangleStripArray(ObjectIndex[] animationTracks,
+    public TriangleStripArray(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, short[] shortIndices,
         int[] stripLengths)
     {
@@ -143,49 +134,50 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
         this.stripLengths = stripLengths;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.encoding = dataInputStream.readByte() & 0xFF;
+        super.deserialize(deserialiser);
+        this.encoding = deserialiser.readUnsignedByte();
         switch (this.encoding)
         {
             case 0:
-                this.intStartIndex = dataInputStream.readInt();
+                this.intStartIndex = deserialiser.readInt();
                 break;
 
             case 1:
-                this.shortStartIndex = dataInputStream.readShort();
+                this.shortStartIndex = deserialiser.readShort();
                 break;
 
             case 2:
-                this.byteStartIndex = dataInputStream.readByte();
+                this.byteStartIndex = deserialiser.readByte();
                 break;
 
             case 128:
-                int intIndicesLength = dataInputStream.readInt();
+                int intIndicesLength = deserialiser.readInt();
                 this.intIndices = new int[intIndicesLength];
                 for (int i = 0; i < this.intIndices.length; i++)
                 {
-                    this.intIndices[i] = dataInputStream.readInt();
+                    this.intIndices[i] = deserialiser.readInt();
                 }
                 break;
 
             case 129:
-                int byteIndicesLength = dataInputStream.readInt();
+                int byteIndicesLength = deserialiser.readInt();
                 this.byteIndices = new byte[byteIndicesLength];
                 for (int i = 0; i < this.byteIndices.length; i++)
                 {
-                    this.byteIndices[i] = dataInputStream.readByte();
+                    this.byteIndices[i] = deserialiser.readByte();
                 }
                 break;
 
             case 130:
-                int shortIndicesLength = dataInputStream.readInt();
+                int shortIndicesLength = deserialiser.readInt();
                 this.shortIndices = new short[shortIndicesLength];
                 for (int i = 0; i < this.shortIndices.length; i++)
                 {
-                    this.shortIndices[i] = dataInputStream.readShort();
+                    this.shortIndices[i] = deserialiser.readShort();
                 }
                 break;
 
@@ -193,14 +185,15 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 throw new FileFormatException("Invalid encoding: " + this.encoding);
         }
 
-        int stripLengths = dataInputStream.readInt();
-        this.stripLengths = new int[stripLengths];
+        int stripLengthCount = deserialiser.readInt();
+        this.stripLengths = new int[stripLengthCount];
         for (int i = 0; i < this.stripLengths.length; i++)
         {
-            this.stripLengths[i] = dataInputStream.readInt();
+            this.stripLengths[i] = deserialiser.readInt();
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

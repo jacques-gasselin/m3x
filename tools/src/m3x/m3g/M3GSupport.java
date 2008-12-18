@@ -1,12 +1,9 @@
 package m3x.m3g;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import m3x.m3g.primitives.ObjectChunk;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 
 /**
@@ -210,7 +207,7 @@ public final class M3GSupport
      *  The object constructed from the byte array.
      * @throws Exception
      */
-    public static M3GSerializable bytesToObject(byte[] serialized, Class<? extends M3GSerializable> clazz) throws Exception
+    /*public static M3GSerializable bytesToObject(byte[] serialized, Class<? extends M3GSerializable> clazz) throws Exception
     {
         LittleEndianDataInputStream dataInputStream =
                 new LittleEndianDataInputStream(new ByteArrayInputStream(serialized));
@@ -218,7 +215,7 @@ public final class M3GSupport
         serializable.deserialize(dataInputStream, null);
         dataInputStream.close();
         return serializable;
-    }
+    }*/
 
     /**
      * Wraps a M3G object to a ObjectChunk.
@@ -227,7 +224,7 @@ public final class M3GSupport
      * @return
      * @throws IOException
      */
-    public static ObjectChunk wrapSerializableToObjectChunk(M3GTypedObject serializable) throws IOException
+    /*public static ObjectChunk wrapSerializableToObjectChunk(M3GTypedObject serializable) throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -236,7 +233,7 @@ public final class M3GSupport
         byte[] objectBytes = baos.toByteArray();
         ObjectChunk objectChunk = new ObjectChunk(serializable.getObjectType(), objectBytes);
         return objectChunk;
-    }
+    }*/
     
     /*
     public static ObjectIndex[] getDepthFirstOrdering(Object3D root)

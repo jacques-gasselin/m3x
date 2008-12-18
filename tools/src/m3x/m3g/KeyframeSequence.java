@@ -1,14 +1,10 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#KeyframeSequence<br>
@@ -229,7 +225,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     private float[] vectorBias;
     private float[] vectorScale;
 
-    public KeyframeSequence(ObjectIndex[] animationTracks,
+    public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast,
         int componentCount, FloatKeyFrame[] keyFrames) throws FileFormatException
@@ -276,7 +272,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     // TODO Auto-generated constructor stub
     }
 
-    public KeyframeSequence(ObjectIndex[] animationTracks,
+    public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast, int componentCount,
         ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
@@ -300,7 +296,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.vectorScale = vectorScale;
     }
 
-    public KeyframeSequence(ObjectIndex[] animationTracks,
+    public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast, int componentCount,
         ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
@@ -323,20 +319,21 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.vectorScale = vectorScale;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.interpolation = dataInputStream.readByte() & 0xFF;
+        super.deserialize(deserialiser);
+        this.interpolation = deserialiser.readUnsignedByte();
         validateInterpolationType(this.interpolation);
-        this.repeatMode = dataInputStream.readByte() & 0xFF;
+        this.repeatMode = deserialiser.readUnsignedByte();
         validateRepeatMode(this.repeatMode);
-        this.encoding = dataInputStream.readByte() & 0xFF;
-        this.duration = dataInputStream.readInt();
-        this.validRangeFirst = dataInputStream.readInt();
-        this.validRangeLast = dataInputStream.readInt();
-        this.componentCount = dataInputStream.readInt();
-        this.keyframeCount = dataInputStream.readInt();
+        this.encoding = deserialiser.readUnsignedByte();
+        this.duration = deserialiser.readInt();
+        this.validRangeFirst = deserialiser.readInt();
+        this.validRangeLast = deserialiser.readInt();
+        this.componentCount = deserialiser.readInt();
+        this.keyframeCount = deserialiser.readInt();
 
         switch (this.encoding)
         {
@@ -344,41 +341,41 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
                 this.floatKeyFrames = new FloatKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.floatKeyFrames.length; i++)
                 {
-                    int time = dataInputStream.readInt();
+                    int time = deserialiser.readInt();
                     float vectorValue[] = new float[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
-                        vectorValue[j] = dataInputStream.readFloat();
+                        vectorValue[j] = deserialiser.readFloat();
                     }
                     this.floatKeyFrames[i] = new FloatKeyFrame(time, vectorValue);
                 }
                 break;
 
             case ENCODING_BYTES:
-                readBiasAndScale(dataInputStream);
+                readBiasAndScale(deserialiser);
                 this.byteKeyFrames = new ByteKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.keyframeCount; i++)
                 {
-                    int time = dataInputStream.readInt();
+                    int time = deserialiser.readInt();
                     byte vectorValue[] = new byte[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
-                        vectorValue[j] = dataInputStream.readByte();
+                        vectorValue[j] = deserialiser.readByte();
                     }
                     this.byteKeyFrames[i] = new ByteKeyFrame(time, vectorValue);
                 }
                 break;
 
             case ENCODING_SHORTS:
-                readBiasAndScale(dataInputStream);
+                readBiasAndScale(deserialiser);
                 this.shortKeyFrames = new ShortKeyFrame[this.keyframeCount];
                 for (int i = 0; i < this.keyframeCount; i++)
                 {
-                    int time = dataInputStream.readInt();
+                    int time = deserialiser.readInt();
                     short vectorValue[] = new short[this.componentCount];
                     for (int j = 0; j < this.componentCount; j++)
                     {
-                        vectorValue[j] = dataInputStream.readShort();
+                        vectorValue[j] = deserialiser.readShort();
                     }
                     this.shortKeyFrames[i] = new ShortKeyFrame(time, vectorValue);
                 }
@@ -389,21 +386,22 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         }
     }
 
-    private void readBiasAndScale(LittleEndianDataInputStream dataInputStream) throws IOException
+    private void readBiasAndScale(M3GDeserialiser deserialiser) throws IOException
     {
         this.vectorBias = new float[this.componentCount];
         for (int i = 0; i < this.componentCount; i++)
         {
-            this.vectorBias[i] = dataInputStream.readFloat();
+            this.vectorBias[i] = deserialiser.readFloat();
         }
 
         this.vectorScale = new float[this.componentCount];
         for (int i = 0; i < this.componentCount; i++)
         {
-            this.vectorScale[i] = dataInputStream.readFloat();
+            this.vectorScale[i] = deserialiser.readFloat();
         }
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -415,31 +413,8 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         M3GSupport.writeInt(dataOutputStream, this.validRangeFirst);
         M3GSupport.writeInt(dataOutputStream, this.validRangeLast);
 
-        int componentCount;
-        int keyFrameCount;
-        switch (this.encoding)
-        {
-            case ENCODING_FLOATS:
-                componentCount = this.floatKeyFrames[0].getVectorValue().length;
-                keyFrameCount = this.floatKeyFrames.length;
-                break;
-
-            case ENCODING_BYTES:
-                componentCount = this.byteKeyFrames[0].getVectorValue().length;
-                keyFrameCount = this.byteKeyFrames.length;
-                break;
-
-            case ENCODING_SHORTS:
-                componentCount = this.shortKeyFrames[0].getVectorValue().length;
-                keyFrameCount = this.shortKeyFrames.length;
-                break;
-
-            default:
-                throw new IOException("Invalid encoding: " + this.encoding);
-        }
-
         M3GSupport.writeInt(dataOutputStream, componentCount);
-        M3GSupport.writeInt(dataOutputStream, keyFrameCount);
+        M3GSupport.writeInt(dataOutputStream, keyframeCount);
 
         switch (this.encoding)
         {

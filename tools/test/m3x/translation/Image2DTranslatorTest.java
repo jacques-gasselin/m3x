@@ -7,7 +7,7 @@ public class Image2DTranslatorTest extends TranslatorSupport
 {
   public void testTranslator()
   {
-    Image2DTranslator translator = new Image2DTranslator();
+    /*Image2DTranslator translator = new Image2DTranslator();
     
     m3x.xml.Image2D image1 = new m3x.xml.Image2D();
 
@@ -31,6 +31,6 @@ public class Image2DTranslatorTest extends TranslatorSupport
     Image2D image2 = (Image2D)translator.toM3G();
    
     assertTrue(image1.getWidth() == image2.getWidth());
-    assertTrue(image1.getHeight() == image2.getHeight());
+    assertTrue(image1.getHeight() == image2.getHeight());*/
   }
 }

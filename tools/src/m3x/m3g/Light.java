@@ -1,18 +1,10 @@
 package m3x.m3g;
 
-import m3x.m3g.Node;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.ColorRGB;
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Light<br>
@@ -42,7 +34,7 @@ public class Light extends Node implements M3GTypedObject
     private float spotAngle;
     private float spotExponent;
 
-    public Light(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public Light(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, float attenuationConstant,
         float attenuationLinear, float attenuationQuadratic, ColorRGB color,
@@ -74,22 +66,24 @@ public class Light extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.attenuationConstant = dataInputStream.readFloat();
-        this.attenuationLinear = dataInputStream.readFloat();
-        this.attenuationQuadratic = dataInputStream.readFloat();
+        super.deserialize(deserialiser);
+        this.attenuationConstant = deserialiser.readFloat();
+        this.attenuationLinear = deserialiser.readFloat();
+        this.attenuationQuadratic = deserialiser.readFloat();
         this.color = new ColorRGB();
-        this.color.deserialize(dataInputStream, m3gVersion);
-        this.mode = dataInputStream.readByte() & 0xFF;
+        this.color.deserialize(deserialiser);
+        this.mode = deserialiser.readUnsignedByte();
         validateMode(this.mode);
-        this.intensity = dataInputStream.readFloat();
-        this.spotAngle = dataInputStream.readFloat();
-        this.spotExponent = dataInputStream.readFloat();
+        this.intensity = deserialiser.readFloat();
+        this.spotAngle = deserialiser.readFloat();
+        this.spotExponent = deserialiser.readFloat();
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

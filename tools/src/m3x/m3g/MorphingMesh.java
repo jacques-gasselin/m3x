@@ -1,18 +1,9 @@
 package m3x.m3g;
 
-import m3x.m3g.Node;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#MorphingMesh<br>
@@ -24,25 +15,25 @@ import m3x.m3g.util.LittleEndianDataInputStream;
   <br>
  * @author jsaarinen
  */
-public class MorphingMesh extends Node implements M3GTypedObject
+public class MorphingMesh extends Mesh
 {
     public static class TargetBuffer implements M3GSerializable
     {
 
-        private ObjectIndex morphTarget;
+        private VertexBuffer morphTarget;
         private float initialWeight;
 
         public TargetBuffer()
         {
         }
 
-        public TargetBuffer(ObjectIndex morphTarget, float initialWeight)
+        public TargetBuffer(VertexBuffer morphTarget, float initialWeight)
         {
             this.morphTarget = morphTarget;
             this.initialWeight = initialWeight;
         }
 
-        public ObjectIndex getMorphTarget()
+        public VertexBuffer getMorphTarget()
         {
             return this.morphTarget;
         }
@@ -52,6 +43,7 @@ public class MorphingMesh extends Node implements M3GTypedObject
             return this.initialWeight;
         }
 
+        @Override
         public boolean equals(Object obj)
         {
             if (obj == this)
@@ -63,15 +55,15 @@ public class MorphingMesh extends Node implements M3GTypedObject
                 return false;
             }
             TargetBuffer another = (TargetBuffer) obj;
-            return this.morphTarget.equals(another.morphTarget) && this.initialWeight == another.initialWeight;
+            return this.morphTarget.equals(another.morphTarget) &&
+                   this.initialWeight == another.initialWeight;
         }
 
-        public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+        public void deserialize(M3GDeserialiser deserialiser)
             throws IOException, FileFormatException
         {
-            this.morphTarget = new ObjectIndex();
-            this.morphTarget.deserialize(dataInputStream, m3gVersion);
-            this.initialWeight = dataInputStream.readFloat();
+            this.morphTarget = (VertexBuffer)deserialiser.readObjectReference();
+            this.initialWeight = deserialiser.readFloat();
         }
 
         public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
@@ -81,19 +73,19 @@ public class MorphingMesh extends Node implements M3GTypedObject
             M3GSupport.writeFloat(dataOutputStream, this.initialWeight);
         }
     }
-    private int morphTargetCount;
+    
     private TargetBuffer[] morphTargets;
 
-    public MorphingMesh(ObjectIndex[] animationTracks,
+    public MorphingMesh(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, Matrix transform,
         boolean enableRendering, boolean enablePicking, byte alphaFactor,
-        int scope, TargetBuffer[] morphTargets) throws FileFormatException
+        int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
+        TargetBuffer[] morphTargets) throws FileFormatException
     {
         super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
+            enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
         assert (morphTargets != null);
         assert (morphTargets.length > 0);
-        this.morphTargetCount = morphTargets.length;
         this.morphTargets = morphTargets;
     }
 
@@ -102,16 +94,17 @@ public class MorphingMesh extends Node implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.morphTargetCount = dataInputStream.readInt();
-        this.morphTargets = new TargetBuffer[this.morphTargetCount];
+        super.deserialize(deserialiser);
+        int morphTargetCount = deserialiser.readInt();
+        this.morphTargets = new TargetBuffer[morphTargetCount];
         for (int i = 0; i < this.morphTargets.length; i++)
         {
             this.morphTargets[i] = new TargetBuffer();
-            this.morphTargets[i].deserialize(dataInputStream, m3gVersion);
+            this.morphTargets[i].deserialize(deserialiser);
         }
     }
 
@@ -119,13 +112,14 @@ public class MorphingMesh extends Node implements M3GTypedObject
         throws IOException
     {
         super.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.morphTargetCount);
+        M3GSupport.writeInt(dataOutputStream, this.morphTargets.length);
         for (TargetBuffer targetBuffer : this.morphTargets)
         {
             targetBuffer.serialize(dataOutputStream, m3gVersion);
         }
     }
 
+    @Override
     public int getObjectType()
     {
         return ObjectTypes.MORPHING_MESH;
@@ -133,7 +127,7 @@ public class MorphingMesh extends Node implements M3GTypedObject
 
     public int getMorphTargetCount()
     {
-        return this.morphTargetCount;
+        return this.morphTargets.length;
     }
 
     public TargetBuffer[] getMorphTargets()

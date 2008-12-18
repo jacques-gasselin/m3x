@@ -4,13 +4,12 @@ import m3x.m3g.TriangleStripArray;
 import m3x.m3g.AbstractTestCase;
 import m3x.m3g.M3GSupport;
 import m3x.m3g.Object3D.UserParameter;
-import m3x.m3g.primitives.ObjectIndex;
 
 public class TriangleStripArrayTest extends AbstractTestCase
 {
   public void testSerializationAndDeseriliazation1()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -27,12 +26,12 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 
   public void testSerializationAndDeseriliazation2()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -49,12 +48,12 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 
   public void testSerializationAndDeseriliazation3()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -71,12 +70,12 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 
   public void testSerializationAndDeseriliazation4()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -93,12 +92,12 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 
   public void testSerializationAndDeseriliazation5()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -115,12 +114,12 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
   
   public void testSerializationAndDeseriliazation6()
   {
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TriangleStripArray array = new TriangleStripArray(animationTracks,
                                                       userParameters,
@@ -137,6 +136,6 @@ public class TriangleStripArrayTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 }

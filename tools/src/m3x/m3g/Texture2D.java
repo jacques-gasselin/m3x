@@ -1,13 +1,10 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.ObjectIndex;
 import m3x.m3g.primitives.Vector3D;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Texture2D<br>
@@ -33,7 +30,7 @@ public class Texture2D extends Transformable implements M3GTypedObject
     public static final int FUNC_REPLACE = 228;
     public static final int WRAP_CLAMP = 240;
     public static final int WRAP_REPEAT = 241;
-    private ObjectIndex texture;
+    private Image2D texture;
     private ColorRGB blendColor;
     private int blending;
     private int wrappingS;
@@ -41,9 +38,9 @@ public class Texture2D extends Transformable implements M3GTypedObject
     private int levelFilter;
     private int imageFilter;
 
-    public Texture2D(ObjectIndex[] animationTracks,
+    public Texture2D(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, Vector3D translation, Vector3D scale,
-        float orientationAngle, Vector3D orientationAxis, ObjectIndex texture,
+        float orientationAngle, Vector3D orientationAxis, Image2D texture,
         ColorRGB blendColor, int blending, int wrappingS, int wrappingT,
         int levelFilter, int imageFilter)
     {
@@ -63,21 +60,22 @@ public class Texture2D extends Transformable implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.texture = new ObjectIndex();
-        this.texture.deserialize(dataInputStream, m3gVersion);
+        super.deserialize(deserialiser);
+        this.texture = (Image2D)deserialiser.readObjectReference();
         this.blendColor = new ColorRGB();
-        this.blendColor.deserialize(dataInputStream, m3gVersion);
-        this.blending = dataInputStream.readByte() & 0xFF;
-        this.wrappingS = dataInputStream.readByte() & 0xFF;
-        this.wrappingT = dataInputStream.readByte() & 0xFF;
-        this.levelFilter = dataInputStream.readByte() & 0xFF;
-        this.imageFilter = dataInputStream.readByte() & 0xFF;
+        this.blendColor.deserialize(deserialiser);
+        this.blending = deserialiser.readUnsignedByte();
+        this.wrappingS = deserialiser.readUnsignedByte();
+        this.wrappingT = deserialiser.readUnsignedByte();
+        this.levelFilter = deserialiser.readUnsignedByte();
+        this.imageFilter = deserialiser.readUnsignedByte();
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {
@@ -96,7 +94,7 @@ public class Texture2D extends Transformable implements M3GTypedObject
         return ObjectTypes.TEXTURE_2D;
     }
 
-    public ObjectIndex getTexture()
+    public Image2D getTexture()
     {
         return this.texture;
     }

@@ -5,13 +5,12 @@ import m3x.m3g.M3GSupport;
 import m3x.m3g.Object3D.UserParameter;
 import m3x.m3g.VertexBuffer.TextureCoordinate;
 import m3x.m3g.primitives.ColorRGBA;
-import m3x.m3g.primitives.ObjectIndex;
 
 public class VertexBufferTest extends AbstractTestCase
 {
   public void testSerializationAndDeseriliazation1()
   {   
-    ObjectIndex[] animationTracks = getAnimationTracks();
+    /*ObjectIndex[] animationTracks = getAnimationTracks();
     UserParameter[] userParameters = getUserParameters();
     TextureCoordinate textureCoord = new TextureCoordinate(new ObjectIndex(4),
                                                            new float[] {1.0f, 1.1f, 1.2f},
@@ -38,6 +37,6 @@ public class VertexBufferTest extends AbstractTestCase
     {
       e.printStackTrace();
       fail(e.getMessage());
-    }    
+    }*/
   }
 }

@@ -1,15 +1,8 @@
 package m3x.m3g;
 
-import m3x.m3g.Object3D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GTypedObject;
-import m3x.m3g.ObjectTypes;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#PolygonMode<br>
@@ -38,7 +31,7 @@ public class PolygonMode extends Object3D implements M3GTypedObject
     private boolean localCameraLightingEnabled;
     private boolean perspectiveCorrectionEnabled;
 
-    public PolygonMode(ObjectIndex[] animationTracks,
+    public PolygonMode(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int culling, int shading, int winding,
         boolean twoSidedLightingEnabled, boolean localCameraLightingEnabled,
         boolean perspectiveCorrectionEnabled) throws FileFormatException
@@ -69,18 +62,20 @@ public class PolygonMode extends Object3D implements M3GTypedObject
         super();
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    @Override
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.culling = dataInputStream.readUnsignedByte();
-        this.shading = dataInputStream.readUnsignedByte();
-        this.winding = dataInputStream.readUnsignedByte();
-        this.twoSidedLightingEnabled = dataInputStream.readBoolean();
-        this.localCameraLightingEnabled = dataInputStream.readBoolean();
-        this.perspectiveCorrectionEnabled = dataInputStream.readBoolean();
+        super.deserialize(deserialiser);
+        this.culling = deserialiser.readUnsignedByte();
+        this.shading = deserialiser.readUnsignedByte();
+        this.winding = deserialiser.readUnsignedByte();
+        this.twoSidedLightingEnabled = deserialiser.readBoolean();
+        this.localCameraLightingEnabled = deserialiser.readBoolean();
+        this.perspectiveCorrectionEnabled = deserialiser.readBoolean();
     }
 
+    @Override
     public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
         throws IOException
     {

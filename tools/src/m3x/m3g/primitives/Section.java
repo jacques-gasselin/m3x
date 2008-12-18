@@ -14,10 +14,13 @@ import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import m3x.m3g.FileFormatException;
+import m3x.m3g.M3GDeserialiser;
+import m3x.m3g.M3GException;
 import m3x.m3g.M3GObject;
+import m3x.m3g.M3GObjectFactory;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.M3GSupport;
-import m3x.m3g.util.LittleEndianDataInputStream;
+import m3x.m3g.Object3D;
 
 
 /**
@@ -50,10 +53,6 @@ public class Section implements M3GSerializable
      */
     private int uncompressedLength;
     /**
-     * The actual contents in this section
-     */
-    private ObjectChunk[] objects;
-    /**
      * Adler32 checksum of the section.
      */
     private int checksum;
@@ -64,50 +63,20 @@ public class Section implements M3GSerializable
     private byte[] compressedData;
 
     /**
-     * Creates a new Section object from ObjectChunks. A Section
-     * contains 1..N ObjectChunks.<br>
-     * The user of this constructor is responsible for giving objects
-     * in leaf-first order as specified by the M3G specification.
+     * Creates a new Section object.
      *
      * @param compressionScheme
      *  Whether to compress or not?
-     *
-     * @param objects
-     *  The actual data in this section.
      * @throws IOException
      */
-    public Section(byte compressionScheme, ObjectChunk[] objects) throws IOException
+    public Section(byte compressionScheme) throws IOException
     {
-        assert (compressionScheme == COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 ||
-            compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32);
-        assert (objects != null);
-
+        if (compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
+            compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+        {
+            throw new IllegalArgumentException("invalid compression scheme");
+        }
         this.compressionScheme = compressionScheme;
-
-        // loop through object chunks to calculate length
-        this.uncompressedLength = 0;
-        for (ObjectChunk objectChunk : objects)
-        {
-            this.uncompressedLength += objectChunk.getTotalLength();
-        }
-
-        this.objects = objects;
-
-        if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
-        {
-            // compress
-            this.compressedData = this.serializeAndCompress(M3GObject.M3G_VERSION);
-
-            // length of a section is compression scheme, total section length
-            // uncompressed length, objects array length (possibly compressed)
-            // and Adler32 checksum
-            this.totalSectionLength = 1 + 4 + 4 + compressedData.length + 4;
-        }
-        else
-        {
-            this.compressedData = null;
-            this.totalSectionLength = 1 + 4 + 4 + this.uncompressedLength + 4;
-        }
     }
 
     /**
@@ -121,10 +90,10 @@ public class Section implements M3GSerializable
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        for (M3GSerializable object : this.objects)
+        /*for (M3GSerializable object : this.objects)
         {
             object.serialize(dos, m3gVersion);
-        }
+        }*/
         dos.close();
         byte[] serializedBytes = baos.toByteArray();
         this.uncompressedLength = serializedBytes.length;
@@ -145,34 +114,34 @@ public class Section implements M3GSerializable
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DeflaterOutputStream dos = new DeflaterOutputStream(baos);
-        for (M3GSerializable object : this.objects)
+        /*for (M3GSerializable object : this.objects)
         {
             // compress one object at a time
             byte[] serializedObject = M3GSupport.objectToBytes(object);
             dos.write(serializedObject, 0, serializedObject.length);
-        }
+        }*/
         dos.close();
         byte[] serializedBytes = baos.toByteArray();
         return serializedBytes;
     }
 
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        this.compressionScheme = dataInputStream.readByte();
+        this.compressionScheme = deserialiser.readByte();
         if (this.compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
             this.compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
         {
             throw new FileFormatException("Invalid compression scheme: " + this.compressionScheme);
         }
 
-        this.totalSectionLength = dataInputStream.readInt();
+        this.totalSectionLength = deserialiser.readInt();
         if (this.totalSectionLength <= 0)
         {
             throw new FileFormatException("Invalid total section length: " + this.totalSectionLength);
         }
 
-        this.uncompressedLength = dataInputStream.readInt();
+        this.uncompressedLength = deserialiser.readInt();
         if (this.uncompressedLength <= 0)
         {
             throw new FileFormatException("Invalid uncompressed length: " + this.uncompressedLength);
@@ -184,7 +153,7 @@ public class Section implements M3GSerializable
         {
             int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
             this.compressedData = new byte[compressedLength];
-            dataInputStream.readFully(this.compressedData);
+            deserialiser.readFully(this.compressedData);
             this.calculateChecksum(this.compressedData);
             Inflater inflater = new Inflater();
             inflater.setInput(this.compressedData);
@@ -205,26 +174,42 @@ public class Section implements M3GSerializable
         else
         {
             // uncompressed, just read the array
-            dataInputStream.readFully(objectsAsBytes);
+            deserialiser.readFully(objectsAsBytes);
             this.calculateChecksum(objectsAsBytes);
         }
 
-        int checksumFromStream = dataInputStream.readInt();
+        int checksumFromStream = deserialiser.readInt();
         if (this.checksum != checksumFromStream)
         {
             throw new FileFormatException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);
         }
 
         // build ObjectChunk[] this.objectsAsBytes
-        List<ObjectChunk> list = new ArrayList<ObjectChunk>();
-        dataInputStream = new LittleEndianDataInputStream(new ByteArrayInputStream(objectsAsBytes));
+        deserialiser.pushInputStream(new ByteArrayInputStream(objectsAsBytes));
         while (true)
         {
             try
             {
-                ObjectChunk objectChunk = new ObjectChunk();
-                objectChunk.deserialize(dataInputStream, m3gVersion);
-                list.add(objectChunk);
+                final int objectType = deserialiser.readUnsignedByte();
+                final int length = deserialiser.readInt();
+                try
+                {
+                    Object3D obj = (Object3D)M3GObjectFactory.getInstance(objectType);
+                    obj.deserialize(deserialiser);
+                    if (objectType == 0)
+                    {
+                        //add a null object instead of the Header object.
+                        deserialiser.addObject(null);
+                    }
+                    else
+                    {
+                        deserialiser.addObject(obj);
+                    }
+                }
+                catch (IllegalArgumentException e)
+                {
+                    throw new FileFormatException(e);
+                }
             }
             catch (EOFException e)
             {
@@ -232,8 +217,7 @@ public class Section implements M3GSerializable
                 break;
             }
         }
-        dataInputStream.close();
-        this.objects = list.toArray(new ObjectChunk[list.size()]);
+        deserialiser.popInputStream();
     }
 
     public boolean equals(Object obj)
@@ -250,7 +234,6 @@ public class Section implements M3GSerializable
         return this.compressionScheme == another.compressionScheme &&
             this.totalSectionLength == another.totalSectionLength &&
             this.uncompressedLength == another.uncompressedLength &&
-            Arrays.equals(this.objects, another.objects) &&
             this.checksum == another.checksum;
     }
 
@@ -282,10 +265,10 @@ public class Section implements M3GSerializable
             objectsAsBytes = this.compressedData;
         }
         this.uncompressedLength = 0;
-        for (ObjectChunk objectChunk : this.objects)
+        /*for (ObjectChunk objectChunk : this.objects)
         {
             this.uncompressedLength += objectChunk.getTotalLength();
-        }
+        }*/
         M3GSupport.writeInt(dataOutputStream, this.uncompressedLength);
         dataOutputStream.write(objectsAsBytes);
         this.calculateChecksum(objectsAsBytes);
@@ -330,10 +313,5 @@ public class Section implements M3GSerializable
     public int getUncompressedLength()
     {
         return this.uncompressedLength;
-    }
-
-    public ObjectChunk[] getObjectChunks()
-    {
-        return this.objects;
     }
 }

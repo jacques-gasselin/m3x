@@ -1,12 +1,9 @@
 package m3x.m3g;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
-import m3x.m3g.primitives.ObjectIndex;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
  * See http://java2me.org/m3g/file-format.html#World<br>
@@ -17,13 +14,13 @@ import m3x.m3g.util.LittleEndianDataInputStream;
  */
 public class World extends Group implements M3GTypedObject
 {
-    private ObjectIndex activeCamera;
-    private ObjectIndex background;
+    private Camera activeCamera;
+    private Background background;
 
-    public World(ObjectIndex[] animationTracks, UserParameter[] userParameters,
+    public World(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, ObjectIndex[] children,
-        ObjectIndex activeCamera, ObjectIndex background) throws FileFormatException
+        byte alphaFactor, int scope, Node[] children,
+        Camera activeCamera, Background background) throws FileFormatException
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, children);
@@ -37,14 +34,12 @@ public class World extends Group implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(LittleEndianDataInputStream dataInputStream, String m3gVersion)
+    public void deserialize(M3GDeserialiser deserialiser)
         throws IOException, FileFormatException
     {
-        super.deserialize(dataInputStream, m3gVersion);
-        this.activeCamera = new ObjectIndex();
-        this.activeCamera.deserialize(dataInputStream, m3gVersion);
-        this.background = new ObjectIndex();
-        this.background.deserialize(dataInputStream, m3gVersion);
+        super.deserialize(deserialiser);
+        this.activeCamera = (Camera)deserialiser.readObjectReference();
+        this.background = (Background)deserialiser.readObjectReference();
     }
 
     @Override
@@ -62,12 +57,12 @@ public class World extends Group implements M3GTypedObject
         return ObjectTypes.WORLD;
     }
 
-    public ObjectIndex getActiveCamera()
+    public Camera getActiveCamera()
     {
         return this.activeCamera;
     }
 
-    public ObjectIndex getBackground()
+    public Background getBackground()
     {
         return this.background;
     }

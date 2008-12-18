@@ -11,7 +11,7 @@ public class PolygonModeTranslatorTest extends TranslatorSupport
 {
   public void testTranslator()
   {
-    PolygonModeTranslator translator = new PolygonModeTranslator();
+    /*PolygonModeTranslator translator = new PolygonModeTranslator();
         
     m3x.xml.PolygonMode pm1 = new m3x.xml.PolygonMode();
     
@@ -39,10 +39,10 @@ public class PolygonModeTranslatorTest extends TranslatorSupport
     assertEquals(toM3G(pm1.getWinding()), pm2.getWinding());
     assertTrue(pm1.isLocalCameraLightingEnabled() == pm2.isLocalCameraLightingEnabled());
     assertTrue(pm1.isPerspectiveCorrectionEnabled() == pm2.isPerspectiveCorrectionEnabled());
-    assertTrue(pm1.isTwoSidedLightingEnabled() == pm2.isTwoSidedLightingEnabled());
+    assertTrue(pm1.isTwoSidedLightingEnabled() == pm2.isTwoSidedLightingEnabled());*/
   }
 
-  private int toM3G(PolygonCullingModeType culling)
+  /*private int toM3G(PolygonCullingModeType culling)
   {
     if (culling.equals(PolygonCullingModeType.BACK))
     {
@@ -87,5 +87,5 @@ public class PolygonModeTranslatorTest extends TranslatorSupport
       return PolygonMode.SHADE_SMOOTH;
     }
     throw new IllegalArgumentException(polygonShadingModeType.toString());
-  }
+  }*/
 }
