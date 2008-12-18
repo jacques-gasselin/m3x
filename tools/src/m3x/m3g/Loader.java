@@ -45,7 +45,7 @@ public abstract class Loader
         M3GDeserialiser deserialiser = new M3GDeserialiser();
         if (!deserialiser.verifyFileIdentifier(inputStream))
         {
-            throw new FileFormatException();
+            throw new FileFormatException("wrong file identifier");
         }
 
         deserialiser.pushInputStream(inputStream);

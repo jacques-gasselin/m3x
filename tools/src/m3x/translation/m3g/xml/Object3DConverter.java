@@ -1,20 +1,16 @@
-package m3x.translation;
+package m3x.translation.m3g.xml;
+
+import m3x.translation.m3g.Translator;
 
 public abstract class Object3DConverter 
-        implements XmlToBinaryConverter, BinaryToXmlConverter
+        implements XmlToBinaryConverter
 {
-    public void toXml(Translator translator, m3x.m3g.Object3D from)
+    public final void toBinary(Translator translator, Object fromObject)
     {
-        //A subclass is responsible for actually creating the object.
-        m3x.xml.Object3D to = translator.getObject(from);
-
-        //user id
-        to.setUserID(from.getUserID());
-
-        //FIXME animation tracks
+        toBinary((XmlTranslator)translator, (m3x.xml.Object3D)fromObject);
     }
 
-    public void toBinary(Translator translator, m3x.xml.Object3D from)
+    public void toBinary(XmlTranslator translator, m3x.xml.Object3D from)
     {
         //A subclass is responsible for actually creating the object.
         m3x.m3g.Object3D to = translator.getObject(from);
