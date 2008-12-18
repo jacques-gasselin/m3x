@@ -9,7 +9,7 @@ import m3x.translation.m3g.Translator;
  */
 public class XmlTranslator extends Translator
 {
-    Hashtable<Class, Class> converterMap;
+    private Hashtable<Class, Class> converterMap;
 
     public XmlTranslator()
     {
@@ -21,7 +21,6 @@ public class XmlTranslator extends Translator
         converterMap.put(m3x.xml.AnimationTrack.class,
                 AnimationTrackConverter.class);
     }
-
 
     public m3x.m3g.Object3D getObject(m3x.xml.Object3D key)
     {
