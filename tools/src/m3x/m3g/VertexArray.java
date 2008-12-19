@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 
@@ -89,7 +88,7 @@ public class VertexArray extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.componentSize = deserialiser.readUnsignedByte();
@@ -114,31 +113,31 @@ public class VertexArray extends Object3D implements M3GTypedObject
                 break;
 
             default:
-                throw new FileFormatException("Invalid component size: " + this.componentSize);
+                throw new IllegalArgumentException("Invalid component size: " + this.componentSize);
         }
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.componentSize);
-        dataOutputStream.write(this.componentCount);
-        dataOutputStream.write(this.encoding);
+        super.serialize(serialiser);
+        serialiser.write(this.componentSize);
+        serialiser.write(this.componentCount);
+        serialiser.write(this.encoding);
         switch (this.componentSize)
         {
             case BYTE_SIZE_IN_BYTES:
                 for (byte b : this.byteComponentsOrDeltas)
                 {
-                    dataOutputStream.write(b);
+                    serialiser.write(b);
                 }
                 break;
 
             case SHORT_SIZE_IN_BYTES:
                 for (short s : this.shortComponentsOrDeltas)
                 {
-                    M3GSupport.writeShort(dataOutputStream, s);
+                    serialiser.writeShort(s);
                 }
                 break;
 

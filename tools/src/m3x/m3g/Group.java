@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -32,41 +31,46 @@ public class Group extends Node implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         int childrenLength = deserialiser.readInt();
         if (childrenLength < 0)
         {
-            throw new FileFormatException("Number of children < 0: " + childrenLength);
+            throw new IllegalArgumentException("Number of children < 0: " + childrenLength);
         }
         this.children = new Node[childrenLength];
         for (int i = 0; i < this.children.length; i++)
         {
-            Node child = (Node)deserialiser.readObjectReference();
+            Node child = (Node)deserialiser.readReference();
             if (child == null)
             {
-                throw new FileFormatException("null child in group");
+                throw new IllegalArgumentException("null child in group");
             }
             this.children[i] = child;
         }
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.children.length);
-        for (Node child : this.children)
+        super.serialize(serialiser);
+        serialiser.writeInt(getChildCount());
+        for (Node child : getChildren())
         {
-            child.serialize(dataOutputStream, m3gVersion);
+            serialiser.writeReference(child);
         }
     }
 
     public int getObjectType()
     {
         return ObjectTypes.GROUP;
+    }
+
+    public int getChildCount()
+    {
+        return this.children.length;
     }
 
     public Node[] getChildren()

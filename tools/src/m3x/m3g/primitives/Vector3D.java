@@ -1,12 +1,10 @@
 package m3x.m3g.primitives;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GDeserialiser;
+import m3x.m3g.M3GSerialiser;
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
 
 public class Vector3D implements M3GSerializable
 {
@@ -24,33 +22,33 @@ public class Vector3D implements M3GSerializable
     }
 
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
-        this.x = deserialiser.readFloat();
-        this.y = deserialiser.readFloat();
-        this.z = deserialiser.readFloat();
+        x = deserialiser.readFloat();
+        y = deserialiser.readFloat();
+        z = deserialiser.readFloat();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+    public void serialize(M3GSerialiser serialiser) throws IOException
     {
-        M3GSupport.writeFloat(dataOutputStream, this.x);
-        M3GSupport.writeFloat(dataOutputStream, this.y);
-        M3GSupport.writeFloat(dataOutputStream, this.z);
+        serialiser.writeFloat(x);
+        serialiser.writeFloat(y);
+        serialiser.writeFloat(z);
     }
 
     public float getX()
     {
-        return this.x;
+        return x;
     }
 
     public float getY()
     {
-        return this.y;
+        return y;
     }
 
     public float getZ()
     {
-        return this.z;
+        return z;
     }
 
     public boolean equals(Object obj)

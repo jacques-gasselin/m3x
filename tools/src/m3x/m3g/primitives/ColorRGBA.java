@@ -1,10 +1,9 @@
 package m3x.m3g.primitives;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GDeserialiser;
+import m3x.m3g.M3GSerialiser;
 import m3x.m3g.M3GSerializable;
 
 public class ColorRGBA extends ColorRGB implements M3GSerializable
@@ -41,18 +40,20 @@ public class ColorRGBA extends ColorRGB implements M3GSerializable
         return super.equals(obj) && this.a == ((ColorRGBA) obj).a;
     }
 
+    @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.a = deserialiser.readUnsignedByte();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.a);
+        super.serialize(serialiser);
+        serialiser.write(this.a);
     }
 
     public int getA()

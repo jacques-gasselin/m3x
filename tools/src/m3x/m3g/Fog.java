@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
@@ -17,6 +16,7 @@ import m3x.m3g.primitives.ColorRGB;
   END<br>
 
  * @author jsaarinen
+ * @author jgasseli
  */
 public class Fog extends Object3D implements M3GTypedObject
 {
@@ -57,7 +57,7 @@ public class Fog extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.color = new ColorRGB();
@@ -74,25 +74,25 @@ public class Fog extends Object3D implements M3GTypedObject
         }
         else
         {
-            throw new FileFormatException("Invalid fog mode: " + this.mode);
+            throw new IllegalArgumentException("Invalid fog mode: " + this.mode);
         }
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.color.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.mode);
+        super.serialize(serialiser);
+        this.color.serialize(serialiser);
+        serialiser.write(this.mode);
         if (this.mode == MODE_EXPONENTIAL)
         {
-            M3GSupport.writeFloat(dataOutputStream, this.density);
+            serialiser.writeFloat(this.density);
         }
         else if (this.mode == MODE_LINEAR)
         {
-            M3GSupport.writeFloat(dataOutputStream, this.near);
-            M3GSupport.writeFloat(dataOutputStream, this.far);
+            serialiser.writeFloat(this.near);
+            serialiser.writeFloat(this.far);
         }
         else
         {

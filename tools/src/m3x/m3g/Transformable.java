@@ -64,8 +64,9 @@ public abstract class Transformable extends Object3D implements M3GSerializable
         this.transform = transform;
     }
 
+    @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.hasComponentTransform = deserialiser.readBoolean();
@@ -89,24 +90,25 @@ public abstract class Transformable extends Object3D implements M3GSerializable
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
+        super.serialize(serialiser);
         if (this.hasComponentTransform)
         {
-            dataOutputStream.writeBoolean(true);
-            this.translation.serialize(dataOutputStream, m3gVersion);
-            this.scale.serialize(dataOutputStream, m3gVersion);
-            M3GSupport.writeFloat(dataOutputStream, this.orientationAngle);
-            this.orientationAxis.serialize(dataOutputStream, m3gVersion);
-            dataOutputStream.writeBoolean(false);
+            serialiser.writeBoolean(true);
+            this.translation.serialize(serialiser);
+            this.scale.serialize(serialiser);
+            serialiser.writeFloat(this.orientationAngle);
+            this.orientationAxis.serialize(serialiser);
+            serialiser.writeBoolean(false);
         }
         else if (this.hasGeneralTransform)
         {
-            dataOutputStream.writeBoolean(false);
-            dataOutputStream.writeBoolean(true);
-            this.transform.serialize(dataOutputStream, m3gVersion);
+            serialiser.writeBoolean(false);
+            serialiser.writeBoolean(true);
+            this.transform.serialize(serialiser);
         }
     }
 

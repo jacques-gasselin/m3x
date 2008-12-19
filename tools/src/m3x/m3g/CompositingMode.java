@@ -15,6 +15,7 @@ import java.io.IOException;
   Float32       depthOffsetUnits;<br>
 
  * @author jsaarinen
+ * @author jgasseli
  */
 public class CompositingMode extends Object3D implements M3GTypedObject
 {
@@ -37,24 +38,16 @@ public class CompositingMode extends Object3D implements M3GTypedObject
         boolean depthWriteEnabled, boolean colorWriteEnabled,
         boolean alphaWriteEnabled, int blending, int alphaThreshold,
         float depthOffsetFactor, float depthOffsetUnits)
-        throws FileFormatException
     {
         super(animationTracks, userParameters);
-        try
-        {
-            this.setDepthTestEnabled(depthTestEnabled);
-            this.setDepthWriteEnabled(depthWriteEnabled);
-            this.setColorWriteEnabled(colorWriteEnabled);
-            this.setAlphaWriteEnabled(alphaWriteEnabled);
-            this.setBlending(blending);
-            this.setAlphaThreshold(alphaThreshold);
-            this.setDepthOffsetFactor(depthOffsetFactor);
-            this.setDepthOffsetUnits(depthOffsetUnits);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new FileFormatException(e);
-        }
+        setDepthTestEnabled(depthTestEnabled);
+        setDepthWriteEnabled(depthWriteEnabled);
+        setColorWriteEnabled(colorWriteEnabled);
+        setAlphaWriteEnabled(alphaWriteEnabled);
+        setBlending(blending);
+        setAlphaThreshold(alphaThreshold);
+        setDepthOffsetFactor(depthOffsetFactor);
+        setDepthOffsetUnits(depthOffsetUnits);
     }
 
     public CompositingMode()
@@ -64,32 +57,32 @@ public class CompositingMode extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.setDepthTestEnabled(deserialiser.readBoolean());
-        this.setDepthWriteEnabled(deserialiser.readBoolean());
-        this.setColorWriteEnabled(deserialiser.readBoolean());
-        this.setAlphaWriteEnabled(deserialiser.readBoolean());
-        this.setAlphaThreshold(deserialiser.readUnsignedByte());
-        this.setBlending(deserialiser.readUnsignedByte());
-        this.setDepthOffsetFactor(deserialiser.readFloat());
-        this.setDepthOffsetUnits(deserialiser.readFloat());
+        setDepthTestEnabled(deserialiser.readBoolean());
+        setDepthWriteEnabled(deserialiser.readBoolean());
+        setColorWriteEnabled(deserialiser.readBoolean());
+        setAlphaWriteEnabled(deserialiser.readBoolean());
+        setAlphaThreshold(deserialiser.readUnsignedByte());
+        setBlending(deserialiser.readUnsignedByte());
+        setDepthOffsetFactor(deserialiser.readFloat());
+        setDepthOffsetUnits(deserialiser.readFloat());
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.writeBoolean(this.isDepthTestEnabled());
-        dataOutputStream.writeBoolean(this.isDepthWriteEnabled());
-        dataOutputStream.writeBoolean(this.isColorWriteEnabled());
-        dataOutputStream.writeBoolean(this.isAlphaWriteEnabled());
-        dataOutputStream.write(this.getAlphaThreshold());
-        dataOutputStream.write(this.getBlending());
-        M3GSupport.writeFloat(dataOutputStream, this.getDepthOffsetFactor());
-        M3GSupport.writeFloat(dataOutputStream, this.getDepthOffsetUnits());
+        super.serialize(serialiser);
+        serialiser.writeBoolean(isDepthTestEnabled());
+        serialiser.writeBoolean(isDepthWriteEnabled());
+        serialiser.writeBoolean(isColorWriteEnabled());
+        serialiser.writeBoolean(isAlphaWriteEnabled());
+        serialiser.write(getAlphaThreshold());
+        serialiser.write(getBlending());
+        serialiser.writeFloat(getDepthOffsetFactor());
+        serialiser.writeFloat(getDepthOffsetUnits());
     }
 
     public int getObjectType()

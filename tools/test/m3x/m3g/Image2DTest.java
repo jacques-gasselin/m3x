@@ -1,10 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.Image2D;
-import m3x.m3g.AbstractTestCase;
-import m3x.m3g.FileFormatException;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.Object3D.UserParameter;
 
 public class Image2DTest extends AbstractTestCase
 {

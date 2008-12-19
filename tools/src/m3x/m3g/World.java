@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -11,6 +10,7 @@ import m3x.m3g.primitives.Matrix;
   ObjectIndex   background;<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
 public class World extends Group implements M3GTypedObject
 {
@@ -20,7 +20,7 @@ public class World extends Group implements M3GTypedObject
     public World(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, Node[] children,
-        Camera activeCamera, Background background) throws FileFormatException
+        Camera activeCamera, Background background)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, children);
@@ -35,20 +35,20 @@ public class World extends Group implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.activeCamera = (Camera)deserialiser.readObjectReference();
-        this.background = (Background)deserialiser.readObjectReference();
+        setActiveCamera((Camera)deserialiser.readReference());
+        setBackground((Background)deserialiser.readReference());
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.activeCamera.serialize(dataOutputStream, m3gVersion);
-        this.background.serialize(dataOutputStream, m3gVersion);
+        super.serialize(serialiser);
+        serialiser.writeReference(getActiveCamera());
+        serialiser.writeReference(getBackground());
     }
 
     @Override
@@ -65,5 +65,15 @@ public class World extends Group implements M3GTypedObject
     public Background getBackground()
     {
         return this.background;
+    }
+
+    private void setActiveCamera(Camera activeCamera)
+    {
+        this.activeCamera = activeCamera;
+    }
+
+    private void setBackground(Background background)
+    {
+        this.background = background;
     }
 }

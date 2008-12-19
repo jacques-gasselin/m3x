@@ -1,12 +1,10 @@
 package m3x.m3g.primitives;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GDeserialiser;
+import m3x.m3g.M3GSerialiser;
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.M3GSupport;
 
 /**
  * A normal 4x4 matrix using floating point elements.
@@ -56,7 +54,7 @@ public class Matrix implements M3GSerializable
     }
 
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         this.matrix = new float[MATRIX_LENGTH];
         for (int i = 0; i < MATRIX_LENGTH; i++)
@@ -68,11 +66,11 @@ public class Matrix implements M3GSerializable
     /**
      * Writes float array to the stream.
      */
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws java.io.IOException
+    public void serialize(M3GSerialiser serialiser) throws java.io.IOException
     {
         for (float element : this.matrix)
         {
-            M3GSupport.writeFloat(dataOutputStream, element);
+            serialiser.writeFloat(element);
         }
     }
 
@@ -86,6 +84,7 @@ public class Matrix implements M3GSerializable
         this.matrix = matrix;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (this == obj)

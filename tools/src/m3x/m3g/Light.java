@@ -38,7 +38,7 @@ public class Light extends Node implements M3GTypedObject
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, float attenuationConstant,
         float attenuationLinear, float attenuationQuadratic, ColorRGB color,
-        int mode, float intensity, float spotAngle, float spotExponent) throws FileFormatException
+        int mode, float intensity, float spotAngle, float spotExponent)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
@@ -53,11 +53,11 @@ public class Light extends Node implements M3GTypedObject
         this.spotExponent = spotExponent;
     }
 
-    private static void validateMode(int mode) throws FileFormatException
+    private static void validateMode(int mode)
     {
         if (mode < MODE_AMBIENT || mode > MODE_SPOT)
         {
-            throw new FileFormatException("Invalid light mode: " + mode);
+            throw new IllegalArgumentException("Invalid light mode: " + mode);
         }
     }
 
@@ -68,7 +68,7 @@ public class Light extends Node implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.attenuationConstant = deserialiser.readFloat();
@@ -84,18 +84,18 @@ public class Light extends Node implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeFloat(dataOutputStream, this.attenuationConstant);
-        M3GSupport.writeFloat(dataOutputStream, this.attenuationLinear);
-        M3GSupport.writeFloat(dataOutputStream, this.attenuationQuadratic);
-        this.color.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.mode);
-        M3GSupport.writeFloat(dataOutputStream, this.intensity);
-        M3GSupport.writeFloat(dataOutputStream, this.spotAngle);
-        M3GSupport.writeFloat(dataOutputStream, this.spotExponent);
+        super.serialize(serialiser);
+        serialiser.writeFloat(this.attenuationConstant);
+        serialiser.writeFloat(this.attenuationLinear);
+        serialiser.writeFloat(this.attenuationQuadratic);
+        this.color.serialize(serialiser);
+        serialiser.write(this.mode);
+        serialiser.writeFloat(this.intensity);
+        serialiser.writeFloat(this.spotAngle);
+        serialiser.writeFloat(this.spotExponent);
     }
 
     public int getObjectType()

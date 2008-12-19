@@ -45,8 +45,9 @@ public class Material extends Object3D implements M3GTypedObject
         super();
     }
 
+    @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.ambientColor = new ColorRGB();
@@ -61,16 +62,17 @@ public class Material extends Object3D implements M3GTypedObject
         this.vertexColorTrackingEnabled = deserialiser.readBoolean();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.ambientColor.serialize(dataOutputStream, m3gVersion);
-        this.diffuseColor.serialize(dataOutputStream, m3gVersion);
-        this.emissiveColor.serialize(dataOutputStream, m3gVersion);
-        this.specularColor.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeFloat(dataOutputStream, this.shininess);
-        dataOutputStream.writeBoolean(this.vertexColorTrackingEnabled);
+        super.serialize(serialiser);
+        this.ambientColor.serialize(serialiser);
+        this.diffuseColor.serialize(serialiser);
+        this.emissiveColor.serialize(serialiser);
+        this.specularColor.serialize(serialiser);
+        serialiser.writeFloat(this.shininess);
+        serialiser.writeBoolean(this.vertexColorTrackingEnabled);
     }
 
     public int getObjectType()

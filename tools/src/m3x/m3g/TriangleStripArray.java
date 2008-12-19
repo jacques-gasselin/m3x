@@ -136,7 +136,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.encoding = deserialiser.readUnsignedByte();
@@ -182,7 +182,7 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 break;
 
             default:
-                throw new FileFormatException("Invalid encoding: " + this.encoding);
+                throw new IllegalArgumentException("Invalid encoding: " + this.encoding);
         }
 
         int stripLengthCount = deserialiser.readInt();
@@ -194,46 +194,46 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.encoding);
+        super.serialize(serialiser);
+        serialiser.write(this.encoding);
         switch (this.encoding)
         {
             case 0:
-                M3GSupport.writeInt(dataOutputStream, this.intStartIndex);
+                serialiser.writeInt(this.intStartIndex);
                 break;
 
             case 1:
-                M3GSupport.writeShort(dataOutputStream, this.shortStartIndex);
+                serialiser.writeShort(this.shortStartIndex);
                 break;
 
             case 2:
-                dataOutputStream.write(this.byteStartIndex);
+                serialiser.write(this.byteStartIndex);
                 break;
 
             case 128:
-                M3GSupport.writeInt(dataOutputStream, this.intIndices.length);
+                serialiser.writeInt(this.intIndices.length);
                 for (int index : this.intIndices)
                 {
-                    M3GSupport.writeInt(dataOutputStream, index);
+                    serialiser.writeInt(index);
                 }
                 break;
 
             case 129:
-                M3GSupport.writeInt(dataOutputStream, this.byteIndices.length);
+                serialiser.writeInt(this.byteIndices.length);
                 for (byte index : this.byteIndices)
                 {
-                    dataOutputStream.write(index);
+                    serialiser.write(index);
                 }
                 break;
 
             case 130:
-                M3GSupport.writeInt(dataOutputStream, this.shortIndices.length);
+                serialiser.writeInt(this.shortIndices.length);
                 for (short index : this.shortIndices)
                 {
-                    M3GSupport.writeShort(dataOutputStream, index);
+                    serialiser.writeShort(index);
                 }
                 break;
 
@@ -241,10 +241,10 @@ public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
                 assert (false);
                 break;
         }
-        M3GSupport.writeInt(dataOutputStream, this.stripLengths.length);
+        serialiser.writeInt(this.stripLengths.length);
         for (int x : this.stripLengths)
         {
-            M3GSupport.writeInt(dataOutputStream, x);
+            serialiser.writeInt(x);
         }
     }
 

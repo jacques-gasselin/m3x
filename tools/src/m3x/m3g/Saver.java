@@ -24,7 +24,7 @@ public abstract class Saver
      */
     public static void save(OutputStream outputStream, Object3D[] roots,
             String version, String author)
-            throws IOException
+        throws IOException
     {
         M3GSerialiser serialiser = new M3GSerialiser(version, author);
         serialiser.writeFileIdentifier(outputStream);

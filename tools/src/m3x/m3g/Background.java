@@ -41,16 +41,15 @@ public class Background extends Object3D implements M3GTypedObject
         Image2D backgroundImage, int backgroundImageModeX,
         int backgroundImageModeY, int cropX, int cropY, int cropWidth,
         int cropHeight, boolean depthClearEnabled, boolean colorClearEnabled)
-        throws FileFormatException
     {
         super(animationTracks, userParameters);
         if (!(backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT))
         {
-            throw new FileFormatException("Invalid backgroudImageModeX: " + backgroundImageModeX);
+            throw new IllegalArgumentException("Invalid backgroudImageModeX: " + backgroundImageModeX);
         }
         if (!(backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT))
         {
-            throw new FileFormatException("Invalid backgroudImageModeY: " + backgroundImageModeY);
+            throw new IllegalArgumentException("Invalid backgroudImageModeY: " + backgroundImageModeY);
         }
         this.backgroundColor = backgroundColor;
         this.backgroundImage = backgroundImage;
@@ -71,12 +70,12 @@ public class Background extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.backgroundColor = new ColorRGBA();
         this.backgroundColor.deserialize(deserialiser);
-        this.backgroundImage = (Image2D)deserialiser.readObjectReference();
+        this.backgroundImage = (Image2D)deserialiser.readReference();
         this.backgroundImageModeX = deserialiser.readUnsignedByte();
         this.backgroundImageModeY = deserialiser.readUnsignedByte();
         this.cropX = deserialiser.readInt();
@@ -88,20 +87,20 @@ public class Background extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.backgroundColor.serialize(dataOutputStream, m3gVersion);
-        this.backgroundImage.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.backgroundImageModeX);
-        dataOutputStream.write(this.backgroundImageModeY);
-        M3GSupport.writeInt(dataOutputStream, this.cropX);
-        M3GSupport.writeInt(dataOutputStream, this.cropY);
-        M3GSupport.writeInt(dataOutputStream, this.cropWidth);
-        M3GSupport.writeInt(dataOutputStream, this.cropHeight);
-        dataOutputStream.writeBoolean(this.depthClearEnabled);
-        dataOutputStream.writeBoolean(this.colorClearEnabled);
+        super.serialize(serialiser);
+        this.backgroundColor.serialize(serialiser);
+        serialiser.writeReference(getBackgroundImage());
+        serialiser.write(this.backgroundImageModeX);
+        serialiser.write(this.backgroundImageModeY);
+        serialiser.writeInt(this.cropX);
+        serialiser.writeInt(this.cropY);
+        serialiser.writeInt(this.cropWidth);
+        serialiser.writeInt(this.cropHeight);
+        serialiser.writeBoolean(this.depthClearEnabled);
+        serialiser.writeBoolean(this.colorClearEnabled);
     }
 
     public int getObjectType()

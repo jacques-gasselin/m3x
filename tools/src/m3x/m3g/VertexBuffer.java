@@ -64,9 +64,9 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
         }
 
         public void deserialize(M3GDeserialiser deserialiser)
-            throws IOException, FileFormatException
+            throws IOException
         {
-            this.textureCoordinates = (VertexArray)deserialiser.readObjectReference();
+            this.textureCoordinates = (VertexArray)deserialiser.readReference();
             this.textureCoordinatesBias = new float[3];
             this.textureCoordinatesBias[0] = deserialiser.readFloat();
             this.textureCoordinatesBias[1] = deserialiser.readFloat();
@@ -74,15 +74,15 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
             this.textureCoordinatesScale = deserialiser.readFloat();
         }
 
-        public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        public void serialize(M3GSerialiser serialiser)
             throws IOException
         {
-            this.textureCoordinates.serialize(dataOutputStream, m3gVersion);
+            serialiser.writeReference(this.textureCoordinates);
             for (float f : this.textureCoordinatesBias)
             {
-                M3GSupport.writeFloat(dataOutputStream, f);
+                serialiser.writeFloat(f);
             }
-            M3GSupport.writeFloat(dataOutputStream, this.textureCoordinatesScale);
+            serialiser.writeFloat(this.textureCoordinatesScale);
         }
 
         @Override
@@ -130,23 +130,23 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.defaultColor = new ColorRGBA();
         this.defaultColor.deserialize(deserialiser);
-        this.positions = (VertexArray)deserialiser.readObjectReference();
+        this.positions = (VertexArray)deserialiser.readReference();
         this.positionBias = new float[3];
         this.positionBias[0] = deserialiser.readFloat();
         this.positionBias[1] = deserialiser.readFloat();
         this.positionBias[2] = deserialiser.readFloat();
         this.positionScale = deserialiser.readFloat();
-        this.normals = (VertexArray)deserialiser.readObjectReference();
-        this.colors = (VertexArray)deserialiser.readObjectReference();
+        this.normals = (VertexArray)deserialiser.readReference();
+        this.colors = (VertexArray)deserialiser.readReference();
         this.textureCoordinateArrayCount = deserialiser.readInt();
         if (this.textureCoordinateArrayCount < 0)
         {
-            throw new FileFormatException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);
+            throw new IllegalArgumentException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);
         }
         this.textureCoordinates = new TextureCoordinate[this.textureCoordinateArrayCount];
         for (int i = 0; i < this.textureCoordinates.length; i++)
@@ -157,23 +157,23 @@ public class VertexBuffer extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.defaultColor.serialize(dataOutputStream, m3gVersion);
-        this.positions.serialize(dataOutputStream, m3gVersion);
+        super.serialize(serialiser);
+        this.defaultColor.serialize(serialiser);
+        serialiser.writeReference(this.positions);
         for (float f : this.positionBias)
         {
-            M3GSupport.writeFloat(dataOutputStream, f);
+            serialiser.writeFloat(f);
         }
-        M3GSupport.writeFloat(dataOutputStream, this.positionScale);
-        this.normals.serialize(dataOutputStream, m3gVersion);
-        this.colors.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.textureCoordinateArrayCount);
+        serialiser.writeFloat(this.positionScale);
+        serialiser.writeReference(this.normals);
+        serialiser.writeReference(this.colors);
+        serialiser.writeInt(this.textureCoordinateArrayCount);
         for (TextureCoordinate textureCoordinate : this.textureCoordinates)
         {
-            textureCoordinate.serialize(dataOutputStream, m3gVersion);
+            textureCoordinate.serialize(serialiser);
         }
     }
 

@@ -187,7 +187,7 @@ public class M3GDeserialiser implements DataInput
      * @return the referenced object
      * @throws java.io.IOException
      */
-    public Object3D readObjectReference() throws IOException
+    public Object3D readReference() throws IOException
     {
         Object3D obj = objects.elementAt(readInt());
         if (rootObjects.contains(obj))
@@ -203,7 +203,7 @@ public class M3GDeserialiser implements DataInput
      * @return the weakly referenced object
      * @throws java.io.IOException
      */
-    public Object3D readWeakObjectReference() throws IOException
+    public Object3D readWeakReference() throws IOException
     {
         Object3D obj = objects.elementAt(readInt());
         return obj;

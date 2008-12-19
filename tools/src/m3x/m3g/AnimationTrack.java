@@ -1,16 +1,16 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#AnimationTrack<br>
-   ObjectIndex   keyframeSequence;<br>
-   ObjectIndex   animationController;<br>
-   UInt32        propertyID;<br>
-
- * @author jsaarinen
+ * ObjectIndex   keyframeSequence;<br>
+ * ObjectIndex   animationController;<br>
+ * UInt32        propertyID;<br>
  *
+ * @author jsaarinen
+ * @author jgasseli
  */
 public class AnimationTrack extends Object3D implements M3GTypedObject
 {
@@ -42,7 +42,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
 
     public AnimationTrack(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, KeyframeSequence keyframeSequence,
-        AnimationController animationController, int propertyID) throws FileFormatException
+        AnimationController animationController, int propertyID)
     {
         super(animationTracks, userParameters);
         this.keyframeSequence = keyframeSequence;
@@ -50,7 +50,7 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
 
         if (propertyID < ALPHA || propertyID > VISIBILITY)
         {
-            throw new FileFormatException("Invalid propertyID: " + propertyID);
+            throw new IllegalArgumentException("Invalid propertyID: " + propertyID);
         }
         this.propertyID = propertyID;
     }
@@ -62,25 +62,36 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.keyframeSequence = (KeyframeSequence)deserialiser.readObjectReference();
-        this.animationController = (AnimationController)deserialiser.readObjectReference();
+        this.keyframeSequence = (KeyframeSequence)deserialiser.readReference();
+        this.animationController = (AnimationController)deserialiser.readReference();
         this.propertyID = deserialiser.readInt();
         if (this.propertyID < ALPHA || this.propertyID > VISIBILITY)
         {
-            throw new FileFormatException("Invalid property ID: " + this.propertyID);
+            throw new IllegalArgumentException("Invalid property ID: " + this.propertyID);
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.keyframeSequence.serialize(dataOutputStream, m3gVersion);
-        this.animationController.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.propertyID);
+        super.serialize(serialiser);
+        serialiser.writeReference(getKeyframeSequence());
+        serialiser.writeReference(getAnimationController());
+        serialiser.writeInt(getPropertyID());
+    }
+
+    @Override
+    public int getReferences(Object3D[] references)
+    {
+        Object3DReferences queue =
+                new Object3DReferences(super.getReferences(references), references);
+        queue.add(getKeyframeSequence());
+        queue.add(getAnimationController());
+        return queue.size();
     }
 
     public int getObjectType()
@@ -91,6 +102,11 @@ public class AnimationTrack extends Object3D implements M3GTypedObject
     public KeyframeSequence getKeyframeSequence()
     {
         return this.keyframeSequence;
+    }
+
+    public void setKeyframeSequece(KeyframeSequence sequence)
+    {
+        this.keyframeSequence = sequence;
     }
 
     public AnimationController getAnimationController()

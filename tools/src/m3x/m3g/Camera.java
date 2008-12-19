@@ -37,7 +37,7 @@ public class Camera extends Node implements M3GTypedObject
     public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, int zTarget, int yTarget,
-        Node zReference, Node yReference, Matrix projectionMatrix) throws FileFormatException
+        Node zReference, Node yReference, Matrix projectionMatrix)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, zTarget, yTarget, zReference,
@@ -67,13 +67,13 @@ public class Camera extends Node implements M3GTypedObject
     public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, int projectionType, float fovy,
-        float aspectRatio, float near, float far) throws FileFormatException
+        float aspectRatio, float near, float far)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
         if (projectionType != PROJECTION_TYPE_PARALLEL && projectionType != PROJECTION_TYPE_PERSPECTIVE)
         {
-            throw new FileFormatException("Invalid projectionType: " + projectionType);
+            throw new IllegalArgumentException("Invalid projectionType: " + projectionType);
         }
         this.projectionType = projectionType;
         this.projectionMatrix = null;
@@ -90,7 +90,7 @@ public class Camera extends Node implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.projectionType = deserialiser.readUnsignedByte();
@@ -109,26 +109,26 @@ public class Camera extends Node implements M3GTypedObject
         }
         else
         {
-            throw new FileFormatException("Invalid projection type: " + this.projectionType);
+            throw new IllegalArgumentException("Invalid projection type: " + this.projectionType);
         }
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.projectionType);
+        super.serialize(serialiser);
+        serialiser.write(this.projectionType);
         if (this.projectionType == PROJECTION_TYPE_GENERIC)
         {
-            this.projectionMatrix.serialize(dataOutputStream, m3gVersion);
+            this.projectionMatrix.serialize(serialiser);
         }
         else
         {
-            M3GSupport.writeFloat(dataOutputStream, this.fovy);
-            M3GSupport.writeFloat(dataOutputStream, this.aspectRatio);
-            M3GSupport.writeFloat(dataOutputStream, this.near);
-            M3GSupport.writeFloat(dataOutputStream, this.far);
+            serialiser.writeFloat(this.fovy);
+            serialiser.writeFloat(this.aspectRatio);
+            serialiser.writeFloat(this.near);
+            serialiser.writeFloat(this.far);
         }
     }
 

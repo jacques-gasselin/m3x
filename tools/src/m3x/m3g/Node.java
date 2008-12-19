@@ -58,7 +58,7 @@ public abstract class Node extends Transformable implements M3GSerializable
     public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope, int zTarget, int yTarget,
-        Node zReference, Node yReference) throws FileFormatException
+        Node zReference, Node yReference)
     {
         this(animationTracks, userParameters, transform,
             enableRendering, enablePicking, alphaFactor, scope);
@@ -71,19 +71,19 @@ public abstract class Node extends Transformable implements M3GSerializable
         this.yReference = yReference;
     }
 
-    private static void validateYTarget(int yTarget) throws FileFormatException
+    private static void validateYTarget(int yTarget)
     {
         if (yTarget < NONE || yTarget > Z_AXIS)
         {
-            throw new FileFormatException("Invalid yTarget: " + yTarget);
+            throw new IllegalArgumentException("Invalid yTarget: " + yTarget);
         }
     }
 
-    private static void validateZTarget(int zTarget) throws FileFormatException
+    private static void validateZTarget(int zTarget)
     {
         if (zTarget < NONE || zTarget > Z_AXIS)
         {
-            throw new FileFormatException("Invalid zTarget: " + zTarget);
+            throw new IllegalArgumentException("Invalid zTarget: " + zTarget);
         }
     }
 
@@ -94,7 +94,7 @@ public abstract class Node extends Transformable implements M3GSerializable
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.enableRendering = deserialiser.readBoolean();
@@ -108,26 +108,27 @@ public abstract class Node extends Transformable implements M3GSerializable
             validateZTarget(this.zTarget);
             this.yTarget = deserialiser.readUnsignedByte();
             validateYTarget(this.yTarget);
-            this.zReference = (Node)deserialiser.readWeakObjectReference();
-            this.yReference = (Node)deserialiser.readWeakObjectReference();
+            this.zReference = (Node)deserialiser.readWeakReference();
+            this.yReference = (Node)deserialiser.readWeakReference();
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.writeBoolean(this.enableRendering);
-        dataOutputStream.writeBoolean(this.enablePicking);
-        dataOutputStream.write(this.alphaFactor);
-        M3GSupport.writeInt(dataOutputStream, this.scope);
-        dataOutputStream.writeBoolean(this.hasAlignment);
+        super.serialize(serialiser);
+        serialiser.writeBoolean(this.enableRendering);
+        serialiser.writeBoolean(this.enablePicking);
+        serialiser.write(this.alphaFactor);
+        serialiser.writeInt(this.scope);
+        serialiser.writeBoolean(this.hasAlignment);
         if (this.hasAlignment)
         {
-            dataOutputStream.write(this.zTarget);
-            dataOutputStream.write(this.yTarget);
-            this.zReference.serialize(dataOutputStream, m3gVersion);
-            this.yReference.serialize(dataOutputStream, m3gVersion);
+            serialiser.write(this.zTarget);
+            serialiser.write(this.yTarget);
+            serialiser.writeReference(this.zReference);
+            serialiser.writeReference(this.yReference);
         }
     }
 

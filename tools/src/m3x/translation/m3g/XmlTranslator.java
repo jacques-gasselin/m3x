@@ -1,8 +1,9 @@
 package m3x.translation.m3g;
 
-import m3x.translation.m3g.xml.*;
 import java.util.Hashtable;
 import java.util.Vector;
+import m3x.translation.m3g.xml.AnimationControllerConverter;
+import m3x.translation.m3g.xml.AnimationTrackConverter;
 
 /**
  *

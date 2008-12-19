@@ -1,9 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.TriangleStripArray;
-import m3x.m3g.AbstractTestCase;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.Object3D.UserParameter;
 
 public class TriangleStripArrayTest extends AbstractTestCase
 {

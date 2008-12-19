@@ -1,11 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.Texture2D;
-import m3x.m3g.AbstractTestCase;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.Object3D.UserParameter;
-import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Vector3D;
 
 public class Texture2DTest extends AbstractTestCase
 {

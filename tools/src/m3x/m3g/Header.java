@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -35,13 +34,13 @@ public class Header implements M3GTypedObject
     }
 
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         byte[] version = new byte[2];
         deserialiser.readFully(version);
         if (!Arrays.equals(version, VERSION))
         {
-            throw new FileFormatException("Invalid M3G version!");
+            throw new IllegalArgumentException("Invalid M3G version!");
         }
         this.hasExternalReferences = deserialiser.readBoolean();
         this.totalFileSize = deserialiser.readInt();
@@ -49,15 +48,14 @@ public class Header implements M3GTypedObject
         this.authoringInformation = deserialiser.readUTF8();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        dataOutputStream.write(VERSION);
-        dataOutputStream.writeBoolean(this.hasExternalReferences);
-        M3GSupport.writeInt(dataOutputStream, this.totalFileSize);
-        M3GSupport.writeInt(dataOutputStream, this.approximateContentSize);
-        dataOutputStream.write(this.authoringInformation.getBytes("UTF-8"));
-        dataOutputStream.write('\0');
+        serialiser.write(VERSION);
+        serialiser.writeBoolean(this.hasExternalReferences);
+        serialiser.writeInt(this.totalFileSize);
+        serialiser.writeInt(this.approximateContentSize);
+        serialiser.writeUTF8(this.authoringInformation);
     }
 
     public boolean isHasExternalReferences()

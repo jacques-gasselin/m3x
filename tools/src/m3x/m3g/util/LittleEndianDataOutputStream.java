@@ -4,25 +4,38 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.zip.Adler32;
 
 public class LittleEndianDataOutputStream implements DataOutput
 {
-
-    private final DataOutputStream dos;
+    private final OutputStream originalStream;
+    private DataOutputStream dos;
 
     private LittleEndianDataOutputStream()
     {
-        this.dos = null;
-    }
-
-    public LittleEndianDataOutputStream(DataOutputStream dos)
-    {
-        this.dos = dos;
+        super();
+        originalStream = null;
     }
 
     public LittleEndianDataOutputStream(OutputStream out)
     {
-        this.dos = new DataOutputStream(out);
+        originalStream = out;
+        dos = new DataOutputStream(out);
+    }
+
+    public void startChecksum(Adler32 adler) throws IOException
+    {
+        //make sure the previous data is written
+        dos.flush();
+        dos = new DataOutputStream(
+                new Adler32FilterOutputStream(adler, originalStream));
+    }
+
+    public void endChecksum() throws IOException
+    {
+        //make sure all the checksum data is written
+        dos.flush();
+        dos = new DataOutputStream(originalStream);
     }
 
     public void write(byte[] b, int off, int len) throws IOException

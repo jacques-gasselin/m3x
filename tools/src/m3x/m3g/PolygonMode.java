@@ -34,22 +34,22 @@ public class PolygonMode extends Object3D implements M3GTypedObject
     public PolygonMode(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int culling, int shading, int winding,
         boolean twoSidedLightingEnabled, boolean localCameraLightingEnabled,
-        boolean perspectiveCorrectionEnabled) throws FileFormatException
+        boolean perspectiveCorrectionEnabled)
     {
         super(animationTracks, userParameters);
         if (culling < CULL_BACK || culling > CULL_NONE)
         {
-            throw new FileFormatException("Invalid culling mode: " + culling);
+            throw new IllegalArgumentException("Invalid culling mode: " + culling);
         }
         this.culling = culling;
         if (shading < SHADE_FLAT || shading > SHADE_SMOOTH)
         {
-            throw new FileFormatException("Invalid shading mode: " + shading);
+            throw new IllegalArgumentException("Invalid shading mode: " + shading);
         }
         this.shading = shading;
         if (winding < WINDING_CCW || winding > WINDING_CW)
         {
-            throw new FileFormatException("Invalid winding mode: " + winding);
+            throw new IllegalArgumentException("Invalid winding mode: " + winding);
         }
         this.winding = winding;
         this.twoSidedLightingEnabled = twoSidedLightingEnabled;
@@ -64,7 +64,7 @@ public class PolygonMode extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.culling = deserialiser.readUnsignedByte();
@@ -76,16 +76,16 @@ public class PolygonMode extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.culling);
-        dataOutputStream.write(this.shading);
-        dataOutputStream.write(this.winding);
-        dataOutputStream.writeBoolean(this.twoSidedLightingEnabled);
-        dataOutputStream.writeBoolean(this.localCameraLightingEnabled);
-        dataOutputStream.writeBoolean(this.perspectiveCorrectionEnabled);
+        super.serialize(serialiser);
+        serialiser.write(this.culling);
+        serialiser.write(this.shading);
+        serialiser.write(this.winding);
+        serialiser.writeBoolean(this.twoSidedLightingEnabled);
+        serialiser.writeBoolean(this.localCameraLightingEnabled);
+        serialiser.writeBoolean(this.perspectiveCorrectionEnabled);
     }
 
     public int getObjectType()

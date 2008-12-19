@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -23,21 +22,17 @@ public class ExternalReference implements M3GTypedObject
     }
 
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         this.uri = deserialiser.readUTF8();
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        if (this.uri != null)
-        {
-            // .. write the string data in raw UTF-8..
-            dataOutputStream.write(this.uri.getBytes("UTF-8"));
-            // .. and terminate it with a null byte
-            dataOutputStream.write('\0');
-        }
+        // .. write the string data in raw UTF-8..
+        // .. and terminate it with a null byte
+        serialiser.writeUTF8(this.uri);
     }
 
     public int getObjectType()

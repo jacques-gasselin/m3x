@@ -1,13 +1,10 @@
 package m3x.m3g.primitives;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.FileFormatException;
 import m3x.m3g.M3GDeserialiser;
+import m3x.m3g.M3GSerialiser;
 import m3x.m3g.M3GSerializable;
-import m3x.m3g.util.LittleEndianDataInputStream;
 
 public class ColorRGB implements M3GSerializable
 {
@@ -47,19 +44,19 @@ public class ColorRGB implements M3GSerializable
         return this.r == color.r && this.g == color.g && this.b == color.b;
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
-    {
-        dataOutputStream.write(this.r);
-        dataOutputStream.write(this.g);
-        dataOutputStream.write(this.b);
-    }
-
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         this.r = deserialiser.readUnsignedByte();
         this.g = deserialiser.readUnsignedByte();
         this.b = deserialiser.readUnsignedByte();
+    }
+
+    public void serialize(M3GSerialiser serialiser) throws IOException
+    {
+        serialiser.write(this.r);
+        serialiser.write(this.g);
+        serialiser.write(this.b);
     }
 
     public int getR()

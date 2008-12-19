@@ -1,9 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.VertexArray;
-import m3x.m3g.AbstractTestCase;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.Object3D.UserParameter;
 
 public class VertexArrayTest extends AbstractTestCase
 {

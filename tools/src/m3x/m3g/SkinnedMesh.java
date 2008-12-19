@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -79,21 +78,21 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         }
 
         public void deserialize(M3GDeserialiser deserialiser)
-            throws IOException, FileFormatException
+            throws IOException
         {
-            this.transformNode = (Node)deserialiser.readObjectReference();
+            this.transformNode = (Node)deserialiser.readReference();
             this.firstVertex = deserialiser.readInt();
             this.vertexCount = deserialiser.readInt();
             this.weight = deserialiser.readInt();
         }
 
-        public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        public void serialize(M3GSerialiser serialiser)
             throws IOException
         {
-            this.transformNode.serialize(dataOutputStream, m3gVersion);
-            M3GSupport.writeInt(dataOutputStream, this.firstVertex);
-            M3GSupport.writeInt(dataOutputStream, this.vertexCount);
-            M3GSupport.writeInt(dataOutputStream, this.weight);
+            serialiser.writeReference(getTransformNode());
+            serialiser.writeInt(this.firstVertex);
+            serialiser.writeInt(this.vertexCount);
+            serialiser.writeInt(this.weight);
         }
     }
     private Group skeleton;
@@ -103,7 +102,7 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         UserParameter[] userParameters, Matrix transform,
         boolean enableRendering, boolean enablePicking, byte alphaFactor,
         int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
-        Group skeleton, BoneReference[] boneReferences) throws FileFormatException
+        Group skeleton, BoneReference[] boneReferences)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
@@ -124,11 +123,12 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         return ObjectTypes.SKINNED_MESH;
     }
 
+    @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.skeleton = (Group)deserialiser.readObjectReference();
+        this.skeleton = (Group)deserialiser.readReference();
         int transformReferenceCount = deserialiser.readInt();
         this.boneReferences = new BoneReference[transformReferenceCount];
         for (int i = 0; i < this.boneReferences.length; i++)
@@ -138,15 +138,16 @@ public class SkinnedMesh extends Mesh implements M3GTypedObject
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.skeleton.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.boneReferences.length);
+        super.serialize(serialiser);
+        serialiser.writeReference(getSkeleton());
+        serialiser.writeInt(this.boneReferences.length);
         for (BoneReference boneReference : this.boneReferences)
         {
-            boneReference.serialize(dataOutputStream, m3gVersion);
+            boneReference.serialize(serialiser);
         }
     }
 

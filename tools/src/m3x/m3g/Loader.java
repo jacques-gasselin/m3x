@@ -27,7 +27,7 @@ public abstract class Loader
      * @throws IOException
      * @throws FileFormatException
      */
-    public static Object3D[] load(byte[] bytes) throws IOException, FileFormatException
+    public static Object3D[] load(byte[] bytes) throws IOException
     {
         return load(new ByteArrayInputStream(bytes));
     }
@@ -40,12 +40,12 @@ public abstract class Loader
      * @throws IOException
      * @throws FileFormatException
      */
-    public static Object3D[] load(InputStream inputStream) throws IOException, FileFormatException
+    public static Object3D[] load(InputStream inputStream) throws IOException
     {
         M3GDeserialiser deserialiser = new M3GDeserialiser();
         if (!deserialiser.verifyFileIdentifier(inputStream))
         {
-            throw new FileFormatException("wrong file identifier");
+            throw new IllegalStateException("wrong file identifier");
         }
 
         deserialiser.deserialise(inputStream);
@@ -53,27 +53,4 @@ public abstract class Loader
         return deserialiser.getRootObjects();
     }
 
-    /**
-     * Saves a M3GObject to a given stream.
-     *
-     * @param outputStream
-     * @param object
-     * @throws IOException
-     */
-    /*public static void save(OutputStream outputStream, M3GObject object) throws IOException
-    {
-        DataOutputStream dos = null;
-        try
-        {
-            dos = new DataOutputStream(outputStream);
-            object.serialize(dos, M3GObject.M3G_VERSION);
-        }
-        finally
-        {
-            if (dos != null)
-            {
-                dos.close();
-            }
-        }
-    }*/
 }

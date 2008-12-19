@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -228,7 +227,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast,
-        int componentCount, FloatKeyFrame[] keyFrames) throws FileFormatException
+        int componentCount, FloatKeyFrame[] keyFrames)
     {
         super(animationTracks, userParameters);
         assert (keyFrames != null);
@@ -249,20 +248,19 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         this.vectorScale = null;
     }
 
-    private static void validateRepeatMode(int repeatMode) throws FileFormatException
+    private static void validateRepeatMode(int repeatMode)
     {
         if (!REPEAT_MODES.contains(repeatMode))
         {
-            throw new FileFormatException("Invalid repeat mode: " + repeatMode);
+            throw new IllegalStateException("Invalid repeat mode: " + repeatMode);
         }
     }
 
     private static void validateInterpolationType(int interpolation)
-        throws FileFormatException
     {
         if (!INTERPOLATION_MODES.contains(interpolation))
         {
-            throw new FileFormatException("Invalid interpolation type: " + interpolation);
+            throw new IllegalStateException("Invalid interpolation type: " + interpolation);
         }
     }
 
@@ -275,7 +273,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast, int componentCount,
-        ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
+        ByteKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale)
     {
         super(animationTracks, userParameters);
         assert (keyFrames != null);
@@ -299,7 +297,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     public KeyframeSequence(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, int interpolation, int repeatMode,
         int duration, int validRangeFirst, int validRangeLast, int componentCount,
-        ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale) throws FileFormatException
+        ShortKeyFrame[] keyFrames, float[] vectorBias, float[] vectorScale)
     {
         super(animationTracks, userParameters);
         validateInterpolationType(interpolation);
@@ -321,7 +319,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.interpolation = deserialiser.readUnsignedByte();
@@ -382,7 +380,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
                 break;
 
             default:
-                throw new FileFormatException("Invalid encoding: " + this.encoding);
+                throw new IllegalStateException("Invalid encoding: " + this.encoding);
         }
     }
 
@@ -402,53 +400,53 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.interpolation);
-        dataOutputStream.write(this.repeatMode);
-        dataOutputStream.write(this.encoding);
-        M3GSupport.writeInt(dataOutputStream, this.duration);
-        M3GSupport.writeInt(dataOutputStream, this.validRangeFirst);
-        M3GSupport.writeInt(dataOutputStream, this.validRangeLast);
+        super.serialize(serialiser);
+        serialiser.write(this.interpolation);
+        serialiser.write(this.repeatMode);
+        serialiser.write(this.encoding);
+        serialiser.writeInt(this.duration);
+        serialiser.writeInt(this.validRangeFirst);
+        serialiser.writeInt(this.validRangeLast);
 
-        M3GSupport.writeInt(dataOutputStream, componentCount);
-        M3GSupport.writeInt(dataOutputStream, keyframeCount);
+        serialiser.writeInt(componentCount);
+        serialiser.writeInt(keyframeCount);
 
         switch (this.encoding)
         {
             case ENCODING_FLOATS:
                 for (FloatKeyFrame keyFrame : this.floatKeyFrames)
                 {
-                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    serialiser.writeInt(keyFrame.getTime());
                     for (float component : keyFrame.getVectorValue())
                     {
-                        M3GSupport.writeFloat(dataOutputStream, component);
+                        serialiser.writeFloat(component);
                     }
                 }
                 break;
 
             case ENCODING_BYTES:
-                writeBiasAndScale(dataOutputStream);
+                writeBiasAndScale(serialiser);
                 for (ByteKeyFrame keyFrame : this.byteKeyFrames)
                 {
-                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    serialiser.writeInt(keyFrame.getTime());
                     for (byte component : keyFrame.getVectorValue())
                     {
-                        dataOutputStream.write(component);
+                        serialiser.write(component);
                     }
                 }
                 break;
 
             case ENCODING_SHORTS:
-                writeBiasAndScale(dataOutputStream);
+                writeBiasAndScale(serialiser);
                 for (ShortKeyFrame keyFrame : this.shortKeyFrames)
                 {
-                    M3GSupport.writeInt(dataOutputStream, keyFrame.getTime());
+                    serialiser.writeInt(keyFrame.getTime());
                     for (short component : keyFrame.getVectorValue())
                     {
-                        M3GSupport.writeShort(dataOutputStream, component);
+                        serialiser.writeShort(component);
                     }
                 }
                 break;
@@ -518,16 +516,16 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         return this.vectorScale;
     }
 
-    private void writeBiasAndScale(DataOutputStream dataOutputStream)
+    private void writeBiasAndScale(M3GSerialiser serialiser)
         throws IOException
     {
         for (float component : this.vectorBias)
         {
-            M3GSupport.writeFloat(dataOutputStream, component);
+            serialiser.writeFloat(component);
         }
         for (float component : this.vectorScale)
         {
-            M3GSupport.writeFloat(dataOutputStream, component);
+            serialiser.writeFloat(component);
         }
     }
 }

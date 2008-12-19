@@ -44,35 +44,36 @@ public class Appearance extends Object3D implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.layer = deserialiser.readByte();
-        this.compositingMode = (CompositingMode)deserialiser.readObjectReference();
-        this.fog = (Fog)deserialiser.readObjectReference();
-        this.polygonMode = (PolygonMode)deserialiser.readObjectReference();
-        this.material = (Material)deserialiser.readObjectReference();
+        this.compositingMode = (CompositingMode)deserialiser.readReference();
+        this.fog = (Fog)deserialiser.readReference();
+        this.polygonMode = (PolygonMode)deserialiser.readReference();
+        this.material = (Material)deserialiser.readReference();
         int texturesLength = deserialiser.readInt();
         this.textures = new Texture2D[texturesLength];
         for (int i = 0; i < this.textures.length; i++)
         {
-            this.textures[i] = (Texture2D)deserialiser.readObjectReference();
+            this.textures[i] = (Texture2D)deserialiser.readReference();
         }
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.writeByte(this.layer);
-        this.compositingMode.serialize(dataOutputStream, m3gVersion);
-        this.fog.serialize(dataOutputStream, m3gVersion);
-        this.polygonMode.serialize(dataOutputStream, m3gVersion);
-        this.material.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.textures.length);
-        for (int i = 0; i < this.textures.length; i++) {
-            this.textures[i].serialize(dataOutputStream, m3gVersion);
+        super.serialize(serialiser);
+        serialiser.writeByte(this.layer);
+        serialiser.writeReference(getCompositingMode());
+        serialiser.writeReference(getFog());
+        serialiser.writeReference(getPolygonMode());
+        serialiser.writeReference(getMaterial());
+        serialiser.writeInt(getTextureCount());
+        for (int i = 0; i < getTextureCount(); ++i)
+        {
+            serialiser.writeReference(getTexture(i));
         }
     }
 
@@ -106,8 +107,13 @@ public class Appearance extends Object3D implements M3GTypedObject
         return this.material;
     }
 
-    public Texture2D[] getTextures()
+    public int getTextureCount()
     {
-        return this.textures;
+        return this.textures.length;
+    }
+
+    public Texture2D getTexture(int index)
+    {
+        return this.textures[index];
     }
 }

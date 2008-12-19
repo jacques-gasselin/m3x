@@ -1,19 +1,19 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 
 /**
  * See http://java2me.org/m3g/file-format.html#AnimationController<br>
-    Float32       speed;<br>
-    Float32       weight;<br>
-    Int32         activeIntervalStart;<br>
-    Int32         activeIntervalEnd;<br>
-    Float32       referenceSequenceTime;<br>
-    Int32         referenceWorldTime;<br>
-
+ *  Float32       speed;<br>
+ *  Float32       weight;<br>
+ *  Int32         activeIntervalStart;<br>
+ *  Int32         activeIntervalEnd;<br>
+ *  Float32       referenceSequenceTime;<br>
+ *  Int32         referenceWorldTime;<br>
+ *
  * @author jsaarinen
+ * @author jgasseli
  *
  */
 public class AnimationController extends Object3D implements M3GTypedObject
@@ -51,30 +51,30 @@ public class AnimationController extends Object3D implements M3GTypedObject
      */
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.setSpeed(deserialiser.readFloat());
-        this.setWeight(deserialiser.readFloat());
-        this.setActiveIntervalStart(deserialiser.readInt());
-        this.setActiveIntervalEnd(deserialiser.readInt());
-        this.setReferenceSequenceTime(deserialiser.readFloat());
-        this.setReferenceWorldTime(deserialiser.readInt());
+        setSpeed(deserialiser.readFloat());
+        setWeight(deserialiser.readFloat());
+        setActiveIntervalStart(deserialiser.readInt());
+        setActiveIntervalEnd(deserialiser.readInt());
+        setReferenceSequenceTime(deserialiser.readFloat());
+        setReferenceWorldTime(deserialiser.readInt());
     }
 
     /**
      * Serialization done as specified in the class JavaDoc.
      */
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion) throws IOException
+    public void serialize(M3GSerialiser serialiser) throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeFloat(dataOutputStream,this.getSpeed());
-        M3GSupport.writeFloat(dataOutputStream,this.getWeight());
-        M3GSupport.writeInt(dataOutputStream,this.getActiveIntervalStart());
-        M3GSupport.writeInt(dataOutputStream,this.getActiveIntervalEnd());
-        M3GSupport.writeFloat(dataOutputStream,this.getReferenceSequenceTime());
-        M3GSupport.writeInt(dataOutputStream,this.getReferenceWorldTime());
+        super.serialize(serialiser);
+        serialiser.writeFloat(getSpeed());
+        serialiser.writeFloat(getWeight());
+        serialiser.writeInt(getActiveIntervalStart());
+        serialiser.writeInt(getActiveIntervalEnd());
+        serialiser.writeFloat(getReferenceSequenceTime());
+        serialiser.writeInt(getReferenceWorldTime());
     }
 
     public int getObjectType()

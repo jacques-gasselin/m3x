@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 
@@ -33,7 +32,6 @@ public class Image2D extends Object3D implements M3GTypedObject
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         int format, int width, int height, byte[] palette, byte[] pixels)
-        throws FileFormatException
     {
         super(animationTracks, userParameters);
         validateFormat(format);
@@ -44,7 +42,7 @@ public class Image2D extends Object3D implements M3GTypedObject
     }
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        int format, int width, int height) throws FileFormatException
+        int format, int width, int height)
     {
         super(animationTracks, userParameters);
         validateFormat(format);
@@ -54,26 +52,25 @@ public class Image2D extends Object3D implements M3GTypedObject
         this.pixels = null;
     }
 
-    private void validateFormat(int format) throws FileFormatException
+    private void validateFormat(int format)
     {
         if (format < FORMAT_ALPHA || format > FORMAT_RGBA)
         {
-            throw new FileFormatException("Invalid image format: " + format);
+            throw new IllegalArgumentException("Invalid image format: " + format);
         }
         this.format = format;
     }
 
     private void validateWidthAndHeight(int width, int height)
-        throws FileFormatException
     {
         if (width <= 0)
         {
-            throw new FileFormatException("Invalid width: " + width);
+            throw new IllegalArgumentException("Invalid width: " + width);
         }
         this.width = width;
         if (height <= 0)
         {
-            throw new FileFormatException("Invalid height: " + height);
+            throw new IllegalArgumentException("Invalid height: " + height);
         }
         this.height = height;
     }
@@ -83,8 +80,9 @@ public class Image2D extends Object3D implements M3GTypedObject
         super();
     }
 
+    @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         this.format = deserialiser.readUnsignedByte();
@@ -94,18 +92,18 @@ public class Image2D extends Object3D implements M3GTypedObject
             this.format != FORMAT_RGB &&
             this.format != FORMAT_RGBA)
         {
-            throw new FileFormatException("Invalid Image2D format: " + this.format);
+            throw new IllegalArgumentException("Invalid Image2D format: " + this.format);
         }
         this.isMutable = deserialiser.readBoolean();
         this.width = deserialiser.readInt();
         if (this.width <= 0)
         {
-            throw new FileFormatException("Invalid Image2D width: " + this.width);
+            throw new IllegalArgumentException("Invalid Image2D width: " + this.width);
         }
         this.height = deserialiser.readInt();
         if (this.height <= 0)
         {
-            throw new FileFormatException("Invalid Image2D height: " + this.height);
+            throw new IllegalArgumentException("Invalid Image2D height: " + this.height);
         }
         if (this.isMutable == false)
         {
@@ -118,20 +116,21 @@ public class Image2D extends Object3D implements M3GTypedObject
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.format);
-        dataOutputStream.writeBoolean(this.isMutable);
-        M3GSupport.writeInt(dataOutputStream, this.width);
-        M3GSupport.writeInt(dataOutputStream, this.height);
+        super.serialize(serialiser);
+        serialiser.write(this.format);
+        serialiser.writeBoolean(this.isMutable);
+        serialiser.writeInt(this.width);
+        serialiser.writeInt(this.height);
         if (this.isMutable == false)
         {
-            M3GSupport.writeInt(dataOutputStream, this.palette.length);
-            dataOutputStream.write(this.palette);
-            M3GSupport.writeInt(dataOutputStream, this.pixels.length);
-            dataOutputStream.write(this.pixels);
+            serialiser.writeInt(this.palette.length);
+            serialiser.write(this.palette);
+            serialiser.writeInt(this.pixels.length);
+            serialiser.write(this.pixels);
         }
     }
 

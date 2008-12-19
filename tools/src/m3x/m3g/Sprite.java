@@ -51,11 +51,11 @@ public class Sprite extends Node implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.image = (Image2D)deserialiser.readObjectReference();
-        this.appearance = (Appearance)deserialiser.readObjectReference();
+        this.image = (Image2D)deserialiser.readReference();
+        this.appearance = (Appearance)deserialiser.readReference();
         this.isScaled = deserialiser.readBoolean();
         this.cropX = deserialiser.readInt();
         this.cropY = deserialiser.readInt();
@@ -64,17 +64,17 @@ public class Sprite extends Node implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.image.serialize(dataOutputStream, m3gVersion);
-        this.appearance.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.writeBoolean(this.isScaled);
-        M3GSupport.writeInt(dataOutputStream, this.cropX);
-        M3GSupport.writeInt(dataOutputStream, this.cropY);
-        M3GSupport.writeInt(dataOutputStream, this.cropWidth);
-        M3GSupport.writeInt(dataOutputStream, this.cropHeight);
+        super.serialize(serialiser);
+        serialiser.writeReference(getImage());
+        serialiser.writeReference(getAppearance());
+        serialiser.writeBoolean(isScaled);
+        serialiser.writeInt(this.cropX);
+        serialiser.writeInt(this.cropY);
+        serialiser.writeInt(this.cropWidth);
+        serialiser.writeInt(this.cropHeight);
     }
 
     public int getObjectType()

@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
@@ -62,10 +61,10 @@ public class Texture2D extends Transformable implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.texture = (Image2D)deserialiser.readObjectReference();
+        this.texture = (Image2D)deserialiser.readReference();
         this.blendColor = new ColorRGB();
         this.blendColor.deserialize(deserialiser);
         this.blending = deserialiser.readUnsignedByte();
@@ -76,17 +75,17 @@ public class Texture2D extends Transformable implements M3GTypedObject
     }
 
     @Override
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.texture.serialize(dataOutputStream, m3gVersion);
-        this.blendColor.serialize(dataOutputStream, m3gVersion);
-        dataOutputStream.write(this.blending);
-        dataOutputStream.write(this.wrappingS);
-        dataOutputStream.write(this.wrappingT);
-        dataOutputStream.write(this.levelFilter);
-        dataOutputStream.write(this.imageFilter);
+        super.serialize(serialiser);
+        serialiser.writeReference(this.texture);
+        this.blendColor.serialize(serialiser);
+        serialiser.write(this.blending);
+        serialiser.write(this.wrappingS);
+        serialiser.write(this.wrappingT);
+        serialiser.write(this.levelFilter);
+        serialiser.write(this.imageFilter);
     }
 
     public int getObjectType()

@@ -60,17 +60,17 @@ public class MorphingMesh extends Mesh
         }
 
         public void deserialize(M3GDeserialiser deserialiser)
-            throws IOException, FileFormatException
+            throws IOException
         {
-            this.morphTarget = (VertexBuffer)deserialiser.readObjectReference();
+            this.morphTarget = (VertexBuffer)deserialiser.readReference();
             this.initialWeight = deserialiser.readFloat();
         }
 
-        public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+        public void serialize(M3GSerialiser serialiser)
             throws IOException
         {
-            this.morphTarget.serialize(dataOutputStream, m3gVersion);
-            M3GSupport.writeFloat(dataOutputStream, this.initialWeight);
+            serialiser.writeReference(getMorphTarget());
+            serialiser.writeFloat(initialWeight);
         }
     }
     
@@ -80,7 +80,7 @@ public class MorphingMesh extends Mesh
         UserParameter[] userParameters, Matrix transform,
         boolean enableRendering, boolean enablePicking, byte alphaFactor,
         int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
-        TargetBuffer[] morphTargets) throws FileFormatException
+        TargetBuffer[] morphTargets)
     {
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
@@ -96,7 +96,7 @@ public class MorphingMesh extends Mesh
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
         int morphTargetCount = deserialiser.readInt();
@@ -108,14 +108,15 @@ public class MorphingMesh extends Mesh
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.morphTargets.length);
+        super.serialize(serialiser);
+        serialiser.writeInt(this.morphTargets.length);
         for (TargetBuffer targetBuffer : this.morphTargets)
         {
-            targetBuffer.serialize(dataOutputStream, m3gVersion);
+            targetBuffer.serialize(serialiser);
         }
     }
 

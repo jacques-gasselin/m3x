@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -45,10 +44,17 @@ public class Mesh extends Node implements M3GTypedObject
         }
 
         public void deserialize(M3GDeserialiser deserialiser)
-            throws IOException, FileFormatException
+            throws IOException
         {
-            this.indexBuffer = (IndexBuffer)deserialiser.readObjectReference();
-            this.appearance = (Appearance)deserialiser.readObjectReference();
+            this.indexBuffer = (IndexBuffer)deserialiser.readReference();
+            this.appearance = (Appearance)deserialiser.readReference();
+        }
+
+        public void serialize(M3GSerialiser serialiser)
+            throws IOException
+        {
+            serialiser.writeReference(getIndexBuffer());
+            serialiser.writeReference(getAppearance());
         }
 
         @Override
@@ -65,13 +71,6 @@ public class Mesh extends Node implements M3GTypedObject
             SubMesh another = (SubMesh) obj;
             return this.indexBuffer.equals(another.indexBuffer) &&
                 this.appearance.equals(another.appearance);
-        }
-
-        public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
-            throws IOException
-        {
-            this.indexBuffer.serialize(dataOutputStream, m3gVersion);
-            this.appearance.serialize(dataOutputStream, m3gVersion);
         }
     }
 
@@ -99,10 +98,10 @@ public class Mesh extends Node implements M3GTypedObject
 
     @Override
     public void deserialize(M3GDeserialiser deserialiser)
-        throws IOException, FileFormatException
+        throws IOException
     {
         super.deserialize(deserialiser);
-        this.vertexBuffer = (VertexBuffer)deserialiser.readObjectReference();
+        this.vertexBuffer = (VertexBuffer)deserialiser.readReference();
         this.subMeshCount = deserialiser.readInt();
         this.subMeshes = new SubMesh[subMeshCount];
         for (int i = 0; i < this.subMeshes.length; i++)
@@ -112,15 +111,16 @@ public class Mesh extends Node implements M3GTypedObject
         }
     }
 
-    public void serialize(DataOutputStream dataOutputStream, String m3gVersion)
+    @Override
+    public void serialize(M3GSerialiser serialiser)
         throws IOException
     {
-        super.serialize(dataOutputStream, m3gVersion);
-        this.vertexBuffer.serialize(dataOutputStream, m3gVersion);
-        M3GSupport.writeInt(dataOutputStream, this.subMeshCount);
+        super.serialize(serialiser);
+        serialiser.writeReference(getVertexBuffer());
+        serialiser.writeInt(getSubmeshCount());
         for (SubMesh subMesh : this.subMeshes)
         {
-            subMesh.serialize(dataOutputStream, m3gVersion);
+            subMesh.serialize(serialiser);
         }
     }
 

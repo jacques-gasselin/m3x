@@ -1,10 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.Camera;
-import m3x.m3g.AbstractTestCase;
-import m3x.m3g.M3GSupport;
-import m3x.m3g.Object3D.UserParameter;
-import m3x.m3g.primitives.Matrix;
 
 public class CameraTest extends AbstractTestCase
 {
