@@ -1,8 +1,8 @@
 package m3x.m3g.primitives;
 
-import m3x.m3g.*;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import m3x.m3g.Deserialiser;
+import m3x.m3g.Serialiser;
 
 /**
  * All M3G objects that can be serialized will implement
