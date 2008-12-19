@@ -17,5 +17,4 @@ public class Adler32FilterInputStream extends FilterInputStream
         super(in);
         this.adler = adler;
     }
-
 }
