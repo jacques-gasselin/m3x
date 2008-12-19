@@ -24,7 +24,7 @@ public interface M3GSerializable
      * @throws FileFormatException
      *  When the input data was somehow invalid from the M3G specification point of view.
      */
-    void deserialize(M3GDeserialiser deserialiser)
+    void deserialize(Deserialiser deserialiser)
         throws IOException;
   
     /**
@@ -42,6 +42,6 @@ public interface M3GSerializable
      * @throws IOException
      *  When something nasty happened.
      */
-    void serialize(M3GSerialiser serialiser)
+    void serialize(Serialiser serialiser)
         throws IOException;
 }

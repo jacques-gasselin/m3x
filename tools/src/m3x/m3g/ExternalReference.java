@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 /**
@@ -21,13 +22,13 @@ public class ExternalReference implements M3GTypedObject
         super();
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         this.uri = deserialiser.readUTF8();
     }
 
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         // .. write the string data in raw UTF-8..

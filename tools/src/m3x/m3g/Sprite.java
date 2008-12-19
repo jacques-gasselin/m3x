@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -50,7 +51,7 @@ public class Sprite extends Node implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -64,7 +65,7 @@ public class Sprite extends Node implements M3GTypedObject
     }
 
     @Override
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         super.serialize(serialiser);

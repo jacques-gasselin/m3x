@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -33,7 +34,7 @@ public class Header implements M3GTypedObject
         super();
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         byte[] version = new byte[2];
@@ -48,7 +49,7 @@ public class Header implements M3GTypedObject
         this.authoringInformation = deserialiser.readUTF8();
     }
 
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         serialiser.write(VERSION);

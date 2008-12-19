@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 
@@ -50,7 +51,7 @@ public class AnimationController extends Object3D implements M3GTypedObject
      * @throws FileFormatException
      */
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -66,7 +67,7 @@ public class AnimationController extends Object3D implements M3GTypedObject
      * Serialization done as specified in the class JavaDoc.
      */
     @Override
-    public void serialize(M3GSerialiser serialiser) throws IOException
+    public void serialize(Serialiser serialiser) throws IOException
     {
         super.serialize(serialiser);
         serialiser.writeFloat(getSpeed());

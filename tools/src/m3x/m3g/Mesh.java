@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -43,14 +44,14 @@ public class Mesh extends Node implements M3GTypedObject
             return this.appearance;
         }
 
-        public void deserialize(M3GDeserialiser deserialiser)
+        public void deserialize(Deserialiser deserialiser)
             throws IOException
         {
             this.indexBuffer = (IndexBuffer)deserialiser.readReference();
             this.appearance = (Appearance)deserialiser.readReference();
         }
 
-        public void serialize(M3GSerialiser serialiser)
+        public void serialize(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(getIndexBuffer());
@@ -97,7 +98,7 @@ public class Mesh extends Node implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -112,7 +113,7 @@ public class Mesh extends Node implements M3GTypedObject
     }
 
     @Override
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         super.serialize(serialiser);

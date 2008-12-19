@@ -26,7 +26,7 @@ public abstract class Saver
             String version, String author)
         throws IOException
     {
-        M3GSerialiser serialiser = new M3GSerialiser(version, author);
+        Serialiser serialiser = new Serialiser(version, author);
         serialiser.writeFileIdentifier(outputStream);
         serialiser.serialise(outputStream, roots);
     }

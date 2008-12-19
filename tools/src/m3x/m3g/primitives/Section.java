@@ -10,9 +10,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import m3x.m3g.M3GDeserialiser;
-import m3x.m3g.M3GObjectFactory;
-import m3x.m3g.M3GSerialiser;
+import m3x.m3g.Deserialiser;
+import m3x.m3g.Serialiser;
 import m3x.m3g.M3GSerializable;
 import m3x.m3g.Object3D;
 
@@ -115,7 +114,7 @@ public class Section
         return serializedBytes;
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         this.compressionScheme = deserialiser.readUnsignedByte();
@@ -184,7 +183,7 @@ public class Section
                 final int length = deserialiser.readInt();
                 try
                 {
-                    Object3D obj = (Object3D)M3GObjectFactory.getInstance(objectType);
+                    Object3D obj = (Object3D)ObjectFactory.getInstance(objectType);
                     obj.deserialize(deserialiser);
                     if (objectType == 0)
                     {
@@ -233,7 +232,7 @@ public class Section
      * fields of this object are written into the output stream,
      * integers are converted into little endian format.
      */
-    public void serialize(M3GSerialiser serialiser, M3GSerializable[] objects)
+    public void serialize(Serialiser serialiser, M3GSerializable[] objects)
         throws IOException
     {
         //serialise the objects to a byte array

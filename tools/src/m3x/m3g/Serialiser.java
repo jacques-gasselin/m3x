@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,14 +18,14 @@ import m3x.m3g.util.LittleEndianDataOutputStream;
  *
  * @author jgasseli
  */
-public class M3GSerialiser implements DataOutput
+public class Serialiser implements DataOutput
 {
     private String version;
     private String author;
     private Stack<LittleEndianDataOutputStream> outputStreams;
     private Hashtable<Object, Integer> objectToIndexMap;
     
-    public M3GSerialiser(String version, String author)
+    public Serialiser(String version, String author)
     {
         this.version = version;
         this.author = author;

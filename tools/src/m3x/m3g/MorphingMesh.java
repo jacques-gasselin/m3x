@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -59,14 +60,14 @@ public class MorphingMesh extends Mesh
                    this.initialWeight == another.initialWeight;
         }
 
-        public void deserialize(M3GDeserialiser deserialiser)
+        public void deserialize(Deserialiser deserialiser)
             throws IOException
         {
             this.morphTarget = (VertexBuffer)deserialiser.readReference();
             this.initialWeight = deserialiser.readFloat();
         }
 
-        public void serialize(M3GSerialiser serialiser)
+        public void serialize(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(getMorphTarget());
@@ -95,7 +96,7 @@ public class MorphingMesh extends Mesh
     }
 
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -109,7 +110,7 @@ public class MorphingMesh extends Mesh
     }
 
     @Override
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         super.serialize(serialiser);

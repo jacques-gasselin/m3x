@@ -2,8 +2,8 @@ package m3x.m3g.primitives;
 
 import java.io.IOException;
 
-import m3x.m3g.M3GDeserialiser;
-import m3x.m3g.M3GSerialiser;
+import m3x.m3g.Deserialiser;
+import m3x.m3g.Serialiser;
 import m3x.m3g.M3GSerializable;
 
 public class Vector3D implements M3GSerializable
@@ -21,7 +21,7 @@ public class Vector3D implements M3GSerializable
     {
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         x = deserialiser.readFloat();
@@ -29,7 +29,7 @@ public class Vector3D implements M3GSerializable
         z = deserialiser.readFloat();
     }
 
-    public void serialize(M3GSerialiser serialiser) throws IOException
+    public void serialize(Serialiser serialiser) throws IOException
     {
         serialiser.writeFloat(x);
         serialiser.writeFloat(y);

@@ -50,7 +50,7 @@ public abstract class Object3D implements M3GSerializable
             return this.parameterValue;
         }
 
-        public void deserialize(M3GDeserialiser deserialiser)
+        public void deserialize(Deserialiser deserialiser)
             throws IOException
         {
             this.parameterID = deserialiser.readInt();
@@ -59,7 +59,7 @@ public abstract class Object3D implements M3GSerializable
             deserialiser.readFully(this.parameterValue);
         }
 
-        public void serialize(M3GSerialiser serialiser)
+        public void serialize(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeInt(this.parameterID);
@@ -95,7 +95,7 @@ public abstract class Object3D implements M3GSerializable
         this.animationTracks = new Vector<AnimationTrack>();
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         this.userID = deserialiser.readInt();
@@ -114,7 +114,7 @@ public abstract class Object3D implements M3GSerializable
         }
     }
 
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         serialiser.writeInt(this.userID);

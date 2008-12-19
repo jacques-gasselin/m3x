@@ -1,16 +1,18 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
+
+import m3x.m3g.*;
 
 /**
  * A factory class that creates M3G objects.
  * 
  * @author jsaarinen
  */
-public abstract class M3GObjectFactory
+abstract class ObjectFactory
 {
     /**
      * Hides the constructor for Utility class
      */
-    private M3GObjectFactory()
+    private ObjectFactory()
     {
 
     }

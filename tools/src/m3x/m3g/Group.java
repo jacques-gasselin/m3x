@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -30,7 +31,7 @@ public class Group extends Node implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -52,7 +53,7 @@ public class Group extends Node implements M3GTypedObject
     }
 
     @Override
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         super.serialize(serialiser);

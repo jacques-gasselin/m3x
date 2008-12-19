@@ -1,4 +1,4 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
 /**
  * Object identifiers enumerated. See

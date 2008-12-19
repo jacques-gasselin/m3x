@@ -1,4 +1,4 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
 /**
  * See http://www.java2me.org/m3g/file-format.html#FileIdentifier

@@ -2,8 +2,8 @@ package m3x.m3g.primitives;
 
 import java.io.IOException;
 
-import m3x.m3g.M3GDeserialiser;
-import m3x.m3g.M3GSerialiser;
+import m3x.m3g.Deserialiser;
+import m3x.m3g.Serialiser;
 import m3x.m3g.M3GSerializable;
 
 /**
@@ -53,7 +53,7 @@ public class Matrix implements M3GSerializable
     {
     }
 
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         this.matrix = new float[MATRIX_LENGTH];
@@ -66,7 +66,7 @@ public class Matrix implements M3GSerializable
     /**
      * Writes float array to the stream.
      */
-    public void serialize(M3GSerialiser serialiser) throws java.io.IOException
+    public void serialize(Serialiser serialiser) throws java.io.IOException
     {
         for (float element : this.matrix)
         {

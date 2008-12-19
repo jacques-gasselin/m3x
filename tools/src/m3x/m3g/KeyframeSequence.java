@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -318,7 +319,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void deserialize(M3GDeserialiser deserialiser)
+    public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialize(deserialiser);
@@ -384,7 +385,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         }
     }
 
-    private void readBiasAndScale(M3GDeserialiser deserialiser) throws IOException
+    private void readBiasAndScale(Deserialiser deserialiser) throws IOException
     {
         this.vectorBias = new float[this.componentCount];
         for (int i = 0; i < this.componentCount; i++)
@@ -400,7 +401,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
     }
 
     @Override
-    public void serialize(M3GSerialiser serialiser)
+    public void serialize(Serialiser serialiser)
         throws IOException
     {
         super.serialize(serialiser);
@@ -516,7 +517,7 @@ public class KeyframeSequence extends Object3D implements M3GTypedObject
         return this.vectorScale;
     }
 
-    private void writeBiasAndScale(M3GSerialiser serialiser)
+    private void writeBiasAndScale(Serialiser serialiser)
         throws IOException
     {
         for (float component : this.vectorBias)

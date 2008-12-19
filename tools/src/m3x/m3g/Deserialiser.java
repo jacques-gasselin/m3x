@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
@@ -13,13 +14,13 @@ import m3x.m3g.util.LittleEndianDataInputStream;
  *
  * @author jgasseli
  */
-public class M3GDeserialiser implements DataInput
+public class Deserialiser implements DataInput
 {
     private Vector<Object3D> rootObjects;
     private Vector<Object3D> objects;
     private Stack<LittleEndianDataInputStream> inputStreams;
     
-    public M3GDeserialiser()
+    public Deserialiser()
     {
         rootObjects = new Vector<Object3D>();
         objects = new Vector<Object3D>();
