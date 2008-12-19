@@ -57,6 +57,15 @@ public class Serialiser implements DataOutput
         return value;
     }
 
+    public void serialiseSingle(OutputStream out, Serializable object) throws IOException
+    {
+        pushOutputStream(out);
+
+        object.serialize(this);
+
+        popOutputStream();
+    }
+
     public void serialise(OutputStream out, Object3D[] roots) throws IOException
     {
         pushOutputStream(out);

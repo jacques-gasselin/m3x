@@ -16,9 +16,7 @@ public class ColorRGBATest extends AbstractTestCase
             //Serialise
             Serialiser serialiser = new Serialiser("1.0", null);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            serialiser.pushOutputStream(out);
-            color.serialize(serialiser);
-            serialiser.popOutputStream();
+            serialiser.serialiseSingle(out, color);
 
             byte[] serialized = out.toByteArray();
 
