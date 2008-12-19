@@ -9,7 +9,7 @@ package m3x.m3g.primitives;
  */
 public interface ObjectTypes
 {
-    public static final int OBJECT_HEADER = 0;
+    public static final int HEADER = 0;
     public static final int ANIMATION_CONTROLLER = 1;
     public static final int ANIMATION_TRACK = 2;
     public static final int APPEARANCE = 3;

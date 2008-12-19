@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
+import m3x.m3g.primitives.Section;
 import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
@@ -58,11 +59,22 @@ public class Deserialiser implements DataInput
         return Arrays.equals(fileIdentifier, bytes);
     }
 
-    public void deserialise(InputStream stream)
+    public void deserialise(InputStream stream) throws IOException
     {
         pushInputStream(stream);
 
-        //FIXME do the actual decoding here.
+        while (true)
+        {
+            try
+            {
+                Section section = new Section();
+                section.deserialize(this);
+            }
+            catch (EOFException eof)
+            {
+                break;
+            }
+        }
 
         popInputStream();
     }

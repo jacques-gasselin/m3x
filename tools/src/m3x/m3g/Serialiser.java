@@ -61,14 +61,14 @@ public class Serialiser implements DataOutput
     {
         pushOutputStream(out);
 
-        Section headerSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32);
+        Section headerSection = new Section(Section.UNCOMPRESSED_ADLER32);
         //add an object index for the header object.
         Header headerObject = new Header();
         getObjectIndex(headerObject);
 
 
         //write out content to the file
-        Section contentSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32);
+        Section contentSection = new Section(Section.UNCOMPRESSED_ADLER32);
         //get the objects in leaf first order
         List<Serializable> lfoObjects = getLeafFirstOrderList(roots);
         Serializable[] objects = lfoObjects.toArray(null);

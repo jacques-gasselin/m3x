@@ -2,17 +2,14 @@ package m3x.m3g.primitives;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.primitives.Serializable;
 import m3x.m3g.Object3D;
 
 
@@ -29,11 +26,11 @@ public class Section
     /**
      * Enum for this.objects being not compressed.
      */
-    public static final int COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 = 0;
+    public static final int UNCOMPRESSED_ADLER32 = 0;
     /**
      * Enum for this.objects being zlib compressed.
      */
-    public static final int COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32 = 1;
+    public static final int ZLIB_32K_COMPRESSED_ADLER32 = 1;
     /**
      * Either of the previous two "enums".
      */
@@ -58,78 +55,31 @@ public class Section
      *  Whether to compress or not?
      * @throws IOException
      */
-    public Section(byte compressionScheme)
+    public Section(int compressionScheme)
     {
-        if (compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
-            compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
-        {
-            throw new IllegalArgumentException("invalid compression scheme");
-        }
+        verifyCompressionScheme(compressionScheme);
         this.compressionScheme = compressionScheme;
     }
 
-    /**
-     * Serializes a list of objects to a byte array.
-     *
-     * @param m3gVersion
-     * @return
-     * @throws IOException
-     */
-    private byte[] serialize(String m3gVersion) throws IOException
+    private void verifyCompressionScheme(int compressionScheme)
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        /*for (M3GSerializable object : this.objects)
+        if (compressionScheme != UNCOMPRESSED_ADLER32 &&
+            compressionScheme != ZLIB_32K_COMPRESSED_ADLER32)
         {
-            object.serialize(dos, m3gVersion);
-        }*/
-        dos.close();
-        byte[] serializedBytes = baos.toByteArray();
-        this.uncompressedLength = serializedBytes.length;
-        return serializedBytes;
-    }
-
-    /**
-     * Compresses ObjectChunk objects one at a time and returns the data in array
-     *
-     * @param m3gVersion
-     * @return
-     *  The compressed data block.
-     * @throws IOException
-     *  When compression failed for some reason.
-     */
-    private byte[] serializeAndCompress(String m3gVersion)
-        throws IOException
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DeflaterOutputStream dos = new DeflaterOutputStream(baos);
-        /*for (M3GSerializable object : this.objects)
-        {
-            // compress one object at a time
-            byte[] serializedObject = M3GSupport.objectToBytes(object);
-            dos.write(serializedObject, 0, serializedObject.length);
-        }*/
-        dos.close();
-        byte[] serializedBytes = baos.toByteArray();
-        return serializedBytes;
+            throw new IllegalArgumentException("invalid compression scheme");
+        }
     }
 
     public void deserialize(Deserialiser deserialiser)
         throws IOException
     {
         this.compressionScheme = deserialiser.readUnsignedByte();
-        if (this.compressionScheme != COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32 &&
-            this.compressionScheme != COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
-        {
-            throw new IllegalStateException("Invalid compression scheme: " + this.compressionScheme);
-        }
-
+        verifyCompressionScheme(compressionScheme);
         this.totalSectionLength = deserialiser.readInt();
         if (this.totalSectionLength <= 0)
         {
             throw new IllegalStateException("Invalid total section length: " + this.totalSectionLength);
         }
-
         this.uncompressedLength = deserialiser.readInt();
         if (this.uncompressedLength <= 0)
         {
@@ -137,8 +87,8 @@ public class Section
         }
 
         // read Section.objects bytes
-        byte[] objectsAsBytes = new byte[this.uncompressedLength];
-        if (this.compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+        byte[] objectData = new byte[this.uncompressedLength];
+        if (this.compressionScheme == ZLIB_32K_COMPRESSED_ADLER32)
         {
             int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
             byte[] compressedData = new byte[compressedLength];
@@ -148,8 +98,8 @@ public class Section
             inflater.setInput(compressedData);
             try
             {
-                int n = inflater.inflate(objectsAsBytes);
-                if (n != objectsAsBytes.length)
+                int n = inflater.inflate(objectData);
+                if (n != objectData.length)
                 {
                     throw new IOException("Decompression failed!");
                 }
@@ -163,41 +113,34 @@ public class Section
         else
         {
             // uncompressed, just read the array
-            deserialiser.readFully(objectsAsBytes);
+            deserialiser.readFully(objectData);
             //this.calculateChecksum(objectsAsBytes);
         }
 
-        int checksumFromStream = deserialiser.readInt();
+        final int checksumFromStream = deserialiser.readInt();
         /*if (this.checksum != checksumFromStream)
         {
             throw new IllegalStateException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);
         }*/
 
         // build ObjectChunk[] this.objectsAsBytes
-        deserialiser.pushInputStream(new ByteArrayInputStream(objectsAsBytes));
+        deserialiser.pushInputStream(new ByteArrayInputStream(objectData));
         while (true)
         {
             try
             {
                 final int objectType = deserialiser.readUnsignedByte();
                 final int length = deserialiser.readInt();
-                try
+                Serializable obj = ObjectFactory.getInstance(objectType);
+                obj.deserialize(deserialiser);
+                if (objectType == 0)
                 {
-                    Object3D obj = (Object3D)ObjectFactory.getInstance(objectType);
-                    obj.deserialize(deserialiser);
-                    if (objectType == 0)
-                    {
-                        //add a null object instead of the Header object.
-                        deserialiser.addObject(null);
-                    }
-                    else
-                    {
-                        deserialiser.addObject(obj);
-                    }
+                    //add a null object instead of the Header object.
+                    deserialiser.addObject(null);
                 }
-                catch (IllegalArgumentException e)
+                else
                 {
-                    throw new IllegalStateException(e);
+                    deserialiser.addObject((Object3D)obj);
                 }
             }
             catch (EOFException e)
@@ -246,7 +189,7 @@ public class Section
         byte[] objectData = objectStream.toByteArray();
         this.uncompressedLength = objectData.length;
         //compress the data if needed.
-        if (compressionScheme == COMPRESSION_SCHEME_ZLIB_32K_COMPRESSED_ADLER32)
+        if (compressionScheme == ZLIB_32K_COMPRESSED_ADLER32)
         {
             // Compress the bytes
             Deflater compresser = new Deflater();
@@ -263,7 +206,7 @@ public class Section
             {
                 //compression did not save space. Don't use it
                 //set the section to uncompressed
-                this.compressionScheme = COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32;
+                this.compressionScheme = UNCOMPRESSED_ADLER32;
             }
         }
         this.totalSectionLength = objectData.length + 1 + 4 + 4 + 4;
@@ -281,13 +224,6 @@ public class Section
     public Section()
     {
         super();
-    }
-
-    public Section(int compressionScheme)
-    {
-        super();
-        this.compressionScheme = compressionScheme;
-
     }
 
     public int getCompressionScheme()

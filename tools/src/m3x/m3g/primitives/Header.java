@@ -1,10 +1,9 @@
 package m3x.m3g.primitives;
 
-import m3x.m3g.*;
-import m3x.m3g.primitives.TypedObject;
-import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
+import m3x.m3g.Deserialiser;
+import m3x.m3g.Serialiser;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Header<br>
@@ -83,6 +82,6 @@ public class Header implements TypedObject
 
     public int getObjectType()
     {
-        return ObjectTypes.OBJECT_HEADER;
+        return ObjectTypes.HEADER;
     }
 }
