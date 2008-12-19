@@ -15,12 +15,9 @@ public abstract class Saver
     }
 
     /**
-     * Instantiates a M3GObject from a given stream.
-     *
      * @param inputStream
      * @return
      * @throws IOException
-     * @throws FileFormatException
      */
     public static void save(OutputStream outputStream, Object3D[] roots,
             String version, String author)

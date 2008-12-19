@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Vector;
@@ -17,14 +18,14 @@ import m3x.m3g.util.Object3DReferences;
   <br>
  * @author jsaarinen
  */
-public abstract class Object3D implements M3GSerializable
+public abstract class Object3D implements Serializable
 {
     private int userID;
     private Vector<AnimationTrack> animationTracks;
     private int userParameterCount;
     private UserParameter[] userParameters;
 
-    public static class UserParameter implements M3GSerializable
+    public static class UserParameter implements Serializable
     {
 
         private int parameterID;

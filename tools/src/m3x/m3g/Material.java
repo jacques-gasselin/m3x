@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import m3x.m3g.primitives.ColorRGBA;
   <br>
  * @author jsaarinen
  */
-public class Material extends Object3D implements M3GTypedObject
+public class Material extends Object3D implements TypedObject
 {
     private ColorRGB ambientColor;
     private ColorRGBA diffuseColor;

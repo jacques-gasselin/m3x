@@ -17,7 +17,7 @@ abstract class ObjectFactory
 
     }
 
-    public static final M3GTypedObject getInstance(int objectType)
+    public static final TypedObject getInstance(int objectType)
     {
         switch (objectType)
         {

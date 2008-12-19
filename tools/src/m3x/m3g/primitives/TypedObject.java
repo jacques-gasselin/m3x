@@ -1,4 +1,4 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
 /**
  * An interface which all concrete (which have object type field)
@@ -6,7 +6,7 @@ package m3x.m3g;
  * 
  * @author jsaarinen
  */
-public interface M3GTypedObject extends M3GSerializable
+public interface TypedObject extends Serializable
 {
     /**
      * Returns the object type byte specified in the M3G specification.

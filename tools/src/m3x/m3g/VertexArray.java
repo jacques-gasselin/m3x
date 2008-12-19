@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ import java.io.IOException;
   <br>
  * @author jsaarinen
  */
-public class VertexArray extends Object3D implements M3GTypedObject
+public class VertexArray extends Object3D implements TypedObject
 {
     private final static int BYTE_SIZE_IN_BYTES = 1;
     private final static int SHORT_SIZE_IN_BYTES = 2;

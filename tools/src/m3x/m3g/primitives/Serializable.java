@@ -1,5 +1,6 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
+import m3x.m3g.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
  * 
  * @author jsaarinen
  */
-public interface M3GSerializable
+public interface Serializable
 {  
     /**
      * Constructs a M3G object from a stream.

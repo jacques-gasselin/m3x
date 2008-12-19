@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
  * @author jgasseli
  *
  */
-public class AnimationController extends Object3D implements M3GTypedObject
+public class AnimationController extends Object3D implements TypedObject
 {
     private float speed;
     private float weight;

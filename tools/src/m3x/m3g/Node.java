@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ import m3x.m3g.primitives.Matrix;
 
  * @author jsaarinen
  */
-public abstract class Node extends Transformable implements M3GSerializable
+public abstract class Node extends Transformable implements Serializable
 {
     public static final int NONE = 144;
     public static final int ORIGIN = 145;

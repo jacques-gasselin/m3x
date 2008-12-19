@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.M3GSerializable;
+import m3x.m3g.primitives.Serializable;
 
-public class ColorRGB implements M3GSerializable
+public class ColorRGB implements Serializable
 {
     private int r,  g,  b;
 

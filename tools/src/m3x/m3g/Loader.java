@@ -8,6 +8,7 @@ import java.io.InputStream;
  * A wrapper class for loading/saving a M3GObject.
  * 
  * @author jsaarinen
+ * @author jgasseli
  */
 public abstract class Loader
 {

@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.io.IOException;
 
  * @author jsaarinen
  */
-public class PolygonMode extends Object3D implements M3GTypedObject
+public class PolygonMode extends Object3D implements TypedObject
 {
     public static final int CULL_BACK = 160;
     public static final int CULL_FRONT = 161;

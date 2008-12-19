@@ -1,5 +1,7 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -18,9 +20,9 @@ import m3x.m3g.primitives.Matrix;
   <br>
  * @author jsaarinen
  */
-public class SkinnedMesh extends Mesh implements M3GTypedObject
+public class SkinnedMesh extends Mesh implements TypedObject
 {
-    public static class BoneReference implements M3GSerializable
+    public static class BoneReference implements Serializable
     {
 
         private Node transformNode;

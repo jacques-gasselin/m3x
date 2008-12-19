@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ import m3x.m3g.primitives.Vector3D;
   <br>
  * @author jsaarinen
  */
-public class Texture2D extends Transformable implements M3GTypedObject
+public class Texture2D extends Transformable implements TypedObject
 {
     public static final int FILTER_BASE_LEVEL = 208;
     public static final int FILTER_LINEAR = 209;

@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ import m3x.m3g.primitives.Matrix;
  * 
  * @author jsaarinen
  */
-public class Group extends Node implements M3GTypedObject
+public class Group extends Node implements TypedObject
 {
     private Node[] children;
 

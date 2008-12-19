@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ import m3x.m3g.primitives.Vector3D;
   <br>
  * @author jsaarinen
  */
-public abstract class Transformable extends Object3D implements M3GSerializable
+public abstract class Transformable extends Object3D implements Serializable
 {
     private boolean hasComponentTransform;
     private Vector3D translation;

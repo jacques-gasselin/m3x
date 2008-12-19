@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import java.util.Set;
   <br>
  * @author jsaarinen
  */
-public class KeyframeSequence extends Object3D implements M3GTypedObject
+public class KeyframeSequence extends Object3D implements TypedObject
 {
     /**
      * Abstract base class for all types of key frames.

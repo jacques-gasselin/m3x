@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ import m3x.m3g.primitives.Matrix;
  * @author jsaarinen
  * @author jgasseli
  */
-public class World extends Group implements M3GTypedObject
+public class World extends Group implements TypedObject
 {
     private Camera activeCamera;
     private Background background;

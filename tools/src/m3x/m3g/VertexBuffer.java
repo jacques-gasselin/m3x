@@ -1,5 +1,7 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,14 +25,14 @@ import m3x.m3g.primitives.ColorRGBA;
   <br>
  * @author jsaarinen
  */
-public class VertexBuffer extends Object3D implements M3GTypedObject
+public class VertexBuffer extends Object3D implements TypedObject
 {
     public VertexBuffer()
     {
         super();
     }
 
-    public static class TextureCoordinate implements M3GSerializable
+    public static class TextureCoordinate implements Serializable
     {
 
         private VertexArray textureCoordinates;

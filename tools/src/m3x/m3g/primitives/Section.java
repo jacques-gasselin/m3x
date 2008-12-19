@@ -12,7 +12,7 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.M3GSerializable;
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.Object3D;
 
 
@@ -232,13 +232,13 @@ public class Section
      * fields of this object are written into the output stream,
      * integers are converted into little endian format.
      */
-    public void serialize(Serialiser serialiser, M3GSerializable[] objects)
+    public void serialize(Serialiser serialiser, Serializable[] objects)
         throws IOException
     {
         //serialise the objects to a byte array
         ByteArrayOutputStream objectStream = new ByteArrayOutputStream();
         serialiser.pushOutputStream(objectStream);
-        for (M3GSerializable obj : objects)
+        for (Serializable obj : objects)
         {
             obj.serialize(serialiser);
         }

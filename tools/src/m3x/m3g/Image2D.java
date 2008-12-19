@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
       
  * @author jsaarinen
  */
-public class Image2D extends Object3D implements M3GTypedObject
+public class Image2D extends Object3D implements TypedObject
 {
     public static final int FORMAT_ALPHA = 96;
     public static final int FORMAT_LUMINANCE = 97;

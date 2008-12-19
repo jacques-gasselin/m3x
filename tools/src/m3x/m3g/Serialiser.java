@@ -1,5 +1,7 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Header;
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -68,19 +70,19 @@ public class Serialiser implements DataOutput
         //write out content to the file
         Section contentSection = new Section(Section.COMPRESSION_SCHEME_UNCOMPRESSED_ADLER32);
         //get the objects in leaf first order
-        List<M3GSerializable> lfoObjects = getLeafFirstOrderList(roots);
-        M3GSerializable[] objects = lfoObjects.toArray(null);
+        List<Serializable> lfoObjects = getLeafFirstOrderList(roots);
+        Serializable[] objects = lfoObjects.toArray(null);
         contentSection.serialize(this, objects);
 
         popOutputStream();
     }
 
-    private List<M3GSerializable> getLeafFirstOrderList(Object3D[] roots)
+    private List<Serializable> getLeafFirstOrderList(Object3D[] roots)
     {
         //store the objects in leaf first order from a depth-first search.
-        List<M3GSerializable> objects = new Vector<M3GSerializable>();
+        List<Serializable> objects = new Vector<Serializable>();
         //use a containment set to ensure there are no duplicates.
-        Set<M3GSerializable> containmentSet = new HashSet<M3GSerializable>();
+        Set<Serializable> containmentSet = new HashSet<Serializable>();
 
         for (Object3D root : roots)
         {
@@ -91,7 +93,7 @@ public class Serialiser implements DataOutput
     }
 
     private void processLeafFirstOrderList(Object3D object,
-            List<M3GSerializable> objects, Set<M3GSerializable> containmentSet)
+            List<Serializable> objects, Set<Serializable> containmentSet)
     {
         if (containmentSet.contains(object))
         {

@@ -1,5 +1,7 @@
-package m3x.m3g;
+package m3x.m3g.primitives;
 
+import m3x.m3g.*;
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,7 +11,7 @@ import java.util.Arrays;
  * 
  * @author jsaarinen
  */
-public class Header implements M3GTypedObject
+public class Header implements TypedObject
 {  
     private final static byte[] VERSION =
     {

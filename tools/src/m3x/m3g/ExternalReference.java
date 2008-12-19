@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -8,7 +9,7 @@ import java.io.IOException;
  * for more information.<br>
  * @author jsaarinen
  */
-public class ExternalReference implements M3GTypedObject
+public class ExternalReference implements TypedObject
 {
     private String uri;
 

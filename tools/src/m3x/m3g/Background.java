@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import m3x.m3g.primitives.ColorRGBA;
 
  * @author jsaarinen
  */
-public class Background extends Object3D implements M3GTypedObject
+public class Background extends Object3D implements TypedObject
 {
     public final static int MODE_BORDER = 32;
     public final static int MODE_REPEAT = 33;

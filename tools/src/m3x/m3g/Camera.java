@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import m3x.m3g.primitives.Matrix;
  * 
  * @author jsaarinen
  */
-public class Camera extends Node implements M3GTypedObject
+public class Camera extends Node implements TypedObject
 {
     public static final int PROJECTION_TYPE_GENERIC = 48;
     public static final int PROJECTION_TYPE_PARALLEL = 49;

@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import m3x.m3g.util.Object3DReferences;
@@ -13,7 +14,7 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public class AnimationTrack extends Object3D implements M3GTypedObject
+public class AnimationTrack extends Object3D implements TypedObject
 {
     public static final int ALPHA = 256;
     public static final int AMBIENT_COLOR = 257;

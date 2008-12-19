@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import m3x.m3g.primitives.Matrix;
  */
 public class MorphingMesh extends Mesh
 {
-    public static class TargetBuffer implements M3GSerializable
+    public static class TargetBuffer implements Serializable
     {
 
         private VertexBuffer morphTarget;

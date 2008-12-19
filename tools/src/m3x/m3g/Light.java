@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -20,7 +21,7 @@ import m3x.m3g.primitives.Matrix;
   <br>
  * @author jsaarinen
  */
-public class Light extends Node implements M3GTypedObject
+public class Light extends Node implements TypedObject
 {
     public final static int MODE_AMBIENT = 128;
     public final static int MODE_DIRECTIONAL = 129;

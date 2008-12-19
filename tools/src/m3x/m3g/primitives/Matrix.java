@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.M3GSerializable;
+import m3x.m3g.primitives.Serializable;
 
 /**
  * A normal 4x4 matrix using floating point elements.
  * 
  * @author jsaarinen
  */
-public class Matrix implements M3GSerializable
+public class Matrix implements Serializable
 {
     /**
      * The 4x4 matrix.

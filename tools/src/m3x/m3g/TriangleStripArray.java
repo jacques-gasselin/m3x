@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.io.IOException;
 
  * @author jsaarinen
  */
-public class TriangleStripArray extends IndexBuffer implements M3GTypedObject
+public class TriangleStripArray extends IndexBuffer implements TypedObject
 {
     public TriangleStripArray()
     {
