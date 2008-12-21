@@ -34,8 +34,6 @@ public class Serialiser implements DataOutput
 
         outputStreams = new Stack<LittleEndianDataOutputStream>();
         objectToIndexMap = new Hashtable<Object, Integer>();
-        //add null as index 0
-        getObjectIndex(null);
     }
 
     public void writeFileIdentifier(OutputStream out) throws IOException
@@ -45,16 +43,21 @@ public class Serialiser implements DataOutput
 
     public int getObjectIndex(Object key)
     {
+        if (key == null)
+        {
+            return 0;
+        }
         Integer value = objectToIndexMap.get(key);
         if (value == null)
         {
             //the object does not exist in the mapping.
             //get the index it should have
-            value = objectToIndexMap.size();
+            //add 1 because null is index 0
+            value = new Integer(objectToIndexMap.size() + 1);
             //store it in the mapping as a new key
             objectToIndexMap.put(key, value);
         }
-        return value;
+        return value.intValue();
     }
 
     public void serialiseSingle(OutputStream out, Serializable object) throws IOException

@@ -18,8 +18,8 @@ public abstract class AbstractTestCase extends TestCase
      */
     protected void doTestAccessors(Object object1, Object object2) throws Exception
     {
-        assertTrue(object1.getClass().equals(object2.getClass()));
         Class clazz = object1.getClass();
+        assertTrue(clazz.equals(object2.getClass()));
         Method[] methods = clazz.getMethods();
 
         for (int i = 0; i < methods.length; i++)
