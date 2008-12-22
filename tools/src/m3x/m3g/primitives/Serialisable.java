@@ -10,7 +10,7 @@ import m3x.m3g.Serialiser;
  * 
  * @author jsaarinen
  */
-public interface Serializable
+public interface Serialisable
 {  
     /**
      * Constructs a M3G object from a stream.
@@ -25,7 +25,7 @@ public interface Serializable
      * @throws FileFormatException
      *  When the input data was somehow invalid from the M3G specification point of view.
      */
-    void deserialize(Deserialiser deserialiser)
+    void deserialise(Deserialiser deserialiser)
         throws IOException;
   
     /**
@@ -43,6 +43,6 @@ public interface Serializable
      * @throws IOException
      *  When something nasty happened.
      */
-    void serialize(Serialiser serialiser)
+    void serialise(Serialiser serialiser)
         throws IOException;
 }

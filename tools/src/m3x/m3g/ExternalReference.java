@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -8,8 +8,9 @@ import java.io.IOException;
  * See See http://java2me.org/m3g/file-format.html#ExternalReference 
  * for more information.<br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class ExternalReference implements TypedObject
+public class ExternalReference implements SectionSerialisable
 {
     private String uri;
 
@@ -23,13 +24,13 @@ public class ExternalReference implements TypedObject
         super();
     }
 
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
         this.uri = deserialiser.readUTF8();
     }
 
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
         // .. write the string data in raw UTF-8..
@@ -37,7 +38,7 @@ public class ExternalReference implements TypedObject
         serialiser.writeUTF8(this.uri);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.EXTERNAL_REFERENCE;
     }

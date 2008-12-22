@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -15,8 +13,9 @@ import java.io.IOException;
   ObjectIndex[] textures;<br>
 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Appearance extends Object3D implements TypedObject
+public class Appearance extends Object3D
 {
     private int layer;
     private CompositingMode compositingMode;
@@ -45,10 +44,10 @@ public class Appearance extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.layer = deserialiser.readByte();
         this.compositingMode = (CompositingMode)deserialiser.readReference();
         this.fog = (Fog)deserialiser.readReference();
@@ -63,10 +62,10 @@ public class Appearance extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeByte(this.layer);
         serialiser.writeReference(getCompositingMode());
         serialiser.writeReference(getFog());
@@ -79,7 +78,7 @@ public class Appearance extends Object3D implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.APPEARANCE;
     }

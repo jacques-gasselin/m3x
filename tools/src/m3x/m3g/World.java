@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import m3x.m3g.primitives.Matrix;
  * @author jsaarinen
  * @author jgasseli
  */
-public class World extends Group implements TypedObject
+public class World extends Group implements SectionSerialisable
 {
     private Camera activeCamera;
     private Background background;
@@ -36,25 +36,25 @@ public class World extends Group implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         setActiveCamera((Camera)deserialiser.readReference());
         setBackground((Background)deserialiser.readReference());
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeReference(getActiveCamera());
         serialiser.writeReference(getBackground());
     }
 
     @Override
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.WORLD;
     }

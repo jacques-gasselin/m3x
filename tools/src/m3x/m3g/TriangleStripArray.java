@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,8 +24,9 @@ import java.io.IOException;
   UInt32[]      stripLengths;
 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class TriangleStripArray extends IndexBuffer implements TypedObject
+public class TriangleStripArray extends IndexBuffer implements SectionSerialisable
 {
     public TriangleStripArray()
     {
@@ -137,10 +138,10 @@ public class TriangleStripArray extends IndexBuffer implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.encoding = deserialiser.readUnsignedByte();
         switch (this.encoding)
         {
@@ -196,10 +197,10 @@ public class TriangleStripArray extends IndexBuffer implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.encoding);
         switch (this.encoding)
         {
@@ -250,7 +251,7 @@ public class TriangleStripArray extends IndexBuffer implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.TRIANGLE_STRIP_ARRAY;
     }

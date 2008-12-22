@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
@@ -18,8 +16,9 @@ import m3x.m3g.primitives.ColorRGBA;
   Boolean       vertexColorTrackingEnabled;<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Material extends Object3D implements TypedObject
+public class Material extends Object3D
 {
     private ColorRGB ambientColor;
     private ColorRGBA diffuseColor;
@@ -48,36 +47,36 @@ public class Material extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.ambientColor = new ColorRGB();
-        this.ambientColor.deserialize(deserialiser);
+        this.ambientColor.deserialise(deserialiser);
         this.diffuseColor = new ColorRGBA();
-        this.diffuseColor.deserialize(deserialiser);
+        this.diffuseColor.deserialise(deserialiser);
         this.emissiveColor = new ColorRGB();
-        this.emissiveColor.deserialize(deserialiser);
+        this.emissiveColor.deserialise(deserialiser);
         this.specularColor = new ColorRGB();
-        this.specularColor.deserialize(deserialiser);
+        this.specularColor.deserialise(deserialiser);
         this.shininess = deserialiser.readFloat();
         this.vertexColorTrackingEnabled = deserialiser.readBoolean();
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
-        this.ambientColor.serialize(serialiser);
-        this.diffuseColor.serialize(serialiser);
-        this.emissiveColor.serialize(serialiser);
-        this.specularColor.serialize(serialiser);
+        super.serialise(serialiser);
+        this.ambientColor.serialise(serialiser);
+        this.diffuseColor.serialise(serialiser);
+        this.emissiveColor.serialise(serialiser);
+        this.specularColor.serialise(serialiser);
         serialiser.writeFloat(this.shininess);
         serialiser.writeBoolean(this.vertexColorTrackingEnabled);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.MATERIAL;
     }

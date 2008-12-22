@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.io.ByteArrayInputStream;
 import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataInput;
 import java.io.EOFException;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
 import m3x.m3g.primitives.Section;
+import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.util.LittleEndianDataInputStream;
 
 /**
@@ -17,10 +19,11 @@ import m3x.m3g.util.LittleEndianDataInputStream;
  */
 public class Deserialiser implements DataInput
 {
+
     private Vector<Object3D> rootObjects;
     private Vector<Object3D> objects;
     private Stack<LittleEndianDataInputStream> inputStreams;
-    
+
     public Deserialiser()
     {
         rootObjects = new Vector<Object3D>();
@@ -68,13 +71,24 @@ public class Deserialiser implements DataInput
             try
             {
                 Section section = new Section();
-                section.deserialize(this);
+                section.deserialise(this);
             }
             catch (EOFException eof)
             {
                 break;
             }
         }
+
+        popInputStream();
+    }
+
+    public void deserialiseSingle(byte[] data, Serialisable object)
+        throws IOException
+    {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        pushInputStream(in);
+
+        object.deserialise(this);
 
         popInputStream();
     }
@@ -102,7 +116,7 @@ public class Deserialiser implements DataInput
             rootObjects.add(obj);
         }
     }
-    
+
     /**
      * Gets a copy of the root objects in the file deserialised.
      * @return a array copy of the root objects
@@ -202,11 +216,13 @@ public class Deserialiser implements DataInput
      */
     public Object3D readReference() throws IOException
     {
-        Object3D obj = objects.elementAt(readInt());
+        int index = readInt();
+        Object3D obj = objects.elementAt(index);
         if (rootObjects.contains(obj))
         {
             rootObjects.remove(obj);
         }
+        System.out.println(index + " : " + obj);
         return obj;
     }
 
@@ -221,5 +237,4 @@ public class Deserialiser implements DataInput
         Object3D obj = objects.elementAt(readInt());
         return obj;
     }
-
 }

@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.Serialisable;
 
-public class Vector3D implements Serializable
+public class Vector3D implements Serialisable
 {
     private float x,  y,  z;
 
@@ -21,7 +21,7 @@ public class Vector3D implements Serializable
     {
     }
 
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
         x = deserialiser.readFloat();
@@ -29,7 +29,7 @@ public class Vector3D implements Serializable
         z = deserialiser.readFloat();
     }
 
-    public void serialize(Serialiser serialiser) throws IOException
+    public void serialise(Serialiser serialiser) throws IOException
     {
         serialiser.writeFloat(x);
         serialiser.writeFloat(y);

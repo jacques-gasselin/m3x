@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,8 +16,9 @@ import java.io.IOException;
   Boolean       perspectiveCorrectionEnabled;
 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class PolygonMode extends Object3D implements TypedObject
+public class PolygonMode extends Object3D implements SectionSerialisable
 {
     public static final int CULL_BACK = 160;
     public static final int CULL_FRONT = 161;
@@ -65,10 +66,10 @@ public class PolygonMode extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.culling = deserialiser.readUnsignedByte();
         this.shading = deserialiser.readUnsignedByte();
         this.winding = deserialiser.readUnsignedByte();
@@ -78,10 +79,10 @@ public class PolygonMode extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.culling);
         serialiser.write(this.shading);
         serialiser.write(this.winding);
@@ -90,7 +91,7 @@ public class PolygonMode extends Object3D implements TypedObject
         serialiser.writeBoolean(this.perspectiveCorrectionEnabled);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.POLYGON_MODE;
     }

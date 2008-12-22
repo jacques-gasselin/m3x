@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -28,8 +28,9 @@ import java.io.IOException;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class VertexArray extends Object3D implements TypedObject
+public class VertexArray extends Object3D implements SectionSerialisable
 {
     private final static int BYTE_SIZE_IN_BYTES = 1;
     private final static int SHORT_SIZE_IN_BYTES = 2;
@@ -89,10 +90,10 @@ public class VertexArray extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.componentSize = deserialiser.readUnsignedByte();
         this.componentCount = deserialiser.readUnsignedByte();
         this.encoding = deserialiser.readUnsignedByte();
@@ -120,10 +121,10 @@ public class VertexArray extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.componentSize);
         serialiser.write(this.componentCount);
         serialiser.write(this.encoding);
@@ -148,7 +149,7 @@ public class VertexArray extends Object3D implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.VERTEX_ARRAY;
     }

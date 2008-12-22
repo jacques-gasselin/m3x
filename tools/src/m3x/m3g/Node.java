@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.Serialisable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -22,8 +22,9 @@ import m3x.m3g.primitives.Matrix;
   END
 
  * @author jsaarinen
+ * @author jgasseli
  */
-public abstract class Node extends Transformable implements Serializable
+public abstract class Node extends Transformable implements Serialisable
 {
     public static final int NONE = 144;
     public static final int ORIGIN = 145;
@@ -94,10 +95,10 @@ public abstract class Node extends Transformable implements Serializable
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.enableRendering = deserialiser.readBoolean();
         this.enablePicking = deserialiser.readBoolean();
         this.alphaFactor = deserialiser.readByte();
@@ -115,10 +116,10 @@ public abstract class Node extends Transformable implements Serializable
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeBoolean(this.enableRendering);
         serialiser.writeBoolean(this.enablePicking);
         serialiser.write(this.alphaFactor);

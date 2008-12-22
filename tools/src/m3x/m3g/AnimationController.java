@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -16,9 +15,8 @@ import java.io.IOException;
  *
  * @author jsaarinen
  * @author jgasseli
- *
  */
-public class AnimationController extends Object3D implements TypedObject
+public class AnimationController extends Object3D
 {
     private float speed;
     private float weight;
@@ -52,10 +50,10 @@ public class AnimationController extends Object3D implements TypedObject
      * @throws FileFormatException
      */
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         setSpeed(deserialiser.readFloat());
         setWeight(deserialiser.readFloat());
         setActiveIntervalStart(deserialiser.readInt());
@@ -68,9 +66,9 @@ public class AnimationController extends Object3D implements TypedObject
      * Serialization done as specified in the class JavaDoc.
      */
     @Override
-    public void serialize(Serialiser serialiser) throws IOException
+    public void serialise(Serialiser serialiser) throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeFloat(getSpeed());
         serialiser.writeFloat(getWeight());
         serialiser.writeInt(getActiveIntervalStart());
@@ -79,7 +77,7 @@ public class AnimationController extends Object3D implements TypedObject
         serialiser.writeInt(getReferenceWorldTime());
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.ANIMATION_CONTROLLER;
     }

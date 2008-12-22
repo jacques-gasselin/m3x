@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,8 +19,9 @@ import m3x.m3g.primitives.Matrix;
   Int32         cropWidth;<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Sprite extends Node implements TypedObject
+public class Sprite extends Node implements SectionSerialisable
 {
     private Image2D image;
     private Appearance appearance;
@@ -52,10 +53,10 @@ public class Sprite extends Node implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.image = (Image2D)deserialiser.readReference();
         this.appearance = (Appearance)deserialiser.readReference();
         this.isScaled = deserialiser.readBoolean();
@@ -66,10 +67,10 @@ public class Sprite extends Node implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeReference(getImage());
         serialiser.writeReference(getAppearance());
         serialiser.writeBoolean(isScaled);
@@ -79,7 +80,7 @@ public class Sprite extends Node implements TypedObject
         serialiser.writeInt(this.cropHeight);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.SPRITE;
     }

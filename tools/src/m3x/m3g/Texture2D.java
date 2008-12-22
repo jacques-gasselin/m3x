@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -18,8 +18,9 @@ import m3x.m3g.primitives.Vector3D;
   Byte          imageFilter;
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Texture2D extends Transformable implements TypedObject
+public class Texture2D extends Transformable implements SectionSerialisable
 {
     public static final int FILTER_BASE_LEVEL = 208;
     public static final int FILTER_LINEAR = 209;
@@ -62,13 +63,13 @@ public class Texture2D extends Transformable implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.texture = (Image2D)deserialiser.readReference();
         this.blendColor = new ColorRGB();
-        this.blendColor.deserialize(deserialiser);
+        this.blendColor.deserialise(deserialiser);
         this.blending = deserialiser.readUnsignedByte();
         this.wrappingS = deserialiser.readUnsignedByte();
         this.wrappingT = deserialiser.readUnsignedByte();
@@ -77,12 +78,12 @@ public class Texture2D extends Transformable implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeReference(this.texture);
-        this.blendColor.serialize(serialiser);
+        this.blendColor.serialise(serialiser);
         serialiser.write(this.blending);
         serialiser.write(this.wrappingS);
         serialiser.write(this.wrappingT);
@@ -90,7 +91,7 @@ public class Texture2D extends Transformable implements TypedObject
         serialiser.write(this.imageFilter);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.TEXTURE_2D;
     }

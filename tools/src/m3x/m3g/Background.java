@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGBA;
@@ -21,8 +19,9 @@ import m3x.m3g.primitives.ColorRGBA;
   Boolean       colorClearEnabled;<br>
 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Background extends Object3D implements TypedObject
+public class Background extends Object3D
 {
     public final static int MODE_BORDER = 32;
     public final static int MODE_REPEAT = 33;
@@ -71,12 +70,12 @@ public class Background extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.backgroundColor = new ColorRGBA();
-        this.backgroundColor.deserialize(deserialiser);
+        this.backgroundColor.deserialise(deserialiser);
         this.backgroundImage = (Image2D)deserialiser.readReference();
         this.backgroundImageModeX = deserialiser.readUnsignedByte();
         this.backgroundImageModeY = deserialiser.readUnsignedByte();
@@ -89,11 +88,11 @@ public class Background extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
-        this.backgroundColor.serialize(serialiser);
+        super.serialise(serialiser);
+        this.backgroundColor.serialise(serialiser);
         serialiser.writeReference(getBackgroundImage());
         serialiser.write(this.backgroundImageModeX);
         serialiser.write(this.backgroundImageModeY);
@@ -105,7 +104,7 @@ public class Background extends Object3D implements TypedObject
         serialiser.writeBoolean(this.colorClearEnabled);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.BACKGROUND;
     }

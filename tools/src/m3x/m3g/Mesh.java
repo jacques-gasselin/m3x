@@ -1,7 +1,7 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -17,10 +17,11 @@ import m3x.m3g.primitives.Matrix;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Mesh extends Node implements TypedObject
+public class Mesh extends Node implements SectionSerialisable
 {
-    public static class SubMesh implements Serializable
+    public static class SubMesh implements Serialisable
     {
 
         private IndexBuffer indexBuffer;
@@ -46,14 +47,14 @@ public class Mesh extends Node implements TypedObject
             return this.appearance;
         }
 
-        public void deserialize(Deserialiser deserialiser)
+        public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
             this.indexBuffer = (IndexBuffer)deserialiser.readReference();
             this.appearance = (Appearance)deserialiser.readReference();
         }
 
-        public void serialize(Serialiser serialiser)
+        public void serialise(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(getIndexBuffer());
@@ -100,34 +101,34 @@ public class Mesh extends Node implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.vertexBuffer = (VertexBuffer)deserialiser.readReference();
         this.subMeshCount = deserialiser.readInt();
         this.subMeshes = new SubMesh[subMeshCount];
         for (int i = 0; i < this.subMeshes.length; i++)
         {
             this.subMeshes[i] = new SubMesh();
-            this.subMeshes[i].deserialize(deserialiser);
+            this.subMeshes[i].deserialise(deserialiser);
         }
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeReference(getVertexBuffer());
         serialiser.writeInt(getSubmeshCount());
         for (SubMesh subMesh : this.subMeshes)
         {
-            subMesh.serialize(serialiser);
+            subMesh.serialise(serialiser);
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.MESH;
     }

@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -11,8 +10,9 @@ import m3x.m3g.primitives.Matrix;
  * ObjectIndex[] children;<br>
  * 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Group extends Node implements TypedObject
+public class Group extends Node
 {
     private Node[] children;
 
@@ -32,10 +32,10 @@ public class Group extends Node implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         int childrenLength = deserialiser.readInt();
         if (childrenLength < 0)
         {
@@ -54,10 +54,10 @@ public class Group extends Node implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeInt(getChildCount());
         for (Node child : getChildren())
         {
@@ -65,7 +65,7 @@ public class Group extends Node implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.GROUP;
     }

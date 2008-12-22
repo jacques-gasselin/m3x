@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -19,7 +17,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public class CompositingMode extends Object3D implements TypedObject
+public class CompositingMode extends Object3D
 {
     public static final int ALPHA = 64;
     public static final int ALPHA_ADD = 65;
@@ -58,10 +56,10 @@ public class CompositingMode extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         setDepthTestEnabled(deserialiser.readBoolean());
         setDepthWriteEnabled(deserialiser.readBoolean());
         setColorWriteEnabled(deserialiser.readBoolean());
@@ -73,10 +71,10 @@ public class CompositingMode extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeBoolean(isDepthTestEnabled());
         serialiser.writeBoolean(isDepthWriteEnabled());
         serialiser.writeBoolean(isColorWriteEnabled());
@@ -87,7 +85,7 @@ public class CompositingMode extends Object3D implements TypedObject
         serialiser.writeFloat(getDepthOffsetUnits());
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.COMPOSITING_MODE;
     }

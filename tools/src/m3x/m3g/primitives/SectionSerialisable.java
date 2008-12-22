@@ -6,7 +6,7 @@ package m3x.m3g.primitives;
  * 
  * @author jsaarinen
  */
-public interface TypedObject extends Serializable
+public interface SectionSerialisable extends Serialisable
 {
     /**
      * Returns the object type byte specified in the M3G specification.
@@ -14,5 +14,5 @@ public interface TypedObject extends Serializable
      * @return
      *  The object type byte.
      */
-    int getObjectType();
+    int getSectionObjectType();
 } 

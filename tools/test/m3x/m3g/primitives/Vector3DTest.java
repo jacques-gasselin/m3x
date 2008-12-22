@@ -4,20 +4,10 @@ import m3x.m3g.AbstractTestCase;
 
 public class Vector3DTest extends AbstractTestCase
 {
-  public void testSerializationAndDeserialization()
-  {
-    /*Vector3D vector = new Vector3D(0.1f, 0.2f, 0.3f);
-                                                                    
-    try
-    {   
-      byte[] serialized = M3GSupport.objectToBytes(vector);
-      Vector3D deserialized = (Vector3D)M3GSupport.bytesToObject(serialized, Vector3D.class);
-      this.doTestAccessors(vector, deserialized);
-    }
-    catch (Exception e)
+
+    public void testSerializationAndDeserialization()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }  
+        Vector3D vector = new Vector3D(10, 20, 30);
+        assertSerialised(vector);
+    }
 }

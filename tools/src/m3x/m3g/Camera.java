@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -22,8 +20,9 @@ import m3x.m3g.primitives.Matrix;
   END<br>
  * 
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Camera extends Node implements TypedObject
+public class Camera extends Node
 {
     public static final int PROJECTION_TYPE_GENERIC = 48;
     public static final int PROJECTION_TYPE_PARALLEL = 49;
@@ -91,15 +90,15 @@ public class Camera extends Node implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.projectionType = deserialiser.readUnsignedByte();
         if (this.projectionType == PROJECTION_TYPE_GENERIC)
         {
             this.projectionMatrix = new Matrix();
-            this.projectionMatrix.deserialize(deserialiser);
+            this.projectionMatrix.deserialise(deserialiser);
         }
         else if (this.projectionType == PROJECTION_TYPE_PARALLEL ||
             this.projectionType == PROJECTION_TYPE_PERSPECTIVE)
@@ -116,14 +115,14 @@ public class Camera extends Node implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.projectionType);
         if (this.projectionType == PROJECTION_TYPE_GENERIC)
         {
-            this.projectionMatrix.serialize(serialiser);
+            this.projectionMatrix.serialise(serialiser);
         }
         else
         {
@@ -134,7 +133,7 @@ public class Camera extends Node implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.CAMERA;
     }

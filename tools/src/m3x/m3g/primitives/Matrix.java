@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.Serialisable;
 
 /**
  * A normal 4x4 matrix using floating point elements.
  * 
  * @author jsaarinen
  */
-public class Matrix implements Serializable
+public class Matrix implements Serialisable
 {
     /**
      * The 4x4 matrix.
@@ -53,7 +53,7 @@ public class Matrix implements Serializable
     {
     }
 
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
         this.matrix = new float[MATRIX_LENGTH];
@@ -66,7 +66,7 @@ public class Matrix implements Serializable
     /**
      * Writes float array to the stream.
      */
-    public void serialize(Serialiser serialiser) throws java.io.IOException
+    public void serialise(Serialiser serialiser) throws java.io.IOException
     {
         for (float element : this.matrix)
         {

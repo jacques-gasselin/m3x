@@ -1,50 +1,49 @@
 package m3x.m3g;
 
+import java.io.ByteArrayOutputStream;
 
 public class AnimationTrackTest extends AbstractTestCase
 {
-  public void testSerializationAndDeserialization()
-  {
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();                                                                    
-    try
-    {  
-      AnimationTrack animationTrack = new AnimationTrack(animationTracks,
-          userParameters,
-          new ObjectIndex(1),
-          new ObjectIndex(2),
-          AnimationTrack.ALPHA);
-      byte[] serialized = M3GSupport.objectToBytes(animationTrack);
-      AnimationTrack deserialized = (AnimationTrack)M3GSupport.bytesToObject(serialized, AnimationTrack.class);
-      this.doTestAccessors(animationTrack, deserialized);
-    }
-    catch (Exception e)
+    private AnimationTrack track;
+
+    public AnimationTrackTest()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
-  
-  public void testFileFormatException()
-  {
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters(); 
-    try
-    {  
-      AnimationTrack animationTrack = new AnimationTrack(animationTracks,
-          userParameters,
-          new ObjectIndex(1),
-          new ObjectIndex(2),
-          -1);
-      byte[] serialized = M3GSupport.objectToBytes(animationTrack);
-      AnimationTrack deserialized = (AnimationTrack)M3GSupport.bytesToObject(serialized, AnimationTrack.class);
-      this.doTestAccessors(animationTrack, deserialized);
+        track = new AnimationTrack();
+        track.setTargetProperty(AnimationTrack.TRANSLATION);
+
+        KeyframeSequence keys = new KeyframeSequence();
+        KeyframeSequence.FloatKeyFrame[] frames = new KeyframeSequence.FloatKeyFrame[3];
+        frames[0] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 0, 1});
+        frames[1] = new KeyframeSequence.FloatKeyFrame(0, new float[]{1, 0, 0});
+        frames[2] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 1, 0});
+        keys.setKeyframes(frames);
+        keys.setInterpolationType(KeyframeSequence.STEP);
+        track.setKeyframeSequence(keys);
     }
-    catch (Exception e)
+
+    public void testSaveAndLoad()
     {
-      // this is what should happen
-      return;
+        Object3D[] roots = new Object3D[]{ track };
+
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Saver.save(out, roots, "1.0", "AnimationTrackTest");
+
+            byte[] data = out.toByteArray();
+
+            Object3D[] loadRoots = Loader.load(data);
+
+            for (int i = 0; i < roots.length; ++i)
+            {
+                doTestAccessors(roots[i], loadRoots[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
     }
-    fail("FileFormatException not thrown!");*/
-  }  
+
 }

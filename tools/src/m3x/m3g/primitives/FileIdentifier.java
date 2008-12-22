@@ -5,6 +5,7 @@ package m3x.m3g.primitives;
  * for more information.
  * 
  * @author jsaarinen
+ * @author jgasseli
  */
 public abstract class FileIdentifier
 {

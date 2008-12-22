@@ -1,8 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
@@ -20,8 +18,9 @@ import m3x.m3g.primitives.Matrix;
   Float32       spotExponent;<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Light extends Node implements TypedObject
+public class Light extends Node
 {
     public final static int MODE_AMBIENT = 128;
     public final static int MODE_DIRECTIONAL = 129;
@@ -69,15 +68,15 @@ public class Light extends Node implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.attenuationConstant = deserialiser.readFloat();
         this.attenuationLinear = deserialiser.readFloat();
         this.attenuationQuadratic = deserialiser.readFloat();
         this.color = new ColorRGB();
-        this.color.deserialize(deserialiser);
+        this.color.deserialise(deserialiser);
         this.mode = deserialiser.readUnsignedByte();
         validateMode(this.mode);
         this.intensity = deserialiser.readFloat();
@@ -86,21 +85,21 @@ public class Light extends Node implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeFloat(this.attenuationConstant);
         serialiser.writeFloat(this.attenuationLinear);
         serialiser.writeFloat(this.attenuationQuadratic);
-        this.color.serialize(serialiser);
+        this.color.serialise(serialiser);
         serialiser.write(this.mode);
         serialiser.writeFloat(this.intensity);
         serialiser.writeFloat(this.spotAngle);
         serialiser.writeFloat(this.spotExponent);
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.LIGHT;
     }

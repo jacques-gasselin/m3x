@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import m3x.m3g.util.Object3DReferences;
@@ -14,7 +13,7 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public class AnimationTrack extends Object3D implements TypedObject
+public class AnimationTrack extends Object3D
 {
     public static final int ALPHA = 256;
     public static final int AMBIENT_COLOR = 257;
@@ -40,21 +39,16 @@ public class AnimationTrack extends Object3D implements TypedObject
 
     private KeyframeSequence keyframeSequence;
     private AnimationController animationController;
-    private int propertyID;
+    private int targetProperty;
 
     public AnimationTrack(AnimationTrack[] animationTracks,
         UserParameter[] userParameters, KeyframeSequence keyframeSequence,
         AnimationController animationController, int propertyID)
     {
         super(animationTracks, userParameters);
-        this.keyframeSequence = keyframeSequence;
-        this.animationController = animationController;
-
-        if (propertyID < ALPHA || propertyID > VISIBILITY)
-        {
-            throw new IllegalArgumentException("Invalid propertyID: " + propertyID);
-        }
-        this.propertyID = propertyID;
+        setKeyframeSequence(keyframeSequence);
+        setAnimationController(animationController);
+        setTargetProperty(propertyID);
     }
 
     public AnimationTrack()
@@ -63,27 +57,73 @@ public class AnimationTrack extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
-        throws IOException
+    public boolean equals(Object obj)
     {
-        super.deserialize(deserialiser);
-        this.keyframeSequence = (KeyframeSequence)deserialiser.readReference();
-        this.animationController = (AnimationController)deserialiser.readReference();
-        this.propertyID = deserialiser.readInt();
-        if (this.propertyID < ALPHA || this.propertyID > VISIBILITY)
+        if (this == obj)
         {
-            throw new IllegalArgumentException("Invalid property ID: " + this.propertyID);
+            return true;
         }
+        if (!(obj instanceof AnimationTrack))
+        {
+            return false;
+        }
+
+        AnimationTrack another = (AnimationTrack) obj;
+        boolean equal = super.equals(obj)
+            && getTargetProperty() == getTargetProperty();
+        if (!equal)
+        {
+            return false;
+        }
+
+        //compare keyframes
+        if (getKeyframeSequence() != null)
+        {
+            if (!getKeyframeSequence().equals(another.getKeyframeSequence()))
+            {
+                return false;
+            }
+        }
+        else if (another.getKeyframeSequence() != null)
+        {
+            return false;
+        }
+
+
+        //compare controller
+        if (getAnimationController() != null)
+        {
+            if (!getAnimationController().equals(another.getAnimationController()))
+            {
+                return false;
+            }
+        }
+        else if (another.getAnimationController() != null)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.deserialise(deserialiser);
+        setKeyframeSequence((KeyframeSequence)deserialiser.readReference());
+        setAnimationController((AnimationController)deserialiser.readReference());
+        setTargetProperty(deserialiser.readInt());
+    }
+
+    @Override
+    public void serialise(Serialiser serialiser)
+        throws IOException
+    {
+        super.serialise(serialiser);
         serialiser.writeReference(getKeyframeSequence());
         serialiser.writeReference(getAnimationController());
-        serialiser.writeInt(getPropertyID());
+        serialiser.writeInt(getTargetProperty());
     }
 
     @Override
@@ -96,7 +136,7 @@ public class AnimationTrack extends Object3D implements TypedObject
         return queue.size();
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.ANIMATION_TRACK;
     }
@@ -106,8 +146,12 @@ public class AnimationTrack extends Object3D implements TypedObject
         return this.keyframeSequence;
     }
 
-    public void setKeyframeSequece(KeyframeSequence sequence)
+    public void setKeyframeSequence(KeyframeSequence sequence)
     {
+        if (sequence == null)
+        {
+            throw new NullPointerException("sequence is null");
+        }
         this.keyframeSequence = sequence;
     }
 
@@ -116,8 +160,22 @@ public class AnimationTrack extends Object3D implements TypedObject
         return this.animationController;
     }
 
-    public int getPropertyID()
+    public void setAnimationController(AnimationController controller)
     {
-        return this.propertyID;
+        this.animationController = controller;
+    }
+
+    public int getTargetProperty()
+    {
+        return this.targetProperty;
+    }
+
+    public void setTargetProperty(int property)
+    {
+        if (property < ALPHA || property > VISIBILITY)
+        {
+            throw new IllegalArgumentException("Invalid property ID: " + property);
+        }
+        this.targetProperty = property;
     }
 }

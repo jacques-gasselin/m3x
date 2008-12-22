@@ -1,9 +1,9 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.util.Object3DReferences;
 
 /**
@@ -17,15 +17,16 @@ import m3x.m3g.util.Object3DReferences;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public abstract class Object3D implements Serializable
+public abstract class Object3D implements SectionSerialisable
 {
     private int userID;
     private Vector<AnimationTrack> animationTracks;
     private int userParameterCount;
     private UserParameter[] userParameters;
 
-    public static class UserParameter implements Serializable
+    public static class UserParameter implements Serialisable
     {
 
         private int parameterID;
@@ -51,7 +52,7 @@ public abstract class Object3D implements Serializable
             return this.parameterValue;
         }
 
-        public void deserialize(Deserialiser deserialiser)
+        public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
             this.parameterID = deserialiser.readInt();
@@ -60,7 +61,7 @@ public abstract class Object3D implements Serializable
             deserialiser.readFully(this.parameterValue);
         }
 
-        public void serialize(Serialiser serialiser)
+        public void serialise(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeInt(this.parameterID);
@@ -96,12 +97,12 @@ public abstract class Object3D implements Serializable
         this.animationTracks = new Vector<AnimationTrack>();
     }
 
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        this.userID = deserialiser.readInt();
-        final int animationTracksLength = deserialiser.readInt();
-        for (int i = 0; i < animationTracksLength; ++i)
+        setUserID(deserialiser.readInt());
+        final int numTracks = deserialiser.readInt();
+        for (int i = 0; i < numTracks; ++i)
         {
             addAnimationTrack((AnimationTrack)deserialiser.readReference());
         }
@@ -111,11 +112,11 @@ public abstract class Object3D implements Serializable
         for (int i = 0; i < this.userParameters.length; ++i)
         {
             this.userParameters[i] = new UserParameter();
-            this.userParameters[i].deserialize(deserialiser);
+            this.userParameters[i].deserialise(deserialiser);
         }
     }
 
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
         serialiser.writeInt(this.userID);
@@ -128,7 +129,7 @@ public abstract class Object3D implements Serializable
         for (int i = 0; i < this.userParameterCount; i++)
         {
             UserParameter userParameter = this.userParameters[i];
-            userParameter.serialize(serialiser);
+            userParameter.serialise(serialiser);
         }
     }
 

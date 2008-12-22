@@ -1,7 +1,7 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,15 +24,16 @@ import m3x.m3g.primitives.ColorRGBA;
        Float32       texCoordScale;<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class VertexBuffer extends Object3D implements TypedObject
+public class VertexBuffer extends Object3D implements SectionSerialisable
 {
     public VertexBuffer()
     {
         super();
     }
 
-    public static class TextureCoordinate implements Serializable
+    public static class TextureCoordinate implements Serialisable
     {
 
         private VertexArray textureCoordinates;
@@ -66,7 +67,7 @@ public class VertexBuffer extends Object3D implements TypedObject
             return this.textureCoordinatesScale;
         }
 
-        public void deserialize(Deserialiser deserialiser)
+        public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
             this.textureCoordinates = (VertexArray)deserialiser.readReference();
@@ -77,7 +78,7 @@ public class VertexBuffer extends Object3D implements TypedObject
             this.textureCoordinatesScale = deserialiser.readFloat();
         }
 
-        public void serialize(Serialiser serialiser)
+        public void serialise(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(this.textureCoordinates);
@@ -132,12 +133,12 @@ public class VertexBuffer extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.defaultColor = new ColorRGBA();
-        this.defaultColor.deserialize(deserialiser);
+        this.defaultColor.deserialise(deserialiser);
         this.positions = (VertexArray)deserialiser.readReference();
         this.positionBias = new float[3];
         this.positionBias[0] = deserialiser.readFloat();
@@ -155,16 +156,16 @@ public class VertexBuffer extends Object3D implements TypedObject
         for (int i = 0; i < this.textureCoordinates.length; i++)
         {
             this.textureCoordinates[i] = new TextureCoordinate();
-            this.textureCoordinates[i].deserialize(deserialiser);
+            this.textureCoordinates[i].deserialise(deserialiser);
         }
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
-        this.defaultColor.serialize(serialiser);
+        super.serialise(serialiser);
+        this.defaultColor.serialise(serialiser);
         serialiser.writeReference(this.positions);
         for (float f : this.positionBias)
         {
@@ -176,11 +177,11 @@ public class VertexBuffer extends Object3D implements TypedObject
         serialiser.writeInt(this.textureCoordinateArrayCount);
         for (TextureCoordinate textureCoordinate : this.textureCoordinates)
         {
-            textureCoordinate.serialize(serialiser);
+            textureCoordinate.serialise(serialiser);
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.VERTEX_BUFFER;
     }

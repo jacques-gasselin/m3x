@@ -4,9 +4,12 @@ import java.io.IOException;
 
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.primitives.Serializable;
 
-public class ColorRGBA extends ColorRGB implements Serializable
+/**
+ * @author jsaarinen
+ * @author jgasseli
+ */
+public class ColorRGBA extends ColorRGB implements Serialisable
 {
     private int a;
 
@@ -41,18 +44,18 @@ public class ColorRGBA extends ColorRGB implements Serializable
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.a = deserialiser.readUnsignedByte();
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.a);
     }
 

@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -17,8 +16,9 @@ import java.io.IOException;
   END<br>
       
  * @author jsaarinen
+ * @author jgasseli
  */
-public class Image2D extends Object3D implements TypedObject
+public class Image2D extends Object3D
 {
     public static final int FORMAT_ALPHA = 96;
     public static final int FORMAT_LUMINANCE = 97;
@@ -83,10 +83,10 @@ public class Image2D extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.format = deserialiser.readUnsignedByte();
         if (this.format != FORMAT_ALPHA &&
             this.format != FORMAT_LUMINANCE &&
@@ -119,10 +119,10 @@ public class Image2D extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.write(this.format);
         serialiser.writeBoolean(this.isMutable);
         serialiser.writeInt(this.width);
@@ -136,7 +136,7 @@ public class Image2D extends Object3D implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.IMAGE_2D;
     }

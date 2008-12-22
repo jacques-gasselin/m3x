@@ -1,7 +1,7 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
-import m3x.m3g.primitives.TypedObject;
+import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -19,10 +19,11 @@ import m3x.m3g.primitives.Matrix;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public class SkinnedMesh extends Mesh implements TypedObject
+public class SkinnedMesh extends Mesh implements SectionSerialisable
 {
-    public static class BoneReference implements Serializable
+    public static class BoneReference implements Serialisable
     {
 
         private Node transformNode;
@@ -80,7 +81,7 @@ public class SkinnedMesh extends Mesh implements TypedObject
                 this.weight == another.weight;
         }
 
-        public void deserialize(Deserialiser deserialiser)
+        public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
             this.transformNode = (Node)deserialiser.readReference();
@@ -89,7 +90,7 @@ public class SkinnedMesh extends Mesh implements TypedObject
             this.weight = deserialiser.readInt();
         }
 
-        public void serialize(Serialiser serialiser)
+        public void serialise(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(getTransformNode());
@@ -121,36 +122,36 @@ public class SkinnedMesh extends Mesh implements TypedObject
     }
 
     @Override
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.SKINNED_MESH;
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.skeleton = (Group)deserialiser.readReference();
         int transformReferenceCount = deserialiser.readInt();
         this.boneReferences = new BoneReference[transformReferenceCount];
         for (int i = 0; i < this.boneReferences.length; i++)
         {
             this.boneReferences[i] = new BoneReference();
-            this.boneReferences[i].deserialize(deserialiser);
+            this.boneReferences[i].deserialise(deserialiser);
         }
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeReference(getSkeleton());
         serialiser.writeInt(this.boneReferences.length);
         for (BoneReference boneReference : this.boneReferences)
         {
-            boneReference.serialize(serialiser);
+            boneReference.serialise(serialiser);
         }
     }
 

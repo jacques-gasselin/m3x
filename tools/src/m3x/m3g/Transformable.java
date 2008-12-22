@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.Serialisable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -22,8 +22,9 @@ import m3x.m3g.primitives.Vector3D;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
-public abstract class Transformable extends Object3D implements Serializable
+public abstract class Transformable extends Object3D implements Serialisable
 {
     private boolean hasComponentTransform;
     private Vector3D translation;
@@ -66,20 +67,20 @@ public abstract class Transformable extends Object3D implements Serializable
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.hasComponentTransform = deserialiser.readBoolean();
         if (this.hasComponentTransform)
         {
             this.translation = new Vector3D();
-            this.translation.deserialize(deserialiser);
+            this.translation.deserialise(deserialiser);
             this.scale = new Vector3D();
-            this.scale.deserialize(deserialiser);
+            this.scale.deserialise(deserialiser);
             this.orientationAngle = deserialiser.readFloat();
             this.orientationAxis = new Vector3D();
-            this.orientationAxis.deserialize(deserialiser);
+            this.orientationAxis.deserialise(deserialiser);
             this.hasGeneralTransform = false;
         }
         this.hasGeneralTransform = deserialiser.readBoolean();
@@ -87,29 +88,29 @@ public abstract class Transformable extends Object3D implements Serializable
         {
             this.hasComponentTransform = false;
             this.transform = new Matrix();
-            this.transform.deserialize(deserialiser);
+            this.transform.deserialise(deserialiser);
         }
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         if (this.hasComponentTransform)
         {
             serialiser.writeBoolean(true);
-            this.translation.serialize(serialiser);
-            this.scale.serialize(serialiser);
+            this.translation.serialise(serialiser);
+            this.scale.serialise(serialiser);
             serialiser.writeFloat(this.orientationAngle);
-            this.orientationAxis.serialize(serialiser);
+            this.orientationAxis.serialise(serialiser);
             serialiser.writeBoolean(false);
         }
         else if (this.hasGeneralTransform)
         {
             serialiser.writeBoolean(false);
             serialiser.writeBoolean(true);
-            this.transform.serialize(serialiser);
+            this.transform.serialise(serialiser);
         }
     }
 

@@ -1,6 +1,6 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,10 +16,11 @@ import m3x.m3g.primitives.Matrix;
   END<br>
   <br>
  * @author jsaarinen
+ * @author jgasseli
  */
 public class MorphingMesh extends Mesh
 {
-    public static class TargetBuffer implements Serializable
+    public static class TargetBuffer implements Serialisable
     {
 
         private VertexBuffer morphTarget;
@@ -61,14 +62,14 @@ public class MorphingMesh extends Mesh
                    this.initialWeight == another.initialWeight;
         }
 
-        public void deserialize(Deserialiser deserialiser)
+        public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
             this.morphTarget = (VertexBuffer)deserialiser.readReference();
             this.initialWeight = deserialiser.readFloat();
         }
 
-        public void serialize(Serialiser serialiser)
+        public void serialise(Serialiser serialiser)
             throws IOException
         {
             serialiser.writeReference(getMorphTarget());
@@ -97,33 +98,33 @@ public class MorphingMesh extends Mesh
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         int morphTargetCount = deserialiser.readInt();
         this.morphTargets = new TargetBuffer[morphTargetCount];
         for (int i = 0; i < this.morphTargets.length; i++)
         {
             this.morphTargets[i] = new TargetBuffer();
-            this.morphTargets[i].deserialize(deserialiser);
+            this.morphTargets[i].deserialise(deserialiser);
         }
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
+        super.serialise(serialiser);
         serialiser.writeInt(this.morphTargets.length);
         for (TargetBuffer targetBuffer : this.morphTargets)
         {
-            targetBuffer.serialize(serialiser);
+            targetBuffer.serialise(serialiser);
         }
     }
 
     @Override
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.MORPHING_MESH;
     }

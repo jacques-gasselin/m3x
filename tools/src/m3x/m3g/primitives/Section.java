@@ -70,7 +70,7 @@ public class Section
         }
     }
 
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
         this.compressionScheme = deserialiser.readUnsignedByte();
@@ -131,8 +131,8 @@ public class Section
             {
                 final int objectType = deserialiser.readUnsignedByte();
                 final int length = deserialiser.readInt();
-                Serializable obj = ObjectFactory.getInstance(objectType);
-                obj.deserialize(deserialiser);
+                Serialisable obj = ObjectFactory.getInstance(objectType);
+                obj.deserialise(deserialiser);
                 if (objectType == 0)
                 {
                     //add a null object instead of the Header object.
@@ -175,15 +175,33 @@ public class Section
      * fields of this object are written into the output stream,
      * integers are converted into little endian format.
      */
-    public void serialize(Serialiser serialiser, Serializable[] objects)
+    public void serialise(Serialiser serialiser, SectionSerialisable[] objects)
         throws IOException
     {
         //serialise the objects to a byte array
         ByteArrayOutputStream objectStream = new ByteArrayOutputStream();
         serialiser.pushOutputStream(objectStream);
-        for (Serializable obj : objects)
         {
-            obj.serialize(serialiser);
+            ByteArrayOutputStream perObjectStream = new ByteArrayOutputStream();
+            //wrap each object in a SectionObject
+            for (SectionSerialisable obj : objects)
+            {
+                perObjectStream.reset();
+                serialiser.pushOutputStream(perObjectStream);
+                obj.serialise(serialiser);
+                serialiser.popOutputStream();
+                perObjectStream.flush();
+                byte[] objData = perObjectStream.toByteArray();
+
+                //write out the object type and the length
+                //Byte          ObjectType
+                //UInt32        Length
+                //Byte[Length]  Data
+                serialiser.write(obj.getSectionObjectType());
+                serialiser.writeInt(objData.length);
+                serialiser.write(objData);
+                serialiser.addObject(obj);
+            }
         }
         serialiser.popOutputStream();
         byte[] objectData = objectStream.toByteArray();

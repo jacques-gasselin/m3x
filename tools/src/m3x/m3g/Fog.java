@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.TypedObject;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -20,7 +19,7 @@ import m3x.m3g.primitives.ColorRGB;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Fog extends Object3D implements TypedObject
+public class Fog extends Object3D
 {
     public final static int MODE_EXPONENTIAL = 80;
     public final static int MODE_LINEAR = 81;
@@ -58,12 +57,12 @@ public class Fog extends Object3D implements TypedObject
     }
 
     @Override
-    public void deserialize(Deserialiser deserialiser)
+    public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
-        super.deserialize(deserialiser);
+        super.deserialise(deserialiser);
         this.color = new ColorRGB();
-        this.color.deserialize(deserialiser);
+        this.color.deserialise(deserialiser);
         this.mode = deserialiser.readUnsignedByte();
         if (this.mode == MODE_EXPONENTIAL)
         {
@@ -81,11 +80,11 @@ public class Fog extends Object3D implements TypedObject
     }
 
     @Override
-    public void serialize(Serialiser serialiser)
+    public void serialise(Serialiser serialiser)
         throws IOException
     {
-        super.serialize(serialiser);
-        this.color.serialize(serialiser);
+        super.serialise(serialiser);
+        this.color.serialise(serialiser);
         serialiser.write(this.mode);
         if (this.mode == MODE_EXPONENTIAL)
         {
@@ -102,7 +101,7 @@ public class Fog extends Object3D implements TypedObject
         }
     }
 
-    public int getObjectType()
+    public int getSectionObjectType()
     {
         return ObjectTypes.FOG;
     }
