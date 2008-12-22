@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.io.ByteArrayOutputStream;
 import m3x.m3g.KeyframeSequence.FloatKeyFrame;
 import m3x.m3g.KeyframeSequence.ByteKeyFrame;
 import m3x.m3g.KeyframeSequence.ShortKeyFrame;
@@ -7,156 +8,41 @@ import m3x.m3g.Object3D.UserParameter;
 
 public class KeyframeSequenceTest extends AbstractTestCase
 {
-  public void testSerializationAndDeserialization1()
-  {       
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    FloatKeyFrame[] keyFrames = new FloatKeyFrame[1];
-    float[] vectorValue = new float[] {0.1f, 0.2f, 0.3f};
-    keyFrames[0] = new FloatKeyFrame(1, vectorValue);
-    try
-    {   
-      KeyframeSequence seq = new KeyframeSequence(animationTracks,
-                                                  userParameters,
-                                                  KeyframeSequence.LINEAR,
-                                                  KeyframeSequence.CONSTANT,
-                                                  1,
-                                                  2,
-                                                  3,
-                                                  3,
-                                                  keyFrames);
-      byte[] serialized = M3GSupport.objectToBytes(seq);
-      KeyframeSequence deserialized = (KeyframeSequence)M3GSupport.bytesToObject(serialized, KeyframeSequence.class);
-      this.doTestAccessors(deserialized, seq);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
+    private KeyframeSequence sequence;
 
-  public void testSerializationAndDeserialization2()
-  {       
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    ByteKeyFrame[] keyFrames = new ByteKeyFrame[1];
-    byte[] vectorValue = new byte[] {1, 2, 3};
-    keyFrames[0] = new ByteKeyFrame(1, vectorValue);
-    try
-    {   
-      KeyframeSequence seq = new KeyframeSequence(animationTracks,
-                                                  userParameters,
-                                                  KeyframeSequence.LINEAR,
-                                                  KeyframeSequence.CONSTANT,
-                                                  1,
-                                                  2,
-                                                  3,
-                                                  3,
-                                                  keyFrames,
-                                                  new float[] {0.1f, 0.2f, 0.3f},
-                                                  new float[] {0.4f, 0.5f, 0.6f});
-      byte[] serialized = M3GSupport.objectToBytes(seq);
-      KeyframeSequence deserialized = (KeyframeSequence)M3GSupport.bytesToObject(serialized, KeyframeSequence.class);
-      this.doTestAccessors(deserialized, seq);
-    }
-    catch (Exception e)
+    public KeyframeSequenceTest()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
+        sequence = new KeyframeSequence();
+        FloatKeyFrame[] frames = new FloatKeyFrame[3];
+        frames[0] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 0, 1});
+        frames[1] = new KeyframeSequence.FloatKeyFrame(0, new float[]{1, 0, 0});
+        frames[2] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 1, 0});
+        sequence.setKeyframes(frames);
+        sequence.setInterpolationType(KeyframeSequence.STEP);
+    }
 
-  public void testSerializationAndDeserialization3()
-  {       
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
-    short[] vectorValue = new short[] {1, 2, 3};
-    keyFrames[0] = new ShortKeyFrame(1, vectorValue);
-    try
-    {   
-      KeyframeSequence seq = new KeyframeSequence(animationTracks,
-                                                  userParameters,
-                                                  KeyframeSequence.SLERP,
-                                                  KeyframeSequence.LOOP,
-                                                  1,
-                                                  2,
-                                                  3,
-                                                  3,
-                                                  keyFrames,
-                                                  new float[] {0.1f, 0.2f, 0.3f},
-                                                  new float[] {0.4f, 0.5f, 0.6f});
-      byte[] serialized = M3GSupport.objectToBytes(seq);
-      KeyframeSequence deserialized = (KeyframeSequence)M3GSupport.bytesToObject(serialized, KeyframeSequence.class);
-      this.doTestAccessors(deserialized, seq);
-    }
-    catch (Exception e)
+    public void testSaveAndLoad()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
+        Object3D[] roots = new Object3D[]{ sequence };
 
-  public void testFileFormatException1()
-  {       
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
-    short[] vectorValue = new short[] {1, 2, 3};
-    keyFrames[0] = new ShortKeyFrame(1, vectorValue);
-    try
-    {   
-      KeyframeSequence seq = new KeyframeSequence(animationTracks,
-                                                  userParameters,
-                                                  -1,
-                                                  KeyframeSequence.LOOP,
-                                                  1,
-                                                  2,
-                                                  3,
-                                                  3,
-                                                  keyFrames,
-                                                  new float[] {0.1f, 0.2f, 0.3f},
-                                                  new float[] {0.4f, 0.5f, 0.6f});
-      byte[] serialized = M3GSupport.objectToBytes(seq);
-      KeyframeSequence deserialized = (KeyframeSequence)M3GSupport.bytesToObject(serialized, KeyframeSequence.class);
-      this.doTestAccessors(deserialized, seq);
-    }
-    catch (Exception e)
-    {
-      return;
-    }
-    fail("FileFormatException not thrown!");*/
-  }
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Saver.save(out, roots, "1.0", "AnimationTrackTest");
 
-  public void testFileFormatException2()
-  {       
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    ShortKeyFrame[] keyFrames = new ShortKeyFrame[1];
-    short[] vectorValue = new short[] {1, 2, 3};
-    keyFrames[0] = new ShortKeyFrame(1, vectorValue);
-    try
-    {   
-      KeyframeSequence seq = new KeyframeSequence(animationTracks,
-                                                  userParameters,
-                                                  KeyframeSequence.CONSTANT,
-                                                  -1,
-                                                  1,
-                                                  2,
-                                                  3,
-                                                  3,
-                                                  keyFrames,
-                                                  new float[] {0.1f, 0.2f, 0.3f},
-                                                  new float[] {0.4f, 0.5f, 0.6f});
-      byte[] serialized = M3GSupport.objectToBytes(seq);
-      KeyframeSequence deserialized = (KeyframeSequence)M3GSupport.bytesToObject(serialized, KeyframeSequence.class);
-      this.doTestAccessors(deserialized, seq);
+            byte[] data = out.toByteArray();
+
+            Object3D[] loadRoots = Loader.load(data);
+
+            for (int i = 0; i < roots.length; ++i)
+            {
+                doTestAccessors(roots[i], loadRoots[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
     }
-    catch (Exception e)
-    {
-      return;
-    }
-    fail("FileFormatException not thrown!");*/
-  }
 }
