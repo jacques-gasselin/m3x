@@ -1,5 +1,8 @@
 package m3x.m3g;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import junit.framework.AssertionFailedError;
@@ -21,7 +24,7 @@ public abstract class AbstractTestCase extends TestCase
             Deserialiser deserialiser = new Deserialiser();
             deserialiser.deserialiseSingle(serialised, to);
 
-            doTestAccessors(from, to);
+            assertTrue(from.equals(to));
         }
         catch (Exception e)
         {
@@ -63,32 +66,26 @@ public abstract class AbstractTestCase extends TestCase
     {
         Class cls = object1.getClass();
         assertTrue(cls.equals(object2.getClass()));
-        Method[] methods = cls.getMethods();
 
-        for (int i = 0; i < methods.length; i++)
+        BeanInfo beanInfo = Introspector.getBeanInfo(cls);
+        for (PropertyDescriptor prop : beanInfo.getPropertyDescriptors())
         {
-            Method getter = methods[i];
-            Class[] paramTypes = getter.getParameterTypes();
-            if (paramTypes.length == 0)
+            Method getter = prop.getReadMethod();
+            if (getter != null)
             {
-                //only go for the ones that don't take any arguments
-                String methodName = getter.getName();
-                if (methodName.startsWith("get") || methodName.startsWith("is"))
+                Object result1 = getter.invoke(object1, (Object[]) null);
+                Object result2 = getter.invoke(object2, (Object[]) null);
+                try
                 {
-                    Object result1 = getter.invoke(object1, (Object[]) null);
-                    Object result2 = getter.invoke(object2, (Object[]) null);
-                    try
-                    {
-                        handleResults(result1, result2);
-                    }
-                    catch (AssertionFailedError e)
-                    {
-                        System.out.println("Failed on method : " + methodName);
-                        System.out.println("result1 : " + result1);
-                        System.out.println("result2 : " + result2);
-                        e.printStackTrace();
-                        throw e;
-                    }
+                    handleResults(result1, result2);
+                }
+                catch (AssertionFailedError e)
+                {
+                    System.out.println("Failed on method : " + getter);
+                    System.out.println("result1 : " + result1);
+                    System.out.println("result2 : " + result2);
+                    e.printStackTrace();
+                    throw e;
                 }
             }
         }

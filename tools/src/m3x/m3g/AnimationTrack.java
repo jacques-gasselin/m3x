@@ -57,56 +57,6 @@ public class AnimationTrack extends Object3D
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (!(obj instanceof AnimationTrack))
-        {
-            return false;
-        }
-
-        AnimationTrack another = (AnimationTrack) obj;
-        boolean equal = super.equals(obj)
-            && getTargetProperty() == getTargetProperty();
-        if (!equal)
-        {
-            return false;
-        }
-
-        //compare keyframes
-        if (getKeyframeSequence() != null)
-        {
-            if (!getKeyframeSequence().equals(another.getKeyframeSequence()))
-            {
-                return false;
-            }
-        }
-        else if (another.getKeyframeSequence() != null)
-        {
-            return false;
-        }
-
-
-        //compare controller
-        if (getAnimationController() != null)
-        {
-            if (!getAnimationController().equals(another.getAnimationController()))
-            {
-                return false;
-            }
-        }
-        else if (another.getAnimationController() != null)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {

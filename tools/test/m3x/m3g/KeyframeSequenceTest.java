@@ -2,9 +2,6 @@ package m3x.m3g;
 
 import java.io.ByteArrayOutputStream;
 import m3x.m3g.KeyframeSequence.FloatKeyFrame;
-import m3x.m3g.KeyframeSequence.ByteKeyFrame;
-import m3x.m3g.KeyframeSequence.ShortKeyFrame;
-import m3x.m3g.Object3D.UserParameter;
 
 public class KeyframeSequenceTest extends AbstractTestCase
 {

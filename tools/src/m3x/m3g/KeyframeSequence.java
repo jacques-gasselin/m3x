@@ -249,43 +249,6 @@ public class KeyframeSequence extends Object3D
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (!(obj instanceof KeyframeSequence))
-        {
-            return false;
-        }
-        KeyframeSequence another = (KeyframeSequence) obj;
-        boolean equal = super.equals(obj)
-            && getInterpolationType() == another.getInterpolationType()
-            && getRepeatMode() == another.getRepeatMode()
-            && getEncoding() == another.getEncoding()
-            && getDuration() == another.getDuration()
-            && getValidRangeFirst() == another.getValidRangeLast()
-            && getComponentCount() == another.getComponentCount()
-            && getKeyframeCount() == another.getKeyframeCount();
-        if (!equal)
-        {
-            return false;
-        }
-
-        //compare keyframes
-        for (int i = 0; i < getKeyframeCount(); ++i)
-        {
-            if (!getKeyFrames()[i].equals(another.getKeyFrames()[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
