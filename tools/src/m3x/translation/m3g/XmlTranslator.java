@@ -1,6 +1,7 @@
 package m3x.translation.m3g;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 import m3x.translation.m3g.xml.AnimationControllerConverter;
 import m3x.translation.m3g.xml.AnimationTrackConverter;
@@ -11,7 +12,7 @@ import m3x.translation.m3g.xml.AnimationTrackConverter;
  */
 public class XmlTranslator extends Translator
 {
-    private Hashtable<Class, Class> converterMap;
+    private Map<Class, Class> converterMap;
     private String version;
 
     public XmlTranslator(String version)
@@ -39,7 +40,7 @@ public class XmlTranslator extends Translator
         Vector<m3x.m3g.Object3D> rootVector = translator.getRootVector();
         return rootVector.toArray(null);
     }
-    
+
     public m3x.m3g.Object3D getObject(m3x.xml.Object3D key)
     {
         return super.getObject((java.lang.Object)key);
