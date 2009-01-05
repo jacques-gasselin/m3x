@@ -11,19 +11,17 @@ import java.io.InputStream;
 public final class ConsoleTest extends Object
 {
     private m3x.xml.M3G xmlRoot = null;
-    private m3x.xml.Deserialiser xmlDeserialiser = null;
     
     /**Creates a ConsoleTest instance using the XML bindings.
      * 
      * @param root - the root of the XML document
      * @param deserialiser - the object that resolves the references of the XML.
      */
-    private ConsoleTest(m3x.xml.M3G root, m3x.xml.Deserialiser deserialiser)
+    private ConsoleTest(m3x.xml.M3G root)
     {
         super();
         
         xmlRoot = root;
-        xmlDeserialiser = deserialiser;
     }
     
     /**Convenience function for printing to the screen.
@@ -138,10 +136,9 @@ public final class ConsoleTest extends Object
             inStream = System.in;
         }
 
-        final m3x.xml.Deserialiser deserialiser = new m3x.xml.Deserialiser();
-        final m3x.xml.M3G root = deserialiser.deserialise(inStream);
+        final m3x.xml.M3G root = m3x.xml.Deserialiser.deserialise(inStream);
         
-        return new ConsoleTest(root, deserialiser);
+        return new ConsoleTest(root);
     }
     
     /**Entry function for M3X

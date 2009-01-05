@@ -71,6 +71,11 @@
                 <location>tools/build</location>
                 <build-target>build</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>tools/test/build</location>
+                <build-target>build</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -119,13 +124,14 @@
             <compilation-unit>
                 <package-root>tools/build/src</package-root>
                 <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar:tools/dist/m3x.jar:lib/ant.jar</classpath>
+                <built-to>tools/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>tools/test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">lib/activation.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jsr173_api.jar:lib/junit-4.4.jar:tools/dist/m3x.jar:lib/ant.jar</classpath>
-                <built-to>tools/build</built-to>
+                <built-to>tools/test/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

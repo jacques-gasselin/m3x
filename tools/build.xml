@@ -10,6 +10,7 @@
     <property name="src.dir" location="${basedir}/src"/>
     <property name="src.m3x.dir" location="${src.dir}/m3x"/>
     <property name="test.dir" location="${basedir}/test"/>
+    <property name="test.build.dir" location="${test.dir}/build"/>
     <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
     <property name="build.dir" location="${basedir}/build"/>
     <property name="build.src.dir" location="${build.dir}/src"/>
@@ -42,28 +43,28 @@
     <target name="xml-build" depends="xjc-typedef">
         <xjc package="${m3x.xml.package}"
              destdir="${build.src.dir}">
-            <arg value="-extension"/>
-            <arg value="-xmlschema"/>
             <schema file="${schema.dir}/m3x.xsd"/>
-            <depends file="${schema.dir}/m3x.xsd"/>
-            <produces dir="${build.src.m3x.xml.dir}"/>
         </xjc>
-        <depend srcdir="${build.src.dir}"
-                destdir="${build.dir}"
-                cache="depcache"
-                closure="yes"/>
         <javac destdir="${build.dir}"
-               fork="true">
+               fork="true"
+               debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${build.src.dir}"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
+        <!--in case any props files were generated-->
+        <copy todir="${build.dir}">
+            <fileset dir="${build.src.dir}">
+              <include name="**/jaxb.properties"/>
+            </fileset>
+        </copy>
     </target>
     
     <target name="clean">
         <delete>
+            <fileset dir="${test.build.dir}" includes="**/*.class"/>
             <fileset dir="${build.dir}" includes="**/*.class"/>
             <fileset dir="${build.dir}" includes="**/*.java"/>
             <fileset dir="${dist.dir}" includes="**/*.jar"/>
@@ -96,30 +97,28 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
+        <!--build the distributable jar-->
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/m3x.jar"
+             basedir="${build.dir}">
+             <exclude name="src/**/*"/>
+        </jar>
         <!--compile the tests-->
+        <mkdir dir="${test.build.dir}" />
         <depend srcdir="${test.dir}"
-                destdir="${build.dir}"
+                destdir="${test.build.dir}"
                 cache="depcache"
                 closure="yes"/>
-        <javac destdir="${build.dir}"
+        <javac destdir="${test.build.dir}"
                fork="true"
                debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${test.dir}"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>
+                <fileset dir="${dist.dir}"/>
             </classpath>
         </javac>
-        <!--build the distributable jar-->
-        <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/m3x.jar"
-             basedir="${build.dir}">
-             <exclude name="src/**/*"/>
-             <exclude name="**/Test*.class"/>
-             <exclude name="**/Demo*.class"/>
-             <exclude name="**/*Test.class"/>
-             <exclude name="**/*Demo.class"/>
-        </jar>
     </target>
     
     <target name="javadoc" depends="pre-build, xml-build">

@@ -5,9 +5,8 @@
                http://www.w3.org/2001/XMLSchema.xsd"
            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-           jaxb:extensionBindingPrefixes="xjc"
            elementFormDefault="qualified"
-           jaxb:version="1.0"
+           jaxb:version="2.0"
            version="1.0"
            xml:lang="EN">
     <!-- BEGIN M3X Format Schema -->

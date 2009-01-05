@@ -1,5 +1,7 @@
 package m3x.xml;
 
+import javax.xml.bind.JAXB;
+
 /**The Deserialiser class hides the complexities of binding a JAXB context
  * and unmarshalling the classes. 
  * The xml classes use refid references that need to be resolved in order to
@@ -7,37 +9,14 @@ package m3x.xml;
  *
  * @author jgasseli
  */
-public class Deserialiser
+public abstract class Deserialiser
 {
     /**The JAXB unsmahaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
-    private javax.xml.bind.Unmarshaller xmlUnmarshaller = null;
-
-    /**Creates a new Deserialser that is bound to the m3x.xml JAXB context.
-     * 
-     */
-    public Deserialiser()
+    private Deserialiser()
     {
-        //create the unmarshaller
-        javax.xml.bind.JAXBContext context = null;
-        try
-        {
-            context = javax.xml.bind.JAXBContext.newInstance("m3x.xml");
-        }
-        catch (javax.xml.bind.JAXBException e)
-        {
-            throw new IllegalArgumentException("unable to bind schema: " + e.getMessage());
-        }
         
-        try
-        {
-            xmlUnmarshaller = context.createUnmarshaller();
-        }
-        catch (javax.xml.bind.JAXBException e)
-        {
-            throw new IllegalArgumentException("unable to create unmarshaller: " + e.getMessage());
-        }
     }
     
     /**Deserialise an input stream that contains an XML document.
@@ -45,15 +24,15 @@ public class Deserialiser
      * @param stream - the inout stream to read from.
      * @return - the root M3G object
      */
-    public m3x.xml.M3G deserialise(java.io.InputStream stream)
+    public static m3x.xml.M3G deserialise(java.io.InputStream stream)
     {
         try
         {
-            return (m3x.xml.M3G)xmlUnmarshaller.unmarshal(stream);
+            return JAXB.unmarshal(stream, m3x.xml.M3G.class);
         }
-        catch (javax.xml.bind.JAXBException e)
+        catch (javax.xml.bind.DataBindingException e)
         {
-            throw new IllegalArgumentException("unable to parse infile: " + e.getMessage());
+            throw new IllegalArgumentException("unable to parse stream: " + e.getMessage());
         }       
     }
 }

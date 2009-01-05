@@ -74,6 +74,10 @@ public abstract class Translator
             try
             {
                 Class converterClass = getConverterClass(keyClass);
+                if (converterClass == null)
+                {
+                    throw new NullPointerException("no converter class for " + key);
+                }
                 converter = (BinaryConverter)converterClass.newInstance();
                 objectClassToBinaryConverterMap.put(keyClass, converter);
             }

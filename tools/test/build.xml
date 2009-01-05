@@ -15,10 +15,11 @@
                fork="true">
             <!-- jaxb-api.jar included in ${lib.dir} causes error with some
                  environments, if not included into endorsed dirs path -->
-            <sysproperty key="java.endorsed.dirs" value="${lib.dir}"/>
+            <!--sysproperty key="java.endorsed.dirs" value="${lib.dir}"/-->
             <classpath>
-                <pathelement location="${build.dir}"/>
+                <pathelement location="${test.build.dir}"/>
                 <fileset dir="${lib.dir}"/>
+                <fileset dir="${dist.dir}"/>
             </classpath>
             
             <formatter usefile="false" type="brief"/>

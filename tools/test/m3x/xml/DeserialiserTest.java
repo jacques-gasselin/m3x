@@ -11,15 +11,14 @@ import junit.framework.TestCase;
  */
 public class DeserialiserTest extends TestCase
 {
-    private Deserialiser deserialiser;
-    
+   
     /**Sets up the test case fixture.
      * Creates a new instance of an m3x.xml.Deserialiser.
      */
     @Override
     public void setUp()
     {
-        deserialiser = new Deserialiser();
+
     }
     
     public void testDeserialiseString1()
@@ -29,7 +28,7 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should throw here
-            m3x.xml.M3G root = deserialiser.deserialise(in);
+            m3x.xml.M3G root = Deserialiser.deserialise(in);
         }
         catch (IllegalArgumentException unused)
         {
@@ -54,7 +53,7 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should not throw here
-            m3x.xml.M3G root = deserialiser.deserialise(in);
+            m3x.xml.M3G root = Deserialiser.deserialise(in);
             List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
@@ -66,18 +65,19 @@ public class DeserialiserTest extends TestCase
 
     public void testDeserialiseStringAnimationController()
     {
-        String xmlString = "<?xml version=\"1.0\"?>\n"
-                + "<m3g>\n"
-                + "    <section>\n"
-                + "        <AnimationController/>"
-                + "    </section>\n"
-                + "</m3g>";
+        String xmlString =
+              "<?xml version=\"1.0\"?>\n"
+            + "<m3g>\n"
+            + "    <section>\n"
+            + "        <AnimationController/>"
+            + "    </section>\n"
+            + "</m3g>";
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         m3x.xml.M3G root = null;
         try
         {
             //Should not throw here
-            root = deserialiser.deserialise(in);
+            root = Deserialiser.deserialise(in);
             List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
