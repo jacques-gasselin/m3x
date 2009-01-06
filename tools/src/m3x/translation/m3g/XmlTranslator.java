@@ -82,7 +82,8 @@ public class XmlTranslator extends Translator
             }
         }
         Vector<m3x.m3g.Object3D> rootVector = translator.getRootVector();
-        return rootVector.toArray(null);
+        m3x.m3g.Object3D[] arr = new m3x.m3g.Object3D[rootVector.size()];
+        return rootVector.toArray(arr);
     }
 
     public m3x.m3g.Object3D getObject(m3x.xml.Object3D key)
@@ -133,10 +134,6 @@ public class XmlTranslator extends Translator
                 option = CommandOption.OutputFile;
                 continue;
             }
-            else
-            {
-                option = CommandOption.InputFile;
-            }
 
             if (option == CommandOption.InputFile)
             {
@@ -146,8 +143,13 @@ public class XmlTranslator extends Translator
             {
                 outputFile = new File(value);
             }
+
+            //default back to input file arguments
+            option = CommandOption.InputFile;
         }
-        
+
+        System.out.println("inputFile: " + inputFile);
+        System.out.println("outputFile: " + outputFile);
         convert(inputFile, outputFile);
     }
 }

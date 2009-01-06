@@ -112,11 +112,10 @@ public class LittleEndianDataOutputStream implements DataOutput
 
     public void writeUTF8(String str) throws IOException
     {
-        if (str == null)
+        if (str != null)
         {
-            throw new NullPointerException("str is null");
+            this.dos.write(str.getBytes("UTF-8"));
         }
-        this.dos.write(str.getBytes("UTF-8"));
         this.dos.writeByte(0);
     }
 }

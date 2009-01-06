@@ -110,11 +110,23 @@ public class Appearance extends Object3D
 
     public int getTextureCount()
     {
+        if (this.textures == null)
+        {
+            return 0;
+        }
         return this.textures.length;
     }
 
     public Texture2D getTexture(int index)
     {
+        if (index < 0)
+        {
+            throw new IllegalArgumentException("index < 0");
+        }
+        if (index >= getTextureCount())
+        {
+            throw new IllegalArgumentException("index > getTextureCount()");
+        }
         return this.textures[index];
     }
 }
