@@ -87,9 +87,9 @@ public class Image2D extends Object3D
         super.deserialise(deserialiser);
         setFormat(deserialiser.readUnsignedByte());
         setMutable(deserialiser.readBoolean());
-        setWidth(deserialiser.readInt());
-        setHeight(deserialiser.readInt());
-        validateWidthAndHeight(this.width, this.height);
+        final int width = deserialiser.readInt();
+        final int height = deserialiser.readInt();
+        setSize(width, height);
         if (!isMutable())
         {
             byte[] palette = deserialiser.readByteArray();
@@ -104,8 +104,10 @@ public class Image2D extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
+        validateFormat(getFormat());
         serialiser.write(getFormat());
         serialiser.writeBoolean(isMutable());
+        validateWidthAndHeight(getWidth(), getHeight());
         serialiser.writeInt(getWidth());
         serialiser.writeInt(getHeight());
         if (!isMutable())
