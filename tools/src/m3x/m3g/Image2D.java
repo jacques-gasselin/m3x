@@ -2,6 +2,7 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -87,9 +88,9 @@ public class Image2D extends Object3D
         super.deserialise(deserialiser);
         setFormat(deserialiser.readUnsignedByte());
         setMutable(deserialiser.readBoolean());
-        final int width = deserialiser.readInt();
-        final int height = deserialiser.readInt();
-        setSize(width, height);
+        final int w = deserialiser.readInt();
+        final int h = deserialiser.readInt();
+        setSize(w, h);
         if (!isMutable())
         {
             byte[] palette = deserialiser.readByteArray();
@@ -124,32 +125,28 @@ public class Image2D extends Object3D
         return ObjectTypes.IMAGE_2D;
     }
 
-    public void setFormat(String format)
+    public void setFormat(String formatString)
     {
-        if (format.equals("ALPHA"))
+        if (formatString == null)
         {
-            setFormat(ALPHA);
+            throw new NullPointerException("format is null");
         }
-        else if (format.equals("LUMINANCE"))
+
+        int value = 0;
+        try
         {
-            setFormat(LUMINANCE);
+            Field field = getClass().getField(formatString);
+            value = field.getInt(this);
         }
-        else if (format.equals("LUMINANCE_ALPHA"))
+        catch (NoSuchFieldException e)
         {
-            setFormat(LUMINANCE_ALPHA);
+            throw new IllegalArgumentException("unknown format " + formatString);
         }
-        else if (format.equals("RGB"))
+        catch (IllegalAccessException e)
         {
-            setFormat(RGB);
+            throw new IllegalArgumentException("no access to format " + formatString);
         }
-        else if (format.equals("RGBA"))
-        {
-            setFormat(RGBA);
-        }
-        else
-        {
-            throw new IllegalArgumentException("unknown format " + format);
-        }
+        setFormat(value);
     }
 
     public void setFormat(int format)

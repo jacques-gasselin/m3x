@@ -2,6 +2,7 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import m3x.m3g.util.Object3DReferences;
 
 /**
@@ -129,8 +130,26 @@ public class AnimationTrack extends Object3D
         this.targetProperty = property;
     }
 
-    public void setTargetProperty(String value)
+    public void setTargetProperty(String propertyString)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        if (propertyString == null)
+        {
+            throw new NullPointerException("value is null");
+        }
+        int property = 0;
+        try
+        {
+            Field field = getClass().getField(propertyString);
+            property = field.getInt(this);
+        }
+        catch (NoSuchFieldException e)
+        {
+            throw new IllegalArgumentException("unknown property " + propertyString);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new IllegalArgumentException("no access to property " + propertyString);
+        }
+        setTargetProperty(property);
     }
 }
