@@ -2,6 +2,7 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -26,21 +27,22 @@ public class Image2D extends Object3D
     public static final int FORMAT_RGB = 99;
     public static final int FORMAT_RGBA = 100;
     private int format;
-    private boolean isMutable;
+    private boolean mutable;
     private int width;
     private int height;
     private byte[] palette;
-    private byte[] pixels;
+    private byte[][] pixels;
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         int format, int width, int height, byte[] palette, byte[] pixels)
     {
         super(animationTracks, userParameters);
         validateFormat(format);
-        this.isMutable = false;
+        this.mutable = false;
         validateWidthAndHeight(width, height);
         this.palette = palette;
-        this.pixels = pixels;
+        this.pixels = new byte[1][];
+        this.pixels[0] = pixels;
     }
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
@@ -48,7 +50,7 @@ public class Image2D extends Object3D
     {
         super(animationTracks, userParameters);
         validateFormat(format);
-        this.isMutable = true;
+        this.mutable = true;
         validateWidthAndHeight(width, height);
         this.palette = null;
         this.pixels = null;
@@ -96,7 +98,7 @@ public class Image2D extends Object3D
         {
             throw new IllegalArgumentException("Invalid Image2D format: " + this.format);
         }
-        this.isMutable = deserialiser.readBoolean();
+        this.mutable = deserialiser.readBoolean();
         this.width = deserialiser.readInt();
         if (this.width <= 0)
         {
@@ -107,14 +109,15 @@ public class Image2D extends Object3D
         {
             throw new IllegalArgumentException("Invalid Image2D height: " + this.height);
         }
-        if (this.isMutable == false)
+        if (this.mutable == false)
         {
             int paletteLength = deserialiser.readInt();
             this.palette = new byte[paletteLength];
             deserialiser.readFully(this.palette);
             int pixelsLength = deserialiser.readInt();
-            this.pixels = new byte[pixelsLength];
-            deserialiser.readFully(this.pixels);
+            this.pixels = new byte[1][];
+            this.pixels[0] = new byte[pixelsLength];
+            deserialiser.readFully(this.pixels[0]);
         }
     }
 
@@ -124,15 +127,15 @@ public class Image2D extends Object3D
     {
         super.serialise(serialiser);
         serialiser.write(this.format);
-        serialiser.writeBoolean(this.isMutable);
+        serialiser.writeBoolean(isMutable());
         serialiser.writeInt(this.width);
         serialiser.writeInt(this.height);
-        if (this.isMutable == false)
+        if (!isMutable())
         {
             serialiser.writeInt(this.palette.length);
             serialiser.write(this.palette);
             serialiser.writeInt(this.pixels.length);
-            serialiser.write(this.pixels);
+            serialiser.write(this.pixels[0]);
         }
     }
 
@@ -146,9 +149,24 @@ public class Image2D extends Object3D
         return this.format;
     }
 
+    public void setMutable(boolean enable)
+    {
+        this.mutable = enable;
+    }
+
     public boolean isMutable()
     {
-        return this.isMutable;
+        return this.mutable;
+    }
+
+    public void setWidth(int width)
+    {
+        this.width = width;
+    }
+
+    public void setHeight(int height)
+    {
+        this.height = height;
     }
 
     public int getWidth()
@@ -161,12 +179,60 @@ public class Image2D extends Object3D
         return this.height;
     }
 
+    public void setPalette(byte[] palette)
+    {
+        if (palette != null)
+        {
+            this.palette = new byte[palette.length];
+            System.arraycopy(palette, 0, this.palette, 0, palette.length);
+        }
+        else
+        {
+            this.palette = null;
+        }
+    }
+
     public byte[] getPalette()
     {
         return this.palette;
     }
 
+    public void setPixels(List<Short> unsignedPixels)
+    {
+        byte[] signedPixels = new byte[unsignedPixels.size()];
+        for (int i = 0; i < unsignedPixels.size(); ++i)
+        {
+            short unsignedPixel = unsignedPixels.get(i);
+            if (unsignedPixel > 127)
+            {
+                unsignedPixel -= 256;
+            }
+            signedPixels[i] = (byte)unsignedPixel;
+        }
+        setPixels(signedPixels);
+    }
+
+    public void setPixels(byte[] pixels)
+    {
+        if (this.pixels == null)
+        {
+            //single level only
+            this.pixels = new byte[1][];
+        }
+        this.pixels[0] = new byte[pixels.length];
+        System.arraycopy(pixels, 0, this.pixels[0], 0, pixels.length);
+    }
+
     public byte[] getPixels()
+    {
+        if (this.pixels == null)
+        {
+            return null;
+        }
+        return this.pixels[0];
+    }
+
+    public byte[][] getMipmapPixels()
     {
         return this.pixels;
     }
