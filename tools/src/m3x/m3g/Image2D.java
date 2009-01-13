@@ -40,9 +40,8 @@ public class Image2D extends Object3D
         validateFormat(format);
         this.mutable = false;
         validateWidthAndHeight(width, height);
-        this.palette = palette;
-        this.pixels = new byte[1][];
-        this.pixels[0] = pixels;
+        setPalette(palette);
+        setPixels(pixels);
     }
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
@@ -52,8 +51,8 @@ public class Image2D extends Object3D
         validateFormat(format);
         this.mutable = true;
         validateWidthAndHeight(width, height);
-        this.palette = null;
-        this.pixels = null;
+        setPalette(null);
+        setPixels((byte[])null);
     }
 
     private void validateFormat(int format)
@@ -197,30 +196,38 @@ public class Image2D extends Object3D
         return this.palette;
     }
 
-    public void setPixels(List<Short> unsignedPixels)
+    public void setPixels(List<Short> pixels)
     {
-        byte[] signedPixels = new byte[unsignedPixels.size()];
-        for (int i = 0; i < unsignedPixels.size(); ++i)
+        byte[] signedPixels = null;
+        if ((pixels != null) && (pixels.size() > 0))
         {
-            short unsignedPixel = unsignedPixels.get(i);
-            if (unsignedPixel > 127)
+            signedPixels = new byte[pixels.size()];
+            for (int i = 0; i < pixels.size(); ++i)
             {
-                unsignedPixel -= 256;
+                short unsignedPixel = pixels.get(i);
+                if (unsignedPixel > 127)
+                {
+                    unsignedPixel -= 256;
+                }
+                signedPixels[i] = (byte)unsignedPixel;
             }
-            signedPixels[i] = (byte)unsignedPixel;
         }
         setPixels(signedPixels);
     }
 
     public void setPixels(byte[] pixels)
     {
-        if (this.pixels == null)
+        if (pixels != null)
         {
             //single level only
             this.pixels = new byte[1][];
+            this.pixels[0] = new byte[pixels.length];
+            System.arraycopy(pixels, 0, this.pixels[0], 0, pixels.length);
         }
-        this.pixels[0] = new byte[pixels.length];
-        System.arraycopy(pixels, 0, this.pixels[0], 0, pixels.length);
+        else
+        {
+            this.pixels = null;
+        }
     }
 
     public byte[] getPixels()
