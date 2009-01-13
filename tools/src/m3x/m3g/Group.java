@@ -3,6 +3,8 @@ package m3x.m3g;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
+import java.util.List;
+import java.util.Vector;
 import m3x.m3g.primitives.Matrix;
 
 /**
@@ -14,7 +16,7 @@ import m3x.m3g.primitives.Matrix;
  */
 public class Group extends Node
 {
-    private Node[] children;
+    private List<Node> children;
 
     public Group(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -23,7 +25,7 @@ public class Group extends Node
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
         assert (children != null);
-        this.children = children;
+        setChildren(children);
     }
 
     public Group()
@@ -36,20 +38,14 @@ public class Group extends Node
         throws IOException
     {
         super.deserialise(deserialiser);
-        int childrenLength = deserialiser.readInt();
-        if (childrenLength < 0)
+        int childCount = deserialiser.readInt();
+        if (childCount < 0)
         {
-            throw new IllegalArgumentException("Number of children < 0: " + childrenLength);
+            throw new IllegalArgumentException("Number of children < 0: " + childCount);
         }
-        this.children = new Node[childrenLength];
-        for (int i = 0; i < this.children.length; i++)
+        for (int i = 0; i < childCount; ++i)
         {
-            Node child = (Node)deserialiser.readReference();
-            if (child == null)
-            {
-                throw new IllegalArgumentException("null child in group");
-            }
-            this.children[i] = child;
+            addChild((Node)deserialiser.readReference());
         }
     }
 
@@ -59,9 +55,9 @@ public class Group extends Node
     {
         super.serialise(serialiser);
         serialiser.writeInt(getChildCount());
-        for (Node child : getChildren())
+        for (int i = 0; i < getChildCount(); ++i)
         {
-            serialiser.writeReference(child);
+            serialiser.writeReference(getChild(i));
         }
     }
 
@@ -72,11 +68,90 @@ public class Group extends Node
 
     public int getChildCount()
     {
-        return this.children.length;
+        if (children == null)
+        {
+            return 0;
+        }
+        return children.size();
+    }
+
+    public Node getChild(int index)
+    {
+        if (index < 0)
+        {
+            throw new IllegalArgumentException("index < 0");
+        }
+        if (index >= getChildCount())
+        {
+            throw new IllegalArgumentException("index >= getChildCount()");
+        }
+        return children.get(index);
     }
 
     public Node[] getChildren()
     {
-        return this.children;
+        Node[] arr = null;
+        final int childCount = getChildCount();
+        if (childCount > 0)
+        {
+            arr = new Node[childCount];
+            for (int i = 0; i < childCount; ++i)
+            {
+                arr[i] = getChild(i);
+            }
+        }
+        return arr;
+    }
+
+    public void setChildren(Node[] children)
+    {
+        //get rid of the old children
+        for (int i = 0; i < getChildCount(); ++i)
+        {
+            removeChild(getChild(i));
+        }
+        if (children == null)
+        {
+            this.children = null;
+        }
+        else
+        {
+            for (int i = 0; i < children.length; ++i)
+            {
+                addChild(children[i]);
+            }
+        }
+    }
+
+    public void addChild(Node child)
+    {
+        if (child == null)
+        {
+            throw new IllegalArgumentException("null child in group");
+        }
+
+        if (children == null)
+        {
+            children = new Vector<Node>();
+        }
+
+        children.add(child);
+        child.setParent(this);
+    }
+
+    public void removeChild(Node child)
+    {
+        if (child == null)
+        {
+            return;
+        }
+
+        if (children == null)
+        {
+            return;
+        }
+
+        children.remove(child);
+        child.setParent(null);
     }
 }

@@ -54,12 +54,13 @@ public class DeserialiserTest extends TestCase
         {
             //Should not throw here
             m3x.xml.M3G root = Deserialiser.deserialise(in);
+            assertNotNull("deserialised root must not be null", root);
             List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
         {
             //must not throw
-            fail();
+            fail(e.toString());
         }
     }
 
@@ -73,18 +74,17 @@ public class DeserialiserTest extends TestCase
             + "    </section>\n"
             + "</m3g>";
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
-        m3x.xml.M3G root = null;
         try
         {
             //Should not throw here
-            root = Deserialiser.deserialise(in);
+            m3x.xml.M3G root = Deserialiser.deserialise(in);
+            assertNotNull("deserialised root must not be null", root);
             List<m3x.xml.Section> sections = root.getSection();
         }
         catch (Exception e)
         {
             //must not throw
-            fail();
+            fail(e.toString());
         }
-        assertNotNull(root);
     }
 }

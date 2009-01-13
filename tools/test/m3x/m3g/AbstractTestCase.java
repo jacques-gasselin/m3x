@@ -177,7 +177,8 @@ public abstract class AbstractTestCase extends TestCase
         }
         else
         {
-            assertTrue(Arrays.equals((Object[]) result1, (Object[]) result2));
+            //are they in return arrays?
+            assertTrue(Arrays.deepEquals((Object[])result1, (Object[])result2));
         }
     }
 }

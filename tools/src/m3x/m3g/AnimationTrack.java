@@ -47,7 +47,7 @@ public class AnimationTrack extends Object3D
     {
         super(animationTracks, userParameters);
         setKeyframeSequence(keyframeSequence);
-        setAnimationController(animationController);
+        setController(animationController);
         setTargetProperty(propertyID);
     }
 
@@ -62,7 +62,7 @@ public class AnimationTrack extends Object3D
     {
         super.deserialise(deserialiser);
         setKeyframeSequence((KeyframeSequence)deserialiser.readReference());
-        setAnimationController((AnimationController)deserialiser.readReference());
+        setController((AnimationController)deserialiser.readReference());
         setTargetProperty(deserialiser.readInt());
     }
 
@@ -72,7 +72,7 @@ public class AnimationTrack extends Object3D
     {
         super.serialise(serialiser);
         serialiser.writeReference(getKeyframeSequence());
-        serialiser.writeReference(getAnimationController());
+        serialiser.writeReference(getController());
         serialiser.writeInt(getTargetProperty());
     }
 
@@ -82,7 +82,7 @@ public class AnimationTrack extends Object3D
         Object3DReferences queue =
                 new Object3DReferences(super.getReferences(references), references);
         queue.add(getKeyframeSequence());
-        queue.add(getAnimationController());
+        queue.add(getController());
         return queue.size();
     }
 
@@ -105,12 +105,12 @@ public class AnimationTrack extends Object3D
         this.keyframeSequence = sequence;
     }
 
-    public AnimationController getAnimationController()
+    public AnimationController getController()
     {
         return this.animationController;
     }
 
-    public void setAnimationController(AnimationController controller)
+    public void setController(AnimationController controller)
     {
         this.animationController = controller;
     }
@@ -127,5 +127,10 @@ public class AnimationTrack extends Object3D
             throw new IllegalArgumentException("Invalid property ID: " + property);
         }
         this.targetProperty = property;
+    }
+
+    public void setTargetProperty(String value)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

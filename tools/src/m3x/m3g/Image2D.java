@@ -213,6 +213,23 @@ public class Image2D extends Object3D
         }
     }
 
+    private static byte uintToByte(int uint)
+    {
+        if (uint < 0)
+        {
+            throw new IllegalArgumentException("value (" + uint + ") < 0");
+        }
+        if (uint > 255)
+        {
+            throw new IllegalArgumentException("value (" + uint + ") > 255");
+        }
+        if (uint > 127)
+        {
+            return (byte)(uint - 256);
+        }
+        return (byte)uint;
+    }
+
     public void setPalette(List<Short> palette)
     {
         byte[] signedPalette = null;
@@ -221,12 +238,7 @@ public class Image2D extends Object3D
             signedPalette = new byte[palette.size()];
             for (int i = 0; i < palette.size(); ++i)
             {
-                short unsignedPixel = palette.get(i);
-                if (unsignedPixel > 127)
-                {
-                    unsignedPixel -= 256;
-                }
-                signedPalette[i] = (byte)unsignedPixel;
+                signedPalette[i] = uintToByte(palette.get(i));
             }
         }
         setPalette(signedPalette);
@@ -245,12 +257,7 @@ public class Image2D extends Object3D
             signedPixels = new byte[pixels.size()];
             for (int i = 0; i < pixels.size(); ++i)
             {
-                short unsignedPixel = pixels.get(i);
-                if (unsignedPixel > 127)
-                {
-                    unsignedPixel -= 256;
-                }
-                signedPixels[i] = (byte)unsignedPixel;
+                signedPixels[i] = uintToByte(pixels.get(i));
             }
         }
         setPixels(signedPixels);

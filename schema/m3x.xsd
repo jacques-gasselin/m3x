@@ -739,7 +739,7 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType name="TransformableType">
+    <xs:complexType name="Transformable">
         <xs:complexContent>
             <xs:extension base="Object3D">
                 <xs:sequence>
@@ -751,9 +751,9 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="NodeType">
+    <xs:complexType name="Node">
         <xs:complexContent>
-            <xs:extension base="TransformableType">
+            <xs:extension base="Transformable">
                 <!--<xs:sequence>
                     <xs:element ref="aligment" minOccurs="0" maxOccurs="2"/>
                 </xs:sequence>-->
@@ -766,7 +766,7 @@
     </xs:complexType>
     <xs:complexType name="GroupType">
         <xs:complexContent>
-            <xs:extension base="NodeType">
+            <xs:extension base="Node">
                 <xs:sequence maxOccurs="unbounded">
                     <xs:annotation><xs:appinfo>
                         <jaxb:property name="childNodes"/>
@@ -806,7 +806,7 @@
     </xs:complexType>
     <xs:complexType name="MeshType">
         <xs:complexContent>
-            <xs:extension base="NodeType">
+            <xs:extension base="Node">
                 <xs:sequence>
                     <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="submesh" minOccurs="1" maxOccurs="unbounded">
@@ -850,7 +850,7 @@
     <xs:element name="AnimationControllerInstance">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="InstanceType"/>
+                <xs:restriction base="InstanceType"/>
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
@@ -859,10 +859,26 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="KeyframeSequenceInstance" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="AnimationControllerInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:choice>
+                            <xs:element ref="KeyframeSequence" minOccurs="0" maxOccurs="1">
+                            </xs:element>
+                            <xs:element ref="KeyframeSequenceInstance" minOccurs="0" maxOccurs="1">
+                            </xs:element>
+                        </xs:choice>
+                        <xs:choice>
+                            <xs:element ref="AnimationController" minOccurs="0" maxOccurs="1">
+                                <xs:annotation><xs:appinfo>
+                                    <jaxb:property name="controller"/>
+                                </xs:appinfo></xs:annotation>
+                            </xs:element>
+                            <xs:element ref="AnimationControllerInstance" minOccurs="0" maxOccurs="1">
+                                <xs:annotation><xs:appinfo>
+                                    <jaxb:property name="controllerInstance"/>
+                                </xs:appinfo></xs:annotation>
+                            </xs:element>
+                        </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="property" type="AnimationTargetType"/>
+                    <xs:attribute name="targetProperty" type="AnimationTargetType" use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -941,7 +957,7 @@
     <xs:element name="Camera">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="NodeType">
+                <xs:extension base="Node">
                     <xs:sequence>
                         <xs:element ref="ProjectionTransform" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
@@ -1095,7 +1111,7 @@
     <xs:element name="Light">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="NodeType">
+                <xs:extension base="Node">
                     <xs:attribute name="attenuationConstant" type="Float32"/>
                     <xs:attribute name="attenuationLinear" type="Float32"/>
                     <xs:attribute name="attenuationQuadratic" type="Float32"/>
@@ -1200,7 +1216,7 @@
     <xs:element name="Texture2D">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="TransformableType">
+                <xs:extension base="Transformable">
                     <xs:sequence>
                         <xs:choice>
                             <xs:element ref="Image2D" minOccurs="0" maxOccurs="1"/>

@@ -31,8 +31,8 @@ public abstract class Node extends Transformable implements Serialisable
     public static final int X_AXIS = 146;
     public static final int Y_AXIS = 147;
     public static final int Z_AXIS = 148;
-    private boolean enableRendering;
-    private boolean enablePicking;
+    private boolean renderingEnabled;
+    private boolean pickingEnabled;
     private byte alphaFactor;
     private int scope;
     private boolean hasAlignment;
@@ -40,14 +40,15 @@ public abstract class Node extends Transformable implements Serialisable
     private int yTarget;
     private Node zReference;
     private Node yReference;
+    private Node parent;
 
     public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
         byte alphaFactor, int scope)
     {
         super(animationTracks, userParameters, transform);
-        this.enableRendering = enableRendering;
-        this.enablePicking = enablePicking;
+        this.renderingEnabled = enableRendering;
+        this.pickingEnabled = enablePicking;
         this.alphaFactor = alphaFactor;
         this.scope = scope;
         this.hasAlignment = false;
@@ -99,8 +100,8 @@ public abstract class Node extends Transformable implements Serialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.enableRendering = deserialiser.readBoolean();
-        this.enablePicking = deserialiser.readBoolean();
+        this.renderingEnabled = deserialiser.readBoolean();
+        this.pickingEnabled = deserialiser.readBoolean();
         this.alphaFactor = deserialiser.readByte();
         this.scope = deserialiser.readInt();
         this.hasAlignment = deserialiser.readBoolean();
@@ -120,8 +121,8 @@ public abstract class Node extends Transformable implements Serialisable
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeBoolean(this.enableRendering);
-        serialiser.writeBoolean(this.enablePicking);
+        serialiser.writeBoolean(this.renderingEnabled);
+        serialiser.writeBoolean(this.pickingEnabled);
         serialiser.write(this.alphaFactor);
         serialiser.writeInt(this.scope);
         serialiser.writeBoolean(this.hasAlignment);
@@ -134,23 +135,79 @@ public abstract class Node extends Transformable implements Serialisable
         }
     }
 
-    public boolean isEnableRendering()
+    public boolean isRenderingEnabled()
     {
-        return this.enableRendering;
+        return this.renderingEnabled;
     }
 
-    public boolean isEnablePicking()
+    public boolean isPickingEnabled()
     {
-        return this.enablePicking;
+        return this.pickingEnabled;
     }
 
-    public byte getAlphaFactor()
+    public void setRenderingEnabled(boolean enabled)
+    {
+        this.renderingEnabled = enabled;
+    }
+
+    public void setPickingEnabled(boolean enabled)
+    {
+        this.pickingEnabled = enabled;
+    }
+
+    private byte getAlphaFactorByte()
     {
         return this.alphaFactor;
+    }
+
+    public float getAlphaFactor()
+    {
+        int factor = getAlphaFactorByte();
+        if (factor < 0)
+        {
+            factor += 256;
+        }
+        return factor / 255.0f;
     }
 
     public int getScope()
     {
         return this.scope;
+    }
+
+    public void setScope(int scope)
+    {
+        this.scope = scope;
+    }
+
+    public Node getParent()
+    {
+        return parent;
+    }
+
+    private void setAlphaFactorByte(byte alphaFactor)
+    {
+        this.alphaFactor = alphaFactor;
+    }
+
+    public void setAlphaFactor(float alphaFactor)
+    {
+        int factor = (int)alphaFactor * 256;
+        factor = Math.max(0, factor);
+        factor = Math.min(255, factor);
+        if (factor > 127)
+        {
+            factor -= 256;
+        }
+        setAlphaFactorByte((byte)factor);
+    }
+
+    protected void setParent(Node parent)
+    {
+        if ((parent != null) && (getParent() != null))
+        {
+            throw new IllegalStateException("node already has a parent");
+        }
+        this.parent = parent;
     }
 }

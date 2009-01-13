@@ -1,5 +1,6 @@
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.Serialisable;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -147,5 +148,52 @@ public abstract class Transformable extends Object3D implements Serialisable
     public Matrix getTransform()
     {
         return this.transform;
+    }
+
+    public void setOrientation(float angle, List<Float> axis)
+    {
+        if (axis == null)
+        {
+            return;
+        }
+        if (axis.size() != 3)
+        {
+            throw new IllegalArgumentException("orientation axis needs 3 elements");
+        }
+        setOrientation(angle, axis.get(0), axis.get(1), axis.get(2));
+    }
+
+    public void setOrientation(float angle, float x, float y, float z)
+    {
+        this.orientationAngle = angle;
+        this.orientationAxis.set(x, y, z);
+    }
+
+    public void setScale(List<Float> scale)
+    {
+        if (scale == null)
+        {
+            return;
+        }
+        if (scale.size() != 3)
+        {
+            throw new IllegalArgumentException("scale needs 3 elements");
+        }
+        setScale(scale.get(0), scale.get(1), scale.get(2));
+    }
+
+    public void setScale(float x, float y, float z)
+    {
+        scale.set(x, y, z);
+    }
+
+    public void setTransform(List<Float> transform)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void setTranslation(List<Float> translation)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -101,7 +101,7 @@ public abstract class TranslatorSupport extends TestCase
     }
   }
 
-  protected void fillTransformableData(m3x.xml.TransformableType tt)
+  protected void fillTransformableData(m3x.xml.Transformable tt)
   {
     tt.getScale().clear();
     tt.getScale().add(0.1f);
