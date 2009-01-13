@@ -51,7 +51,7 @@ public class Image2D extends Object3D
         validateFormat(format);
         this.mutable = true;
         validateWidthAndHeight(width, height);
-        setPalette(null);
+        setPalette((byte[])null);
         setPixels((byte[])null);
     }
 
@@ -211,6 +211,25 @@ public class Image2D extends Object3D
         {
             this.paletteData = null;
         }
+    }
+
+    public void setPalette(List<Short> palette)
+    {
+        byte[] signedPalette = null;
+        if ((palette != null) && (palette.size() > 0))
+        {
+            signedPalette = new byte[palette.size()];
+            for (int i = 0; i < palette.size(); ++i)
+            {
+                short unsignedPixel = palette.get(i);
+                if (unsignedPixel > 127)
+                {
+                    unsignedPixel -= 256;
+                }
+                signedPalette[i] = (byte)unsignedPixel;
+            }
+        }
+        setPalette(signedPalette);
     }
 
     public byte[] getPalette()

@@ -11,6 +11,7 @@ import java.util.Vector;
 import m3x.translation.m3g.xml.AnimationControllerConverter;
 import m3x.translation.m3g.xml.AnimationTrackConverter;
 import m3x.translation.m3g.xml.AppearanceConverter;
+import m3x.translation.m3g.xml.Image2DConverter;
 
 /**
  *
@@ -33,6 +34,8 @@ public class XmlTranslator extends Translator
                 AnimationTrackConverter.class);
         converterMap.put(m3x.xml.Appearance.class,
                 AppearanceConverter.class);
+        converterMap.put(m3x.xml.Image2D.class,
+                Image2DConverter.class);
     }
 
     public static void convert(File source, File target)

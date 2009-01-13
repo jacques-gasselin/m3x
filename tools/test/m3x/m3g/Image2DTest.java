@@ -1,45 +1,49 @@
 package m3x.m3g;
 
+import java.io.ByteArrayOutputStream;
+
 
 public class Image2DTest extends AbstractTestCase
 {
-  public void testSerializationAndDeseriliazation1()
-  {
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();                           
-    try
-    {   
-      Image2D image = new Image2D(animationTracks,
-          userParameters,
-          Image2D.FORMAT_ALPHA,
-          42,
-          66,
-          new byte[256 * 3],
-          new byte[42 * 66]);
-      byte[] serialized = M3GSupport.objectToBytes(image);
-      Image2D deserialized = (Image2D)M3GSupport.bytesToObject(serialized, Image2D.class);
-      this.doTestAccessors(image, deserialized);
-    }
-    catch (Exception e)
+    private Image2D image;
+
+    public Image2DTest()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }    
-    try
-    {
-      Image2D image = new Image2D(animationTracks,
-          userParameters,
-          -1,
-          42,
-          66,
-          new byte[256 * 3],
-          new byte[42 * 66]);
+        image = new Image2D();
+        image.setFormat(Image2D.RGBA);
+        image.setMutable(false);
+        image.setSize(256, 256);
+        image.setPalette(new byte[256 * 4]);
+        image.setPixels(new byte[256 * 256]);
     }
-    catch (FileFormatException e)
+
+    public void testSaveAndLoad()
     {
-      // this is what should happen
-      return;
+        Object3D[] roots = new Object3D[]{ image };
+
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Saver.save(out, roots, "1.0", "Image2DTest");
+
+            byte[] data = out.toByteArray();
+
+            Object3D[] loadRoots = Loader.load(data);
+
+            for (int i = 0; i < roots.length; ++i)
+            {
+                doTestAccessors(roots[i], loadRoots[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
     }
-    fail("Image2D constructor didn't throw FileFormatException.");*/
-  }
+
+    public void testSerializationAndDeseriliazation1()
+    {
+        assertSerialised(image);
+    }
 }

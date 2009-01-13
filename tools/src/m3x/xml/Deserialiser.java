@@ -33,6 +33,6 @@ public abstract class Deserialiser
         catch (javax.xml.bind.DataBindingException e)
         {
             throw new IllegalArgumentException("unable to parse stream: " + e.getMessage());
-        }       
+        }
     }
 }
