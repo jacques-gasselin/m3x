@@ -30,6 +30,7 @@
     <target name="pre-build">
         <mkdir dir="${build.m3x.xml.dir}"/>
         <mkdir dir="${build.src.m3x.xml.dir}"/>
+        <mkdir dir="${test.build.dir}" />
     </target>
     
     <target name="xjc-typedef">
@@ -63,6 +64,7 @@
     </target>
     
     <target name="clean">
+        <mkdir dir="${test.build.dir}" />
         <delete>
             <fileset dir="${test.build.dir}" includes="**/*.class"/>
             <fileset dir="${build.dir}" includes="**/*.class"/>

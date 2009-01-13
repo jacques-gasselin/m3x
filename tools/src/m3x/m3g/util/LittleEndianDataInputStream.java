@@ -4,7 +4,6 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * @author jgasseli
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 public class LittleEndianDataInputStream extends Object
         implements DataInput
 {
-
     private DataInputStream dataInputStream;
 
     private LittleEndianDataInputStream()
@@ -132,7 +130,8 @@ public class LittleEndianDataInputStream extends Object
 
     public String readUTF8() throws IOException
     {
-        byte[] buffer = new byte[256];
+        final int bufferSize = 256;
+        byte[] buffer = new byte[bufferSize];
         int index = 0;
         while (true)
         {
@@ -145,7 +144,7 @@ public class LittleEndianDataInputStream extends Object
             if (index == buffer.length)
             {
                 //resize the buffer
-                byte[] newBuffer = new byte[buffer.length + 256];
+                byte[] newBuffer = new byte[buffer.length + bufferSize];
                 System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
                 buffer = newBuffer;
             }
