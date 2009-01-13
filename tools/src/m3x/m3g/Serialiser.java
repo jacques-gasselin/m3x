@@ -245,6 +245,23 @@ public class Serialiser implements DataOutput
         getOutputStream().writeByte(v);
     }
 
+    public void writeByteArray(byte[] v) throws IOException
+    {
+        LittleEndianDataOutputStream out = getOutputStream();
+        if (v == null)
+        {
+            out.writeInt(0);
+        }
+        else
+        {
+            out.writeInt(v.length);
+            for (int i = 0; i < v.length; ++i)
+            {
+                out.writeByte(v[i]);
+            }
+        }
+    }
+
     public void writeShort(int v) throws IOException
     {
         getOutputStream().writeShort(v);

@@ -153,6 +153,22 @@ public class Deserialiser implements DataInput
         return getInputStream().readByte();
     }
 
+    public byte[] readByteArray() throws IOException
+    {
+        LittleEndianDataInputStream in = getInputStream();
+        final int length = in.readInt();
+        byte[] arr = null;
+        if (length > 0)
+        {
+            arr = new byte[length];
+            for (int i = 0; i < length; ++i)
+            {
+                arr[i] = in.readByte();
+            }
+        }
+        return arr;
+    }
+
     public int readUnsignedByte() throws IOException
     {
         return getInputStream().readUnsignedByte();

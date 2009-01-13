@@ -21,17 +21,17 @@ import java.util.List;
  */
 public class Image2D extends Object3D
 {
-    public static final int FORMAT_ALPHA = 96;
-    public static final int FORMAT_LUMINANCE = 97;
-    public static final int FORMAT_LUMINANCE_ALPHA = 98;
-    public static final int FORMAT_RGB = 99;
-    public static final int FORMAT_RGBA = 100;
+    public static final int ALPHA = 96;
+    public static final int LUMINANCE = 97;
+    public static final int LUMINANCE_ALPHA = 98;
+    public static final int RGB = 99;
+    public static final int RGBA = 100;
     private int format;
     private boolean mutable;
     private int width;
     private int height;
-    private byte[] palette;
-    private byte[][] pixels;
+    private byte[] paletteData;
+    private byte[][] mipmapData;
 
     public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         int format, int width, int height, byte[] palette, byte[] pixels)
@@ -55,27 +55,24 @@ public class Image2D extends Object3D
         setPixels((byte[])null);
     }
 
-    private void validateFormat(int format)
+    private static void validateFormat(int format)
     {
-        if (format < FORMAT_ALPHA || format > FORMAT_RGBA)
+        if (format < ALPHA || format > RGBA)
         {
             throw new IllegalArgumentException("Invalid image format: " + format);
         }
-        this.format = format;
     }
 
-    private void validateWidthAndHeight(int width, int height)
+    private static void validateWidthAndHeight(int width, int height)
     {
         if (width <= 0)
         {
             throw new IllegalArgumentException("Invalid width: " + width);
         }
-        this.width = width;
         if (height <= 0)
         {
             throw new IllegalArgumentException("Invalid height: " + height);
         }
-        this.height = height;
     }
 
     public Image2D()
@@ -88,35 +85,17 @@ public class Image2D extends Object3D
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.format = deserialiser.readUnsignedByte();
-        if (this.format != FORMAT_ALPHA &&
-            this.format != FORMAT_LUMINANCE &&
-            this.format != FORMAT_LUMINANCE_ALPHA &&
-            this.format != FORMAT_RGB &&
-            this.format != FORMAT_RGBA)
+        setFormat(deserialiser.readUnsignedByte());
+        setMutable(deserialiser.readBoolean());
+        setWidth(deserialiser.readInt());
+        setHeight(deserialiser.readInt());
+        validateWidthAndHeight(this.width, this.height);
+        if (!isMutable())
         {
-            throw new IllegalArgumentException("Invalid Image2D format: " + this.format);
-        }
-        this.mutable = deserialiser.readBoolean();
-        this.width = deserialiser.readInt();
-        if (this.width <= 0)
-        {
-            throw new IllegalArgumentException("Invalid Image2D width: " + this.width);
-        }
-        this.height = deserialiser.readInt();
-        if (this.height <= 0)
-        {
-            throw new IllegalArgumentException("Invalid Image2D height: " + this.height);
-        }
-        if (this.mutable == false)
-        {
-            int paletteLength = deserialiser.readInt();
-            this.palette = new byte[paletteLength];
-            deserialiser.readFully(this.palette);
-            int pixelsLength = deserialiser.readInt();
-            this.pixels = new byte[1][];
-            this.pixels[0] = new byte[pixelsLength];
-            deserialiser.readFully(this.pixels[0]);
+            byte[] palette = deserialiser.readByteArray();
+            byte[] pixels = deserialiser.readByteArray();
+            setPalette(palette);
+            setPixels(pixels);
         }
     }
 
@@ -125,22 +104,56 @@ public class Image2D extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.write(this.format);
+        serialiser.write(getFormat());
         serialiser.writeBoolean(isMutable());
-        serialiser.writeInt(this.width);
-        serialiser.writeInt(this.height);
+        serialiser.writeInt(getWidth());
+        serialiser.writeInt(getHeight());
         if (!isMutable())
         {
-            serialiser.writeInt(this.palette.length);
-            serialiser.write(this.palette);
-            serialiser.writeInt(this.pixels.length);
-            serialiser.write(this.pixels[0]);
+            byte[] palette = getPalette();
+            byte[] pixels = getPixels();
+            serialiser.writeByteArray(palette);
+            serialiser.writeByteArray(pixels);
         }
     }
 
     public int getSectionObjectType()
     {
         return ObjectTypes.IMAGE_2D;
+    }
+
+    public void setFormat(String format)
+    {
+        if (format.equals("ALPHA"))
+        {
+            setFormat(ALPHA);
+        }
+        else if (format.equals("LUMINANCE"))
+        {
+            setFormat(LUMINANCE);
+        }
+        else if (format.equals("LUMINANCE_ALPHA"))
+        {
+            setFormat(LUMINANCE_ALPHA);
+        }
+        else if (format.equals("RGB"))
+        {
+            setFormat(RGB);
+        }
+        else if (format.equals("RGBA"))
+        {
+            setFormat(RGBA);
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown format " + format);
+        }
+    }
+
+    public void setFormat(int format)
+    {
+        validateFormat(format);
+        this.format = format;
     }
 
     public int getFormat()
@@ -158,12 +171,19 @@ public class Image2D extends Object3D
         return this.mutable;
     }
 
-    public void setWidth(int width)
+    public void setSize(int width, int height)
+    {
+        validateWidthAndHeight(width, height);
+        setWidth(width);
+        setHeight(height);
+    }
+
+    private void setWidth(int width)
     {
         this.width = width;
     }
 
-    public void setHeight(int height)
+    private void setHeight(int height)
     {
         this.height = height;
     }
@@ -182,18 +202,18 @@ public class Image2D extends Object3D
     {
         if (palette != null)
         {
-            this.palette = new byte[palette.length];
-            System.arraycopy(palette, 0, this.palette, 0, palette.length);
+            this.paletteData = new byte[palette.length];
+            System.arraycopy(palette, 0, this.paletteData, 0, palette.length);
         }
         else
         {
-            this.palette = null;
+            this.paletteData = null;
         }
     }
 
     public byte[] getPalette()
     {
-        return this.palette;
+        return this.paletteData;
     }
 
     public void setPixels(List<Short> pixels)
@@ -220,27 +240,27 @@ public class Image2D extends Object3D
         if (pixels != null)
         {
             //single level only
-            this.pixels = new byte[1][];
-            this.pixels[0] = new byte[pixels.length];
-            System.arraycopy(pixels, 0, this.pixels[0], 0, pixels.length);
+            this.mipmapData = new byte[1][];
+            this.mipmapData[0] = new byte[pixels.length];
+            System.arraycopy(pixels, 0, this.mipmapData[0], 0, pixels.length);
         }
         else
         {
-            this.pixels = null;
+            this.mipmapData = null;
         }
     }
 
     public byte[] getPixels()
     {
-        if (this.pixels == null)
+        if (this.mipmapData == null)
         {
             return null;
         }
-        return this.pixels[0];
+        return this.mipmapData[0];
     }
 
     public byte[][] getMipmapPixels()
     {
-        return this.pixels;
+        return this.mipmapData;
     }
 }
