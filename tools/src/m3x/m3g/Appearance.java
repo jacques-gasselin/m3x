@@ -129,4 +129,14 @@ public class Appearance extends Object3D
         }
         return this.textures[index];
     }
+
+    public void setCompositingMode(CompositingMode compositingMode)
+    {
+        this.compositingMode = compositingMode;
+    }
+
+    public void setFog(Fog fog)
+    {
+        this.fog = fog;
+    }
 }

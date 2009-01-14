@@ -17,9 +17,28 @@ public class AppearanceConverter extends Object3DConverter
         m3x.m3g.Appearance to, m3x.xml.Appearance from)
     {
         super.setFromXML(translator, to, from);
-        //FIXME Fog mode
-        //FIXME Compositing mode.
+        to.setCompositingMode(getCompositingMode(translator, from));
+        to.setFog(getFog(translator, from));
         //FIXME Polygon mode.
+    }
+
+    private static m3x.m3g.CompositingMode getCompositingMode(
+        XmlToBinaryTranslator translator, m3x.xml.Appearance from)
+    {
+        m3x.xml.CompositingMode cm = from.getCompositingMode();
+        if (cm == null)
+        {
+            if (from.getCompositingModeInstance() != null)
+            {
+                cm = (m3x.xml.CompositingMode)
+                    from.getCompositingModeInstance().getRef();
+            }
+        }
+        if (cm == null)
+        {
+            return null;
+        }
+        return (m3x.m3g.CompositingMode) translator.getObject(cm);
     }
 
     private static m3x.m3g.Fog getFog(
@@ -40,4 +59,5 @@ public class AppearanceConverter extends Object3DConverter
         }
         return (m3x.m3g.Fog) translator.getObject(fog);
     }
+
 }
