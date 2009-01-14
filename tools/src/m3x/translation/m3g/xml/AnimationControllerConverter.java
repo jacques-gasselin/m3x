@@ -1,18 +1,22 @@
 package m3x.translation.m3g.xml;
 
-import m3x.translation.m3g.XmlTranslator;
+import m3x.translation.m3g.XmlToBinaryTranslator;
 
 
 public class AnimationControllerConverter extends Object3DConverter
 {
     @Override
-    public void toBinary(XmlTranslator translator, m3x.xml.Object3D originalFrom)
+    public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
     {
-        m3x.xml.AnimationController from = (m3x.xml.AnimationController)originalFrom;
         m3x.m3g.AnimationController to = new m3x.m3g.AnimationController();
-        translator.setObject(originalFrom, to);
-        super.toBinary(translator, from);
+        setFromXML(translator, to, (m3x.xml.AnimationController)from);
+        return to;
+    }
 
+    protected final void setFromXML(XmlToBinaryTranslator translator,
+        m3x.m3g.AnimationController to, m3x.xml.AnimationController from)
+    {
+        super.setFromXML(translator, to, from);
         to.setSpeed(from.getSpeed());
         to.setWeight(from.getWeight());
         to.setReferenceSequenceTime(from.getReferenceSequenceTime());
@@ -20,5 +24,4 @@ public class AnimationControllerConverter extends Object3DConverter
         to.setActiveIntervalStart(from.getActiveIntervalStart());
         to.setActiveIntervalEnd(from.getActiveIntervalEnd());
     }
-
 }

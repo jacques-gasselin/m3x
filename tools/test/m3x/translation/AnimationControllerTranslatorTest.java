@@ -1,13 +1,13 @@
 package m3x.translation;
 
-import m3x.translation.m3g.XmlTranslator;
+import m3x.translation.m3g.XmlToBinaryTranslator;
 import m3x.m3g.AnimationController;
 
 public class AnimationControllerTranslatorTest extends TranslatorSupport
 {
     public void testTranslator()
     {
-        XmlTranslator translator = new XmlTranslator("1.0");
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
 
         m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
         ac.setActiveIntervalEnd(1);

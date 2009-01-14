@@ -3,6 +3,7 @@ package m3x.m3g;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import m3x.m3g.primitives.Matrix;
@@ -16,7 +17,7 @@ import m3x.m3g.primitives.Matrix;
  */
 public class Group extends Node
 {
-    private List<Node> children;
+    private List<Node> childNodes;
 
     public Group(AnimationTrack[] animationTracks, UserParameter[] userParameters,
         Matrix transform, boolean enableRendering, boolean enablePicking,
@@ -25,7 +26,7 @@ public class Group extends Node
         super(animationTracks, userParameters, transform, enableRendering,
             enablePicking, alphaFactor, scope);
         assert (children != null);
-        setChildren(children);
+        setChildNodes(children);
     }
 
     public Group()
@@ -68,11 +69,11 @@ public class Group extends Node
 
     public int getChildCount()
     {
-        if (children == null)
+        if (childNodes == null)
         {
             return 0;
         }
-        return children.size();
+        return childNodes.size();
     }
 
     public Node getChild(int index)
@@ -85,42 +86,42 @@ public class Group extends Node
         {
             throw new IllegalArgumentException("index >= getChildCount()");
         }
-        return children.get(index);
+        return childNodes.get(index);
     }
 
-    public Node[] getChildren()
+    public List<Node> getChildNodes()
     {
-        Node[] arr = null;
-        final int childCount = getChildCount();
-        if (childCount > 0)
-        {
-            arr = new Node[childCount];
-            for (int i = 0; i < childCount; ++i)
-            {
-                arr[i] = getChild(i);
-            }
-        }
-        return arr;
+        return this.childNodes;
     }
 
-    public void setChildren(Node[] children)
+    public void setChildNodes(List<Node> childNodes)
     {
         //get rid of the old children
         for (int i = 0; i < getChildCount(); ++i)
         {
             removeChild(getChild(i));
         }
-        if (children == null)
+        if (childNodes == null)
         {
-            this.children = null;
+            this.childNodes = null;
         }
         else
         {
-            for (int i = 0; i < children.length; ++i)
+            for (Node child : childNodes)
             {
-                addChild(children[i]);
+                addChild(child);
             }
         }
+    }
+
+    public void setChildNodes(Node[] children)
+    {
+        List<Node> childList = null;
+        if (children != null)
+        {
+            childList = Arrays.asList(children);
+        }
+        setChildNodes(childList);
     }
 
     public void addChild(Node child)
@@ -130,12 +131,12 @@ public class Group extends Node
             throw new IllegalArgumentException("null child in group");
         }
 
-        if (children == null)
+        if (childNodes == null)
         {
-            children = new Vector<Node>();
+            childNodes = new Vector<Node>();
         }
 
-        children.add(child);
+        childNodes.add(child);
         child.setParent(this);
     }
 
@@ -146,12 +147,12 @@ public class Group extends Node
             return;
         }
 
-        if (children == null)
+        if (childNodes == null)
         {
             return;
         }
 
-        children.remove(child);
+        childNodes.remove(child);
         child.setParent(null);
     }
 }

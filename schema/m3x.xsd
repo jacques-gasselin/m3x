@@ -789,7 +789,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="IndexBufferType">
+    <xs:complexType name="IndexBuffer">
         <xs:complexContent>
             <xs:extension base="Object3D">
                 <xs:sequence>
@@ -1243,7 +1243,7 @@
     <xs:element name="TriangleStripArray">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="IndexBufferType">
+                <xs:extension base="IndexBuffer">
                     <xs:sequence>
                         <xs:element ref="stripLengths" minOccurs="1" maxOccurs="1"/>
                     </xs:sequence>

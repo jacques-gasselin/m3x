@@ -1,12 +1,29 @@
 package m3x.translation.m3g.xml;
 
-import m3x.translation.m3g.XmlTranslator;
+import m3x.translation.m3g.XmlToBinaryTranslator;
 
 
 public class AnimationTrackConverter extends Object3DConverter
 {
+    @Override
+    public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
+    {
+        m3x.m3g.AnimationTrack to = new m3x.m3g.AnimationTrack();
+        setFromXML(translator, to, (m3x.xml.AnimationTrack)from);
+        return to;
+    }
+
+    protected final void setFromXML(XmlToBinaryTranslator translator,
+        m3x.m3g.AnimationTrack to, m3x.xml.AnimationTrack from)
+    {
+        super.setFromXML(translator, to, from);
+        to.setTargetProperty(from.getTargetProperty().value());
+        to.setController(getController(translator, from));
+        to.setKeyframeSequence(getKeyframeSequence(translator, from));
+    }
+    
     private static m3x.m3g.AnimationController getController(
-        XmlTranslator translator, m3x.xml.AnimationTrack from)
+        XmlToBinaryTranslator translator, m3x.xml.AnimationTrack from)
     {
         m3x.xml.AnimationController controller = null;
         controller = from.getController();
@@ -26,7 +43,7 @@ public class AnimationTrackConverter extends Object3DConverter
     }
 
     private static m3x.m3g.KeyframeSequence getKeyframeSequence(
-        XmlTranslator translator, m3x.xml.AnimationTrack from)
+        XmlToBinaryTranslator translator, m3x.xml.AnimationTrack from)
     {
         m3x.xml.KeyframeSequence sequence = null;
         sequence = from.getKeyframeSequence();
@@ -43,18 +60,5 @@ public class AnimationTrackConverter extends Object3DConverter
             return null;
         }
         return (m3x.m3g.KeyframeSequence) translator.getObject(sequence);
-    }
-
-    @Override
-    public void toBinary(XmlTranslator translator, m3x.xml.Object3D originalFrom)
-    {
-        m3x.xml.AnimationTrack from = (m3x.xml.AnimationTrack)originalFrom;
-        m3x.m3g.AnimationTrack to = new m3x.m3g.AnimationTrack();
-        translator.setObject(from, to);
-        super.toBinary(translator, from);
-
-        to.setTargetProperty(from.getTargetProperty().value());
-        to.setController(getController(translator, from));
-        to.setKeyframeSequence(getKeyframeSequence(translator, from));
     }
 }

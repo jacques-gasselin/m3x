@@ -69,7 +69,7 @@ public class XmlToBinaryTask extends Task
                     }
                     //apply the conversion for the given file names.
                     File target = new File(postMappingPath);
-                    XmlTranslator.convert(source, target);
+                    XmlToBinaryTranslator.convert(source, target);
                 }
                 catch (IOException ex)
                 {

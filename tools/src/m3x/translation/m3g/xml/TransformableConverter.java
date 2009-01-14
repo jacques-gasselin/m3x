@@ -1,6 +1,6 @@
 package m3x.translation.m3g.xml;
 
-import m3x.translation.m3g.XmlTranslator;
+import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
  *
@@ -8,14 +8,10 @@ import m3x.translation.m3g.XmlTranslator;
  */
 public abstract class TransformableConverter extends Object3DConverter
 {
-    @Override
-    public void toBinary(XmlTranslator translator, m3x.xml.Object3D originalFrom)
+    protected final void setFromXML(XmlToBinaryTranslator translator,
+        m3x.m3g.Transformable to, m3x.xml.Transformable from)
     {
-        super.toBinary(translator, originalFrom);
-        //A subclass is responsible for actually creating the object.
-        m3x.m3g.Transformable to = (m3x.m3g.Transformable)translator.getObject(originalFrom);
-        m3x.xml.Transformable from = (m3x.xml.Transformable)originalFrom;
-
+        super.setFromXML(translator, to, from);
         to.setScale(from.getScale());
         to.setOrientation(from.getOrientation().getAngle(), from.getOrientation().getValue());
         to.setTranslation(from.getTranslation());

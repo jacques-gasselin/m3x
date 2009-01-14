@@ -11,5 +11,5 @@ public interface BinaryConverter
      *
      * @return an M3G object representation
      */
-    public void toBinary(Translator translator, Object from);
+    public m3x.m3g.Object3D toBinary(BinaryTranslator translator, Object from);
 }

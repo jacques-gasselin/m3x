@@ -11,18 +11,34 @@ import java.util.Vector;
 import m3x.translation.m3g.xml.AnimationControllerConverter;
 import m3x.translation.m3g.xml.AnimationTrackConverter;
 import m3x.translation.m3g.xml.AppearanceConverter;
+import m3x.translation.m3g.xml.BackgroundConverter;
+import m3x.translation.m3g.xml.CameraConverter;
+import m3x.translation.m3g.xml.CompositingModeConverter;
+import m3x.translation.m3g.xml.GroupConverter;
 import m3x.translation.m3g.xml.Image2DConverter;
+import m3x.translation.m3g.xml.KeyframeSequenceConverter;
+import m3x.translation.m3g.xml.LightConverter;
+import m3x.translation.m3g.xml.MaterialConverter;
+import m3x.translation.m3g.xml.MeshConverter;
+import m3x.translation.m3g.xml.MorphingMeshConverter;
+import m3x.translation.m3g.xml.PolygonModeConverter;
+import m3x.translation.m3g.xml.SkinnedMeshConverter;
+import m3x.translation.m3g.xml.Texture2DConverter;
+import m3x.translation.m3g.xml.TriangleStripArrayConverter;
+import m3x.translation.m3g.xml.VertexArrayConverter;
+import m3x.translation.m3g.xml.VertexBufferConverter;
+import m3x.translation.m3g.xml.WorldConverter;
 
 /**
  *
  * @author jgasseli
  */
-public class XmlTranslator extends Translator
+public class XmlToBinaryTranslator extends BinaryTranslator
 {
     private Map<Class, Class> converterMap;
     private String version;
 
-    public XmlTranslator(String version)
+    public XmlToBinaryTranslator(String version)
     {
         converterMap = new Hashtable<Class, Class>();
         this.version = version;
@@ -34,8 +50,40 @@ public class XmlTranslator extends Translator
                 AnimationTrackConverter.class);
         converterMap.put(m3x.xml.Appearance.class,
                 AppearanceConverter.class);
+        converterMap.put(m3x.xml.Background.class,
+                BackgroundConverter.class);
+        converterMap.put(m3x.xml.Camera.class,
+                CameraConverter.class);
+        converterMap.put(m3x.xml.CompositingMode.class,
+                CompositingModeConverter.class);
+        converterMap.put(m3x.xml.Group.class,
+                GroupConverter.class);
         converterMap.put(m3x.xml.Image2D.class,
                 Image2DConverter.class);
+        converterMap.put(m3x.xml.KeyframeSequence.class,
+                KeyframeSequenceConverter.class);
+        converterMap.put(m3x.xml.Light.class,
+                LightConverter.class);
+        converterMap.put(m3x.xml.Material.class,
+                MaterialConverter.class);
+        converterMap.put(m3x.xml.Mesh.class,
+                MeshConverter.class);
+        converterMap.put(m3x.xml.MorphingMesh.class,
+                MorphingMeshConverter.class);
+        converterMap.put(m3x.xml.PolygonMode.class,
+                PolygonModeConverter.class);
+        converterMap.put(m3x.xml.SkinnedMesh.class,
+                SkinnedMeshConverter.class);
+        converterMap.put(m3x.xml.Texture2D.class,
+                Texture2DConverter.class);
+        converterMap.put(m3x.xml.TriangleStripArray.class,
+                TriangleStripArrayConverter.class);
+        converterMap.put(m3x.xml.VertexArray.class,
+                VertexArrayConverter.class);
+        converterMap.put(m3x.xml.VertexBuffer.class,
+                VertexBufferConverter.class);
+        converterMap.put(m3x.xml.World.class,
+                WorldConverter.class);
     }
 
     public static void convert(File source, File target)
@@ -53,7 +101,7 @@ public class XmlTranslator extends Translator
         }
 
         //translate
-        m3x.m3g.Object3D[] binRoots = XmlTranslator.convertRoot(xmlRoot);
+        m3x.m3g.Object3D[] binRoots = XmlToBinaryTranslator.convertRoot(xmlRoot);
 
         //serialise the binary stream
         try
@@ -76,7 +124,7 @@ public class XmlTranslator extends Translator
 
     public static m3x.m3g.Object3D[] convertRoot(m3x.xml.M3G root)
     {
-        XmlTranslator translator = new XmlTranslator(root.getVersion());
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator(root.getVersion());
         for (m3x.xml.Section section : root.getSection())
         {
             for (m3x.xml.Object3D object : section.getObjects())
@@ -120,7 +168,7 @@ public class XmlTranslator extends Translator
     {
         if (args.length != 3)
         {
-            System.out.println("Usage: " + XmlTranslator.class.getSimpleName()
+            System.out.println("Usage: " + XmlToBinaryTranslator.class.getSimpleName()
                 + " -o binary_outfile xml_infile");
         }
 

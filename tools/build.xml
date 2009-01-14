@@ -36,7 +36,7 @@
     <target name="xjc-typedef">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
             <classpath>
-                <pathelement location="${lib.dir}/jaxb-xjc.jar"/>
+                <fileset dir="${lib.dir}/jaxb"/>
             </classpath>
         </taskdef>        
     </target>

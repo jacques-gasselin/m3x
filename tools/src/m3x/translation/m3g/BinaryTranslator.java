@@ -7,14 +7,14 @@ import java.util.Vector;
  * 
  * @author jgasseli
  */
-public abstract class Translator
+public abstract class BinaryTranslator
 {
     private Hashtable<Object, m3x.m3g.Object3D> objectToBinaryMap;
     private Hashtable<Class, BinaryConverter> objectClassToBinaryConverterMap;
     private Vector<m3x.m3g.Object3D> objects;
     private Vector<m3x.m3g.Object3D> rootObjects;
 
-    public Translator()
+    public BinaryTranslator()
     {
         objectToBinaryMap = new Hashtable<Object, m3x.m3g.Object3D>();
         objectClassToBinaryConverterMap = new Hashtable<Class, BinaryConverter>();
@@ -90,6 +90,7 @@ public abstract class Translator
                 throw new IllegalStateException(ex);
             }
         }
-        converter.toBinary(this, key);
+        m3x.m3g.Object3D binary = converter.toBinary(this, key);
+        setObject(key, binary);
     }
 }
