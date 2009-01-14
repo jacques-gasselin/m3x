@@ -684,7 +684,7 @@
         </xs:simpleType>
     </xs:element>
     <!-- M3G types -->
-    <xs:complexType name="InstanceType">
+    <xs:complexType name="InstanceType" abstract="true">
         <xs:annotation>
             <xs:documentation>
                 The Instance type declares a base for M3G instance elements.
@@ -739,7 +739,7 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType name="Transformable">
+    <xs:complexType name="Transformable" abstract="true">
         <xs:complexContent>
             <xs:extension base="Object3D">
                 <xs:sequence>
@@ -751,7 +751,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="Node">
+    <xs:complexType name="Node" abstract="true">
         <xs:complexContent>
             <xs:extension base="Transformable">
                 <!--<xs:sequence>
@@ -776,16 +776,21 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="ImageBase">
+    <xs:complexType name="ImageBase" abstract="true">
         <xs:complexContent>
             <xs:extension base="Object3D">
                 <xs:attribute name="format"
-                              type="ImageBaseColorType"/>
+                              type="ImageBaseColorType"
+                              use="required"/>
                 <xs:attribute name="mutable"
                               type="Boolean"
                               default="false"/>
-                <xs:attribute name="width" type="UInt31"/>
-                <xs:attribute name="height" type="UInt31"/>
+                <xs:attribute name="width"
+                              type="UInt31"
+                              use="required"/>
+                <xs:attribute name="height"
+                              type="UInt31"
+                              use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -808,12 +813,21 @@
         <xs:complexContent>
             <xs:extension base="Node">
                 <xs:sequence>
-                    <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
+                    <xs:choice>
+                        <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
+                        <xs:element ref="VertexBuffer" minOccurs="1" maxOccurs="1" />
+                    </xs:choice>
                     <xs:element name="submesh" minOccurs="1" maxOccurs="unbounded">
                         <xs:complexType>
                             <xs:sequence>
-                                <xs:element ref="TriangleStripArrayInstance" minOccurs="1" maxOccurs="1"/>
-                                <xs:element ref="AppearanceInstance" minOccurs="1" maxOccurs="1"/>
+                                <xs:choice>
+                                    <xs:element ref="TriangleStripArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="TriangleStripArray" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                                <xs:choice>
+                                    <xs:element ref="AppearanceInstance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="Appearance" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -895,16 +909,36 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="CompositingModeInstance"
-                                    minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="FogInstance"
-                                    minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="PolygonModeInstance"
-                                    minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="MaterialInstance"
-                                    minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="Texture2DInstance"
-                                    minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:choice>
+                            <xs:element ref="CompositingModeInstance"
+                                        minOccurs="0" maxOccurs="1"/>
+                            <xs:element ref="CompositingMode"
+                                        minOccurs="0" maxOccurs="1"/>
+                        </xs:choice>
+                        <xs:choice>
+                            <xs:element ref="FogInstance"
+                                        minOccurs="0" maxOccurs="1"/>
+                            <xs:element ref="Fog"
+                                        minOccurs="0" maxOccurs="1"/>
+                        </xs:choice>
+                        <xs:choice>
+                            <xs:element ref="PolygonModeInstance"
+                                        minOccurs="0" maxOccurs="1"/>
+                            <xs:element ref="PolygonMode"
+                                        minOccurs="0" maxOccurs="1"/>
+                        </xs:choice>
+                        <xs:choice>
+                            <xs:element ref="MaterialInstance"
+                                        minOccurs="0" maxOccurs="1"/>
+                            <xs:element ref="Material"
+                                        minOccurs="0" maxOccurs="1"/>
+                        </xs:choice>
+                        <xs:choice>
+                            <xs:element ref="Texture2DInstance"
+                                        minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element ref="Texture2D"
+                                        minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="layer"
                                   type="LayerInt"

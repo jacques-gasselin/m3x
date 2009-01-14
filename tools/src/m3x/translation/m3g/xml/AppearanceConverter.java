@@ -21,4 +21,23 @@ public class AppearanceConverter extends Object3DConverter
         //FIXME Compositing mode.
         //FIXME Polygon mode.
     }
+
+    private static m3x.m3g.Fog getFog(
+        XmlToBinaryTranslator translator, m3x.xml.Appearance from)
+    {
+        m3x.xml.Fog fog = from.getFog();
+        if (fog == null)
+        {
+            if (from.getFogInstance() != null)
+            {
+                fog = (m3x.xml.Fog)
+                    from.getFogInstance().getRef();
+            }
+        }
+        if (fog == null)
+        {
+            return null;
+        }
+        return (m3x.m3g.Fog) translator.getObject(fog);
+    }
 }
