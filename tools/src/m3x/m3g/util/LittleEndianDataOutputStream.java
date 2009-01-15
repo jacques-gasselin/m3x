@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.Adler32;
+import java.util.zip.CheckedOutputStream;
 
 public class LittleEndianDataOutputStream implements DataOutput
 {
@@ -28,7 +29,7 @@ public class LittleEndianDataOutputStream implements DataOutput
         //make sure the previous data is written
         dos.flush();
         dos = new DataOutputStream(
-                new Adler32FilterOutputStream(adler, originalStream));
+                new CheckedOutputStream(originalStream, adler));
     }
 
     public void endChecksum() throws IOException
