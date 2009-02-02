@@ -79,19 +79,6 @@ public class MorphingMesh extends Mesh
     
     private TargetBuffer[] morphTargets;
 
-    public MorphingMesh(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, Matrix transform,
-        boolean enableRendering, boolean enablePicking, byte alphaFactor,
-        int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
-        TargetBuffer[] morphTargets)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
-        assert (morphTargets != null);
-        assert (morphTargets.length > 0);
-        this.morphTargets = morphTargets;
-    }
-
     public MorphingMesh()
     {
         super();

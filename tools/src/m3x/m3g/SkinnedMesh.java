@@ -102,20 +102,6 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
     private Group skeleton;
     private BoneReference[] boneReferences;
 
-    public SkinnedMesh(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, Matrix transform,
-        boolean enableRendering, boolean enablePicking, byte alphaFactor,
-        int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes,
-        Group skeleton, BoneReference[] boneReferences)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope, vertexBuffer, subMeshes);
-        assert (skeleton != null);
-        assert (boneReferences != null);
-        this.skeleton = skeleton;
-        this.boneReferences = boneReferences;
-    }
-
     public SkinnedMesh()
     {
         super();

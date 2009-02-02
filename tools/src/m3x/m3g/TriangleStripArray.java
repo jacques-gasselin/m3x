@@ -2,7 +2,6 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -28,113 +27,11 @@ import java.io.IOException;
  */
 public class TriangleStripArray extends IndexBuffer implements SectionSerialisable
 {
+    private int[] stripLengths;
+
     public TriangleStripArray()
     {
         super();
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters)
-    {
-        super(animationTracks, userParameters);
-    }
-    private int encoding;
-    private int intStartIndex;
-    private byte byteStartIndex;
-    private short shortStartIndex;
-    private int[] intIndices;
-    private byte[] byteIndices;
-    private short[] shortIndices;
-    private int[] stripLengths;
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, int intStartIndex,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 0;
-        this.byteStartIndex = 0;
-        this.shortStartIndex = 0;
-        this.intStartIndex = intStartIndex;
-        this.intIndices = null;
-        this.byteIndices = null;
-        this.shortIndices = null;
-        this.stripLengths = stripLengths;
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, byte byteStartIndex,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 1;
-        this.byteStartIndex = byteStartIndex;
-        this.shortStartIndex = 0;
-        this.intStartIndex = 0;
-        this.intIndices = null;
-        this.byteIndices = null;
-        this.shortIndices = null;
-        this.stripLengths = stripLengths;
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, short shortStartIndex,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 2;
-        this.byteStartIndex = 0;
-        this.shortStartIndex = shortStartIndex;
-        this.intStartIndex = 0;
-        this.intIndices = null;
-        this.byteIndices = null;
-        this.shortIndices = null;
-        this.stripLengths = stripLengths;
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, int[] intIndices,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 128;
-        this.byteStartIndex = 0;
-        this.shortStartIndex = 0;
-        this.intStartIndex = 0;
-        this.intIndices = intIndices;
-        this.byteIndices = null;
-        this.shortIndices = null;
-        this.stripLengths = stripLengths;
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, byte[] byteIndices,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 129;
-        this.byteStartIndex = 0;
-        this.shortStartIndex = 0;
-        this.intStartIndex = 0;
-        this.intIndices = null;
-        this.byteIndices = byteIndices;
-        this.shortIndices = null;
-        this.stripLengths = stripLengths;
-    }
-
-    public TriangleStripArray(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, short[] shortIndices,
-        int[] stripLengths)
-    {
-        super(animationTracks, userParameters);
-        this.encoding = 130;
-        this.byteStartIndex = 0;
-        this.shortStartIndex = 0;
-        this.intStartIndex = 0;
-        this.intIndices = null;
-        this.byteIndices = null;
-        this.shortIndices = shortIndices;
-        this.stripLengths = stripLengths;
     }
 
     @Override
@@ -142,58 +39,14 @@ public class TriangleStripArray extends IndexBuffer implements SectionSerialisab
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.encoding = deserialiser.readUnsignedByte();
-        switch (this.encoding)
+
+        final int stripLengthCount = deserialiser.readInt();
+        int[] lengths = new int[stripLengthCount];
+        for (int i = 0; i < stripLengthCount; i++)
         {
-            case 0:
-                this.intStartIndex = deserialiser.readInt();
-                break;
-
-            case 1:
-                this.shortStartIndex = deserialiser.readShort();
-                break;
-
-            case 2:
-                this.byteStartIndex = deserialiser.readByte();
-                break;
-
-            case 128:
-                int intIndicesLength = deserialiser.readInt();
-                this.intIndices = new int[intIndicesLength];
-                for (int i = 0; i < this.intIndices.length; i++)
-                {
-                    this.intIndices[i] = deserialiser.readInt();
-                }
-                break;
-
-            case 129:
-                int byteIndicesLength = deserialiser.readInt();
-                this.byteIndices = new byte[byteIndicesLength];
-                for (int i = 0; i < this.byteIndices.length; i++)
-                {
-                    this.byteIndices[i] = deserialiser.readByte();
-                }
-                break;
-
-            case 130:
-                int shortIndicesLength = deserialiser.readInt();
-                this.shortIndices = new short[shortIndicesLength];
-                for (int i = 0; i < this.shortIndices.length; i++)
-                {
-                    this.shortIndices[i] = deserialiser.readShort();
-                }
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid encoding: " + this.encoding);
+            lengths[i] = deserialiser.readInt();
         }
-
-        int stripLengthCount = deserialiser.readInt();
-        this.stripLengths = new int[stripLengthCount];
-        for (int i = 0; i < this.stripLengths.length; i++)
-        {
-            this.stripLengths[i] = deserialiser.readInt();
-        }
+        setStripLengths(lengths);
     }
 
     @Override
@@ -201,50 +54,7 @@ public class TriangleStripArray extends IndexBuffer implements SectionSerialisab
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.write(this.encoding);
-        switch (this.encoding)
-        {
-            case 0:
-                serialiser.writeInt(this.intStartIndex);
-                break;
-
-            case 1:
-                serialiser.writeShort(this.shortStartIndex);
-                break;
-
-            case 2:
-                serialiser.write(this.byteStartIndex);
-                break;
-
-            case 128:
-                serialiser.writeInt(this.intIndices.length);
-                for (int index : this.intIndices)
-                {
-                    serialiser.writeInt(index);
-                }
-                break;
-
-            case 129:
-                serialiser.writeInt(this.byteIndices.length);
-                for (byte index : this.byteIndices)
-                {
-                    serialiser.write(index);
-                }
-                break;
-
-            case 130:
-                serialiser.writeInt(this.shortIndices.length);
-                for (short index : this.shortIndices)
-                {
-                    serialiser.writeShort(index);
-                }
-                break;
-
-            default:
-                assert (false);
-                break;
-        }
-        serialiser.writeInt(this.stripLengths.length);
+        serialiser.writeInt(getStripLengthCount());
         for (int x : this.stripLengths)
         {
             serialiser.writeInt(x);
@@ -256,43 +66,22 @@ public class TriangleStripArray extends IndexBuffer implements SectionSerialisab
         return ObjectTypes.TRIANGLE_STRIP_ARRAY;
     }
 
-    public int getEncoding()
+    public int getStripLengthCount()
     {
-        return this.encoding;
-    }
-
-    public int getIntStartIndex()
-    {
-        return this.intStartIndex;
-    }
-
-    public byte getByteStartIndex()
-    {
-        return this.byteStartIndex;
-    }
-
-    public short getShortStartIndex()
-    {
-        return this.shortStartIndex;
-    }
-
-    public int[] getIntIndices()
-    {
-        return this.intIndices;
-    }
-
-    public byte[] getByteIndices()
-    {
-        return this.byteIndices;
-    }
-
-    public short[] getShortIndices()
-    {
-        return this.shortIndices;
+        if (this.stripLengths == null)
+        {
+            return 0;
+        }
+        return this.stripLengths.length;
     }
 
     public int[] getStripLengths()
     {
         return this.stripLengths;
+    }
+
+    public void setStripLengths(int[] stripLengths)
+    {
+        this.stripLengths = stripLengths;
     }
 }

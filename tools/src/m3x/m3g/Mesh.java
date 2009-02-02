@@ -21,7 +21,7 @@ import m3x.m3g.primitives.Matrix;
  */
 public class Mesh extends Node implements SectionSerialisable
 {
-    public static class SubMesh implements Serialisable
+    private static class SubMesh implements Serialisable
     {
 
         private IndexBuffer indexBuffer;
@@ -33,8 +33,13 @@ public class Mesh extends Node implements SectionSerialisable
 
         public SubMesh(IndexBuffer indexBuffer, Appearance appearance)
         {
-            this.indexBuffer = indexBuffer;
-            this.appearance = appearance;
+            setAppearance(appearance);
+            setIndexBuffer(indexBuffer);
+        }
+        
+        public Appearance getAppearance()
+        {
+            return this.appearance;
         }
 
         public IndexBuffer getIndexBuffer()
@@ -42,9 +47,14 @@ public class Mesh extends Node implements SectionSerialisable
             return this.indexBuffer;
         }
 
-        public Appearance getAppearance()
+        public void setAppearance(Appearance appearance)
         {
-            return this.appearance;
+            this.appearance = appearance;
+        }
+
+        public void setIndexBuffer(IndexBuffer indexBuffer)
+        {
+            this.indexBuffer = indexBuffer;
         }
 
         public void deserialise(Deserialiser deserialiser)
@@ -79,7 +89,6 @@ public class Mesh extends Node implements SectionSerialisable
     }
 
     private VertexBuffer vertexBuffer;
-    private int subMeshCount;
     private SubMesh[] subMeshes;
 
     public Mesh(AnimationTrack[] animationTracks, UserParameter[] userParameters,
@@ -90,9 +99,8 @@ public class Mesh extends Node implements SectionSerialisable
             enablePicking, alphaFactor, scope);
         assert (subMeshes != null);
         assert (subMeshes.length > 0);
-        this.vertexBuffer = vertexBuffer;
+        setVertexBuffer(vertexBuffer);
         this.subMeshes = subMeshes;
-        this.subMeshCount = subMeshes.length;
     }
 
     public Mesh()
@@ -105,9 +113,9 @@ public class Mesh extends Node implements SectionSerialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.vertexBuffer = (VertexBuffer)deserialiser.readReference();
-        this.subMeshCount = deserialiser.readInt();
-        this.subMeshes = new SubMesh[subMeshCount];
+        setVertexBuffer((VertexBuffer)deserialiser.readReference());
+        final int subMeshCount = deserialiser.readInt();
+        setSubmeshCount(subMeshCount);
         for (int i = 0; i < this.subMeshes.length; i++)
         {
             this.subMeshes[i] = new SubMesh();
@@ -133,18 +141,66 @@ public class Mesh extends Node implements SectionSerialisable
         return ObjectTypes.MESH;
     }
 
+    private final void requireIndexInSubmeshRange(int index)
+    {
+        if (index < 0)
+        {
+            throw new IllegalArgumentException("index < 0");
+        }
+        if (index >= getSubmeshCount())
+        {
+            throw new IllegalArgumentException("index >= getSubmeshCount()");
+        }
+    }
+
+    private final SubMesh getSubMesh(int index)
+    {
+        requireIndexInSubmeshRange(index);
+
+        return this.subMeshes[index];
+    }
+
+    public Appearance getAppearance(int index)
+    {
+        return getSubMesh(index).getAppearance();
+    }
+
+    public IndexBuffer getIndexBuffer(int index)
+    {
+        return getSubMesh(index).getIndexBuffer();
+    }
+
+    public int getSubmeshCount()
+    {
+        if (this.subMeshes == null)
+        {
+            return 0;
+        }
+        return this.subMeshes.length;
+    }
+
     public VertexBuffer getVertexBuffer()
     {
         return this.vertexBuffer;
     }
 
-    public int getSubmeshCount()
+    public void setAppearance(int index, Appearance appearance)
     {
-        return this.subMeshCount;
+        getSubMesh(index).setAppearance(appearance);
     }
 
-    public SubMesh[] getSubMeshes()
+    public void setIndexBuffer(int index, IndexBuffer indexBuffer)
     {
-        return this.subMeshes;
+        getSubMesh(index).setIndexBuffer(indexBuffer);
+    }
+
+    public void setSubmeshCount(int submeshCount)
+    {
+        this.subMeshes = new SubMesh[submeshCount];
+    }
+
+    public void setVertexBuffer(VertexBuffer vertexBuffer)
+    {
+        this.vertexBuffer = vertexBuffer;
     }
 }

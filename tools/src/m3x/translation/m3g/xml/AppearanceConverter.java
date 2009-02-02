@@ -25,38 +25,15 @@ public class AppearanceConverter extends Object3DConverter
     private static m3x.m3g.CompositingMode getCompositingMode(
         XmlToBinaryTranslator translator, m3x.xml.Appearance from)
     {
-        m3x.xml.CompositingMode cm = from.getCompositingMode();
-        if (cm == null)
-        {
-            if (from.getCompositingModeInstance() != null)
-            {
-                cm = (m3x.xml.CompositingMode)
-                    from.getCompositingModeInstance().getRef();
-            }
-        }
-        if (cm == null)
-        {
-            return null;
-        }
+        m3x.xml.CompositingMode cm = getObjectOrInstance(
+            from.getCompositingMode(), from.getCompositingModeInstance());
         return (m3x.m3g.CompositingMode) translator.getObject(cm);
     }
 
     private static m3x.m3g.Fog getFog(
         XmlToBinaryTranslator translator, m3x.xml.Appearance from)
     {
-        m3x.xml.Fog fog = from.getFog();
-        if (fog == null)
-        {
-            if (from.getFogInstance() != null)
-            {
-                fog = (m3x.xml.Fog)
-                    from.getFogInstance().getRef();
-            }
-        }
-        if (fog == null)
-        {
-            return null;
-        }
+        m3x.xml.Fog fog = getObjectOrInstance(from.getFog(), from.getFogInstance());
         return (m3x.m3g.Fog) translator.getObject(fog);
     }
 

@@ -12,7 +12,7 @@
     <!-- BEGIN M3X Format Schema -->
     <xs:annotation>
         <xs:documentation>
-            M3X Schema for JSR184
+            M3X Schema for JSR297
             Version 1.0 (DRAFT)
         </xs:documentation>
     </xs:annotation>
@@ -145,7 +145,7 @@
                     </xs:annotation>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute name="version" type="String" fixed="1.0"/>
+            <xs:attribute name="version" type="String" fixed="2.0"/>
             <xs:attribute name="author" type="String"/>
         </xs:complexType>
     </xs:element>
@@ -156,12 +156,12 @@
                 <xs:appinfo>
                     <jaxb:property name="objects"/>
                 </xs:appinfo>
-            </xs:annotation>   
+            </xs:annotation>
             <xs:group ref="RootElementGroup">
             </xs:group>
         </xs:sequence>
     </xs:complexType>
-    <xs:group name="RootElementGroup">     
+    <xs:group name="RootElementGroup">
         <xs:choice>
             <xs:element ref="AnimationController"/>
             <xs:element ref="AnimationTrack"/>
@@ -217,11 +217,59 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+            <xs:enumeration value="ANIMATABILITY">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets Object3D animatability. Only valid for Object3D targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_POSITION">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets reference position of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_SPEED">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets playback speed of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ANIMATION_WEIGHT">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets blending weight of controller objects. Only valid for AnimationController targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BOUNDING_BOX">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets bounding box information of node objects. Only valid for Node targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BOUNDING_SPHERE">
+                <xs:annotation>
+                    <xs:documentation>
+                        Targets bounding sphere information of node objects. Only valid for Node targets.
+                        Since M3G 2.0
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
             <xs:enumeration value="COLOR">
                 <xs:annotation>
                     <xs:documentation>
                         Targets the color of Light, Background, Fog, Texture2D or VertexBuffer objects.
-                        Since M3G 1.0
+                        Since M3G 2.0
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
@@ -278,6 +326,33 @@
             </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="BlenderType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed blend factor constants. They correspond to OpenGL|ES blend modes.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="String">
+            <xs:enumeration value="ADD"/>
+            <xs:enumeration value="CONSTANT_ALPHA"/>
+            <xs:enumeration value="CONSTANT_COLOR"/>
+            <xs:enumeration value="DST_ALPHA"/>
+            <xs:enumeration value="DST_COLOR"/>
+            <xs:enumeration value="ONE"/>
+            <xs:enumeration value="ONE_MINUS_CONSTANT_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_CONSTANT_COLOR"/>
+            <xs:enumeration value="ONE_MINUS_DST_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_DST_COLOR"/>
+            <xs:enumeration value="ONE_MINUS_SRC_ALPHA"/>
+            <xs:enumeration value="ONE_MINUS_SRC_COLOR"/>
+            <xs:enumeration value="REVERSE_SUBTRACT"/>
+            <xs:enumeration value="SRC_ALPHA"/>
+            <xs:enumeration value="SRC_ALPHA_SATURATE"/>
+            <xs:enumeration value="SRC_COLOR"/>
+            <xs:enumeration value="SUBTRACT"/>
+            <xs:enumeration value="ZERO"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="CameraProjectionModeType">
         <xs:annotation>
             <xs:documentation>
@@ -299,8 +374,11 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="ALPHA"/>
             <xs:enumeration value="ALPHA_ADD"/>
+            <xs:enumeration value="ALPHA_PREMULTIPLY"/>
+            <xs:enumeration value="ALPHA_DARKEN"/>
             <xs:enumeration value="MODULATE"/>
             <xs:enumeration value="MODULATE_X2"/>
+            <xs:enumeration value="MODULATE_INV"/>
             <xs:enumeration value="REPLACE"/>
         </xs:restriction>
     </xs:simpleType>
@@ -312,6 +390,7 @@
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="EXPONENTIAL"/>
+            <xs:enumeration value="EXPONENTIAL_SQUARED"/>
             <xs:enumeration value="LINEAR"/>
         </xs:restriction>
     </xs:simpleType>
@@ -352,6 +431,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="CONSTANT"/>
             <xs:enumeration value="LOOP"/>
+            <xs:enumeration value="ADDITIVE_LOOP"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="LightType">
@@ -447,6 +527,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
+            <xs:enumeration value="ANISOTROPIC"/>
             <xs:enumeration value="LINEAR"/>
             <xs:enumeration value="NEAREST"/>
         </xs:restriction>
@@ -610,7 +691,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element ref="AnimationTrackInstance" minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="AnimationTrackInstance">
                     <xs:annotation>
                         <xs:documentation>
                             An object can have any number of animation tracks targeting it.
@@ -667,7 +748,7 @@
                 <xs:sequence maxOccurs="unbounded">
                     <xs:annotation><xs:appinfo>
                         <jaxb:property name="childNodes"/>
-                    </xs:appinfo></xs:annotation>  
+                    </xs:appinfo></xs:annotation>
                     <xs:group ref="NodeElementGroup"/>
                 </xs:sequence>
             </xs:extension>
@@ -1129,7 +1210,7 @@
                                         <xs:attribute name="vertexCount" type="UInt31"/>
                                         <xs:attribute name="weight" type="Int32"/>
                                     </xs:extension>
-                                </xs:complexContent>                         
+                                </xs:complexContent>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -1188,13 +1269,14 @@
                 <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:choice>
+                            <xs:element ref="float_array" minOccurs="1" maxOccurs="1"/>
                             <xs:element ref="int_array" minOccurs="1" maxOccurs="1"/>
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="componentCount" type="UByte"/>
+                    <xs:attribute name="componentCount" type="Byte"/>
                     <xs:attribute name="componentType"
                                   type="VertexArrayDataType"
-                                  default="SHORT"/>
+                                  default="FLOAT"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
