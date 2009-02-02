@@ -17,6 +17,13 @@ public class PolygonModeConverter extends Object3DConverter
         m3x.m3g.PolygonMode to, m3x.xml.PolygonMode from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+
+        to.setCulling(from.getCulling().value());
+        to.setShading(from.getShading().value());
+        to.setWinding(from.getWinding().value());
+        to.setLocalCameraLightingEnabled(from.isLocalCameraLightingEnabled());
+        to.setPerspectiveCorrectionEnabled(from.isPerspectiveCorrectionEnabled());
+        to.setTwoSidedLightingEnabled(from.isTwoSidedLightingEnabled());
+
     }
 }

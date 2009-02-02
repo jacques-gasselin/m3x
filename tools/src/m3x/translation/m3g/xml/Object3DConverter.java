@@ -12,16 +12,11 @@ public abstract class Object3DConverter extends XmlToBinaryConverter
         to.setUserID(from.getUserID());
 
         //animation tracks
-        for (m3x.xml.AnimationTrack xmlAT : from.getAnimationTrack())
+        for (Object objectOrInstance : from.getAnimationTrackOrAnimationTrackInstance())
         {
+            m3x.xml.AnimationTrack xmlAT = getObjectOrInstance(objectOrInstance);
             m3x.m3g.AnimationTrack m3gAT = (m3x.m3g.AnimationTrack)
                 translator.getReference(xmlAT);
-            to.addAnimationTrack(m3gAT);
-        }
-        for (m3x.xml.AnimationTrackInstance xmlAT : from.getAnimationTrackInstance())
-        {
-            m3x.m3g.AnimationTrack m3gAT = (m3x.m3g.AnimationTrack)
-                translator.getReference((m3x.xml.AnimationTrack) xmlAT.getRef());
             to.addAnimationTrack(m3gAT);
         }
     }

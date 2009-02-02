@@ -6,6 +6,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Vector;
@@ -317,4 +318,26 @@ public abstract class Object3D implements SectionSerialisable
     {
         return animationTracks.size();
     }
+
+    public final int getFieldValue(String fieldName, String context)
+    {
+        if (fieldName == null)
+        {
+            throw new NullPointerException("fieldName is null");
+        }
+        try
+        {
+            Field field = getClass().getField(fieldName);
+            return field.getInt(this);
+        }
+        catch (NoSuchFieldException e)
+        {
+            throw new IllegalArgumentException("unknown " + context + " " + fieldName);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new IllegalArgumentException("no access to " + context + " " + fieldName);
+        }
+    }
+
 }

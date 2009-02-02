@@ -21,6 +21,38 @@ public abstract class XmlToBinaryConverter implements BinaryConverter
         return (T) instance.getRef();
     }
 
+    @SuppressWarnings("unchecked")
+    public static final <T extends m3x.xml.Object3D, I extends m3x.xml.InstanceType>
+    T getObjectOrInstance(Object objectOrInstance)
+    {
+        if (objectOrInstance == null)
+        {
+            return null;
+        }
+        try
+        {
+            T object = (T) objectOrInstance;
+            return object;
+        }
+        catch (Throwable t)
+        {
+            assert(t instanceof ClassCastException);
+        }
+        
+        try
+        {
+            I instance = (I) objectOrInstance;
+            return (T) instance.getRef();
+        }
+        catch (Throwable t)
+        {
+            assert(t instanceof ClassCastException);
+        }
+
+        throw new IllegalArgumentException(
+            "objectOrInstance is not a valid object or instance");
+    }
+
 
     public final m3x.m3g.Object3D toBinary(BinaryTranslator translator, Object from)
     {

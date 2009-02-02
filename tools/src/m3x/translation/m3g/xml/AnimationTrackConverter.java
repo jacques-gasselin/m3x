@@ -27,7 +27,7 @@ public class AnimationTrackConverter extends Object3DConverter
     {
         m3x.xml.AnimationController controller = getObjectOrInstance(
             from.getController(), from.getControllerInstance());
-        return (m3x.m3g.AnimationController) translator.getObject(controller);
+        return (m3x.m3g.AnimationController) translator.getReference(controller);
     }
 
     private static m3x.m3g.KeyframeSequence getKeyframeSequence(
@@ -35,6 +35,6 @@ public class AnimationTrackConverter extends Object3DConverter
     {
         m3x.xml.KeyframeSequence sequence = getObjectOrInstance(
             from.getKeyframeSequence(), from.getKeyframeSequenceInstance());
-        return (m3x.m3g.KeyframeSequence) translator.getObject(sequence);
+        return (m3x.m3g.KeyframeSequence) translator.getReference(sequence);
     }
 }

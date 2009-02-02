@@ -2,8 +2,8 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 
 /**
@@ -125,4 +125,50 @@ public class PolygonMode extends Object3D implements SectionSerialisable
     {
         return this.perspectiveCorrectionEnabled;
     }
+
+    public void setCulling(int mode)
+    {
+        this.culling = mode;
+    }
+
+    public void setCulling(String mode)
+    {
+        setCulling(getFieldValue(mode, "mode"));
+    }
+
+    public void setLocalCameraLightingEnabled(boolean localCameraLightingEnabled)
+    {
+        this.localCameraLightingEnabled = localCameraLightingEnabled;
+    }
+
+    public void setPerspectiveCorrectionEnabled(boolean perspectiveCorrectionEnabled)
+    {
+        this.perspectiveCorrectionEnabled = perspectiveCorrectionEnabled;
+    }
+
+    public void setShading(int mode)
+    {
+        this.shading = mode;
+    }
+
+    public void setShading(String mode)
+    {
+        setShading(getFieldValue(mode, "mode"));
+    }
+
+    public void setTwoSidedLightingEnabled(boolean twoSidedLightingEnabled)
+    {
+        this.twoSidedLightingEnabled = twoSidedLightingEnabled;
+    }
+
+    public void setWinding(int mode)
+    {
+        this.winding = mode;
+    }
+
+    public void setWinding(String mode)
+    {
+        setWinding(getFieldValue(mode, "mode"));
+    }
+
 }

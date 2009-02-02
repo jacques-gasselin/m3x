@@ -1,11 +1,11 @@
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Vector3D;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Texture2D<br>
@@ -32,7 +32,7 @@ public class Texture2D extends Transformable implements SectionSerialisable
     public static final int FUNC_REPLACE = 228;
     public static final int WRAP_CLAMP = 240;
     public static final int WRAP_REPEAT = 241;
-    private Image2D texture;
+    private Image2D image;
     private ColorRGB blendColor;
     private int blending;
     private int wrappingS;
@@ -40,26 +40,11 @@ public class Texture2D extends Transformable implements SectionSerialisable
     private int levelFilter;
     private int imageFilter;
 
-    public Texture2D(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, Vector3D translation, Vector3D scale,
-        float orientationAngle, Vector3D orientationAxis, Image2D texture,
-        ColorRGB blendColor, int blending, int wrappingS, int wrappingT,
-        int levelFilter, int imageFilter)
-    {
-        super(animationTracks, userParameters, translation, scale,
-            orientationAngle, orientationAxis);
-        this.texture = texture;
-        this.blendColor = blendColor;
-        this.blending = blending;
-        this.wrappingS = wrappingS;
-        this.wrappingT = wrappingT;
-        this.levelFilter = levelFilter;
-        this.imageFilter = imageFilter;
-    }
-
     public Texture2D()
     {
         super();
+        this.blendColor = new ColorRGB();
+        setBlendColor(0xffffff);
     }
 
     @Override
@@ -67,7 +52,7 @@ public class Texture2D extends Transformable implements SectionSerialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.texture = (Image2D)deserialiser.readReference();
+        this.image = (Image2D)deserialiser.readReference();
         this.blendColor = new ColorRGB();
         this.blendColor.deserialise(deserialiser);
         this.blending = deserialiser.readUnsignedByte();
@@ -82,7 +67,7 @@ public class Texture2D extends Transformable implements SectionSerialisable
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeReference(this.texture);
+        serialiser.writeReference(this.image);
         this.blendColor.serialise(serialiser);
         serialiser.write(this.blending);
         serialiser.write(this.wrappingS);
@@ -96,9 +81,9 @@ public class Texture2D extends Transformable implements SectionSerialisable
         return ObjectTypes.TEXTURE_2D;
     }
 
-    public Image2D getTexture()
+    public Image2D getImage()
     {
-        return this.texture;
+        return this.image;
     }
 
     public ColorRGB getBlendColor()
@@ -130,4 +115,53 @@ public class Texture2D extends Transformable implements SectionSerialisable
     {
         return this.imageFilter;
     }
+
+    public void setBlendColor(int ARGB)
+    {
+        this.blendColor.set(ARGB);
+    }
+
+    public void setBlendColor(List<Short> blendColor)
+    {
+        this.blendColor.set(blendColor);
+    }
+
+    public void setBlending(int func)
+    {
+        this.blending = func;
+    }
+
+    public void setBlending(String func)
+    {
+        setBlending(getFieldValue(func, "func"));
+    }
+
+    public void setFiltering(int levelFilter, int imageFilter)
+    {
+        this.levelFilter = levelFilter;
+        this.imageFilter = imageFilter;
+    }
+
+    public void setFiltering(String levelFilter, String imageFilter)
+    {
+        setFiltering(getFieldValue(levelFilter, "level filter"),
+            getFieldValue(imageFilter, "image filter"));
+    }
+
+    public void setImage(Image2D image)
+    {
+        this.image = image;
+    }
+
+    public void setWrapping(int wrapS, int wrapT)
+    {
+        this.wrappingS = wrapS;
+        this.wrappingT = wrapT;
+    }
+
+    public void setWrapping(String wrapS, String wrapT)
+    {
+        setWrapping(getFieldValue(wrapS, "wrapS"), getFieldValue(wrapT, "wrapT"));
+    }
+
 }

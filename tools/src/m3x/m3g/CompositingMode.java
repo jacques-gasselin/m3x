@@ -2,6 +2,7 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * See http://java2me.org/m3g/file-format.html#CompositingMode<br>
@@ -29,7 +30,7 @@ public class CompositingMode extends Object3D
     private boolean colorWriteEnabled;
     private boolean alphaWriteEnabled;
     private int blending;
-    private int alphaThreshold;
+    private float alphaThreshold;
     private float depthOffsetFactor;
     private float depthOffsetUnits;
 
@@ -64,7 +65,7 @@ public class CompositingMode extends Object3D
         setDepthWriteEnabled(deserialiser.readBoolean());
         setColorWriteEnabled(deserialiser.readBoolean());
         setAlphaWriteEnabled(deserialiser.readBoolean());
-        setAlphaThreshold(deserialiser.readUnsignedByte());
+        setAlphaThresholdByte(deserialiser.readUnsignedByte());
         setBlending(deserialiser.readUnsignedByte());
         setDepthOffsetFactor(deserialiser.readFloat());
         setDepthOffsetUnits(deserialiser.readFloat());
@@ -79,8 +80,8 @@ public class CompositingMode extends Object3D
         serialiser.writeBoolean(isDepthWriteEnabled());
         serialiser.writeBoolean(isColorWriteEnabled());
         serialiser.writeBoolean(isAlphaWriteEnabled());
-        serialiser.write(getAlphaThreshold());
-        serialiser.write(getBlending());
+        serialiser.writeByte(getAlphaThresholdByte());
+        serialiser.writeByte(getBlending());
         serialiser.writeFloat(getDepthOffsetFactor());
         serialiser.writeFloat(getDepthOffsetUnits());
     }
@@ -115,9 +116,14 @@ public class CompositingMode extends Object3D
         return this.blending;
     }
 
-    public int getAlphaThreshold()
+    public float getAlphaThreshold()
     {
         return this.alphaThreshold;
+    }
+
+    private int getAlphaThresholdByte()
+    {
+        return Math.round(this.alphaThreshold * 255);
     }
 
     public float getDepthOffsetFactor()
@@ -130,7 +136,12 @@ public class CompositingMode extends Object3D
         return this.depthOffsetUnits;
     }
 
-    private void setDepthTestEnabled(boolean depthTestEnabled)
+    public void setAlphaThreshold(float alphaThreshold)
+    {
+        this.alphaThreshold = alphaThreshold;
+    }
+
+    public void setDepthTestEnabled(boolean depthTestEnabled)
     {
         this.depthTestEnabled = depthTestEnabled;
     }
@@ -160,9 +171,15 @@ public class CompositingMode extends Object3D
         this.blending = blending;
     }
 
-    public void setAlphaThreshold(int alphaThreshold)
+    public void setBlending(String blending)
     {
-        this.alphaThreshold = alphaThreshold;
+        setBlending(getFieldValue(blending, "blending"));
+    }
+
+
+    public void setAlphaThresholdByte(int alphaThreshold)
+    {
+        this.alphaThreshold = alphaThreshold / 255.0f;
     }
 
     public void setDepthOffsetFactor(float depthOffsetFactor)

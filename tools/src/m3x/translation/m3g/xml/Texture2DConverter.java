@@ -22,6 +22,20 @@ public class Texture2DConverter extends TransformableConverter
         m3x.m3g.Texture2D to, m3x.xml.Texture2D from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+
+        to.setImage(getImage(translator, from));
+        to.setBlendColor(from.getBlendColor());
+        to.setBlending(from.getBlending().value());
+        to.setWrapping(from.getWrappingS().value(), from.getWrappingT().value());
+        to.setFiltering(from.getLevelFilter().value(), from.getImageFilter().value());
     }
+
+    private static m3x.m3g.Image2D getImage(
+        XmlToBinaryTranslator translator, m3x.xml.Texture2D from)
+    {
+        m3x.xml.Image2D im = getObjectOrInstance(
+            from.getImage2D(), from.getImage2DInstance());
+        return (m3x.m3g.Image2D) translator.getReference(im);
+    }
+
 }

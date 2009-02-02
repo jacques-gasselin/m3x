@@ -3,11 +3,10 @@ package m3x.m3g;
 import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import m3x.m3g.primitives.ColorRGBA;
+import m3x.m3g.primitives.Vector3D;
 
 /**
  * See http://java2me.org/m3g/file-format.html#VertexBuffer<br>
@@ -28,108 +27,90 @@ import m3x.m3g.primitives.ColorRGBA;
  */
 public class VertexBuffer extends Object3D implements SectionSerialisable
 {
-    public VertexBuffer()
-    {
-        super();
-    }
-
-    public static class TextureCoordinate implements Serialisable
+    private static class ScaleBiasedVertexArray implements Serialisable
     {
 
-        private VertexArray textureCoordinates;
-        private float[] textureCoordinatesBias;
-        private float textureCoordinatesScale;
+        private VertexArray array;
+        private float scale;
+        private Vector3D bias;
 
-        public TextureCoordinate()
+        public ScaleBiasedVertexArray()
         {
         }
 
-        public TextureCoordinate(VertexArray textureCoordinates,
-            float[] textureCoordinatesBias, float textureCoordinatesScale)
+        public VertexArray getArray()
         {
-            this.textureCoordinates = textureCoordinates;
-            this.textureCoordinatesBias = textureCoordinatesBias;
-            this.textureCoordinatesScale = textureCoordinatesScale;
+            return this.array;
         }
 
-        public VertexArray getTextureCoordinates()
+        public float[] getBias()
         {
-            return this.textureCoordinates;
+            float[] ret = new float[3];
+            ret[0] = bias.getX();
+            ret[1] = bias.getY();
+            ret[2] = bias.getZ();
+            return ret;
         }
 
-        public float[] getTextureCoordinatesBias()
+        public float getScale()
         {
-            return this.textureCoordinatesBias;
+            return this.scale;
         }
 
-        public float getTextureCoordinatesScale()
+        public void setArray(VertexArray array)
         {
-            return this.textureCoordinatesScale;
+            if (array == null)
+            {
+                throw new NullPointerException("array is null");
+            }
+            this.array = array;
+        }
+
+        public void setBias(float[] bias)
+        {
+            if (bias == null)
+            {
+                throw new NullPointerException("bias is null");
+            }
+            if (bias.length != 3)
+            {
+                throw new IllegalArgumentException("bias does not have 3 components");
+            }
+            this.bias.set(bias[0], bias[1], bias[2]);
+        }
+
+        public void setScale(float scale)
+        {
+            this.scale = scale;
         }
 
         public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
-            this.textureCoordinates = (VertexArray)deserialiser.readReference();
-            this.textureCoordinatesBias = new float[3];
-            this.textureCoordinatesBias[0] = deserialiser.readFloat();
-            this.textureCoordinatesBias[1] = deserialiser.readFloat();
-            this.textureCoordinatesBias[2] = deserialiser.readFloat();
-            this.textureCoordinatesScale = deserialiser.readFloat();
+            setArray((VertexArray)deserialiser.readReference());
+            bias.deserialise(deserialiser);
+            setScale(deserialiser.readFloat());
         }
 
         public void serialise(Serialiser serialiser)
             throws IOException
         {
-            serialiser.writeReference(this.textureCoordinates);
-            for (float f : this.textureCoordinatesBias)
-            {
-                serialiser.writeFloat(f);
-            }
-            serialiser.writeFloat(this.textureCoordinatesScale);
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof TextureCoordinate))
-            {
-                return false;
-            }
-            TextureCoordinate another = (TextureCoordinate) obj;
-            return this.textureCoordinates.equals(another.textureCoordinates) &&
-                Arrays.equals(this.textureCoordinatesBias, another.textureCoordinatesBias) &&
-                this.textureCoordinatesScale == another.textureCoordinatesScale;
+            serialiser.writeReference(getArray());
+            bias.serialise(serialiser);
+            serialiser.writeFloat(getScale());
         }
     }
+
     private ColorRGBA defaultColor;
-    private VertexArray positions;
-    private float[] positionBias;
-    private float positionScale;
+    private ScaleBiasedVertexArray positions;
     private VertexArray normals;
     private VertexArray colors;
-    private int textureCoordinateArrayCount;
-    private TextureCoordinate[] textureCoordinates;
+    private ScaleBiasedVertexArray[] textureCoordinates;
 
-    public VertexBuffer(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, ColorRGBA defaultColor,
-        VertexArray positions, float[] positionBias, float positionScale,
-        VertexArray normals, VertexArray colors,
-        TextureCoordinate[] textureCoordinates)
+    public VertexBuffer()
     {
-        super(animationTracks, userParameters);
-        this.defaultColor = defaultColor;
-        this.positions = positions;
-        this.positionBias = positionBias;
-        this.positionScale = positionScale;
-        this.normals = normals;
-        this.colors = colors;
-        this.textureCoordinateArrayCount = textureCoordinates.length;
-        this.textureCoordinates = textureCoordinates;
+        super();
+        positions = new ScaleBiasedVertexArray();
     }
 
     @Override
@@ -139,23 +120,14 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         super.deserialise(deserialiser);
         this.defaultColor = new ColorRGBA();
         this.defaultColor.deserialise(deserialiser);
-        this.positions = (VertexArray)deserialiser.readReference();
-        this.positionBias = new float[3];
-        this.positionBias[0] = deserialiser.readFloat();
-        this.positionBias[1] = deserialiser.readFloat();
-        this.positionBias[2] = deserialiser.readFloat();
-        this.positionScale = deserialiser.readFloat();
+        this.positions.deserialise(deserialiser);
         this.normals = (VertexArray)deserialiser.readReference();
         this.colors = (VertexArray)deserialiser.readReference();
-        this.textureCoordinateArrayCount = deserialiser.readInt();
-        if (this.textureCoordinateArrayCount < 0)
+        int textureCoordinateArrayCount = deserialiser.readInt();
+        setTexCoordCount(textureCoordinateArrayCount);
+        for (int i = 0; i < textureCoordinateArrayCount; i++)
         {
-            throw new IllegalArgumentException("Invalid texture coordinate array length: " + this.textureCoordinateArrayCount);
-        }
-        this.textureCoordinates = new TextureCoordinate[this.textureCoordinateArrayCount];
-        for (int i = 0; i < this.textureCoordinates.length; i++)
-        {
-            this.textureCoordinates[i] = new TextureCoordinate();
+            this.textureCoordinates[i] = new ScaleBiasedVertexArray();
             this.textureCoordinates[i].deserialise(deserialiser);
         }
     }
@@ -166,16 +138,11 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     {
         super.serialise(serialiser);
         this.defaultColor.serialise(serialiser);
-        serialiser.writeReference(this.positions);
-        for (float f : this.positionBias)
-        {
-            serialiser.writeFloat(f);
-        }
-        serialiser.writeFloat(this.positionScale);
-        serialiser.writeReference(this.normals);
-        serialiser.writeReference(this.colors);
-        serialiser.writeInt(this.textureCoordinateArrayCount);
-        for (TextureCoordinate textureCoordinate : this.textureCoordinates)
+        getPositionsArray().serialise(serialiser);
+        serialiser.writeReference(getNormals());
+        serialiser.writeReference(getColors());
+        serialiser.writeInt(getTexCoordCount());
+        for (ScaleBiasedVertexArray textureCoordinate : this.textureCoordinates)
         {
             textureCoordinate.serialise(serialiser);
         }
@@ -191,19 +158,19 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         return this.defaultColor;
     }
 
-    public VertexArray getPositions()
+    public VertexArray getPositionsArray()
     {
-        return this.positions;
+        return this.positions.getArray();
     }
 
-    public float[] getPositionBias()
+    public float[] getPositionsBias()
     {
-        return this.positionBias;
+        return this.positions.getBias();
     }
 
-    public float getPositionScale()
+    public float getPositionsScale()
     {
-        return this.positionScale;
+        return this.positions.getScale();
     }
 
     public VertexArray getNormals()
@@ -216,13 +183,62 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         return this.colors;
     }
 
-    public int getTextureCoordinateArrayCount()
+    public int getTexCoordCount()
     {
-        return this.textureCoordinateArrayCount;
+        if (this.textureCoordinates == null)
+        {
+            return 0;
+        }
+        return this.textureCoordinates.length;
     }
 
-    public TextureCoordinate[] getTextureCoordinates()
+    public VertexArray getTexCoordsArray(int index)
     {
-        return this.textureCoordinates;
+        return this.textureCoordinates[index].getArray();
+    }
+
+    public float[] getTexCoordsBias(int index)
+    {
+        return this.textureCoordinates[index].getBias();
+    }
+
+    public float getTexCoordsScale(int index)
+    {
+        return this.textureCoordinates[index].getScale();
+    }
+
+    public void setColors(VertexArray va)
+    {
+        this.colors = va;
+    }
+
+    public void setNormals(VertexArray va)
+    {
+        this.normals = va;
+    }
+
+    public void setPositions(VertexArray va, float scale, float[] bias)
+    {
+        this.positions.setArray(va);
+        this.positions.setScale(scale);
+        this.positions.setBias(bias);
+    }
+
+    public void setTexCoordCount(int texCoordCount)
+    {
+        if (texCoordCount < 0)
+        {
+            throw new IllegalArgumentException(
+                "Invalid texture coordinate array length: "
+                + texCoordCount);
+        }
+        this.textureCoordinates = new ScaleBiasedVertexArray[texCoordCount];
+    }
+
+    public void setTexCoords(int index, VertexArray va, float scale, float[] bias)
+    {
+        this.textureCoordinates[index].setArray(va);
+        this.textureCoordinates[index].setScale(scale);
+        this.textureCoordinates[index].setBias(bias);
     }
 }

@@ -130,26 +130,8 @@ public class AnimationTrack extends Object3D
         this.targetProperty = property;
     }
 
-    public void setTargetProperty(String propertyString)
+    public void setTargetProperty(String property)
     {
-        if (propertyString == null)
-        {
-            throw new NullPointerException("value is null");
-        }
-        int property = 0;
-        try
-        {
-            Field field = getClass().getField(propertyString);
-            property = field.getInt(this);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new IllegalArgumentException("unknown property " + propertyString);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new IllegalArgumentException("no access to property " + propertyString);
-        }
-        setTargetProperty(property);
+        setTargetProperty(getFieldValue(property, "property"));
     }
 }

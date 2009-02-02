@@ -36,7 +36,7 @@ public class GroupConverter extends NodeConverter
             childNodes = new Vector<m3x.m3g.Node>();
             for (m3x.xml.Node node : from.getChildNodes())
             {
-                childNodes.add((m3x.m3g.Node) translator.getObject(node));
+                childNodes.add((m3x.m3g.Node) translator.getReference(node));
             }
         }
         return childNodes;

@@ -2,6 +2,7 @@ package m3x.m3g.primitives;
 
 import java.io.IOException;
 
+import java.util.List;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
 
@@ -76,4 +77,27 @@ public class ColorRGB implements Serialisable
     {
         return this.b;
     }
+
+    public void set(int RGB)
+    {
+        this.r = (RGB >> 16) & 0xff;
+        this.g = (RGB >> 8) & 0xff;
+        this.b = (RGB >> 0) & 0xff;
+    }
+
+    public void set(List<Short> color)
+    {
+        if (color == null)
+        {
+            throw new NullPointerException("color is null");
+        }
+        if (color.size() < 3)
+        {
+            throw new IllegalArgumentException("color.size() < 3");
+        }
+        this.r = color.get(0) & 0xff;
+        this.g = color.get(1) & 0xff;
+        this.b = color.get(2) & 0xff;
+    }
+
 }

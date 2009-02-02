@@ -17,6 +17,6 @@ public class SkinnedMeshConverter extends Object3DConverter
         m3x.m3g.SkinnedMesh to, m3x.xml.SkinnedMesh from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+
     }
 }

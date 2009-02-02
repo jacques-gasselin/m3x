@@ -117,7 +117,7 @@ public class Appearance extends Object3D
         return this.textures.length;
     }
 
-    public Texture2D getTexture(int index)
+    private final void requireTextureInRange(int index)
     {
         if (index < 0)
         {
@@ -127,6 +127,12 @@ public class Appearance extends Object3D
         {
             throw new IllegalArgumentException("index > getTextureCount()");
         }
+    }
+
+    public Texture2D getTexture(int index)
+    {
+        requireTextureInRange(index);
+        
         return this.textures[index];
     }
 
@@ -139,4 +145,34 @@ public class Appearance extends Object3D
     {
         this.fog = fog;
     }
+
+    public void setMaterial(Material material)
+    {
+        this.material = material;
+    }
+
+    public void setPolygonMode(PolygonMode polygonMode)
+    {
+        this.polygonMode = polygonMode;
+    }
+
+    public void setTextureCount(int count)
+    {
+        if (count == 0)
+        {
+            this.textures = null;
+        }
+        else
+        {
+            this.textures = new Texture2D[count];
+        }
+    }
+
+    public void setTexture(int index, Texture2D texture)
+    {
+        requireTextureInRange(index);
+
+        this.textures[index] = texture;
+    }
+
 }

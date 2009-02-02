@@ -36,7 +36,7 @@ public class MeshConverter extends NodeConverter
     {
         m3x.xml.VertexBuffer vb = getObjectOrInstance(
             from.getVertexBuffer(), from.getVertexBufferInstance());
-        return (m3x.m3g.VertexBuffer) translator.getObject(vb);
+        return (m3x.m3g.VertexBuffer) translator.getReference(vb);
     }
 
     private static m3x.m3g.Appearance getAppearance(
@@ -44,7 +44,7 @@ public class MeshConverter extends NodeConverter
     {
         m3x.xml.Appearance a = getObjectOrInstance(
             from.getAppearance(), from.getAppearanceInstance());
-        return (m3x.m3g.Appearance) translator.getObject(a);
+        return (m3x.m3g.Appearance) translator.getReference(a);
     }
 
     private static m3x.m3g.IndexBuffer getIndexBuffer(
@@ -52,7 +52,7 @@ public class MeshConverter extends NodeConverter
     {
         m3x.xml.IndexBuffer ib = getObjectOrInstance(
             from.getTriangleStripArray(), from.getTriangleStripArrayInstance());
-        return (m3x.m3g.IndexBuffer) translator.getObject(ib);
+        return (m3x.m3g.IndexBuffer) translator.getReference(ib);
     }
 
 }

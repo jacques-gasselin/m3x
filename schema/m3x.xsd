@@ -602,15 +602,15 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:choice>
-                <xs:element ref="AnimationTrack" minOccurs="0" maxOccurs="unbounded">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="AnimationTrack">
                     <xs:annotation>
                         <xs:documentation>
                             An object can have any number of animation tracks targeting it.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element ref="AnimationTrackInstance" minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="AnimationTrackInstance">
                     <xs:annotation>
                         <xs:documentation>
                             An object can have any number of animation tracks targeting it.
@@ -711,19 +711,19 @@
             <xs:extension base="Node">
                 <xs:sequence>
                     <xs:choice>
-                        <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
-                        <xs:element ref="VertexBuffer" minOccurs="1" maxOccurs="1" />
+                        <xs:element ref="VertexBufferInstance"/>
+                        <xs:element ref="VertexBuffer"/>
                     </xs:choice>
                     <xs:element name="submesh" minOccurs="1" maxOccurs="unbounded">
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:choice>
-                                    <xs:element ref="TriangleStripArrayInstance" minOccurs="1" maxOccurs="1"/>
-                                    <xs:element ref="TriangleStripArray" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="TriangleStripArrayInstance"/>
+                                    <xs:element ref="TriangleStripArray"/>
                                 </xs:choice>
                                 <xs:choice>
-                                    <xs:element ref="AppearanceInstance" minOccurs="1" maxOccurs="1"/>
-                                    <xs:element ref="Appearance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="AppearanceInstance"/>
+                                    <xs:element ref="Appearance"/>
                                 </xs:choice>
                             </xs:sequence>
                         </xs:complexType>
@@ -770,19 +770,17 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:choice>
-                            <xs:element ref="KeyframeSequence" minOccurs="0" maxOccurs="1">
-                            </xs:element>
-                            <xs:element ref="KeyframeSequenceInstance" minOccurs="0" maxOccurs="1">
-                            </xs:element>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="KeyframeSequence"/>
+                            <xs:element ref="KeyframeSequenceInstance"/>
                         </xs:choice>
-                        <xs:choice>
-                            <xs:element ref="AnimationController" minOccurs="0" maxOccurs="1">
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="AnimationController">
                                 <xs:annotation><xs:appinfo>
                                     <jaxb:property name="controller"/>
                                 </xs:appinfo></xs:annotation>
                             </xs:element>
-                            <xs:element ref="AnimationControllerInstance" minOccurs="0" maxOccurs="1">
+                            <xs:element ref="AnimationControllerInstance">
                                 <xs:annotation><xs:appinfo>
                                     <jaxb:property name="controllerInstance"/>
                                 </xs:appinfo></xs:annotation>
@@ -806,35 +804,25 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:choice>
-                            <xs:element ref="CompositingModeInstance"
-                                        minOccurs="0" maxOccurs="1"/>
-                            <xs:element ref="CompositingMode"
-                                        minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="CompositingModeInstance"/>
+                            <xs:element ref="CompositingMode"/>
                         </xs:choice>
-                        <xs:choice>
-                            <xs:element ref="FogInstance"
-                                        minOccurs="0" maxOccurs="1"/>
-                            <xs:element ref="Fog"
-                                        minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="FogInstance"/>
+                            <xs:element ref="Fog"/>
                         </xs:choice>
-                        <xs:choice>
-                            <xs:element ref="PolygonModeInstance"
-                                        minOccurs="0" maxOccurs="1"/>
-                            <xs:element ref="PolygonMode"
-                                        minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="PolygonModeInstance"/>
+                            <xs:element ref="PolygonMode"/>
                         </xs:choice>
-                        <xs:choice>
-                            <xs:element ref="MaterialInstance"
-                                        minOccurs="0" maxOccurs="1"/>
-                            <xs:element ref="Material"
-                                        minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="MaterialInstance"/>
+                            <xs:element ref="Material"/>
                         </xs:choice>
-                        <xs:choice>
-                            <xs:element ref="Texture2DInstance"
-                                        minOccurs="0" maxOccurs="unbounded"/>
-                            <xs:element ref="Texture2D"
-                                        minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element ref="Texture2DInstance"/>
+                            <xs:element ref="Texture2D"/>
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="layer"
@@ -1142,9 +1130,9 @@
             <xs:complexContent>
                 <xs:extension base="Transformable">
                     <xs:sequence>
-                        <xs:choice>
-                            <xs:element ref="Image2D" minOccurs="0" maxOccurs="1"/>
-                            <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="Image2D"/>
+                            <xs:element ref="Image2DInstance"/>
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="blendColor" type="ColorRGB"/>
@@ -1188,7 +1176,7 @@
                 <xs:extension base="Object3D">
                     <xs:sequence>
                         <xs:choice>
-                            <xs:element ref="int_array" minOccurs="1" maxOccurs="1"/>
+                            <xs:element ref="int_array"/>
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="componentCount" type="UByte"/>
@@ -1211,44 +1199,48 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element name="positions" minOccurs="1" maxOccurs="1">
+                        <xs:element name="positions">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element ref="bias" minOccurs="0" maxOccurs="1"/>
+                                    <xs:element ref="bias" minOccurs="0"/>
                                     <xs:choice>
-                                        <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
-                                        <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                        <xs:element ref="VertexArray"/>
+                                        <xs:element ref="VertexArrayInstance"/>
                                     </xs:choice>
                                 </xs:sequence>
-                                <xs:attribute name="scale" type="Float32"/>
+                                <xs:attribute name="scale"
+                                              type="Float32"
+                                              default="1.0"/>
                             </xs:complexType>
                         </xs:element>
-                        <xs:element name="normals" minOccurs="0" maxOccurs="1">
+                        <xs:element name="normals" minOccurs="0">
                             <xs:complexType>
                                 <xs:choice>
-                                    <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
-                                    <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="VertexArray"/>
+                                    <xs:element ref="VertexArrayInstance"/>
                                 </xs:choice>
                             </xs:complexType>
                         </xs:element>
-                        <xs:element name="colors" minOccurs="0" maxOccurs="1">
+                        <xs:element name="colors" minOccurs="0">
                             <xs:complexType>
                                 <xs:choice>
-                                    <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
-                                    <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="VertexArray"/>
+                                    <xs:element ref="VertexArrayInstance"/>
                                 </xs:choice>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="texcoords" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element ref="bias" minOccurs="0" maxOccurs="1"/>
+                                    <xs:element ref="bias" minOccurs="0"/>
                                     <xs:choice>
-                                        <xs:element ref="VertexArray" minOccurs="1" maxOccurs="1"/>
-                                        <xs:element ref="VertexArrayInstance" minOccurs="1" maxOccurs="1"/>
+                                        <xs:element ref="VertexArray"/>
+                                        <xs:element ref="VertexArrayInstance"/>
                                     </xs:choice>
                                 </xs:sequence>
-                                <xs:attribute name="scale" type="Float32"/>
+                                <xs:attribute name="scale"
+                                              type="Float32"
+                                              default="1.0"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
