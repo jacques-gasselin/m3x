@@ -91,18 +91,6 @@ public class Mesh extends Node implements SectionSerialisable
     private VertexBuffer vertexBuffer;
     private SubMesh[] subMeshes;
 
-    public Mesh(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, VertexBuffer vertexBuffer, SubMesh[] subMeshes)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
-        assert (subMeshes != null);
-        assert (subMeshes.length > 0);
-        setVertexBuffer(vertexBuffer);
-        this.subMeshes = subMeshes;
-    }
-
     public Mesh()
     {
         super();

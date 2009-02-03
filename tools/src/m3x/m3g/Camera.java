@@ -35,55 +35,6 @@ public class Camera extends Node
     private float near;
     private float far;
 
-    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, int zTarget, int yTarget,
-        Node zReference, Node yReference, Matrix projectionMatrix)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope, zTarget, yTarget, zReference,
-            yReference);
-        this.projectionType = PROJECTION_TYPE_GENERIC;
-        this.projectionMatrix = projectionMatrix;
-        this.fovy = 0.0f;
-        this.aspectRatio = 0.0f;
-        this.near = 0.0f;
-        this.far = 0.0f;
-    }
-
-    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, Matrix projectionMatrix)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
-        this.projectionType = PROJECTION_TYPE_GENERIC;
-        this.projectionMatrix = projectionMatrix;
-        this.fovy = 0.0f;
-        this.aspectRatio = 0.0f;
-        this.near = 0.0f;
-        this.far = 0.0f;
-    }
-
-    public Camera(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, int projectionType, float fovy,
-        float aspectRatio, float near, float far)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
-        if (projectionType != PROJECTION_TYPE_PARALLEL && projectionType != PROJECTION_TYPE_PERSPECTIVE)
-        {
-            throw new IllegalArgumentException("Invalid projectionType: " + projectionType);
-        }
-        this.projectionType = projectionType;
-        this.projectionMatrix = null;
-        this.fovy = fovy;
-        this.aspectRatio = aspectRatio;
-        this.near = near;
-        this.far = far;
-    }
-
     public Camera()
     {
         super();

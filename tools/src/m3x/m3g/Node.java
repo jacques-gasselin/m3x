@@ -1,10 +1,7 @@
 package m3x.m3g;
 
 import m3x.m3g.primitives.Serialisable;
-import java.io.DataOutputStream;
 import java.io.IOException;
-
-import m3x.m3g.primitives.Matrix;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Node<br>
@@ -31,9 +28,10 @@ public abstract class Node extends Transformable implements Serialisable
     public static final int X_AXIS = 146;
     public static final int Y_AXIS = 147;
     public static final int Z_AXIS = 148;
+    
     private boolean renderingEnabled;
     private boolean pickingEnabled;
-    private byte alphaFactor;
+    private int alphaFactor;
     private int scope;
     private boolean hasAlignment;
     private int zTarget;
@@ -42,57 +40,31 @@ public abstract class Node extends Transformable implements Serialisable
     private Node yReference;
     private Node parent;
 
-    public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope)
+    private static final void requireValidTarget(int target)
     {
-        super(animationTracks, userParameters, transform);
-        this.renderingEnabled = enableRendering;
-        this.pickingEnabled = enablePicking;
-        this.alphaFactor = alphaFactor;
-        this.scope = scope;
-        this.hasAlignment = false;
-        this.zTarget = 0;
-        this.yTarget = 0;
-        this.zReference = null;
-        this.yReference = null;
-    }
-
-    public Node(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, int zTarget, int yTarget,
-        Node zReference, Node yReference)
-    {
-        this(animationTracks, userParameters, transform,
-            enableRendering, enablePicking, alphaFactor, scope);
-        this.hasAlignment = true;
-        validateZTarget(zTarget);
-        this.zTarget = zTarget;
-        validateYTarget(yTarget);
-        this.yTarget = yTarget;
-        this.zReference = zReference;
-        this.yReference = yReference;
-    }
-
-    private static void validateYTarget(int yTarget)
-    {
-        if (yTarget < NONE || yTarget > Z_AXIS)
+        if (target < NONE || target > Z_AXIS)
         {
-            throw new IllegalArgumentException("Invalid yTarget: " + yTarget);
+            throw new IllegalArgumentException("Invalid target: " + target);
         }
     }
 
-    private static void validateZTarget(int zTarget)
+    private final void requireNotThis(Node ref)
     {
-        if (zTarget < NONE || zTarget > Z_AXIS)
+        if (ref == this)
         {
-            throw new IllegalArgumentException("Invalid zTarget: " + zTarget);
+            throw new IllegalArgumentException("self reference is not allowed");
         }
     }
 
     public Node()
     {
         super();
+        setParent(null);
+        setRenderingEnabled(true);
+        setPickingEnabled(true);
+        setAlphaFactor(1.0f);
+        setScope(-1);
+        setAlignment(null, NONE, null, NONE);
     }
 
     @Override
@@ -100,19 +72,18 @@ public abstract class Node extends Transformable implements Serialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.renderingEnabled = deserialiser.readBoolean();
-        this.pickingEnabled = deserialiser.readBoolean();
-        this.alphaFactor = deserialiser.readByte();
-        this.scope = deserialiser.readInt();
+        setRenderingEnabled(deserialiser.readBoolean());
+        setPickingEnabled(deserialiser.readBoolean());
+        setAlphaFactorByte(deserialiser.readUnsignedByte());
+        setScope(deserialiser.readInt());
         this.hasAlignment = deserialiser.readBoolean();
         if (this.hasAlignment)
         {
-            this.zTarget = deserialiser.readUnsignedByte();
-            validateZTarget(this.zTarget);
-            this.yTarget = deserialiser.readUnsignedByte();
-            validateYTarget(this.yTarget);
-            this.zReference = (Node)deserialiser.readWeakReference();
-            this.yReference = (Node)deserialiser.readWeakReference();
+            final int zTarget = deserialiser.readUnsignedByte();
+            final int yTarget = deserialiser.readUnsignedByte();
+            Node zRef = (Node)deserialiser.readWeakReference();
+            Node yRef = (Node)deserialiser.readWeakReference();
+            setAlignment(zRef, zTarget, yRef, yTarget);
         }
     }
 
@@ -155,18 +126,14 @@ public abstract class Node extends Transformable implements Serialisable
         this.pickingEnabled = enabled;
     }
 
-    private byte getAlphaFactorByte()
+    private int getAlphaFactorByte()
     {
         return this.alphaFactor;
     }
 
     public float getAlphaFactor()
     {
-        int factor = getAlphaFactorByte();
-        if (factor < 0)
-        {
-            factor += 256;
-        }
+        final int factor = getAlphaFactorByte();
         return factor / 255.0f;
     }
 
@@ -185,7 +152,20 @@ public abstract class Node extends Transformable implements Serialisable
         return parent;
     }
 
-    private void setAlphaFactorByte(byte alphaFactor)
+    public void setAlignment(Node zRef, int zTarget, Node yRef, int yTarget)
+    {
+        requireValidTarget(zTarget);
+        requireValidTarget(yTarget);
+        requireNotThis(zRef);
+        requireNotThis(yRef);
+
+        this.zReference = zRef;
+        this.zTarget = zTarget;
+        this.yReference = yRef;
+        this.yTarget = yTarget;
+    }
+
+    private void setAlphaFactorByte(int alphaFactor)
     {
         this.alphaFactor = alphaFactor;
     }
@@ -195,11 +175,7 @@ public abstract class Node extends Transformable implements Serialisable
         int factor = (int)alphaFactor * 256;
         factor = Math.max(0, factor);
         factor = Math.min(255, factor);
-        if (factor > 127)
-        {
-            factor -= 256;
-        }
-        setAlphaFactorByte((byte)factor);
+        setAlphaFactorByte(factor);
     }
 
     protected void setParent(Node parent)

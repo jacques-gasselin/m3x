@@ -19,16 +19,6 @@ public class Group extends Node
 {
     private List<Node> childNodes;
 
-    public Group(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, Node[] children)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
-        assert (children != null);
-        setChildNodes(children);
-    }
-
     public Group()
     {
         super();

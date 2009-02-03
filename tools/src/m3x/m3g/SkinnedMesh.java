@@ -138,5 +138,6 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
     public void setSkeleton(Group skeleton)
     {
         this.skeleton = skeleton;
+        this.skeleton.setParent(this);
     }
 }
