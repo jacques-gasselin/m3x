@@ -511,26 +511,32 @@
             <xs:restriction base="Matrix"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="translation">
+    <xs:element name="translation"
+                default="0.0 0.0 0.0">
         <xs:simpleType>
             <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="bias">
+    <xs:element name="bias"
+                default="0.0 0.0 0.0">
         <xs:simpleType>
             <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="scale">
+    <xs:element name="scale"
+                default="1.0 1.0 1.0">
         <xs:simpleType>
             <xs:restriction base="Vector3D"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="orientation">
+    <xs:element name="orientation"
+                default="0.0 0.0 0.0">
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="Vector3D">
-                    <xs:attribute name="angle" type="Float32"/>
+                    <xs:attribute name="angle"
+                                  type="Float32"
+                                  default="0.0"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>

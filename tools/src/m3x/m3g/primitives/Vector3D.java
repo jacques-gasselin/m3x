@@ -2,6 +2,7 @@ package m3x.m3g.primitives;
 
 import java.io.IOException;
 
+import java.util.List;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
 import m3x.m3g.primitives.Serialisable;
@@ -34,6 +35,15 @@ public class Vector3D implements Serialisable
         serialiser.writeFloat(x);
         serialiser.writeFloat(y);
         serialiser.writeFloat(z);
+    }
+
+    public void set(List<Float> value)
+    {
+        if (value.size() < 3)
+        {
+            throw new IllegalArgumentException("size() < 3");
+        }
+        set(value.get(0), value.get(1), value.get(2));
     }
 
     public void set(float x, float y, float z)

@@ -20,8 +20,8 @@ public class VertexBufferConverter extends Object3DConverter
         super.setFromXML(translator, to, from);
 
         setPositions(translator, to, from.getPositions());
-        setNormals(translator, to, from.getNormals());
-        setColors(translator, to, from.getColors());
+        to.setNormals(getNormals(translator, from.getNormals()));
+        to.setColors(getColors(translator, from.getColors()));
         setTexCoords(translator, to, from.getTexcoords());
     }
 
@@ -54,24 +54,28 @@ public class VertexBufferConverter extends Object3DConverter
         to.setPositions(va, scale, bias);
     }
 
-    private static final void setNormals(XmlToBinaryTranslator translator,
-        m3x.m3g.VertexBuffer to, m3x.xml.VertexBuffer.Normals from)
+    private static final m3x.m3g.VertexArray getNormals(
+        XmlToBinaryTranslator translator, m3x.xml.VertexBuffer.Normals from)
     {
+        if (from == null)
+        {
+            return null;
+        }
         m3x.xml.VertexArray xmlVA = getObjectOrInstance(
             from.getVertexArray(), from.getVertexArrayInstance());
-        m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
-            translator.getReference(xmlVA);
-        to.setNormals(va);
+        return (m3x.m3g.VertexArray) translator.getReference(xmlVA);
     }
 
-    private static final void setColors(XmlToBinaryTranslator translator,
-        m3x.m3g.VertexBuffer to, m3x.xml.VertexBuffer.Colors from)
+    private static final m3x.m3g.VertexArray getColors(
+        XmlToBinaryTranslator translator, m3x.xml.VertexBuffer.Colors from)
     {
+        if (from == null)
+        {
+            return null;
+        }
         m3x.xml.VertexArray xmlVA = getObjectOrInstance(
             from.getVertexArray(), from.getVertexArrayInstance());
-        m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
-            translator.getReference(xmlVA);
-        to.setColors(va);
+        return (m3x.m3g.VertexArray) translator.getReference(xmlVA);
     }
 
     private static final void setTexCoords(XmlToBinaryTranslator translator,

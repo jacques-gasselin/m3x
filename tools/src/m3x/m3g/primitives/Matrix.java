@@ -2,6 +2,7 @@ package m3x.m3g.primitives;
 
 import java.io.IOException;
 
+import java.util.List;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
 import m3x.m3g.primitives.Serialisable;
@@ -18,6 +19,19 @@ public class Matrix implements Serialisable
      */
     private float[] matrix;
     private final static int MATRIX_LENGTH = 16;
+
+    public Matrix(List<Float> transform)
+    {
+        if (transform.size() < 16)
+        {
+            throw new IllegalArgumentException("size() < 16");
+        }
+        this.matrix = new float[MATRIX_LENGTH];
+        for (int i = 0; i < matrix.length; i++)
+        {
+            this.matrix[i] = transform.get(i);
+        }
+    }
 
     /**
      * Constructs a new matrix.

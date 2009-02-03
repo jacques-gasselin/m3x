@@ -29,6 +29,10 @@ public abstract class BinaryTranslator
 
     protected m3x.m3g.Object3D getObject(Object key)
     {
+        if (key == null)
+        {
+            return null;
+        }
         m3x.m3g.Object3D value = objectToBinaryMap.get(key);
         if (value == null)
         {

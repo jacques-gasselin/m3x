@@ -27,44 +27,20 @@ import m3x.m3g.primitives.Vector3D;
  */
 public abstract class Transformable extends Object3D implements Serialisable
 {
-    private boolean hasComponentTransform;
     private Vector3D translation;
     private Vector3D scale;
     private float orientationAngle;
     private Vector3D orientationAxis;
-    private boolean hasGeneralTransform;
     private Matrix transform;
-
-    public Transformable(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, Vector3D translation, Vector3D scale,
-        float orientationAngle, Vector3D orientationAxis)
-    {
-        super(animationTracks, userParameters);
-        this.hasComponentTransform = true;
-        this.translation = translation;
-        this.scale = scale;
-        this.orientationAngle = orientationAngle;
-        this.orientationAxis = orientationAxis;
-        this.hasGeneralTransform = false;
-        this.transform = null;
-    }
 
     public Transformable()
     {
         super();
-    }
-
-    public Transformable(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, Matrix transform)
-    {
-        super(animationTracks, userParameters);
-        this.hasComponentTransform = false;
-        this.translation = null;
-        this.scale = null;
-        this.orientationAngle = 0.0f;
-        this.orientationAxis = null;
-        this.hasGeneralTransform = true;
-        this.transform = transform;
+        this.translation = new Vector3D();
+        this.scale = new Vector3D();
+        this.orientationAxis = new Vector3D();
+        
+        setScale();
     }
 
     @Override
@@ -72,8 +48,8 @@ public abstract class Transformable extends Object3D implements Serialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.hasComponentTransform = deserialiser.readBoolean();
-        if (this.hasComponentTransform)
+        boolean hasComponentTransform = deserialiser.readBoolean();
+        if (hasComponentTransform)
         {
             this.translation = new Vector3D();
             this.translation.deserialise(deserialiser);
@@ -82,12 +58,10 @@ public abstract class Transformable extends Object3D implements Serialisable
             this.orientationAngle = deserialiser.readFloat();
             this.orientationAxis = new Vector3D();
             this.orientationAxis.deserialise(deserialiser);
-            this.hasGeneralTransform = false;
         }
-        this.hasGeneralTransform = deserialiser.readBoolean();
-        if (this.hasGeneralTransform)
+        boolean hasGeneralTransform = deserialiser.readBoolean();
+        if (hasGeneralTransform)
         {
-            this.hasComponentTransform = false;
             this.transform = new Matrix();
             this.transform.deserialise(deserialiser);
         }
@@ -98,26 +72,21 @@ public abstract class Transformable extends Object3D implements Serialisable
         throws IOException
     {
         super.serialise(serialiser);
-        if (this.hasComponentTransform)
+        final boolean hasComponentTransform = true;
+        serialiser.writeBoolean(hasComponentTransform);
+        if (hasComponentTransform)
         {
-            serialiser.writeBoolean(true);
             this.translation.serialise(serialiser);
             this.scale.serialise(serialiser);
             serialiser.writeFloat(this.orientationAngle);
             this.orientationAxis.serialise(serialiser);
-            serialiser.writeBoolean(false);
         }
-        else if (this.hasGeneralTransform)
+        final boolean hasGeneralTransform = transform != null;
+        serialiser.writeBoolean(hasGeneralTransform);
+        if (hasGeneralTransform)
         {
-            serialiser.writeBoolean(false);
-            serialiser.writeBoolean(true);
             this.transform.serialise(serialiser);
         }
-    }
-
-    public boolean isHasComponentTransform()
-    {
-        return this.hasComponentTransform;
     }
 
     public Vector3D getTranslation()
@@ -140,11 +109,6 @@ public abstract class Transformable extends Object3D implements Serialisable
         return this.orientationAxis;
     }
 
-    public boolean isHasGeneralTransform()
-    {
-        return this.hasGeneralTransform;
-    }
-
     public Matrix getTransform()
     {
         return this.transform;
@@ -152,15 +116,15 @@ public abstract class Transformable extends Object3D implements Serialisable
 
     public void setOrientation(float angle, List<Float> axis)
     {
-        if (axis == null)
+        if (axis == null || axis.size() == 0)
         {
-            return;
+            setOrientation();
         }
-        if (axis.size() != 3)
+        else
         {
-            throw new IllegalArgumentException("orientation axis needs 3 elements");
+            this.orientationAxis.set(axis);
+            this.orientationAngle = angle;
         }
-        setOrientation(angle, axis.get(0), axis.get(1), axis.get(2));
     }
 
     public void setOrientation(float angle, float x, float y, float z)
@@ -169,17 +133,33 @@ public abstract class Transformable extends Object3D implements Serialisable
         this.orientationAxis.set(x, y, z);
     }
 
+    private void setOrientation()
+    {
+        setOrientation(0, 0, 0, 0);
+    }
+
+    public void setTransform(List<Float> transform)
+    {
+        if (transform == null || transform.size() == 0)
+        {
+            setTransform();
+        }
+        else
+        {
+            this.transform = new Matrix(transform);
+        }
+    }
+
     public void setScale(List<Float> scale)
     {
-        if (scale == null)
+        if (scale == null || scale.size() == 0)
         {
-            return;
+            setScale();
         }
-        if (scale.size() != 3)
+        else
         {
-            throw new IllegalArgumentException("scale needs 3 elements");
+            this.scale.set(scale);
         }
-        setScale(scale.get(0), scale.get(1), scale.get(2));
     }
 
     public void setScale(float x, float y, float z)
@@ -187,13 +167,36 @@ public abstract class Transformable extends Object3D implements Serialisable
         scale.set(x, y, z);
     }
 
-    public void setTransform(List<Float> transform)
+    private void setScale()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        setScale(1.0f, 1.0f, 1.0f);
     }
 
     public void setTranslation(List<Float> translation)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        if (translation == null || translation.size() == 0)
+        {
+            setTranslation();
+        }
+        else
+        {
+            this.translation.set(translation);
+        }
     }
+
+    public void setTranslation(float x, float y, float z)
+    {
+        this.translation.set(x, y, z);
+    }
+
+    private void setTransform()
+    {
+        this.transform = null;
+    }
+    
+    private void setTranslation()
+    {
+        setTranslation(0.0f, 0.0f, 0.0f);
+    }
+
 }

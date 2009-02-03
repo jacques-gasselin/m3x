@@ -36,6 +36,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
 
         public ScaleBiasedVertexArray()
         {
+            this.bias = new Vector3D();
         }
 
         public VertexArray getArray()
@@ -70,7 +71,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         {
             if (bias == null)
             {
-                throw new NullPointerException("bias is null");
+                bias = new float[3];
             }
             if (bias.length != 3)
             {
@@ -233,6 +234,10 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
                 + texCoordCount);
         }
         this.textureCoordinates = new ScaleBiasedVertexArray[texCoordCount];
+        for (int i = 0; i < texCoordCount; ++i)
+        {
+            this.textureCoordinates[i] = new ScaleBiasedVertexArray();
+        }
     }
 
     public void setTexCoords(int index, VertexArray va, float scale, float[] bias)

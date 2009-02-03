@@ -13,7 +13,10 @@ public abstract class TransformableConverter extends Object3DConverter
     {
         super.setFromXML(translator, to, from);
         to.setScale(from.getScale());
-        to.setOrientation(from.getOrientation().getAngle(), from.getOrientation().getValue());
+        if (from.getOrientation() != null)
+        {
+            to.setOrientation(from.getOrientation().getAngle(), from.getOrientation().getValue());
+        }
         to.setTranslation(from.getTranslation());
         to.setTransform(from.getTransform());
     }
