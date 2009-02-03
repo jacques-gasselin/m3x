@@ -1,11 +1,11 @@
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
-import m3x.m3g.primitives.Matrix;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * See http://java2me.org/m3g/file-format.html#SkinnedMesh<br>
@@ -23,15 +23,14 @@ import m3x.m3g.primitives.Matrix;
  */
 public class SkinnedMesh extends Mesh implements SectionSerialisable
 {
-    public static class BoneReference implements Serialisable
+    private static class Bone
     {
-
         private Node transformNode;
         private int firstVertex;
         private int vertexCount;
         private int weight;
 
-        public BoneReference(Node transformNode, int firstVertex,
+        public Bone(Node transformNode, int firstVertex,
             int vertexCount, int weight)
         {
             this.transformNode = transformNode;
@@ -40,7 +39,7 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
             this.weight = weight;
         }
 
-        public BoneReference()
+        public Bone()
         {
         }
 
@@ -63,48 +62,25 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
         {
             return this.weight;
         }
-
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof BoneReference))
-            {
-                return false;
-            }
-            BoneReference another = (BoneReference) obj;
-            return this.transformNode.equals(another.transformNode) &&
-                this.firstVertex == another.firstVertex &&
-                this.vertexCount == another.vertexCount &&
-                this.weight == another.weight;
-        }
-
-        public void deserialise(Deserialiser deserialiser)
-            throws IOException
-        {
-            this.transformNode = (Node)deserialiser.readReference();
-            this.firstVertex = deserialiser.readInt();
-            this.vertexCount = deserialiser.readInt();
-            this.weight = deserialiser.readInt();
-        }
-
-        public void serialise(Serialiser serialiser)
-            throws IOException
-        {
-            serialiser.writeReference(getTransformNode());
-            serialiser.writeInt(this.firstVertex);
-            serialiser.writeInt(this.vertexCount);
-            serialiser.writeInt(this.weight);
-        }
     }
+    
     private Group skeleton;
-    private BoneReference[] boneReferences;
+    private List<Bone> boneReferences;
 
     public SkinnedMesh()
     {
         super();
+        resetBones(10);
+    }
+
+    private final void resetBones(int capacity)
+    {
+        boneReferences = new Vector<Bone>(capacity);
+    }
+
+    public void addTransform(Node bone, int weight, int firstVertex, int vertexCount)
+    {
+        boneReferences.add(new Bone(bone, firstVertex, vertexCount, weight));
     }
 
     @Override
@@ -118,13 +94,16 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.skeleton = (Group)deserialiser.readReference();
-        int transformReferenceCount = deserialiser.readInt();
-        this.boneReferences = new BoneReference[transformReferenceCount];
-        for (int i = 0; i < this.boneReferences.length; i++)
+        setSkeleton((Group)deserialiser.readReference());
+        final int transformReferenceCount = deserialiser.readInt();
+        resetBones(transformReferenceCount);
+        for (int i = 0; i < transformReferenceCount; ++i)
         {
-            this.boneReferences[i] = new BoneReference();
-            this.boneReferences[i].deserialise(deserialiser);
+            final Node bone = (Node) deserialiser.readReference();
+            final int firstVertex = deserialiser.readInt();
+            final int vertexCount = deserialiser.readInt();
+            final int weight = deserialiser.readInt();
+            addTransform(bone, weight, firstVertex, vertexCount);
         }
     }
 
@@ -134,10 +113,15 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
     {
         super.serialise(serialiser);
         serialiser.writeReference(getSkeleton());
-        serialiser.writeInt(this.boneReferences.length);
-        for (BoneReference boneReference : this.boneReferences)
+        final int transformReferenceCount = getTransformReferenceCount();
+        serialiser.writeInt(transformReferenceCount);
+        for (int i = 0; i < transformReferenceCount; ++i)
         {
-            boneReference.serialise(serialiser);
+            Bone ref = this.boneReferences.get(i);
+            serialiser.writeReference(ref.getTransformNode());
+            serialiser.writeInt(ref.getFirstVertex());
+            serialiser.writeInt(ref.getVertexCount());
+            serialiser.writeInt(ref.getWeight());
         }
     }
 
@@ -148,11 +132,11 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
 
     public int getTransformReferenceCount()
     {
-        return this.boneReferences.length;
+        return this.boneReferences.size();
     }
 
-    public BoneReference[] getBoneReferences()
+    public void setSkeleton(Group skeleton)
     {
-        return this.boneReferences;
+        this.skeleton = skeleton;
     }
 }

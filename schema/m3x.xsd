@@ -1108,8 +1108,13 @@
             <xs:complexContent>
                 <xs:extension base="MeshType">
                     <xs:sequence>
-                        <xs:element ref="Group" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="skeleton" type="GroupType"/>
                         <xs:element name="bone" minOccurs="1" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:appinfo>
+                                    <jaxb:property name="bones"/>
+                                </xs:appinfo>
+                            </xs:annotation>
                             <xs:complexType>
                                 <xs:complexContent>
                                     <xs:extension base="InstanceType">
@@ -1117,7 +1122,7 @@
                                         <xs:attribute name="vertexCount" type="UInt31"/>
                                         <xs:attribute name="weight" type="Int32"/>
                                     </xs:extension>
-                                </xs:complexContent>                         
+                                </xs:complexContent>            
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>

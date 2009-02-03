@@ -86,9 +86,9 @@ public class Texture2D extends Transformable implements SectionSerialisable
         return this.image;
     }
 
-    public ColorRGB getBlendColor()
+    public int getBlendColor()
     {
-        return this.blendColor;
+        return this.blendColor.getRGB();
     }
 
     public int getBlending()
@@ -116,9 +116,9 @@ public class Texture2D extends Transformable implements SectionSerialisable
         return this.imageFilter;
     }
 
-    public void setBlendColor(int ARGB)
+    public void setBlendColor(int argb)
     {
-        this.blendColor.set(ARGB);
+        this.blendColor.set(argb);
     }
 
     public void setBlendColor(List<Short> blendColor)

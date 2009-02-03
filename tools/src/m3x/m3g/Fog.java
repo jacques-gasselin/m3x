@@ -23,6 +23,7 @@ public class Fog extends Object3D
 {
     public final static int MODE_EXPONENTIAL = 80;
     public final static int MODE_LINEAR = 81;
+    
     private ColorRGB color;
     private int mode;
     private float density;

@@ -18,5 +18,21 @@ public class SkinnedMeshConverter extends Object3DConverter
     {
         super.setFromXML(translator, to, from);
 
+        to.setSkeleton(getSkeleton(translator, from));
+
+        for (m3x.xml.SkinnedMesh.Bone xmlBone : from.getBones())
+        {
+            m3x.m3g.Node bone = (m3x.m3g.Node)
+                translator.getReference((m3x.xml.Node) xmlBone.getRef());
+            to.addTransform(bone, xmlBone.getWeight(),
+                xmlBone.getFirstVertex(), xmlBone.getVertexCount());
+        }
     }
+
+    private static m3x.m3g.Group getSkeleton(
+        XmlToBinaryTranslator translator, m3x.xml.SkinnedMesh from)
+    {
+        return (m3x.m3g.Group) translator.getReference(from.getSkeleton());
+    }
+
 }

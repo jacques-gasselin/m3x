@@ -16,21 +16,22 @@ public class ColorRGB implements Serialisable
 
     public ColorRGB(int r, int g, int b)
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        set(r, g, b);
     }
 
     public ColorRGB(float r, float g, float b)
     {
-        this.r = (int) (r * 255.0f + 0.5f);
-        this.g = (int) (g * 255.0f + 0.5f);
-        this.b = (int) (b * 255.0f + 0.5f);
+        set(r, g, b);
     }
 
     public ColorRGB()
     {
         super();
+    }
+
+    public static final int clampColor(int value)
+    {
+        return Math.max(0, Math.min(255, value));
     }
 
     @Override
@@ -56,11 +57,11 @@ public class ColorRGB implements Serialisable
         this.b = deserialiser.readUnsignedByte();
     }
 
-    public void serialise(Serialiser serialiser) throws IOException
+    public int getRGB()
     {
-        serialiser.write(this.r);
-        serialiser.write(this.g);
-        serialiser.write(this.b);
+        return (getR() << 16)
+             | (getG() << 8)
+             | (getB() << 0);
     }
 
     public int getR()
@@ -78,11 +79,28 @@ public class ColorRGB implements Serialisable
         return this.b;
     }
 
-    public void set(int RGB)
+    public void serialise(Serialiser serialiser) throws IOException
     {
-        this.r = (RGB >> 16) & 0xff;
-        this.g = (RGB >> 8) & 0xff;
-        this.b = (RGB >> 0) & 0xff;
+        serialiser.writeByte(getR());
+        serialiser.writeByte(getG());
+        serialiser.writeByte(getB());
+    }
+
+    public void set(int r, int g, int b)
+    {
+        this.r = clampColor(r);
+        this.g = clampColor(g);
+        this.b = clampColor(b);
+    }
+
+    public void set(float r, float g, float b)
+    {
+        set(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+    }
+
+    public void set(int rgb)
+    {
+        set((rgb >> 16) & 0xff, (rgb >> 8) & 0xff, (rgb >> 0) & 0xff);
     }
 
     public void set(List<Short> color)
@@ -95,9 +113,7 @@ public class ColorRGB implements Serialisable
         {
             throw new IllegalArgumentException("color.size() < 3");
         }
-        this.r = color.get(0) & 0xff;
-        this.g = color.get(1) & 0xff;
-        this.b = color.get(2) & 0xff;
+        set(color.get(0), color.get(1), color.get(2));
     }
 
 }
