@@ -31,22 +31,6 @@ public class Sprite extends Node implements SectionSerialisable
     private int cropWidth;
     private int cropHeight;
 
-    public Sprite(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, Image2D image, Appearance appearance,
-        boolean isScaled, int cropX, int cropY, int cropWidth, int cropHeight)
-    {
-        super(animationTracks, userParameters, transform, enableRendering,
-              enablePicking, alphaFactor, scope);
-        this.image = image;
-        this.appearance = appearance;
-        this.isScaled = isScaled;
-        this.cropX = cropX;
-        this.cropY = cropY;
-        this.cropWidth = cropWidth;
-        this.cropHeight = cropHeight;
-    }
-
     public Sprite()
     {
         super();

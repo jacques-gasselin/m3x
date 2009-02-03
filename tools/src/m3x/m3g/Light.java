@@ -4,7 +4,6 @@ import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
-import m3x.m3g.primitives.Matrix;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Light<br>
@@ -22,41 +21,23 @@ import m3x.m3g.primitives.Matrix;
  */
 public class Light extends Node
 {
-    public final static int MODE_AMBIENT = 128;
-    public final static int MODE_DIRECTIONAL = 129;
-    public final static int MODE_OMNI = 130;
-    public final static int MODE_SPOT = 131;
-    private float attenuationConstant;
-    private float attenuationLinear;
-    private float attenuationQuadratic;
+    public final static int AMBIENT = 128;
+    public final static int DIRECTIONAL = 129;
+    public final static int OMNI = 130;
+    public final static int SPOT = 131;
+    
+    private float constantAttenuation;
+    private float linearAttenuation;
+    private float quadraticAttenuation;
     private ColorRGB color;
     private int mode;
     private float intensity;
     private float spotAngle;
     private float spotExponent;
 
-    public Light(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        Matrix transform, boolean enableRendering, boolean enablePicking,
-        byte alphaFactor, int scope, float attenuationConstant,
-        float attenuationLinear, float attenuationQuadratic, ColorRGB color,
-        int mode, float intensity, float spotAngle, float spotExponent)
+    private static void requireValidMode(int mode)
     {
-        super(animationTracks, userParameters, transform, enableRendering,
-            enablePicking, alphaFactor, scope);
-        this.attenuationConstant = attenuationConstant;
-        this.attenuationLinear = attenuationLinear;
-        this.attenuationQuadratic = attenuationQuadratic;
-        this.color = color;
-        validateMode(mode);
-        this.mode = mode;
-        this.intensity = intensity;
-        this.spotAngle = spotAngle;
-        this.spotExponent = spotExponent;
-    }
-
-    private static void validateMode(int mode)
-    {
-        if (mode < MODE_AMBIENT || mode > MODE_SPOT)
+        if (mode < AMBIENT || mode > SPOT)
         {
             throw new IllegalArgumentException("Invalid light mode: " + mode);
         }
@@ -65,6 +46,13 @@ public class Light extends Node
     public Light()
     {
         super();
+        this.color = new ColorRGB();
+        setMode(DIRECTIONAL);
+        setColor(0xffffff);
+        setIntensity(1.0f);
+        setAttenuation(1.0f, 0.0f, 0.0f);
+        setSpotAngle(45.0f);
+        setSpotExponent(0.0f);
     }
 
     @Override
@@ -72,16 +60,15 @@ public class Light extends Node
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.attenuationConstant = deserialiser.readFloat();
-        this.attenuationLinear = deserialiser.readFloat();
-        this.attenuationQuadratic = deserialiser.readFloat();
-        this.color = new ColorRGB();
+        final float constant = deserialiser.readFloat();
+        final float linear = deserialiser.readFloat();
+        final float quadratic = deserialiser.readFloat();
+        setAttenuation(constant, linear, quadratic);
         this.color.deserialise(deserialiser);
-        this.mode = deserialiser.readUnsignedByte();
-        validateMode(this.mode);
-        this.intensity = deserialiser.readFloat();
-        this.spotAngle = deserialiser.readFloat();
-        this.spotExponent = deserialiser.readFloat();
+        setMode(deserialiser.readUnsignedByte());
+        setIntensity(deserialiser.readFloat());
+        setSpotAngle(deserialiser.readFloat());
+        setSpotExponent(deserialiser.readFloat());
     }
 
     @Override
@@ -89,14 +76,14 @@ public class Light extends Node
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeFloat(this.attenuationConstant);
-        serialiser.writeFloat(this.attenuationLinear);
-        serialiser.writeFloat(this.attenuationQuadratic);
+        serialiser.writeFloat(getConstantAttenuation());
+        serialiser.writeFloat(getLinearAttenuation());
+        serialiser.writeFloat(getQuadraticAttenuation());
         this.color.serialise(serialiser);
-        serialiser.write(this.mode);
-        serialiser.writeFloat(this.intensity);
-        serialiser.writeFloat(this.spotAngle);
-        serialiser.writeFloat(this.spotExponent);
+        serialiser.writeByte(getMode());
+        serialiser.writeFloat(getIntensity());
+        serialiser.writeFloat(getSpotAngle());
+        serialiser.writeFloat(getSpotExponent());
     }
 
     public int getSectionObjectType()
@@ -104,19 +91,19 @@ public class Light extends Node
         return ObjectTypes.LIGHT;
     }
 
-    public float getAttenuationConstant()
+    public float getConstantAttenuation()
     {
-        return this.attenuationConstant;
+        return this.constantAttenuation;
     }
 
-    public float getAttenuationLinear()
+    public float getLinearAttenuation()
     {
-        return this.attenuationLinear;
+        return this.linearAttenuation;
     }
 
-    public float getAttenuationQuadratic()
+    public float getQuadraticAttenuation()
     {
-        return this.attenuationQuadratic;
+        return this.quadraticAttenuation;
     }
 
     public ColorRGB getColor()
@@ -142,5 +129,38 @@ public class Light extends Node
     public float getSpotExponent()
     {
         return this.spotExponent;
+    }
+
+    public void setMode(int mode)
+    {
+        requireValidMode(mode);
+        this.mode = mode;
+    }
+
+    public void setAttenuation(float constant, float linear, float quadratic)
+    {
+        this.constantAttenuation = constant;
+        this.linearAttenuation = linear;
+        this.quadraticAttenuation = quadratic;
+    }
+
+    public void setColor(int rgb)
+    {
+        this.color.set(rgb);
+    }
+
+    public void setIntensity(float intensity)
+    {
+        this.intensity = intensity;
+    }
+
+    public void setSpotAngle(float angle)
+    {
+        this.spotAngle = angle;
+    }
+
+    public void setSpotExponent(float exponent)
+    {
+        this.spotExponent = exponent;
     }
 }

@@ -21,8 +21,8 @@ import m3x.m3g.primitives.ColorRGB;
  */
 public class Fog extends Object3D
 {
-    public final static int MODE_EXPONENTIAL = 80;
-    public final static int MODE_LINEAR = 81;
+    public final static int EXPONENTIAL = 80;
+    public final static int LINEAR = 81;
     
     private ColorRGB color;
     private int mode;
@@ -30,31 +30,14 @@ public class Fog extends Object3D
     private float near;
     private float far;
 
-    public Fog(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        ColorRGB color, float density)
-    {
-        super(animationTracks, userParameters);
-        this.color = color;
-        this.mode = MODE_EXPONENTIAL;
-        this.density = density;
-        this.near = 0.0f;
-        this.far = 0.0f;
-    }
-
-    public Fog(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        ColorRGB color, float near, float far)
-    {
-        super(animationTracks, userParameters);
-        this.color = color;
-        this.mode = MODE_LINEAR;
-        this.density = 0.0f;
-        this.near = near;
-        this.far = far;
-    }
-
     public Fog()
     {
         super();
+        this.color = new ColorRGB();
+        setMode(LINEAR);
+        setDensity(1.0f);
+        setLinear(0.0f, 1.0f);
+        setColor(0x0);
     }
 
     @Override
@@ -64,15 +47,15 @@ public class Fog extends Object3D
         super.deserialise(deserialiser);
         this.color = new ColorRGB();
         this.color.deserialise(deserialiser);
-        this.mode = deserialiser.readUnsignedByte();
-        if (this.mode == MODE_EXPONENTIAL)
+        setMode(deserialiser.readUnsignedByte());
+        if (getMode() == EXPONENTIAL)
         {
-            this.density = deserialiser.readFloat();
+            setDensity(deserialiser.readFloat());
         }
-        else if (this.mode == MODE_LINEAR)
+        else if (getMode() == LINEAR)
         {
-            this.near = deserialiser.readFloat();
-            this.far = deserialiser.readFloat();
+            setNear(deserialiser.readFloat());
+            setFar(deserialiser.readFloat());
         }
         else
         {
@@ -86,15 +69,15 @@ public class Fog extends Object3D
     {
         super.serialise(serialiser);
         this.color.serialise(serialiser);
-        serialiser.write(this.mode);
-        if (this.mode == MODE_EXPONENTIAL)
+        serialiser.writeByte(getMode());
+        if (getMode() == EXPONENTIAL)
         {
-            serialiser.writeFloat(this.density);
+            serialiser.writeFloat(getDensity());
         }
-        else if (this.mode == MODE_LINEAR)
+        else if (getMode() == LINEAR)
         {
-            serialiser.writeFloat(this.near);
-            serialiser.writeFloat(this.far);
+            serialiser.writeFloat(getNear());
+            serialiser.writeFloat(getFar());
         }
         else
         {
@@ -107,14 +90,9 @@ public class Fog extends Object3D
         return ObjectTypes.FOG;
     }
 
-    public ColorRGB getColor()
+    public int getColor()
     {
-        return this.color;
-    }
-
-    public int getMode()
-    {
-        return this.mode;
+        return this.color.getRGB();
     }
 
     public float getDensity()
@@ -122,13 +100,54 @@ public class Fog extends Object3D
         return this.density;
     }
 
+    public float getFar()
+    {
+        return this.far;
+    }
+
+    public int getMode()
+    {
+        return this.mode;
+    }
+
     public float getNear()
     {
         return this.near;
     }
 
-    public float getFar()
+    public void setDensity(float density)
     {
-        return this.far;
+        this.density = density;
+    }
+
+    public void setColor(int rgb)
+    {
+        this.color.set(rgb);
+    }
+
+    private void setFar(float far)
+    {
+        this.far = far;
+    }
+
+    public void setLinear(float near, float far)
+    {
+        setNear(near);
+        setFar(far);
+    }
+
+    public void setMode(int mode)
+    {
+        this.mode = mode;
+    }
+
+    public void setMode(String mode)
+    {
+        setMode(getFieldValue(mode, "mode"));
+    }
+
+    private void setNear(float near)
+    {
+        this.near = near;
     }
 }
