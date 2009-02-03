@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.util.List;
 import java.util.Vector;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#SkinnedMesh<br>
@@ -81,6 +82,13 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
     public void addTransform(Node bone, int weight, int firstVertex, int vertexCount)
     {
         boneReferences.add(new Bone(bone, firstVertex, vertexCount, weight));
+    }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        queue.add(getSkeleton());
     }
 
     @Override

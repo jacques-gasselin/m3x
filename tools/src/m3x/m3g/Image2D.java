@@ -34,28 +34,6 @@ public class Image2D extends Object3D
     private byte[] paletteData;
     private byte[][] mipmapData;
 
-    public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        int format, int width, int height, byte[] palette, byte[] pixels)
-    {
-        super(animationTracks, userParameters);
-        validateFormat(format);
-        this.mutable = false;
-        validateWidthAndHeight(width, height);
-        setPalette(palette);
-        setPixels(pixels);
-    }
-
-    public Image2D(AnimationTrack[] animationTracks, UserParameter[] userParameters,
-        int format, int width, int height)
-    {
-        super(animationTracks, userParameters);
-        validateFormat(format);
-        this.mutable = true;
-        validateWidthAndHeight(width, height);
-        setPalette((byte[])null);
-        setPixels((byte[])null);
-    }
-
     private static void validateFormat(int format)
     {
         if (format < ALPHA || format > RGBA)

@@ -27,20 +27,6 @@ public class Material extends Object3D
     private float shininess;
     private boolean vertexColorTrackingEnabled;
 
-    public Material(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, ColorRGB ambientColor,
-        ColorRGBA diffuseColor, ColorRGB emissiveColor, ColorRGB specularColor,
-        float shininess, boolean vertexColorTrackingEnabled)
-    {
-        super(animationTracks, userParameters);
-        this.ambientColor = ambientColor;
-        this.diffuseColor = diffuseColor;
-        this.emissiveColor = emissiveColor;
-        this.specularColor = specularColor;
-        this.shininess = shininess;
-        this.vertexColorTrackingEnabled = vertexColorTrackingEnabled;
-    }
-
     public Material()
     {
         super();

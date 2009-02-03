@@ -6,6 +6,7 @@ import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGB;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Texture2D<br>
@@ -74,6 +75,13 @@ public class Texture2D extends Transformable implements SectionSerialisable
         serialiser.write(this.wrappingT);
         serialiser.write(this.levelFilter);
         serialiser.write(this.imageFilter);
+    }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        queue.add(getImage());
     }
 
     public int getSectionObjectType()

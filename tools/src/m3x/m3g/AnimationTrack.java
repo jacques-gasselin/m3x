@@ -42,16 +42,6 @@ public class AnimationTrack extends Object3D
     private AnimationController animationController;
     private int targetProperty;
 
-    public AnimationTrack(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, KeyframeSequence keyframeSequence,
-        AnimationController animationController, int propertyID)
-    {
-        super(animationTracks, userParameters);
-        setKeyframeSequence(keyframeSequence);
-        setController(animationController);
-        setTargetProperty(propertyID);
-    }
-
     public AnimationTrack()
     {
         super();
@@ -78,13 +68,11 @@ public class AnimationTrack extends Object3D
     }
 
     @Override
-    public int getReferences(Object3D[] references)
+    protected void setReferenceQueue(Object3DReferences queue)
     {
-        Object3DReferences queue =
-                new Object3DReferences(super.getReferences(references), references);
+        super.setReferenceQueue(queue);
         queue.add(getKeyframeSequence());
         queue.add(getController());
-        return queue.size();
     }
 
     public int getSectionObjectType()

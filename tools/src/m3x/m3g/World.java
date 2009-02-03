@@ -3,6 +3,7 @@ package m3x.m3g;
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#World<br>
@@ -12,7 +13,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public class World extends Group implements SectionSerialisable
+public class World extends Group
 {
     private Camera activeCamera;
     private Background background;

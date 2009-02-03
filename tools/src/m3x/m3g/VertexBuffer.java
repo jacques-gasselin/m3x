@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.Vector3D;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#VertexBuffer<br>
@@ -111,6 +112,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     public VertexBuffer()
     {
         super();
+        this.defaultColor = new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f);
         positions = new ScaleBiasedVertexArray();
     }
 
@@ -146,6 +148,19 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         for (ScaleBiasedVertexArray textureCoordinate : this.textureCoordinates)
         {
             textureCoordinate.serialise(serialiser);
+        }
+    }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        queue.add(getPositionsArray());
+        queue.add(getNormals());
+        queue.add(getColors());
+        for (int i = 0; i < getTexCoordCount(); ++i)
+        {
+            queue.add(getTexCoordsArray(i));
         }
     }
 

@@ -6,6 +6,7 @@ import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Mesh<br>
@@ -29,6 +30,8 @@ public class Mesh extends Node implements SectionSerialisable
 
         public SubMesh()
         {
+            setAppearance(null);
+            setIndexBuffer(null);
         }
 
         public SubMesh(IndexBuffer indexBuffer, Appearance appearance)
@@ -104,9 +107,8 @@ public class Mesh extends Node implements SectionSerialisable
         setVertexBuffer((VertexBuffer)deserialiser.readReference());
         final int subMeshCount = deserialiser.readInt();
         setSubmeshCount(subMeshCount);
-        for (int i = 0; i < this.subMeshes.length; i++)
+        for (int i = 0; i < subMeshCount; i++)
         {
-            this.subMeshes[i] = new SubMesh();
             this.subMeshes[i].deserialise(deserialiser);
         }
     }
@@ -123,6 +125,19 @@ public class Mesh extends Node implements SectionSerialisable
             subMesh.serialise(serialiser);
         }
     }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        queue.add(getVertexBuffer());
+        for (int i = 0; i < getSubmeshCount(); ++i)
+        {
+            queue.add(getAppearance(i));
+            queue.add(getIndexBuffer(i));
+        }
+    }
+
 
     public int getSectionObjectType()
     {
@@ -185,6 +200,10 @@ public class Mesh extends Node implements SectionSerialisable
     public void setSubmeshCount(int submeshCount)
     {
         this.subMeshes = new SubMesh[submeshCount];
+        for (int i = 0; i < submeshCount; ++i)
+        {
+            this.subMeshes[i] = new SubMesh();
+        }
     }
 
     public void setVertexBuffer(VertexBuffer vertexBuffer)

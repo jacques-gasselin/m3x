@@ -78,170 +78,10 @@ public abstract class Object3D implements SectionSerialisable
         }
     }
 
-    /**
-     * Constructor for the class.
-     *
-     * @param animationTracks
-     * @param userParameters
-     *  Not mandatory, can be null which means that there's no
-     *  user parameters.
-     */
-    public Object3D(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters)
-    {
-        assert (animationTracks != null);
-        this.animationTracks = new Vector<AnimationTrack>();
-        for (AnimationTrack at : animationTracks)
-        {
-            addAnimationTrack(at);
-        }
-        this.userParameterCount = userParameters != null ? userParameters.length : 0;
-        this.userParameters = userParameters;
-    }
-
-    public Object3D()
+    protected Object3D()
     {
         super();
         this.animationTracks = new Vector<AnimationTrack>();
-    }
-
-    /**
-     * Does a null safe deep equality comparison of 2 objects.
-     * @param value1
-     * @param value2
-     * @return
-     */
-    private static boolean nullSafeEquals(Object value1, Object value2)
-    {
-        //Check for quick null safe equality
-        if (value1 == null)
-        {
-            if (value2 == null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        //Compare the classes
-        if (!(value1.getClass().equals(value2.getClass())))
-        {
-            return false;
-        }
-
-        //do full compare
-        if (value1.getClass().isArray())
-        {
-            //array compare
-
-            //length
-            final int length = Array.getLength(value1);
-            if (length != Array.getLength(value2))
-            {
-                return false;
-            }
-
-            //contents
-            for (int i = 0; i < length; ++i)
-            {
-                Object a = Array.get(value1, i);
-                Object b = Array.get(value2, i);
-                if (!nullSafeEquals(a, b))
-                {
-                    return false;
-                }
-            }
-        }
-        else if (!value1.equals(value2))
-        {
-            return false;
-        }
-
-        return true;
-    }
-    
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-
-        //Compare the classes
-        if (!(getClass().equals(obj.getClass())))
-        {
-            return false;
-        }
-
-        //Get the bean for the class
-        BeanInfo bean = null;
-        try
-        {
-            bean = Introspector.getBeanInfo(getClass());
-        }
-        catch (IntrospectionException e)
-        {
-            return false;
-        }
-
-        //Compare properties
-        for (PropertyDescriptor prop : bean.getPropertyDescriptors())
-        {
-            Method getter = prop.getReadMethod();
-            if (getter != null)
-            {
-                try
-                {
-                    Object value1 = getter.invoke(this, (Object[])null);
-                    Object value2 = getter.invoke(obj, (Object[])null);
-
-                    if (!nullSafeEquals(value1, value2))
-                    {
-                        return false;
-                    }
-                }
-                catch (InvocationTargetException e)
-                {
-                    throw new IllegalStateException("unable to invoke " + getter, e);
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new IllegalStateException("unable to access " + getter, e);
-                }
-            }
-        }
-
-
-        //Compare references
-        Object3D obj3D = (Object3D)obj;
-        final int referenceCount = getReferences(null);
-        if (referenceCount != obj3D.getReferences(null))
-        {
-            return false;
-        }
-
-        Object3D[] references1 = new Object3D[referenceCount];
-        getReferences(references1);
-        Object3D[] references2 = new Object3D[referenceCount];
-        obj3D.getReferences(references2);
-
-        for (int i = 0; i < referenceCount; ++i)
-        {
-            Object3D value1 = references1[i];
-            Object3D value2 = references2[i];
-
-            if (!nullSafeEquals(value1, value2))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public void deserialise(Deserialiser deserialiser)
@@ -290,13 +130,18 @@ public abstract class Object3D implements SectionSerialisable
         this.userID = userID;
     }
 
-    public int getReferences(Object3D[] references)
+    protected void setReferenceQueue(Object3DReferences queue)
     {
-        Object3DReferences queue = new Object3DReferences(0, references);
         for (int i = 0; i < getAnimationTrackCount(); ++i)
         {
             queue.add(getAnimationTrack(i));
         }
+    }
+
+    public final int getReferences(Object3D[] references)
+    {
+        Object3DReferences queue = new Object3DReferences(0, references);
+        setReferenceQueue(queue);
         return queue.size();
     }
 

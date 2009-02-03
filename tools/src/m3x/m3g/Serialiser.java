@@ -1,6 +1,5 @@
 package m3x.m3g;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import m3x.m3g.primitives.Header;
 import m3x.m3g.primitives.Serialisable;

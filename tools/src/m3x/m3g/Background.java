@@ -37,33 +37,6 @@ public class Background extends Object3D
     private boolean depthClearEnabled;
     private boolean colorClearEnabled;
 
-    public Background(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, ColorRGBA backgroundColor,
-        Image2D backgroundImage, int backgroundImageModeX,
-        int backgroundImageModeY, int cropX, int cropY, int cropWidth,
-        int cropHeight, boolean depthClearEnabled, boolean colorClearEnabled)
-    {
-        super(animationTracks, userParameters);
-        if (!(backgroundImageModeX == MODE_BORDER || backgroundImageModeX == MODE_REPEAT))
-        {
-            throw new IllegalArgumentException("Invalid backgroudImageModeX: " + backgroundImageModeX);
-        }
-        if (!(backgroundImageModeY == MODE_BORDER || backgroundImageModeY == MODE_REPEAT))
-        {
-            throw new IllegalArgumentException("Invalid backgroudImageModeY: " + backgroundImageModeY);
-        }
-        this.backgroundColor = backgroundColor;
-        this.backgroundImage = backgroundImage;
-        this.backgroundImageModeX = backgroundImageModeX;
-        this.backgroundImageModeY = backgroundImageModeY;
-        this.cropX = cropX;
-        this.cropY = cropY;
-        this.cropWidth = cropWidth;
-        this.cropHeight = cropHeight;
-        this.depthClearEnabled = depthClearEnabled;
-        this.colorClearEnabled = colorClearEnabled;
-    }
-
     public Background()
     {
         super();

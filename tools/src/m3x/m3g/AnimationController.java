@@ -25,20 +25,6 @@ public class AnimationController extends Object3D
     private float referenceSequenceTime;
     private int referenceWorldTime;
 
-    public AnimationController(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, float speed, float weight,
-        int activeIntervalStart, int activeIntervalEnd,
-        float referenceSequenceTime, int referenceWorldTime)
-    {
-        super(animationTracks, userParameters);
-        this.setSpeed(speed);
-        this.setWeight(weight);
-        this.setActiveIntervalStart(activeIntervalStart);
-        this.setActiveIntervalEnd(activeIntervalEnd);
-        this.setReferenceSequenceTime(referenceSequenceTime);
-        this.setReferenceWorldTime(referenceWorldTime);
-    }
-
     public AnimationController()
     {
         super();

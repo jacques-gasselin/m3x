@@ -2,6 +2,7 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Appearance<br>
@@ -23,20 +24,6 @@ public class Appearance extends Object3D
     private PolygonMode polygonMode;
     private Material material;
     private Texture2D[] textures;
-
-    public Appearance(AnimationTrack[] animationTracks,
-        UserParameter[] userParameters, int layer, CompositingMode compositingMode,
-        Fog fog, PolygonMode polygonMode, Material material,
-        Texture2D[] textures)
-    {
-        super(animationTracks, userParameters);
-        this.layer = layer;
-        this.compositingMode = compositingMode;
-        this.fog = fog;
-        this.polygonMode = polygonMode;
-        this.material = material;
-        this.textures = textures;
-    }
 
     public Appearance()
     {
@@ -76,6 +63,16 @@ public class Appearance extends Object3D
         {
             serialiser.writeReference(getTexture(i));
         }
+    }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        queue.add(getCompositingMode());
+        queue.add(getFog());
+        queue.add(getMaterial());
+        queue.add(getPolygonMode());
     }
 
     public int getSectionObjectType()

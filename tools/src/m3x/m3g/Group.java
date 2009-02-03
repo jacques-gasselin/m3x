@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import m3x.m3g.primitives.Matrix;
+import m3x.m3g.util.Object3DReferences;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Group<br>
@@ -49,6 +50,16 @@ public class Group extends Node
         for (int i = 0; i < getChildCount(); ++i)
         {
             serialiser.writeReference(getChild(i));
+        }
+    }
+
+    @Override
+    protected void setReferenceQueue(Object3DReferences queue)
+    {
+        super.setReferenceQueue(queue);
+        for (int i = 0; i < getChildCount(); ++i)
+        {
+            queue.add(getChild(i));
         }
     }
 
