@@ -26,7 +26,8 @@ public abstract class IndexBufferConverter extends Object3DConverter
             final int index = indexList.get(i);
             maxIndex = Math.max(index, maxIndex);
             indices[i] = index;
-            if (i != 0 && allImplicit)
+            
+            if (i > 0 && allImplicit)
             {
                 //it must be previous + 1 to be an implicit index
                 if (index != (indices[i - 1] + 1))
@@ -61,6 +62,5 @@ public abstract class IndexBufferConverter extends Object3DConverter
             to.setEncoding(encoding);
             to.setFirstIndex(indices[0]);
         }
-
     }
 }

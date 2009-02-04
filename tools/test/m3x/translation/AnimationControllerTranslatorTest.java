@@ -21,8 +21,8 @@ public class AnimationControllerTranslatorTest extends TranslatorSupport
 
         assertTrue(ac.getActiveIntervalEnd() == m3gAC.getActiveIntervalEnd());
         assertTrue(ac.getActiveIntervalStart() == m3gAC.getActiveIntervalStart());
-        assertTrue(ac.getReferenceSequenceTime() == m3gAC.getReferenceSequenceTime());
-        assertTrue(ac.getReferenceWorldTime() == m3gAC.getReferenceWorldTime());
+        assertTrue(ac.getReferenceSequenceTime() == m3gAC.getPosition(m3gAC.getRefWorldTime()));
+        assertTrue(ac.getReferenceWorldTime() == m3gAC.getRefWorldTime());
         assertTrue(ac.getSpeed() == m3gAC.getSpeed());
         assertTrue(ac.getWeight() == m3gAC.getWeight());
     }

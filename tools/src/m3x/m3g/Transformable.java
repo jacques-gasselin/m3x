@@ -2,7 +2,6 @@ package m3x.m3g;
 
 import java.util.List;
 import m3x.m3g.primitives.Serialisable;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -33,14 +32,16 @@ public abstract class Transformable extends Object3D implements Serialisable
     private Vector3D orientationAxis;
     private Matrix transform;
 
-    public Transformable()
+    protected Transformable()
     {
-        super();
         this.translation = new Vector3D();
         this.scale = new Vector3D();
         this.orientationAxis = new Vector3D();
         
         setScale();
+        setTranslation();
+        setOrientation();
+        setTransform();
     }
 
     @Override
@@ -48,22 +49,29 @@ public abstract class Transformable extends Object3D implements Serialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        boolean hasComponentTransform = deserialiser.readBoolean();
+        final boolean hasComponentTransform = deserialiser.readBoolean();
         if (hasComponentTransform)
         {
-            this.translation = new Vector3D();
             this.translation.deserialise(deserialiser);
-            this.scale = new Vector3D();
             this.scale.deserialise(deserialiser);
             this.orientationAngle = deserialiser.readFloat();
-            this.orientationAxis = new Vector3D();
             this.orientationAxis.deserialise(deserialiser);
         }
-        boolean hasGeneralTransform = deserialiser.readBoolean();
+        else
+        {
+            setScale();
+            setTranslation();
+            setOrientation();
+        }
+        final boolean hasGeneralTransform = deserialiser.readBoolean();
         if (hasGeneralTransform)
         {
             this.transform = new Matrix();
             this.transform.deserialise(deserialiser);
+        }
+        else
+        {
+            setTransform();
         }
     }
 

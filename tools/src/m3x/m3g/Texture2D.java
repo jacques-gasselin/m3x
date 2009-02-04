@@ -43,7 +43,6 @@ public class Texture2D extends Transformable implements SectionSerialisable
 
     public Texture2D()
     {
-        super();
         this.blendColor = new ColorRGB();
         setBlendColor(0xffffff);
     }

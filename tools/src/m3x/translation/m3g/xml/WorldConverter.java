@@ -18,5 +18,10 @@ public class WorldConverter extends GroupConverter
         m3x.m3g.World to, m3x.xml.World from)
     {
         super.setFromXML(translator, to, from);
+        to.setActiveCamera((m3x.m3g.Camera)
+            translator.getReference((m3x.xml.Camera) from.getActiveCamera()));
+        to.setBackground((m3x.m3g.Background)
+            translator.getReference((m3x.xml.Background) from.getBackground()));
+
     }
 }

@@ -173,7 +173,7 @@ public class Serialiser implements DataOutput
             processDepthFirstOrderList(root, objects, containmentSet);
         }
 
-        System.out.println("objects: " + objects);
+        //System.out.println("objects: " + objects);
         return objects;
     }
 
@@ -314,7 +314,7 @@ public class Serialiser implements DataOutput
     public void writeReference(Object object) throws IOException
     {
         final int index = getObjectIndex(object);
-        System.out.println(object + " : " + index);
+        //System.out.println(object + " : " + index);
         writeInt(index);
     }
 

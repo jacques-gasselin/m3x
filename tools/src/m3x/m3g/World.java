@@ -21,6 +21,8 @@ public class World extends Group
     public World()
     {
         super();
+        setActiveCamera(null);
+        setBackground(null);
     }
 
     @Override

@@ -18,10 +18,23 @@ public abstract class IndexBuffer extends Object3D
     private int encoding;
     private int[] indices;
     private int firstIndex;
-    
+
+    private static final void requireIndexInRange(final int index, final int maximum)
+    {
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException("index < 0");
+        }
+        if (index > maximum)
+        {
+            throw new IndexOutOfBoundsException("index > " + maximum);
+        }
+    }
+
     public IndexBuffer()
     {
         super();
+        setEncoding(ENCODING_SHORT);
     }
 
     @Override
@@ -203,14 +216,7 @@ public abstract class IndexBuffer extends Object3D
         for (int i = 0; i < indices.length; ++i)
         {
             final int index = indices[i];
-            if (index < 0)
-            {
-                throw new IndexOutOfBoundsException("indices[" + i + "] < 0");
-            }
-            if (index > maximum)
-            {
-                throw new IndexOutOfBoundsException("indices[" + i + "] > " + maximum);
-            }
+            requireIndexInRange(index, maximum);
         }
         this.indices = indices;
     }
@@ -222,15 +228,9 @@ public abstract class IndexBuffer extends Object3D
             throw new IllegalStateException(
                 "implicit start index not valid for explicit indices");
         }
-        if (firstIndex < 0)
-        {
-            throw new IndexOutOfBoundsException("firstIndex < 0");
-        }
         final int maximum = getEncodingMaximum();
-        if (firstIndex > maximum)
-        {
-            throw new IndexOutOfBoundsException("firstIndex > " + maximum);
-        }
+        requireIndexInRange(firstIndex, maximum);
+        
         this.firstIndex = firstIndex;
     }
 }

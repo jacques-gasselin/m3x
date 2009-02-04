@@ -34,6 +34,11 @@ public class ColorRGB implements Serialisable
         return Math.max(0, Math.min(255, value));
     }
 
+    public static final int clampColor(float value)
+    {
+        return clampColor(Math.round(value * 255));
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -95,7 +100,9 @@ public class ColorRGB implements Serialisable
 
     public void set(float r, float g, float b)
     {
-        set(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+        this.r = clampColor(r);
+        this.g = clampColor(g);
+        this.b = clampColor(b);
     }
 
     public void set(int rgb)

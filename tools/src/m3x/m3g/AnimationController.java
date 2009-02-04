@@ -28,6 +28,11 @@ public class AnimationController extends Object3D
     public AnimationController()
     {
         super();
+        setActiveInterval(0, 0);
+        setSpeed(1.0f);
+        setWeight(1.0f);
+        setPosition(0.0f, 0);
+
     }
 
     /**
@@ -42,10 +47,12 @@ public class AnimationController extends Object3D
         super.deserialise(deserialiser);
         setSpeed(deserialiser.readFloat());
         setWeight(deserialiser.readFloat());
-        setActiveIntervalStart(deserialiser.readInt());
-        setActiveIntervalEnd(deserialiser.readInt());
-        setReferenceSequenceTime(deserialiser.readFloat());
-        setReferenceWorldTime(deserialiser.readInt());
+        final int start = deserialiser.readInt();
+        final int end = deserialiser.readInt();
+        setActiveInterval(start, end);
+        final float sequenceTime = deserialiser.readFloat();
+        final int worldTime = deserialiser.readInt();
+        setPosition(sequenceTime, worldTime);
     }
 
     /**
@@ -59,8 +66,8 @@ public class AnimationController extends Object3D
         serialiser.writeFloat(getWeight());
         serialiser.writeInt(getActiveIntervalStart());
         serialiser.writeInt(getActiveIntervalEnd());
-        serialiser.writeFloat(getReferenceSequenceTime());
-        serialiser.writeInt(getReferenceWorldTime());
+        serialiser.writeFloat(getRefSequenceTime());
+        serialiser.writeInt(getRefWorldTime());
     }
 
     public int getSectionObjectType()
@@ -88,19 +95,26 @@ public class AnimationController extends Object3D
         return this.activeIntervalEnd;
     }
 
-    public float getReferenceSequenceTime()
+    private float getRefSequenceTime()
     {
         return this.referenceSequenceTime;
     }
 
-    public int getReferenceWorldTime()
+    public int getRefWorldTime()
     {
         return this.referenceWorldTime;
     }
 
-    public void setSpeed(float speed)
+    private void setSpeed(float speed)
     {
         this.speed = speed;
+    }
+
+    public void setSpeed(float speed, int worldTime)
+    {
+        final float sequenceTime = getPosition(worldTime);
+        setPosition(sequenceTime, worldTime);
+        setSpeed(speed);
     }
 
     public void setWeight(float weight)
@@ -108,23 +122,21 @@ public class AnimationController extends Object3D
         this.weight = weight;
     }
 
-    public void setActiveIntervalStart(int activeIntervalStart)
+    public float getPosition(int worldTime)
     {
-        this.activeIntervalStart = activeIntervalStart;
+        return getRefSequenceTime()
+             + getSpeed() * (worldTime - getRefWorldTime());
     }
 
-    public void setActiveIntervalEnd(int activeIntervalEnd)
+    public void setActiveInterval(int start, int end)
     {
-        this.activeIntervalEnd = activeIntervalEnd;
+        this.activeIntervalStart = start;
+        this.activeIntervalEnd = end;
     }
 
-    public void setReferenceSequenceTime(float referenceSequenceTime)
+    public void setPosition(float sequenceTime, int worldTime)
     {
-        this.referenceSequenceTime = referenceSequenceTime;
-    }
-
-    public void setReferenceWorldTime(int referenceWorldTime)
-    {
-        this.referenceWorldTime = referenceWorldTime;
+        this.referenceSequenceTime = sequenceTime;
+        this.referenceWorldTime = worldTime;
     }
 }

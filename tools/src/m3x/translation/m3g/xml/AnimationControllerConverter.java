@@ -17,11 +17,10 @@ public class AnimationControllerConverter extends Object3DConverter
         m3x.m3g.AnimationController to, m3x.xml.AnimationController from)
     {
         super.setFromXML(translator, to, from);
-        to.setSpeed(from.getSpeed());
+        to.setPosition(0, 0);
+        to.setSpeed(from.getSpeed(), 0);
         to.setWeight(from.getWeight());
-        to.setReferenceSequenceTime(from.getReferenceSequenceTime());
-        to.setReferenceWorldTime(from.getReferenceWorldTime());
-        to.setActiveIntervalStart(from.getActiveIntervalStart());
-        to.setActiveIntervalEnd(from.getActiveIntervalEnd());
+        to.setPosition(from.getReferenceSequenceTime(), from.getReferenceWorldTime());
+        to.setActiveInterval(from.getActiveIntervalStart(), from.getActiveIntervalEnd());
     }
 }

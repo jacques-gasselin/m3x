@@ -28,6 +28,11 @@ public class Appearance extends Object3D
     public Appearance()
     {
         super();
+        setLayer(0);
+        setCompositingMode(null);
+        setFog(null);
+        setPolygonMode(null);
+        setMaterial(null);
     }
 
     @Override
@@ -35,16 +40,16 @@ public class Appearance extends Object3D
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.layer = deserialiser.readByte();
-        this.compositingMode = (CompositingMode)deserialiser.readReference();
-        this.fog = (Fog)deserialiser.readReference();
-        this.polygonMode = (PolygonMode)deserialiser.readReference();
-        this.material = (Material)deserialiser.readReference();
-        int texturesLength = deserialiser.readInt();
-        this.textures = new Texture2D[texturesLength];
-        for (int i = 0; i < this.textures.length; i++)
+        setLayer(deserialiser.readByte());
+        setCompositingMode((CompositingMode)deserialiser.readReference());
+        setFog((Fog)deserialiser.readReference());
+        setPolygonMode((PolygonMode)deserialiser.readReference());
+        setMaterial((Material)deserialiser.readReference());
+        final int texturesLength = deserialiser.readInt();
+        setTextureCount(texturesLength);
+        for (int i = 0; i < texturesLength; ++i)
         {
-            this.textures[i] = (Texture2D)deserialiser.readReference();
+            setTexture(i, (Texture2D)deserialiser.readReference());
         }
     }
 
@@ -130,6 +135,19 @@ public class Appearance extends Object3D
         }
     }
 
+    private static final void requireLayerInRange(int layer)
+    {
+        if (layer < -63)
+        {
+            throw new IllegalArgumentException("layer < -63");
+        }
+        if (layer > 63)
+        {
+            throw new IllegalArgumentException("layer > 63");
+        }
+    }
+
+
     public Texture2D getTexture(int index)
     {
         requireTextureInRange(index);
@@ -174,6 +192,13 @@ public class Appearance extends Object3D
         requireTextureInRange(index);
 
         this.textures[index] = texture;
+    }
+
+    public void setLayer(int layer)
+    {
+        requireLayerInRange(layer);
+        
+        this.layer = layer;
     }
 
 }

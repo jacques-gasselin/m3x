@@ -82,6 +82,7 @@ public abstract class Object3D implements SectionSerialisable
     {
         super();
         this.animationTracks = new Vector<AnimationTrack>();
+        setUserID(0);
     }
 
     public void deserialise(Deserialiser deserialiser)

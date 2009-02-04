@@ -9,11 +9,9 @@ public class AnimationControllerTest extends AbstractTestCase
     public AnimationControllerTest()
     {
         controller = new AnimationController();
-        controller.setActiveIntervalStart(1);
-        controller.setActiveIntervalEnd(10);
-        controller.setReferenceSequenceTime(0.1f);
-        controller.setReferenceWorldTime(100);
-        controller.setSpeed(2.0f);
+        controller.setActiveInterval(1, 10);
+        controller.setPosition(0.1f, 100);
+        controller.setSpeed(2.0f, 100);
         controller.setWeight(3.0f);
     }
 
