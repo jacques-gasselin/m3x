@@ -25,7 +25,6 @@ public class VertexBufferConverter extends Object3DConverter
         setTexCoords(translator, to, from.getTexcoords());
     }
 
-
     private static final float[] getBias(List<Float> list)
     {
         if (list == null)
@@ -45,13 +44,20 @@ public class VertexBufferConverter extends Object3DConverter
     private static final void setPositions(XmlToBinaryTranslator translator,
         m3x.m3g.VertexBuffer to, m3x.xml.VertexBuffer.Positions from)
     {
-        final float[] bias = getBias(from.getBias());
-        final float scale = from.getScale();
-        m3x.xml.VertexArray xmlVA = getObjectOrInstance(
-            from.getVertexArray(), from.getVertexArrayInstance());
-        m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
-            translator.getReference(xmlVA);
-        to.setPositions(va, scale, bias);
+        if (from == null)
+        {
+            to.setPositions(null, 1.0f, null);
+        }
+        else
+        {
+            final float[] bias = getBias(from.getBias());
+            final float scale = from.getScale();
+            m3x.xml.VertexArray xmlVA = getObjectOrInstance(
+                from.getVertexArray(), from.getVertexArrayInstance());
+            m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
+                translator.getReference(xmlVA);
+            to.setPositions(va, scale, bias);
+        }
     }
 
     private static final m3x.m3g.VertexArray getNormals(
@@ -86,13 +92,20 @@ public class VertexBufferConverter extends Object3DConverter
         for (int i = 0; i < texCoordCount; ++i)
         {
             m3x.xml.VertexBuffer.Texcoords from = fromList.get(i);
-            final float[] bias = getBias(from.getBias());
-            final float scale = from.getScale();
-            m3x.xml.VertexArray xmlVA = getObjectOrInstance(
-                from.getVertexArray(), from.getVertexArrayInstance());
-            m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
-                translator.getReference(xmlVA);
-            to.setTexCoords(i, va, scale, bias);
+            if (from == null)
+            {
+                to.setTexCoords(i, null, 1.0f, null);
+            }
+            else
+            {
+                final float[] bias = getBias(from.getBias());
+                final float scale = from.getScale();
+                m3x.xml.VertexArray xmlVA = getObjectOrInstance(
+                    from.getVertexArray(), from.getVertexArrayInstance());
+                m3x.m3g.VertexArray va = (m3x.m3g.VertexArray)
+                    translator.getReference(xmlVA);
+                to.setTexCoords(i, va, scale, bias);
+            }
         }
     }
 

@@ -159,8 +159,8 @@
     </target>
 
     <target name="build"
-            description="builds and tests the tools"
-            depends="test">
+            description="builds the tools"
+            depends="build-src">
 
     </target>
 </project>

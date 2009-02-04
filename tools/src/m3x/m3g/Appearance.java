@@ -53,7 +53,7 @@ public class Appearance extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeByte(this.layer);
+        serialiser.writeByte(getLayer());
         serialiser.writeReference(getCompositingMode());
         serialiser.writeReference(getFog());
         serialiser.writeReference(getPolygonMode());
@@ -71,8 +71,12 @@ public class Appearance extends Object3D
         super.setReferenceQueue(queue);
         queue.add(getCompositingMode());
         queue.add(getFog());
-        queue.add(getMaterial());
         queue.add(getPolygonMode());
+        queue.add(getMaterial());
+        for (int i = 0; i < getTextureCount(); ++i)
+        {
+            queue.add(getTexture(i));
+        }
     }
 
     public int getSectionObjectType()

@@ -145,8 +145,11 @@
                     </xs:annotation>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute name="version" type="String" fixed="1.0"/>
-            <xs:attribute name="author" type="String"/>
+            <xs:attribute name="version"
+                          type="String"
+                          fixed="1.0"/>
+            <xs:attribute name="author"
+                          type="String"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="section" type="Section"/>
@@ -945,11 +948,20 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:attribute name="color"
-                                  type="ColorRGB"/>
-                    <xs:attribute name="mode" type="FogEquationType"/>
-                    <xs:attribute name="density" type="Float32"/>
-                    <xs:attribute name="near" type="Float32"/>
-                    <xs:attribute name="far" type="Float32"/>
+                                  type="ColorRGB"
+                                  default="0 0 0"/>
+                    <xs:attribute name="mode"
+                                  type="FogEquationType"
+                                  default="LINEAR"/>
+                    <xs:attribute name="density"
+                                  type="Float32"
+                                  default="1"/>
+                    <xs:attribute name="near"
+                                  type="Float32"
+                                  default="0"/>
+                    <xs:attribute name="far"
+                                  type="Float32"
+                                  default="1"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -973,8 +985,8 @@
             <xs:complexContent>
                 <xs:extension base="Image2DType">
                     <xs:sequence>
-                        <xs:element ref="palette" minOccurs="0" maxOccurs="1"/>
-                        <xs:element ref="pixels" minOccurs="0" maxOccurs="1"/>
+                        <xs:element ref="palette" minOccurs="0"/>
+                        <xs:element ref="pixels"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -1000,8 +1012,8 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="keytimes" minOccurs="1" maxOccurs="1"/>
-                        <xs:element ref="keyframes" minOccurs="1" maxOccurs="1"/>
+                        <xs:element ref="keytimes"/>
+                        <xs:element ref="keyframes"/>
                     </xs:sequence>
                     <xs:attribute name="keyframeCount"
                                   type="UInt31"/>
@@ -1115,7 +1127,7 @@
                 <xs:extension base="MeshType">
                     <xs:sequence>
                         <xs:element name="skeleton" type="GroupType"/>
-                        <xs:element name="bone" minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="bone" maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:appinfo>
                                     <jaxb:property name="bones"/>
@@ -1124,11 +1136,17 @@
                             <xs:complexType>
                                 <xs:complexContent>
                                     <xs:extension base="InstanceType">
-                                        <xs:attribute name="firstVertex" type="UInt31"/>
-                                        <xs:attribute name="vertexCount" type="UInt31"/>
-                                        <xs:attribute name="weight" type="Int32"/>
+                                        <xs:attribute name="firstVertex"
+                                                      type="UInt31"
+                                                      use="required"/>
+                                        <xs:attribute name="vertexCount"
+                                                      type="UInt31"
+                                                      use="required"/>
+                                        <xs:attribute name="weight"
+                                                      type="Int32"
+                                                      use="required"/>
                                     </xs:extension>
-                                </xs:complexContent>            
+                                </xs:complexContent>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -1168,7 +1186,7 @@
             <xs:complexContent>
                 <xs:extension base="IndexBuffer">
                     <xs:sequence>
-                        <xs:element ref="stripLengths" minOccurs="1" maxOccurs="1"/>
+                        <xs:element ref="stripLengths"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -1186,14 +1204,14 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:choice>
-                            <xs:element ref="int_array"/>
-                        </xs:choice>
+                        <xs:element ref="int_array"/>
                     </xs:sequence>
-                    <xs:attribute name="componentCount" type="UByte"/>
+                    <xs:attribute name="componentCount"
+                                  type="UByte"
+                                  use="required"/>
                     <xs:attribute name="componentType"
                                   type="VertexArrayDataType"
-                                  default="SHORT"/>
+                                  use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1255,7 +1273,9 @@
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="defaultColor" type="ColorRGBA"/>
+                    <xs:attribute name="defaultColor"
+                                  type="ColorRGBA"
+                                  default="255 255 255 255"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1271,8 +1291,10 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="GroupType">
-                    <xs:attribute name="activeCamera" type="Object3DReference"/>
-                    <xs:attribute name="background" type="Object3DReference"/>
+                    <xs:attribute name="activeCamera"
+                                  type="Object3DReference"/>
+                    <xs:attribute name="background"
+                                  type="Object3DReference"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

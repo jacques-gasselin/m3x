@@ -113,7 +113,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     {
         super();
         this.defaultColor = new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f);
-        positions = new ScaleBiasedVertexArray();
+        this.positions = new ScaleBiasedVertexArray();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     {
         super.serialise(serialiser);
         this.defaultColor.serialise(serialiser);
-        getPositionsArray().serialise(serialiser);
+        this.positions.serialise(serialiser);
         serialiser.writeReference(getNormals());
         serialiser.writeReference(getColors());
         serialiser.writeInt(getTexCoordCount());

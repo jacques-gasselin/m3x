@@ -5,7 +5,6 @@ import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import m3x.m3g.primitives.Serialisable;
 
 
@@ -42,6 +41,54 @@ public class VertexArray extends Object3D implements SectionSerialisable
     public static final int ENCODING_RAW = 0;
     public static final int ENCODING_DELTA = 1;
 
+    private static final void requireValidFirstVertex(final int firstVertex)
+    {
+        if (firstVertex < 0)
+        {
+            throw new IllegalArgumentException("firstVertex < 0");
+        }
+        if (firstVertex > 65535)
+        {
+            throw new IllegalArgumentException("firstVertex > 65535");
+        }
+    }
+
+    private static final void requireValidVertexCount(final int vertexCount)
+    {
+        if (vertexCount <= 0)
+        {
+            throw new IllegalArgumentException("vertexCount <= 0");
+        }
+        if (vertexCount > 65535)
+        {
+            throw new IllegalArgumentException("vertexCount > 65535");
+        }
+    }
+
+    private static final void requireValidComponentType(final int componentType)
+    {
+        if (componentType < BYTE)
+        {
+            throw new IllegalArgumentException("componentType < BYTE");
+        }
+        if (componentType > SHORT)
+        {
+            throw new IllegalArgumentException("componentType > SHORT");
+        }
+    }
+
+    private static final void requireValidComponentCount(final int componentCount)
+    {
+        if (componentCount < 1)
+        {
+            throw new IllegalArgumentException("componentCount < 1");
+        }
+        if (componentCount > 4)
+        {
+            throw new IllegalArgumentException("componentCount > 4");
+        }
+    }
+
     private static abstract class Values implements Serialisable
     {
         private int vertexCount;
@@ -62,29 +109,34 @@ public class VertexArray extends Object3D implements SectionSerialisable
             }
         }
 
+        private final void requireSize(int numVertices, int size)
+        {
+            requireValidVertexCount(numVertices);
+            final int neededSize = numVertices * getComponentCount();
+            if (size < neededSize)
+            {
+                throw new IllegalArgumentException("size too small: "
+                    + size + " where " + neededSize + " is needed");
+            }
+        }
+
         protected final <T> void requireArrayLength(int numVertices,
             T array)
         {
-            if (numVertices < 0)
-            {
-                throw new IllegalArgumentException("numVertices < 0");
-            }
-            if (Array.getLength(array) < numVertices * getComponentCount())
-            {
-                throw new IllegalArgumentException("array is not long enough");
-            }
+            requireArrayNotNull(array);
+            requireSize(numVertices, Array.getLength(array));
+        }
+
+        protected final <T> void requireListSize(int numVertices, List<T> values)
+        {
+            requireArrayNotNull(values);
+            requireSize(numVertices, values.size());
         }
 
         protected final void requireSourceLength(int firstVertex, int numVertices)
         {
-            if (firstVertex < 0)
-            {
-                throw new IllegalArgumentException("firstVertex < 0");
-            }
-            if (numVertices < 0)
-            {
-                throw new IllegalArgumentException("numVertices < 0");
-            }
+            requireValidFirstVertex(firstVertex);
+            requireValidVertexCount(numVertices);
             if (firstVertex + numVertices > getVertexCount())
             {
                 throw new IllegalArgumentException(
@@ -135,7 +187,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
 
         public void get(int firstVertex, int numVertices, byte[] dst)
         {
-            requireArrayNotNull(dst);
             requireSourceLength(firstVertex, numVertices);
             requireArrayLength(numVertices, dst);
 
@@ -147,7 +198,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
 
         public void set(int firstVertex, int numVertices, byte[] src)
         {
-            requireArrayNotNull(src);
             requireSourceLength(firstVertex, numVertices);
             requireArrayLength(numVertices, src);
 
@@ -160,7 +210,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         @Override
         public void set(int firstVertex, int numVertices, List<Integer> values)
         {
-            requireArrayNotNull(values);
+            requireListSize(numVertices, values);
             
             final int size = values.size();
             byte[] src = new byte[size];
@@ -237,7 +287,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
 
         public void get(int firstVertex, int numVertices, short[] dst)
         {
-            requireArrayNotNull(dst);
             requireSourceLength(firstVertex, numVertices);
             requireArrayLength(numVertices, dst);
 
@@ -249,7 +298,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
 
         public void set(int firstVertex, int numVertices, short[] src)
         {
-            requireArrayNotNull(src);
             requireSourceLength(firstVertex, numVertices);
             requireArrayLength(numVertices, src);
 
@@ -262,7 +310,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         @Override
         public void set(int firstVertex, int numVertices, List<Integer> values)
         {
-            requireArrayNotNull(values);
+            requireListSize(numVertices, values);
 
             final int size = values.size();
             short[] src = new short[size];
@@ -384,6 +432,10 @@ public class VertexArray extends Object3D implements SectionSerialisable
 
     public void setSizeAndType(int vertexCount, int componentCount, int componentType)
     {
+        requireValidVertexCount(vertexCount);
+        requireValidComponentCount(componentCount);
+        requireValidComponentType(componentType);
+        
         switch (componentType)
         {
             case BYTE:

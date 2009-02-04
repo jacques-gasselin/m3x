@@ -20,8 +20,9 @@ public class VertexArrayConverter extends Object3DConverter
         super.setFromXML(translator, to, from);
         List<Integer> values = from.getIntArray();
         
-        final int vertexCount = values.size();
+        final int arraySize = values.size();
         final int componentCount = from.getComponentCount();
+        final int vertexCount = arraySize / componentCount;
         final int componentType = to.getComponentType(
             from.getComponentType().value());
 
