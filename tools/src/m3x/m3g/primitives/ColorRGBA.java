@@ -65,6 +65,18 @@ public class ColorRGBA extends ColorRGB implements Serialisable
         return this.a;
     }
 
+    @Override
+    public void set(int r, int g, int b)
+    {
+        set(r, g, b, 255);
+    }
+
+    @Override
+    public void set(float r, float g, float b)
+    {
+        set(r, g, b, 1.0f);
+    }
+
     public void set(int r, int g, int b, int a)
     {
         super.set(r, g, b);
@@ -78,10 +90,10 @@ public class ColorRGBA extends ColorRGB implements Serialisable
     }
 
     @Override
-    public void set(int rgba)
+    public void set(int argb)
     {
-        super.set(rgba);
-        this.a = clampColor((rgba >>> 24) & 0xff);
+        super.set(argb);
+        this.a = clampColor((argb >>> 24) & 0xff);
     }
 
     @Override

@@ -55,12 +55,14 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
-        <!--in case any props files were generated-->
         <copy todir="${build.dir}">
             <fileset dir="${build.src.dir}">
               <include name="**/jaxb.properties"/>
             </fileset>
         </copy>
+        <!--add the schema to the build path-->
+        <copy todir="${build.dir}/m3x/xml"
+              file="${schema.dir}/m3x.xsd"/>
     </target>
     
     <target name="clean">

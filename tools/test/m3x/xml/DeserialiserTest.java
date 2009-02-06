@@ -21,29 +21,28 @@ public class DeserialiserTest extends TestCase
 
     }
     
-    public void testDeserialiseString1()
+    public void testDeserialiseEmptyFile()
     {
         String xmlString = "<?xml version=\"1.0\"?>\n";
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         try
         {
             //Should throw here
-            m3x.xml.M3G root = Deserialiser.deserialise(in);
+            Deserialiser.deserialise(in);
+            fail("Should throw here because the file is empty");
         }
-        catch (IllegalArgumentException unused)
+        catch (Deserialiser.ValidationException e)
         {
-            return;
+            
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
-            //must be IllegalArgumentException
+            t.printStackTrace();
             fail();
         }
-        //should not get here
-        fail();
     }
 
-    public void testDeserialiseString2()
+    public void testDeserialiseEmptySection()
     {
         String xmlString = "<?xml version=\"1.0\"?>\n"
                 + "<m3g>\n"
@@ -52,15 +51,17 @@ public class DeserialiserTest extends TestCase
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         try
         {
-            //Should not throw here
-            m3x.xml.M3G root = Deserialiser.deserialise(in);
-            assertNotNull("deserialised root must not be null", root);
-            List<m3x.xml.Section> sections = root.getSection();
+            Deserialiser.deserialise(in);
+            fail("Should throw here because the section is empty");
         }
-        catch (Exception e)
+        catch (Deserialiser.ValidationException e)
         {
-            //must not throw
-            fail(e.toString());
+            assertTrue(e.getLine() == 3);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail();
         }
     }
 
@@ -70,7 +71,7 @@ public class DeserialiserTest extends TestCase
               "<?xml version=\"1.0\"?>\n"
             + "<m3g>\n"
             + "    <section>\n"
-            + "        <AnimationController/>"
+            + "        <AnimationController/>\n"
             + "    </section>\n"
             + "</m3g>";
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
@@ -78,13 +79,76 @@ public class DeserialiserTest extends TestCase
         {
             //Should not throw here
             m3x.xml.M3G root = Deserialiser.deserialise(in);
-            assertNotNull("deserialised root must not be null", root);
+            assertNotNull("deserialised root must not be null",
+                root);
             List<m3x.xml.Section> sections = root.getSection();
+            assertEquals("Should have 1 section only",
+                1, sections.size());
+            Section section = sections.get(0);
+            List<Object3D> objects = section.getObjects();
+            assertEquals("Should have 1 object only",
+                1, objects.size());
+            assertTrue("object should be an animation controller",
+                objects.get(0) instanceof m3x.xml.AnimationController);
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
             //must not throw
-            fail(e.toString());
+            fail(t.toString());
         }
     }
+
+    public void testDeserialiseStringInvalidAnimationControllerInstance()
+    {
+        String xmlString =
+              "<?xml version=\"1.0\"?>\n"
+            + "<m3g>\n"
+            + "    <section>\n"
+            + "        <AnimationController id=\"ac0\"/>\n"
+            + "        <AnimationControllerInstance ref=\"ac0\"/>\n"
+            + "    </section>\n"
+            + "</m3g>";
+        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        try
+        {
+            Deserialiser.deserialise(in);
+            fail("Should throw here because an instance can't be a root object");
+        }
+        catch (Deserialiser.ValidationException e)
+        {
+            assertTrue(e.getLine() == 5);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail();
+        }
+    }
+
+    public void testDeserialiseStringInvalidAnimationTrack()
+    {
+        String xmlString =
+              "<?xml version=\"1.0\"?>\n"
+            + "<m3g>\n"
+            + "    <section>\n"
+            + "        <AnimationTrack id=\"at0\"/>\n"
+            + "    </section>\n"
+            + "</m3g>";
+        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        try
+        {
+            Deserialiser.deserialise(in);
+            fail("Should throw here because a track needs a sequence");
+        }
+        catch (Deserialiser.ValidationException e)
+        {
+            assertTrue(e.getLine() == 4);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail();
+        }
+    }
+
 }

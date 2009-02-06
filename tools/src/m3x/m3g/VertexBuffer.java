@@ -122,7 +122,6 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.defaultColor = new ColorRGBA();
         this.defaultColor.deserialise(deserialiser);
         this.positions.deserialise(deserialiser);
         this.normals = (VertexArray)deserialiser.readReference();
@@ -263,8 +262,8 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         this.textureCoordinates[index].setBias(bias);
     }
 
-    private void setDefaultColor(int rgba)
+    public void setDefaultColor(int argb)
     {
-        this.defaultColor.set(rgba);
+        this.defaultColor.set(argb);
     }
 }

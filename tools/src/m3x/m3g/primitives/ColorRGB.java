@@ -105,9 +105,9 @@ public class ColorRGB implements Serialisable
         this.b = clampColor(b);
     }
 
-    public void set(int rgb)
+    public void set(int argb)
     {
-        set((rgb >> 16) & 0xff, (rgb >> 8) & 0xff, (rgb >> 0) & 0xff);
+        set((argb >> 16) & 0xff, (argb >> 8) & 0xff, (argb >> 0) & 0xff);
     }
 
     public void set(List<Short> color)

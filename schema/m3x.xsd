@@ -404,9 +404,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="BACK"/>
-            <xs:enumeration value="FRONT"/>
-            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="CULL_BACK"/>
+            <xs:enumeration value="CULL_FRONT"/>
+            <xs:enumeration value="CULL_NONE"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PolygonShadingModeType">
@@ -416,8 +416,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="FLAT"/>
-            <xs:enumeration value="SMOOTH"/>
+            <xs:enumeration value="SHADE_FLAT"/>
+            <xs:enumeration value="SHADE_SMOOTH"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PolygonWindingModeType">
@@ -427,8 +427,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="CCW"/>
-            <xs:enumeration value="CW"/>
+            <xs:enumeration value="WINDING_CCW"/>
+            <xs:enumeration value="WINDING_CW"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextureMipmapModeType">
@@ -438,9 +438,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="BASE_LEVEL"/>
-            <xs:enumeration value="LINEAR"/>
-            <xs:enumeration value="NEAREST"/>
+            <xs:enumeration value="FILTER_BASE_LEVEL"/>
+            <xs:enumeration value="FILTER_LINEAR"/>
+            <xs:enumeration value="FILTER_NEAREST"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextureFilterModeType">
@@ -450,8 +450,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="LINEAR"/>
-            <xs:enumeration value="NEAREST"/>
+            <xs:enumeration value="FILTER_LINEAR"/>
+            <xs:enumeration value="FILTER_NEAREST"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="Texture2DBlendModeType">
@@ -461,11 +461,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="ADD"/>
-            <xs:enumeration value="BLEND"/>
-            <xs:enumeration value="DECAL"/>
-            <xs:enumeration value="MODULATE"/>
-            <xs:enumeration value="REPLACE"/>
+            <xs:enumeration value="FUNC_ADD"/>
+            <xs:enumeration value="FUNC_BLEND"/>
+            <xs:enumeration value="FUNC_DECAL"/>
+            <xs:enumeration value="FUNC_MODULATE"/>
+            <xs:enumeration value="FUNC_REPLACE"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="Texture2DWrapModeType">
@@ -475,8 +475,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="CLAMP"/>
-            <xs:enumeration value="REPEAT"/>
+            <xs:enumeration value="WRAP_CLAMP"/>
+            <xs:enumeration value="WRAP_REPEAT"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="VertexArrayDataType">
@@ -1042,14 +1042,30 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Node">
-                    <xs:attribute name="attenuationConstant" type="Float32"/>
-                    <xs:attribute name="attenuationLinear" type="Float32"/>
-                    <xs:attribute name="attenuationQuadratic" type="Float32"/>
-                    <xs:attribute name="color" type="ColorRGB"/>
-                    <xs:attribute name="mode" type="LightType"/>
-                    <xs:attribute name="intensity" type="Float32"/>
-                    <xs:attribute name="spotAngle" type="Float32"/>
-                    <xs:attribute name="spotExponent" type="Float32"/>
+                    <xs:attribute name="attenuationConstant"
+                                  type="Float32"
+                                  default="1.0"/>
+                    <xs:attribute name="attenuationLinear"
+                                  type="Float32"
+                                  default="0.0"/>
+                    <xs:attribute name="attenuationQuadratic"
+                                  type="Float32"
+                                  default="0.0"/>
+                    <xs:attribute name="color"
+                                  type="ColorRGB"
+                                  default="255 255 255"/>
+                    <xs:attribute name="mode"
+                                  type="LightType"
+                                  default="DIRECTIONAL"/>
+                    <xs:attribute name="intensity"
+                                  type="Float32"
+                                  default="1.0"/>
+                    <xs:attribute name="spotAngle"
+                                  type="Float32"
+                                  default="45.0"/>
+                    <xs:attribute name="spotExponent"
+                                  type="Float32"
+                                  default="0.0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1058,12 +1074,24 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="ambientColor" type="ColorRGB"/>
-                    <xs:attribute name="diffuseColor" type="ColorRGBA"/>
-                    <xs:attribute name="emissiveColor" type="ColorRGB"/>
-                    <xs:attribute name="specularColor" type="ColorRGB"/>
-                    <xs:attribute name="shininess" type="Float32"/>
-                    <xs:attribute name="vertexColorTrackingEnabled" type="Boolean"/>
+                    <xs:attribute name="ambientColor"
+                                  type="ColorRGB"
+                                  default="51 51 51"/>
+                    <xs:attribute name="diffuseColor"
+                                  type="ColorRGBA"
+                                  default="204 204 204 255"/>
+                    <xs:attribute name="emissiveColor"
+                                  type="ColorRGB"
+                                  default="0 0 0"/>
+                    <xs:attribute name="specularColor"
+                                  type="ColorRGB"
+                                  default="0 0 0"/>
+                    <xs:attribute name="shininess"
+                                  type="Float32"
+                                  default="0.0"/>
+                    <xs:attribute name="vertexColorTrackingEnabled"
+                                  type="Boolean"
+                                  default="false"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1087,12 +1115,14 @@
             <xs:complexContent>
                 <xs:extension base="MeshType">
                     <xs:sequence>
-                        <xs:element name="morphtarget" minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="morphtarget" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element ref="VertexBufferInstance" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element ref="VertexBufferInstance"/>
                                 </xs:sequence>
-                                <xs:attribute name="weight" type="Float32"/>
+                                <xs:attribute name="weight"
+                                              type="Float32"
+                                              use="required"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -1104,12 +1134,24 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="culling" type="PolygonCullingModeType"/>
-                    <xs:attribute name="shading" type="PolygonShadingModeType"/>
-                    <xs:attribute name="winding" type="PolygonWindingModeType"/>
-                    <xs:attribute name="twoSidedLightingEnabled" type="Boolean"/>
-                    <xs:attribute name="localCameraLightingEnabled" type="Boolean"/>
-                    <xs:attribute name="perspectiveCorrectionEnabled" type="Boolean"/>
+                    <xs:attribute name="culling"
+                                  type="PolygonCullingModeType"
+                                  default="CULL_BACK"/>
+                    <xs:attribute name="shading"
+                                  type="PolygonShadingModeType"
+                                  default="SHADE_SMOOTH"/>
+                    <xs:attribute name="winding"
+                                  type="PolygonWindingModeType"
+                                  default="WINDING_CCW"/>
+                    <xs:attribute name="twoSidedLightingEnabled"
+                                  type="Boolean"
+                                  default="false"/>
+                    <xs:attribute name="localCameraLightingEnabled"
+                                  type="Boolean"
+                                  default="false"/>
+                    <xs:attribute name="perspectiveCorrectionEnabled"
+                                  type="Boolean"
+                                  default="false"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
