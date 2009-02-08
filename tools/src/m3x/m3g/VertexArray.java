@@ -452,7 +452,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         }
     }
 
-    public int getComponentType(String componentType)
+    public final int getComponentType(String componentType)
     {
         return getFieldValue(componentType, "type");
     }

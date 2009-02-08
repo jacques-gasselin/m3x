@@ -1,8 +1,10 @@
 package m3x.m3g;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import junit.framework.AssertionFailedError;
@@ -24,7 +26,7 @@ public abstract class AbstractTestCase extends TestCase
             Deserialiser deserialiser = new Deserialiser();
             deserialiser.deserialiseSingle(serialised, to);
 
-            assertTrue(from.equals(to));
+            doTestAccessors(from, to);
         }
         catch (Exception e)
         {
@@ -62,19 +64,42 @@ public abstract class AbstractTestCase extends TestCase
      * @param object2
      * @throws Exception
      */
-    protected void doTestAccessors(Object object1, Object object2) throws Exception
+    protected void doTestAccessors(Object object1, Object object2) throws AssertionFailedError
     {
         Class cls = object1.getClass();
         assertTrue(cls.equals(object2.getClass()));
 
-        BeanInfo beanInfo = Introspector.getBeanInfo(cls);
+        BeanInfo beanInfo;
+        try
+        {
+            beanInfo = Introspector.getBeanInfo(cls);
+        }
+        catch (IntrospectionException e)
+        {
+            return;
+        }
+        
         for (PropertyDescriptor prop : beanInfo.getPropertyDescriptors())
         {
             Method getter = prop.getReadMethod();
             if (getter != null)
             {
-                Object result1 = getter.invoke(object1, (Object[]) null);
-                Object result2 = getter.invoke(object2, (Object[]) null);
+
+                Object result1, result2;
+                try
+                {
+                    result1 = getter.invoke(object1, (Object[]) null);
+                    result2 = getter.invoke(object2, (Object[]) null);
+                }
+                catch (InvocationTargetException e)
+                {
+                    continue;
+                }
+                catch (IllegalAccessException e)
+                {
+                    continue;
+                }
+                
                 try
                 {
                     handleResults(result1, result2);
@@ -126,7 +151,14 @@ public abstract class AbstractTestCase extends TestCase
         {
             try
             {
-                assertTrue(result1.equals(result2));
+                if (result1 instanceof Object3D)
+                {
+                    doTestAccessors(result1, result2);
+                }
+                else
+                {
+                    assertTrue(result1.equals(result2));
+                }
             }
             catch (AssertionFailedError e)
             {

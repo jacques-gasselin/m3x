@@ -9,7 +9,7 @@ public class VertexArrayConverter extends Object3DConverter
     @Override
     public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
     {
-        m3x.m3g.VertexArray to = new m3x.m3g.VertexArray();
+        final m3x.m3g.VertexArray to = new m3x.m3g.VertexArray();
         setFromXML(translator, to, (m3x.xml.VertexArray)from);
         return to;
     }
@@ -18,13 +18,14 @@ public class VertexArrayConverter extends Object3DConverter
         m3x.m3g.VertexArray to, m3x.xml.VertexArray from)
     {
         super.setFromXML(translator, to, from);
-        List<Integer> values = from.getIntArray();
+        final List<Integer> values = from.getIntArray();
         
         final int arraySize = values.size();
         final int componentCount = from.getComponentCount();
         final int vertexCount = arraySize / componentCount;
-        final int componentType = to.getComponentType(
-            from.getComponentType().value());
+        final String componentTypeStr = from.getComponentType().value();
+        //System.out.println("componentType: " + componentTypeStr);
+        final int componentType = to.getComponentType(componentTypeStr);
 
         to.setSizeAndType(vertexCount, componentCount, componentType);
         to.set(0, vertexCount, values);
