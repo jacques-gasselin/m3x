@@ -25,7 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.xml;
+package m3x.collada;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -43,9 +43,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**The Deserialiser class hides the complexities of binding a JAXB context
- * and unmarshalling the classes. 
+ * and unmarshalling the classes.
  * The xml classes use refid references that need to be resolved in order to
- * make a properly referenced translation. 
+ * make a properly referenced translation.
  *
  * @author jgasseli
  */
@@ -56,14 +56,14 @@ public abstract class Deserialiser
      */
     private Deserialiser()
     {
-        
+
     }
 
     public static final class ValidationException extends RuntimeException
     {
         private final int line;
         private final int column;
-        
+
         private ValidationException(String message)
         {
             super(message);
@@ -77,7 +77,7 @@ public abstract class Deserialiser
             this.line = line;
             this.column = column;
         }
-        
+
         public int getColumn()
         {
             return column;
@@ -97,7 +97,7 @@ public abstract class Deserialiser
             final int offset = locator.getOffset();
             if (offset != -1)
             {
-                throw new ValidationException("Byte offset " + offset 
+                throw new ValidationException("Byte offset " + offset
                     + ": " + event.getMessage());
 
             }
@@ -112,24 +112,24 @@ public abstract class Deserialiser
     }
 
     /**Deserialise an input stream that contains an XML document.
-     * 
+     *
      * @param stream - the inout stream to read from.
-     * @return - the root M3G object
+     * @return - the root COLLADA object
      * @throws IllegalArgumentException - if the stream is unable to be read
      * or the sections are empty
      * @throws ValidationException - if the stream in invalid
      */
-    public static m3x.xml.M3G deserialise(java.io.InputStream stream)
+    public static m3x.collada.COLLADA deserialise(java.io.InputStream stream)
     {
         JAXBContext context = null;
         try
         {
-            context = JAXBContext.newInstance(m3x.xml.M3G.class);
+            context = JAXBContext.newInstance(m3x.collada.COLLADA.class);
         }
         catch (JAXBException e)
         {
             e.printStackTrace();
-            throw new AssertionError("unable to parse the m3x schema");
+            throw new AssertionError("unable to parse the collada schema");
         }
 
         Unmarshaller unmarshaller = null;
@@ -165,7 +165,7 @@ public abstract class Deserialiser
                 SchemaFactory schemaFactory = SchemaFactory.newInstance(
                     XMLConstants.W3C_XML_SCHEMA_NS_URI);
                 Source schemaSource = new StreamSource(
-                    m3x.xml.M3G.class.getResourceAsStream("m3x.xsd"));
+                    m3x.collada.COLLADA.class.getResourceAsStream("collada.xsd"));
                 try
                 {
                     validatingSchema = schemaFactory.newSchema(schemaSource);
@@ -175,14 +175,14 @@ public abstract class Deserialiser
                 {
                     e.printStackTrace();
                     throw new AssertionError(
-                        "unable to load the m3x schema");
+                        "unable to load the collada schema");
                 }
             }
         }
 
         try
         {
-            return (m3x.xml.M3G) unmarshaller.unmarshal(stream);
+            return (m3x.collada.COLLADA) unmarshaller.unmarshal(stream);
         }
         catch (UnmarshalException e)
         {
