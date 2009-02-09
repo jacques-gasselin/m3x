@@ -8,6 +8,6 @@ public class ColorRGBTest extends AbstractTestCase
     public void testSerializationAndDeserialization()
     {
         ColorRGB color = new ColorRGB(10, 20, 30);
-        assertSerialised(color);
+        assertSerialiseSingle(color);
     }
 }

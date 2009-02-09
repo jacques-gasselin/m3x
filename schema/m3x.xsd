@@ -570,11 +570,6 @@
             <xs:restriction base="UInt31List"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="stripLengths">
-        <xs:simpleType>
-            <xs:restriction base="UInt16List"/>
-        </xs:simpleType>
-    </xs:element>
     <xs:element name="float_array">
         <xs:simpleType>
             <xs:restriction base="Float32List">
@@ -1228,7 +1223,11 @@
             <xs:complexContent>
                 <xs:extension base="IndexBuffer">
                     <xs:sequence>
-                        <xs:element ref="stripLengths"/>
+                        <xs:element name="stripLengths">
+                            <xs:simpleType>
+                                <xs:restriction base="UInt16List"/>
+                            </xs:simpleType>
+                        </xs:element>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

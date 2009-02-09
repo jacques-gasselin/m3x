@@ -36,6 +36,21 @@ public class Appearance extends Object3D
     }
 
     @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+        final Appearance other = (Appearance) obj;
+        if (getLayer() != other.getLayer())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {

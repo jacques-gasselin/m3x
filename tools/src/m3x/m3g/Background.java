@@ -40,6 +40,7 @@ public class Background extends Object3D
     public Background()
     {
         super();
+        backgroundColor = new ColorRGBA();
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import m3x.m3g.Deserialiser;
 import m3x.m3g.Serialiser;
-import m3x.m3g.primitives.Serialisable;
 
 public class Vector3D implements Serialisable
 {
@@ -74,11 +73,13 @@ public class Vector3D implements Serialisable
         {
             return true;
         }
-        if (!(obj instanceof Vector3D))
+        if (getClass() != obj.getClass())
         {
             return false;
         }
         Vector3D another = (Vector3D) obj;
-        return this.x == another.x && this.y == another.y && this.z == another.z;
+        return this.x == another.x
+            && this.y == another.y
+            && this.z == another.z;
     }
 }

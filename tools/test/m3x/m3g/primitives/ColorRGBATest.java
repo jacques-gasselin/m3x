@@ -7,6 +7,6 @@ public class ColorRGBATest extends AbstractTestCase
     public void testSerializationAndDeserialization()
     {
         ColorRGBA color = new ColorRGBA(10, 20, 30, 255);
-        assertSerialised(color);
+        assertSerialiseSingle(color);
     }
 }

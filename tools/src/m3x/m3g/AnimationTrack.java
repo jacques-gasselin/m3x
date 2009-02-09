@@ -48,6 +48,21 @@ public class AnimationTrack extends Object3D
     }
 
     @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+        final AnimationTrack other = (AnimationTrack) obj;
+        if (getTargetProperty() != other.getTargetProperty())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {

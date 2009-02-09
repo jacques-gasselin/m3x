@@ -85,6 +85,52 @@ public abstract class Object3D implements SectionSerialisable
         setUserID(0);
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final Object3D other = (Object3D) obj;
+        if (getUserID() != other.getUserID())
+        {
+            return false;
+        }
+
+        //does the equal comparison for all referenced objects.
+        final int referenceCountA = getReferences(null);
+        final int referenceCountB = other.getReferences(null);
+        if (referenceCountA != referenceCountB)
+        {
+            return false;
+        }
+
+        final Object3D[] referencesA = new Object3D[referenceCountA];
+        getReferences(referencesA);
+
+        final Object3D[] referencesB = new Object3D[referenceCountB];
+        other.getReferences(referencesB);
+
+        for (int i = 0; i < referenceCountA; ++i)
+        {
+            Object3D a = referencesA[i];
+            Object3D b = referencesB[i];
+            if (!a.equals(b))
+            {
+                return false;
+            }
+        }
+
+        //FIXME compare user object
+        
+        return true;
+    }
+
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {

@@ -35,6 +35,42 @@ public class AnimationController extends Object3D
 
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+        final AnimationController other = (AnimationController) obj;
+        if (getSpeed() != other.getSpeed())
+        {
+            return false;
+        }
+        if (getWeight() != other.getWeight())
+        {
+            return false;
+        }
+        if (getActiveIntervalStart() != other.getActiveIntervalStart())
+        {
+            return false;
+        }
+        if (getActiveIntervalEnd() != other.getActiveIntervalEnd())
+        {
+            return false;
+        }
+        if (getRefSequenceTime() != other.getRefSequenceTime())
+        {
+            return false;
+        }
+        if (getRefWorldTime() != other.getRefWorldTime())
+        {
+            return false;
+        }
+        return true;
+    }
+
+
     /**
      * Deserialization done as specified in the class JavaDoc.
      * @throws IOException

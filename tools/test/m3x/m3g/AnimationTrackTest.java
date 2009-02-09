@@ -1,12 +1,15 @@
 package m3x.m3g;
 
-import java.io.ByteArrayOutputStream;
-
 public class AnimationTrackTest extends AbstractTestCase
 {
     private AnimationTrack track;
 
     public AnimationTrackTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
     {
         track = new AnimationTrack();
         track.setTargetProperty(AnimationTrack.TRANSLATION);
@@ -24,26 +27,7 @@ public class AnimationTrackTest extends AbstractTestCase
     public void testSaveAndLoad()
     {
         Object3D[] roots = new Object3D[]{ track };
-
-        try
-        {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Saver.save(out, roots, "1.0", "AnimationTrackTest");
-
-            byte[] data = out.toByteArray();
-
-            Object3D[] loadRoots = Loader.load(data);
-
-            for (int i = 0; i < roots.length; ++i)
-            {
-                doTestAccessors(roots[i], loadRoots[i]);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.toString());
-        }
+        assertSaveAndLoad(roots);
     }
 
 }

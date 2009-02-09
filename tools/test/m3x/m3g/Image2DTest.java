@@ -44,6 +44,6 @@ public class Image2DTest extends AbstractTestCase
 
     public void testSerializationAndDeseriliazation1()
     {
-        assertSerialised(image);
+        assertSerialiseSingle(image);
     }
 }

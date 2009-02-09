@@ -46,12 +46,14 @@ public class ColorRGB implements Serialisable
         {
             return true;
         }
-        if (!(obj instanceof ColorRGB))
+        if (getClass() != obj.getClass())
         {
             return false;
         }
         ColorRGB color = (ColorRGB) obj;
-        return this.r == color.r && this.g == color.g && this.b == color.b;
+        return this.r == color.r
+            && this.g == color.g
+            && this.b == color.b;
     }
 
     public void deserialise(Deserialiser deserialiser)

@@ -3,53 +3,65 @@ package m3x.m3g;
 
 public class AppearanceTest extends AbstractTestCase
 {
-  public void testSerializationAndDeseriliazation1()
-  {
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    Appearance appearance = new Appearance(animationTracks,
-                                           userParameters,
-                                           (byte)127,
-                                           new ObjectIndex(1),
-                                           new ObjectIndex(2),
-                                           new ObjectIndex(3),
-                                           new ObjectIndex(4),
-                                           new ObjectIndex[] {new ObjectIndex(5)});
-                            
-    try
-    {   
-      byte[] serialized = M3GSupport.objectToBytes(appearance);
-      Appearance deserialized = (Appearance)M3GSupport.bytesToObject(serialized, Appearance.class);
-      this.doTestAccessors(appearance, deserialized);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
+    private Appearance appearance;
 
-  public void testSerializationAndDeseriliazation2()
-  {
-    /*ObjectIndex[] animationTracks = getAnimationTracks();
-    UserParameter[] userParameters = getUserParameters();
-    ColorRGB color = new ColorRGB(0.1f, 0.2f, 0.3f);
-    Fog fog = new Fog(animationTracks,
-                      userParameters,
-                      color,
-                      0.2f,
-                      0.3f);
-                            
-    try
-    {   
-      byte[] serialized = M3GSupport.objectToBytes(fog);
-      Fog deserialized = (Fog)M3GSupport.bytesToObject(serialized, Fog.class);
-      this.doTestAccessors(fog, deserialized);
-    }
-    catch (Exception e)
+    public AppearanceTest()
     {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }*/
-  }
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        appearance = new Appearance();
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ appearance };
+        assertSaveAndLoad(roots);
+    }
+
+    public void testGetLayer()
+    {
+        assertEquals(0, appearance.getLayer());
+    }
+
+    public void testSetLayer()
+    {
+        final int MIN = -63;
+        final int MAX = 63;
+
+        try
+        {
+            appearance.setLayer(MIN);
+            assertEquals(MIN, appearance.getLayer());
+
+            appearance.setLayer(MAX);
+            assertEquals(MAX, appearance.getLayer());
+        }
+        catch (Throwable t)
+        {
+            fail("setting valid values must not throw");
+        }
+
+        try
+        {
+            appearance.setLayer(MIN - 1);
+            fail("should throw if the layer is below the minimum");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof IllegalArgumentException);
+        }
+
+        try
+        {
+            appearance.setLayer(MAX + 1);
+            fail("should throw if the layer is above the maximum");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof IllegalArgumentException);
+        }
+    }
 }

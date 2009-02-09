@@ -33,15 +33,11 @@ public class ColorRGBA extends ColorRGB implements Serialisable
 
     public boolean equals(Object obj)
     {
-        if (obj == this)
-        {
-            return true;
-        }
-        if (!(obj instanceof ColorRGBA))
+        if (!super.equals(obj))
         {
             return false;
         }
-        return super.equals(obj) && this.a == ((ColorRGBA) obj).a;
+        return this.a == ((ColorRGBA) obj).a;
     }
 
     @Override

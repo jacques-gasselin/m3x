@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -14,7 +15,31 @@ import junit.framework.TestCase;
 
 public abstract class AbstractTestCase extends TestCase
 {
-    protected void assertSerialised(Serialisable from, Serialisable to)
+
+    protected void assertSaveAndLoad(Object3D[] roots)
+    {
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Saver.save(out, roots, "1.0", null);
+
+            byte[] data = out.toByteArray();
+
+            Object3D[] loadRoots = Loader.load(data);
+
+            for (int i = 0; i < roots.length; ++i)
+            {
+                roots[i].equals(loadRoots[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
+    }
+
+    protected void assertSerialiseSingle(Serialisable from, Serialisable to)
     {
         try
         {
@@ -26,7 +51,7 @@ public abstract class AbstractTestCase extends TestCase
             Deserialiser deserialiser = new Deserialiser();
             deserialiser.deserialiseSingle(serialised, to);
 
-            doTestAccessors(from, to);
+            assertTrue(from.equals(to));
         }
         catch (Exception e)
         {
@@ -35,7 +60,7 @@ public abstract class AbstractTestCase extends TestCase
         }
     }
 
-    protected void assertSerialised(Serialisable from)
+    protected void assertSerialiseSingle(Serialisable from)
     {
         Class cls = from.getClass();
         Serialisable to = null;
@@ -53,7 +78,7 @@ public abstract class AbstractTestCase extends TestCase
             e.printStackTrace();
             fail(e.toString());
         }
-        assertSerialised(from, to);
+        assertSerialiseSingle(from, to);
     }
     
     /**

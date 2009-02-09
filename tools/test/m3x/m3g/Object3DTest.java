@@ -14,4 +14,11 @@ public class Object3DTest extends AbstractTestCase
         object = new AnimationController();
         object.setUserID(USERID);
     }
+
+    public void testGetUserID()
+    {
+        assertEquals("user id should be " + USERID,
+            USERID, object.getUserID());
+    }
+    
 }

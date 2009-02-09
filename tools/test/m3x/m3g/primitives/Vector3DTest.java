@@ -8,6 +8,6 @@ public class Vector3DTest extends AbstractTestCase
     public void testSerializationAndDeserialization()
     {
         Vector3D vector = new Vector3D(10, 20, 30);
-        assertSerialised(vector);
+        assertSerialiseSingle(vector);
     }
 }
