@@ -728,7 +728,7 @@
                                     <xs:element ref="TriangleStripArrayInstance"/>
                                     <xs:element ref="TriangleStripArray"/>
                                 </xs:choice>
-                                <xs:choice>
+                                <xs:choice minOccurs="0">
                                     <xs:element ref="AppearanceInstance"/>
                                     <xs:element ref="Appearance"/>
                                 </xs:choice>
