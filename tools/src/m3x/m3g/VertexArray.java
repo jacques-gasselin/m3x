@@ -282,7 +282,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         @Override
         public int getComponentType()
         {
-            return VertexArray.BYTE;
+            return VertexArray.SHORT;
         }
 
         public void get(int firstVertex, int numVertices, short[] dst)
@@ -450,6 +450,8 @@ public class VertexArray extends Object3D implements SectionSerialisable
                 throw new IllegalArgumentException(
                     "Invalid component type: " + componentType);
         }
+
+        assert(getComponentType() == componentType);
     }
 
     public final int getComponentType(String componentType)

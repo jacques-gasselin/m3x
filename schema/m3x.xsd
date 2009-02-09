@@ -523,7 +523,10 @@
     <xs:element name="bias"
                 default="0.0 0.0 0.0">
         <xs:simpleType>
-            <xs:restriction base="Vector3D"/>
+            <xs:restriction base="Float32List">
+                <xs:minLength value="1"/>
+                <xs:maxLength value="3"/>
+            </xs:restriction>
         </xs:simpleType>
     </xs:element>
     <xs:element name="scale"
@@ -645,8 +648,8 @@
             <xs:extension base="Object3D">
                 <xs:sequence>
                     <xs:element ref="translation" minOccurs="0" maxOccurs="1"/>
-                    <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
                     <xs:element ref="orientation" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
                     <xs:element ref="Transform" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>

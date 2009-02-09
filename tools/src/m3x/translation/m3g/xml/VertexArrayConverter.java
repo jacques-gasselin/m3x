@@ -24,8 +24,9 @@ public class VertexArrayConverter extends Object3DConverter
         final int componentCount = from.getComponentCount();
         final int vertexCount = arraySize / componentCount;
         final String componentTypeStr = from.getComponentType().value();
-        //System.out.println("componentType: " + componentTypeStr);
         final int componentType = to.getComponentType(componentTypeStr);
+        //System.out.println("componentType: " + componentTypeStr
+        //    + " -> " + componentType);
 
         to.setSizeAndType(vertexCount, componentCount, componentType);
         to.set(0, vertexCount, values);
