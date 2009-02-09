@@ -23,24 +23,29 @@ import m3x.m3g.primitives.ColorRGBA;
  */
 public class Background extends Object3D
 {
-    public final static int MODE_BORDER = 32;
-    public final static int MODE_REPEAT = 33;
+    public final static int BORDER = 32;
+    public final static int REPEAT = 33;
     
-    private ColorRGBA backgroundColor;
-    private Image2D backgroundImage;
-    private int backgroundImageModeX;
-    private int backgroundImageModeY;
+    private ColorRGBA color;
+    private Image2D image;
+    private int imageModeX;
+    private int imageModeY;
     private int cropX;
     private int cropY;
     private int cropWidth;
     private int cropHeight;
-    private boolean depthClearEnabled;
     private boolean colorClearEnabled;
+    private boolean depthClearEnabled;
 
     public Background()
     {
         super();
-        backgroundColor = new ColorRGBA();
+        color = new ColorRGBA();
+        setColor(0x0);
+        setColorClearEnable(true);
+        setDepthClearEnable(true);
+        setImage(null);
+        setImageMode(BORDER, BORDER);
     }
 
     @Override
@@ -48,17 +53,18 @@ public class Background extends Object3D
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.backgroundColor = new ColorRGBA();
-        this.backgroundColor.deserialise(deserialiser);
-        this.backgroundImage = (Image2D)deserialiser.readReference();
-        this.backgroundImageModeX = deserialiser.readUnsignedByte();
-        this.backgroundImageModeY = deserialiser.readUnsignedByte();
-        this.cropX = deserialiser.readInt();
-        this.cropY = deserialiser.readInt();
-        this.cropWidth = deserialiser.readInt();
-        this.cropHeight = deserialiser.readInt();
-        this.depthClearEnabled = deserialiser.readBoolean();
-        this.colorClearEnabled = deserialiser.readBoolean();
+        this.color.deserialise(deserialiser);
+        setImage((Image2D)deserialiser.readReference());
+        final int modeX = deserialiser.readUnsignedByte();
+        final int modeY = deserialiser.readUnsignedByte();
+        setImageMode(modeX, modeY);
+        final int x = deserialiser.readInt();
+        final int y = deserialiser.readInt();
+        final int width = deserialiser.readInt();
+        final int height = deserialiser.readInt();
+        setCrop(x, y, width, height);
+        setDepthClearEnable(deserialiser.readBoolean());
+        setColorClearEnable(deserialiser.readBoolean());
     }
 
     @Override
@@ -66,16 +72,16 @@ public class Background extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        this.backgroundColor.serialise(serialiser);
-        serialiser.writeReference(getBackgroundImage());
-        serialiser.write(this.backgroundImageModeX);
-        serialiser.write(this.backgroundImageModeY);
-        serialiser.writeInt(this.cropX);
-        serialiser.writeInt(this.cropY);
-        serialiser.writeInt(this.cropWidth);
-        serialiser.writeInt(this.cropHeight);
-        serialiser.writeBoolean(this.depthClearEnabled);
-        serialiser.writeBoolean(this.colorClearEnabled);
+        this.color.serialise(serialiser);
+        serialiser.writeReference(getImage());
+        serialiser.write(getImageModeX());
+        serialiser.write(getImageModeY());
+        serialiser.writeInt(getCropX());
+        serialiser.writeInt(getCropY());
+        serialiser.writeInt(getCropWidth());
+        serialiser.writeInt(getCropHeight());
+        serialiser.writeBoolean(isDepthClearEnabled());
+        serialiser.writeBoolean(isColorClearEnabled());
     }
 
     public int getSectionObjectType()
@@ -83,24 +89,19 @@ public class Background extends Object3D
         return ObjectTypes.BACKGROUND;
     }
 
-    public ColorRGBA getBackgroundColor()
+    public Image2D getImage()
     {
-        return this.backgroundColor;
+        return this.image;
     }
 
-    public Image2D getBackgroundImage()
+    public int getImageModeX()
     {
-        return this.backgroundImage;
+        return this.imageModeX;
     }
 
-    public int getBackgroundImageModeX()
+    public int getImageModeY()
     {
-        return this.backgroundImageModeX;
-    }
-
-    public int getBackgroundImageModeY()
-    {
-        return this.backgroundImageModeY;
+        return this.imageModeY;
     }
 
     public int getCropX()
@@ -131,5 +132,39 @@ public class Background extends Object3D
     public boolean isColorClearEnabled()
     {
         return this.colorClearEnabled;
+    }
+
+    public void setColor(int argb)
+    {
+        this.color.set(argb);
+    }
+
+    public void setColorClearEnable(boolean enable)
+    {
+        this.colorClearEnabled = enable;
+    }
+
+    public void setDepthClearEnable(boolean enable)
+    {
+        this.depthClearEnabled = enable;
+    }
+
+    public void setImage(Image2D image)
+    {
+        this.image = image;
+    }
+
+    public void setImageMode(int modeX, int modeY)
+    {
+        this.imageModeX = modeX;
+        this.imageModeY = modeY;
+    }
+
+    public void setCrop(int x, int y, int width, int height)
+    {
+        this.cropX = x;
+        this.cropY = y;
+        this.cropWidth = width;
+        this.cropHeight = height;
     }
 }
