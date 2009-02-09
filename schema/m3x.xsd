@@ -14,6 +14,36 @@
         <xs:documentation>
             M3X Schema for JSR184
             Version 1.0 (DRAFT)
+
+            Licensed under the simplified BSD license.
+
+            ----
+
+            Copyright (c) 2008, Jacques Gasselin de Richebourg
+            All rights reserved.
+
+            Redistribution and use in source and binary forms, with or without modification,
+            are permitted provided that the following conditions are met:
+
+            - Redistributions of source code must retain the above copyright notice,
+            this list of conditions and the following disclaimer.
+
+            - Redistributions in binary form must reproduce the above copyright notice,
+            this list of conditions and the following disclaimer in the documentation
+            and/or other materials provided with the distribution.
+
+            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+            THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+            PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+            CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+            EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+            PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+            OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+            WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+            OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+            ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
         </xs:documentation>
     </xs:annotation>
     <!-- Import xml::base -->
@@ -126,77 +156,6 @@
             <xs:maxLength value="4"/>
         </xs:restriction>
     </xs:simpleType>
-    <!-- Root Element -->
-    <xs:element name="m3g">
-        <xs:annotation>
-            <xs:appinfo>enable-xmlns</xs:appinfo>
-            <xs:documentation>
-                The m3g element is the root of the document that describes
-                the content of a JSR184/297 .m3g file
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="section" minOccurs="1" maxOccurs="unbounded">
-                    <xs:annotation>
-                        <xs:documentation>
-                            The m3g element must contain 1 or more sections
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-            </xs:sequence>
-            <xs:attribute name="version"
-                          type="String"
-                          fixed="1.0"/>
-            <xs:attribute name="author"
-                          type="String"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="section" type="Section"/>
-    <xs:complexType name="Section">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:annotation>
-                <xs:appinfo>
-                    <jaxb:property name="objects"/>
-                </xs:appinfo>
-            </xs:annotation>   
-            <xs:group ref="RootElementGroup">
-            </xs:group>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:group name="RootElementGroup">     
-        <xs:choice>
-            <xs:element ref="AnimationController"/>
-            <xs:element ref="AnimationTrack"/>
-            <xs:element ref="Appearance"/>
-            <xs:element ref="Background"/>
-            <xs:element ref="Camera"/>
-            <xs:element ref="CompositingMode"/>
-            <xs:element ref="Fog"/>
-            <xs:element ref="Group"/>
-            <xs:element ref="Image2D"/>
-            <xs:element ref="KeyframeSequence"/>
-            <xs:element ref="Light"/>
-            <xs:element ref="Material"/>
-            <xs:element ref="Mesh"/>
-            <xs:element ref="PolygonMode"/>
-            <xs:element ref="SkinnedMesh"/>
-            <xs:element ref="Texture2D"/>
-            <xs:element ref="TriangleStripArray"/>
-            <xs:element ref="VertexArray"/>
-            <xs:element ref="VertexBuffer"/>
-            <xs:element ref="World"/>
-        </xs:choice>
-    </xs:group>
-    <xs:group name="NodeElementGroup">
-        <xs:choice>
-            <xs:element ref="Camera"/>
-            <xs:element ref="Group"/>
-            <xs:element ref="Light"/>
-            <xs:element ref="Mesh"/>
-            <xs:element ref="SkinnedMesh"/>
-        </xs:choice>
-    </xs:group>
     <!-- Enumerations -->
     <xs:simpleType name="AnimationTargetType">
         <xs:annotation>
@@ -491,6 +450,77 @@
         </xs:restriction>
     </xs:simpleType>
     <!-- Complex types -->
+    <!-- Root Element -->
+    <xs:element name="m3g">
+        <xs:annotation>
+            <xs:appinfo>enable-xmlns</xs:appinfo>
+            <xs:documentation>
+                The m3g element is the root of the document that describes
+                the content of a JSR184/297 .m3g file
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="section" minOccurs="1" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The m3g element must contain 1 or more sections
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="version"
+                          type="String"
+                          fixed="1.0"/>
+            <xs:attribute name="author"
+                          type="String"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="section" type="Section"/>
+    <xs:complexType name="Section">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:annotation>
+                <xs:appinfo>
+                    <jaxb:property name="objects"/>
+                </xs:appinfo>
+            </xs:annotation>
+            <xs:group ref="RootElementGroup">
+            </xs:group>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:group name="RootElementGroup">
+        <xs:choice>
+            <xs:element ref="AnimationController"/>
+            <xs:element ref="AnimationTrack"/>
+            <xs:element ref="Appearance"/>
+            <xs:element ref="Background"/>
+            <xs:element ref="Camera"/>
+            <xs:element ref="CompositingMode"/>
+            <xs:element ref="Fog"/>
+            <xs:element ref="Group"/>
+            <xs:element ref="Image2D"/>
+            <xs:element ref="KeyframeSequence"/>
+            <xs:element ref="Light"/>
+            <xs:element ref="Material"/>
+            <xs:element ref="Mesh"/>
+            <xs:element ref="PolygonMode"/>
+            <xs:element ref="SkinnedMesh"/>
+            <xs:element ref="Texture2D"/>
+            <xs:element ref="TriangleStripArray"/>
+            <xs:element ref="VertexArray"/>
+            <xs:element ref="VertexBuffer"/>
+            <xs:element ref="World"/>
+        </xs:choice>
+    </xs:group>
+    <xs:group name="NodeElementGroup">
+        <xs:choice>
+            <xs:element ref="Camera"/>
+            <xs:element ref="Group"/>
+            <xs:element ref="Light"/>
+            <xs:element ref="Mesh"/>
+            <xs:element ref="SkinnedMesh"/>
+        </xs:choice>
+    </xs:group>
     <!-- Helper types -->
     <xs:element name="Transform">
         <xs:annotation>

@@ -1,91 +1,36 @@
+/**
+ * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package m3x.translation;
 
-import m3x.m3g.CompositingMode;
-import m3x.m3g.PolygonMode;
-import m3x.xml.CompositingModeBlendType;
-import m3x.xml.PolygonCullingModeType;
-import m3x.xml.PolygonShadingModeType;
-import m3x.xml.PolygonWindingModeType;
-
+/**
+ * 
+ * @author jgasseli
+ */
 public class PolygonModeTranslatorTest extends TranslatorSupport
 {
-  public void testTranslator()
-  {
-    /*PolygonModeTranslator translator = new PolygonModeTranslator();
-        
-    m3x.xml.PolygonMode pm1 = new m3x.xml.PolygonMode();
-    
-    m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.Section section = new m3x.xml.Section();
-    m3xRoot.getSection().add(section);
-    
-    m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
-    section.getObjects().add(at);
-    m3x.xml.AnimationTrackInstance ati = new m3x.xml.AnimationTrackInstance();
-    ati.setRef(at);
-    pm1.setAnimationTrackInstance(ati);
-
-    pm1.setCulling(PolygonCullingModeType.BACK);
-    pm1.setLocalCameraLightingEnabled(true);
-    pm1.setPerspectiveCorrectionEnabled(false);
-    pm1.setShading(PolygonShadingModeType.SMOOTH);
-    pm1.setTwoSidedLightingEnabled(true);
-    pm1.setWinding(PolygonWindingModeType.CW);
-    translator.set(pm1, m3xRoot, null);
-    PolygonMode pm2 = (PolygonMode)translator.toM3G();
-   
-    assertEquals(toM3G(pm1.getCulling()), pm2.getCulling());
-    assertEquals(toM3G(pm1.getShading()), pm2.getShading());
-    assertEquals(toM3G(pm1.getWinding()), pm2.getWinding());
-    assertTrue(pm1.isLocalCameraLightingEnabled() == pm2.isLocalCameraLightingEnabled());
-    assertTrue(pm1.isPerspectiveCorrectionEnabled() == pm2.isPerspectiveCorrectionEnabled());
-    assertTrue(pm1.isTwoSidedLightingEnabled() == pm2.isTwoSidedLightingEnabled());*/
-  }
-
-  /*private int toM3G(PolygonCullingModeType culling)
-  {
-    if (culling.equals(PolygonCullingModeType.BACK))
-    {
-      return PolygonMode.CULL_BACK;
-    }
-    else
-    if (culling.equals(PolygonCullingModeType.FRONT))
-    {
-      return PolygonMode.CULL_FRONT;
-    }
-    else
-    if (culling.equals(PolygonCullingModeType.NONE))
-    {
-      return PolygonMode.CULL_NONE;
-    }
-    throw new IllegalArgumentException(culling.toString());
-  }
-  
-  private int toM3G(PolygonWindingModeType winding)
-  {
-    if (winding.equals(PolygonWindingModeType.CW))
-    {
-      return PolygonMode.WINDING_CW;
-    }
-    else
-    if (winding.equals(PolygonWindingModeType.CCW))
-    {
-      return PolygonMode.WINDING_CCW;
-    }
-    throw new IllegalArgumentException(winding.toString());
-  }
-
-  private int toM3G(PolygonShadingModeType polygonShadingModeType)
-  {
-    if (polygonShadingModeType.equals(PolygonShadingModeType.FLAT))
-    {
-      return PolygonMode.SHADE_FLAT;
-    }
-    else
-    if (polygonShadingModeType.equals(PolygonShadingModeType.SMOOTH))
-    {
-      return PolygonMode.SHADE_SMOOTH;
-    }
-    throw new IllegalArgumentException(polygonShadingModeType.toString());
-  }*/
 }

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema
+               http://www.w3.org/2001/XMLSchema.xsd"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+           elementFormDefault="qualified"
+           jaxb:version="2.0"
+           version="1.0"
+           xml:lang="EN">
+    <!-- BEGIN Schema -->
+    <xs:annotation>
+        <xs:documentation>
+            M3X interoperable COLLADA compatible Schema for JSR184
+            Version 1.0 (DRAFT)
+
+            Licensed under the simplified BSD license.
+
+            ----
+
+            Copyright (c) 2008, Jacques Gasselin de Richebourg
+            All rights reserved.
+
+            Redistribution and use in source and binary forms, with or without modification,
+            are permitted provided that the following conditions are met:
+
+            - Redistributions of source code must retain the above copyright notice,
+            this list of conditions and the following disclaimer.
+
+            - Redistributions in binary form must reproduce the above copyright notice,
+            this list of conditions and the following disclaimer in the documentation
+            and/or other materials provided with the distribution.
+
+            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+            THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+            PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+            CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+            EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+            PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+            OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+            WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+            OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+            ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+            ----
+
+            THIS XML SCHEMA IS DESIGNED FOR THE EXPRESS PURPOSE OF DESERIALISING
+            ASSETS CREATED WITH VERSION 1.4.1 OF THE COLLADA SPECIFICATION.
+            THIS SCHEMA IS ONLY INTENDED FOR INTEROPERABILITY AND IS NOT A REDEFINITION
+            OF THE COLLADA SPECIFICATION OR SCHEMA.
+
+            For the COLLADA specification and schema please visit:
+            http://www.kronos.org/collada
+
+            COLLADA is a trademark of Sony Computer Entertainment Inc.
+            All other trademarks are the property of their respective owners
+            and/or their licensors.
+
+        </xs:documentation>
+    </xs:annotation>
+    <!-- Import xml::base -->
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <!-- Simple types -->
+    <xs:simpleType name="Byte">
+        <xs:restriction base="xs:byte"/>
+    </xs:simpleType>
+    <xs:simpleType name="LayerInt">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="-63"/>
+            <xs:maxInclusive value="63"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="UByte">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int16">
+        <xs:restriction base="xs:short"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt16">
+        <xs:restriction base="xs:unsignedShort"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int32">
+        <xs:restriction base="xs:int"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt31">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1073741823"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="UInt32">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+    <xs:simpleType name="Float32">
+        <xs:restriction base="xs:float"/>
+    </xs:simpleType>
+    <xs:simpleType name="String">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="Boolean">
+        <xs:restriction base="xs:boolean"/>
+    </xs:simpleType>
+    <xs:simpleType name="Name">
+        <xs:restriction base="xs:Name"/>
+    </xs:simpleType>
+    <xs:simpleType name="DateTime">
+        <xs:restriction base="xs:dateTime"/>
+    </xs:simpleType>
+    <xs:simpleType name="Token">
+        <xs:restriction base="xs:token"/>
+    </xs:simpleType>
+    <!-- Aggregate types -->
+    <xs:simpleType name="ByteList">
+        <xs:list itemType="Byte"/>
+    </xs:simpleType>
+    <xs:simpleType name="UByteList">
+        <xs:list itemType="UByte"/>
+    </xs:simpleType>
+    <xs:simpleType name="Float32List">
+        <xs:list itemType="Float32"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt16List">
+        <xs:list itemType="UInt16"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int16List">
+        <xs:list itemType="Int16"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt31List">
+        <xs:list itemType="UInt31"/>
+    </xs:simpleType>
+    <xs:simpleType name="UInt32List">
+        <xs:list itemType="UInt32"/>
+    </xs:simpleType>
+    <xs:simpleType name="Int32List">
+        <xs:list itemType="Int32"/>
+    </xs:simpleType>
+    <!-- Simple Arrays -->
+    <xs:simpleType name="Vector2D">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Vector3D">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Vector4D">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Matrix">
+        <xs:restriction base="Float32List">
+            <xs:minLength value="16"/>
+            <xs:maxLength value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Enumerations -->
+	<xs:simpleType name="MorphMethodType">
+		<xs:restriction base="String">
+			<xs:enumeration value="NORMALIZED"/>
+			<xs:enumeration value="RELATIVE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NodeType">
+		<xs:restriction base="String">
+			<xs:enumeration value="JOINT"/>
+			<xs:enumeration value="NODE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InternalRefernece">
+		<xs:restriction base="String">
+			<xs:pattern value="(#(.*))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UpAxisType">
+		<xs:restriction base="String">
+			<xs:enumeration value="X_UP"/>
+			<xs:enumeration value="Y_UP"/>
+			<xs:enumeration value="Z_UP"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VersionType">
+		<xs:restriction base="String">
+			<xs:enumeration value="1.4.0"/>
+			<xs:enumeration value="1.4.1"/>
+		</xs:restriction>
+	</xs:simpleType>
+    <!-- Complex types -->
+    <!-- Root Element -->
+    <xs:element name="COLLADA">
+        <xs:annotation>
+            <xs:appinfo>enable-xmlns</xs:appinfo>
+            <xs:documentation>
+                The COLLADA element is the root of the document that describes
+                the content of a COLLADA compatible JSR184/297 file
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="asset"/>
+            </xs:sequence>
+            <xs:attribute name="version"
+                          type="VersionType"
+                          use="required"/>
+            <xs:attribute ref="xml:base"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- Groupings -->
+
+    <!-- Content Elements -->
+    <xs:element name="asset">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="contributor"
+                            minOccurs="0"
+                            maxOccurs="unbounded"/>
+                <xs:element name="created"
+                            type="DateTime"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="contributor"/>
+
+    <!-- END Schema -->
+</xs:schema>

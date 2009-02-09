@@ -23,6 +23,7 @@
 
     <property name="m3x.xml.package" value="m3x.xml"/>
     <property name="m3x.m3g.package" value="m3x.m3g"/>
+    <property name="m3x.collada.package" value="m3x.collada"/>
     <property name="m3x.translation.package" value="m3x.translation"/>
 
     <property name="checkstyle.policy" location="${basedir}/checkstyle-policy.xml"/>
@@ -46,6 +47,10 @@
              destdir="${build.src.dir}">
             <schema file="${schema.dir}/m3x.xsd"/>
         </xjc>
+        <xjc package="${m3x.collada.package}"
+             destdir="${build.src.dir}">
+            <schema file="${schema.dir}/collada.xsd"/>
+        </xjc>
         <javac destdir="${build.dir}"
                fork="true"
                debug="true">
@@ -63,6 +68,9 @@
         <!--add the schema to the build path-->
         <copy todir="${build.dir}/m3x/xml"
               file="${schema.dir}/m3x.xsd"/>
+        <!--add the schema to the build path-->
+        <copy todir="${build.dir}/m3x/collada"
+              file="${schema.dir}/collada.xsd"/>
     </target>
     
     <target name="clean">

@@ -1,41 +1,36 @@
+/**
+ * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package m3x.translation;
 
-import m3x.m3g.Camera;
-import m3x.xml.CameraProjectionModeType;
-
+/**
+ * 
+ * @author jgasseli
+ */
 public class CameraTranslatorTest extends TranslatorSupport
 {
-  public void testTranslator()
-  {
-    /*CameraTranslator translator = new CameraTranslator();
-        
-    m3x.xml.Camera c1 = new m3x.xml.Camera();
-    c1.setAlphaFactor(0.1f);
-    c1.setAspectRatio(1.0f);
-    c1.setFar(2.0f);
-    c1.setFovy(90.0f);
-    c1.setNear(1.0f);
-
-    c1.setProjectionType(CameraProjectionModeType.PERSPECTIVE);
-    
-    fillTransformableData(c1);
-    
-    m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.Section section = new m3x.xml.Section();
-    m3xRoot.getSection().add(section);
-    
-    m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
-    section.getObjects().add(at);
-    m3x.xml.AnimationTrackInstance ati = new m3x.xml.AnimationTrackInstance();
-    ati.setRef(at);
-    c1.setAnimationTrackInstance(ati);
-
-    translator.set(c1, m3xRoot, null);
-    Camera c2 = (Camera)translator.toM3G();
-   
-    assertTrue(c1.getAspectRatio() == c2.getAspectRatio());
-    assertTrue(c1.getFar() == c2.getFar());
-    assertTrue(c1.getFovy() == c2.getFovy());
-    assertTrue(c1.getNear() == c2.getNear());*/
-  }
 }

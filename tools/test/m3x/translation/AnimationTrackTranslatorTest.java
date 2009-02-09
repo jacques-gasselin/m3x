@@ -1,47 +1,36 @@
+/**
+ * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package m3x.translation;
 
-import m3x.m3g.AnimationTrack;
-import m3x.xml.AnimationTargetType;
-
 /**
- * TODO: add comp. of values between m3x and m3g if possible.
- * 
  * @author jsaarinen
+ * @author jgasseli
  */
 public class AnimationTrackTranslatorTest extends TranslatorSupport
 {
-  public void testTranslator()
-  {
-    /*AnimationTrackConverter translator = new AnimationTrackConverter();
-    
-    m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
-    at.setProperty(AnimationTargetType.ALPHA);
-
-    m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.Section section = new m3x.xml.Section();
-    m3xRoot.getSection().add(section);
-    
-    m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
-    section.getObjects().add(ac);
-    m3x.xml.AnimationControllerInstance aci = new m3x.xml.AnimationControllerInstance();
-    aci.setRef(ac);
-    at.setAnimationControllerInstance(aci);
-    
-    m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
-    section.getObjects().add(ks);
-    m3x.xml.KeyframeSequenceInstance ksi = new m3x.xml.KeyframeSequenceInstance();
-    ksi.setRef(ks);
-    at.setKeyframeSequenceInstance(ksi);
-    
-    translator.set(at, m3xRoot, null);
-    try
-    {
-      AnimationTrack m3gAT = (AnimationTrack)translator.toM3G();
-      fail("Control should not arrive here.");
-    }
-    catch (Exception e)
-    {
-      //TODO: this is ok for now
-    }*/
-  }
 }

@@ -1,40 +1,36 @@
+/**
+ * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package m3x.translation;
 
-import m3x.m3g.Texture2D;
-
+/**
+ * 
+ * @author jgasseli
+ */
 public class Texture2DTranslatorTest extends TranslatorSupport
 {
-  public void testTranslator()
-  {
-    /*Texture2DTranslator translator = new Texture2DTranslator();
-    
-    m3x.xml.Texture2D t1 = new m3x.xml.Texture2D();
-    
-    m3x.xml.M3G m3xRoot = new m3x.xml.M3G();
-    m3x.xml.Section section = new m3x.xml.Section();
-    m3xRoot.getSection().add(section);
-    
-    m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
-    section.getObjects().add(at);
-    m3x.xml.AnimationTrackInstance ati = new m3x.xml.AnimationTrackInstance();
-    ati.setRef(at);
-    t1.setAnimationTrackInstance(ati);
-    
-    m3x.xml.Image2D image = new m3x.xml.Image2D();
-    section.getObjects().add(image);
-    m3x.xml.Image2DInstance imageInstance = new m3x.xml.Image2DInstance();
-    imageInstance.setRef(image);
-    t1.setImage2DInstance(imageInstance);   
-    
-    translator.set(t1, m3xRoot, null);
-    try
-    {
-      Texture2D t2 = (Texture2D)translator.toM3G();
-      fail("Control should not go here.");
-    }
-    catch (Exception e)
-    {
-      //TODO: should fail
-    }*/
-  }
 }

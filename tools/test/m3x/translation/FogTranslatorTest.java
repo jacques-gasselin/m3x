@@ -1,44 +1,36 @@
+/**
+ * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package m3x.translation;
 
-import m3x.m3g.Fog;
-import m3x.xml.FogEquationType;
-
+/**
+ *
+ * @author jgasseli
+ */
 public class FogTranslatorTest extends TranslatorSupport
 {
-  public void testTranslator()
-  {
-    /*FogTranslator translator = new FogTranslator();
-
-    m3x.xml.Fog m3xFog = new m3x.xml.Fog();
-    m3xFog.setFar(1.0f);
-    m3xFog.setMode(FogEquationType.LINEAR);
-    m3xFog.setNear(0.1f);
-    m3xFog.setUserID(666);
-    m3xFog.getColor().clear();
-    m3xFog.getColor().add((short)1);
-    m3xFog.getColor().add((short)2);
-    m3xFog.getColor().add((short)3);
-    
-    translator.set(m3xFog, null, null);
-    Fog m3gFog = (Fog)translator.toM3G();
-    assertColorRGBEquals(m3gFog.getColor(), m3xFog.getColor());
-    assertTrue(m3gFog.getFar() == m3xFog.getFar().floatValue());
-    assertTrue(m3gFog.getNear() == m3xFog.getNear().floatValue());
-    assertTrue(m3gFog.getMode() == Fog.MODE_LINEAR);
-    
-    m3xFog = new m3x.xml.Fog();
-    m3xFog.setMode(FogEquationType.EXPONENTIAL);
-    m3xFog.setDensity(0.6f);
-    m3xFog.setUserID(666);
-    m3xFog.getColor().clear();
-    m3xFog.getColor().add((short)4);
-    m3xFog.getColor().add((short)5);
-    m3xFog.getColor().add((short)6);
-    
-    translator.set(null);
-    translator.set(m3xFog, null, null);
-    m3gFog = (Fog)translator.toM3G();
-    assertTrue(m3gFog.getDensity() == m3xFog.getDensity());
-    assertTrue(m3gFog.getMode() == Fog.MODE_EXPONENTIAL);*/
-  }
 }
