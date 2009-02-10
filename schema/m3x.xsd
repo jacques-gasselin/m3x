@@ -881,15 +881,18 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="Image2DInstance" minOccurs="0" maxOccurs="1"/>
+                        <xs:choice minOccurs="0">
+                            <xs:element ref="Image2D"/>
+                            <xs:element ref="Image2DInstance"/>
+                        </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="backgroundColor"
+                    <xs:attribute name="color"
                                   type="ColorRGBA"
                                   default="0 0 0 255"/>
-                    <xs:attribute name="backgroundImageModeX"
+                    <xs:attribute name="imageModeX"
                                   type="BackgroundRepeatType"
                                   default="BORDER"/>
-                    <xs:attribute name="backgroundImageModeY"
+                    <xs:attribute name="imageModeY"
                                   type="BackgroundRepeatType"
                                   default="BORDER"/>
                     <xs:attribute name="cropX"

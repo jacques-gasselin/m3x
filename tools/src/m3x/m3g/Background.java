@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -161,6 +162,11 @@ public class Background extends Object3D
         return this.colorClearEnabled;
     }
 
+    public void setColor(List<Short> color)
+    {
+        this.color.set(color);
+    }
+
     public void setColor(int argb)
     {
         this.color.set(argb);
@@ -193,5 +199,12 @@ public class Background extends Object3D
         this.cropY = y;
         this.cropWidth = width;
         this.cropHeight = height;
+    }
+
+    public void setImageMode(String modeX, String modeY)
+    {
+        setImageMode(
+            getFieldValue(modeX, "modeX"),
+            getFieldValue(modeY, "modeY"));
     }
 }

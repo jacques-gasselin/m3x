@@ -47,6 +47,44 @@ public class BackgroundConverter extends Object3DConverter
         m3x.m3g.Background to, m3x.xml.Background from)
     {
         super.setFromXML(translator, to, from);
-        //TODO implement
+
+        to.setColor(from.getColor());
+        to.setImage(getImage2D(translator, from));
+        //set crop
+        {
+            //only override values that were explicitly
+            //set in the XML file.
+            int x = getOptionalValueWithDefault(
+                from.getCropX(), to.getCropX());
+            int y = getOptionalValueWithDefault(
+                from.getCropY(), to.getCropY());
+            int width = getOptionalValueWithDefault(
+                from.getCropWidth(), to.getCropWidth());
+            int height = getOptionalValueWithDefault(
+                from.getCropHeight(), to.getCropHeight());
+            to.setCrop(x, y, width, height);
+        }
+        to.setImageMode(from.getImageModeX().value(),
+            from.getImageModeY().value());
+        to.setColorClearEnable(from.isColorClearEnabled());
+        to.setDepthClearEnable(from.isDepthClearEnabled());
+    }
+
+    private static final int getOptionalValueWithDefault(final Integer value,
+        final int defaultValue)
+    {
+        if (value == null)
+        {
+            return defaultValue;
+        }
+        return value.intValue();
+    }
+
+    private static m3x.m3g.Image2D getImage2D(
+        XmlToBinaryTranslator translator, m3x.xml.Background from)
+    {
+        m3x.xml.Image2D image = getObjectOrInstance(
+            from.getImage2D(), from.getImage2DInstance());
+        return (m3x.m3g.Image2D) translator.getReference(image);
     }
 }
