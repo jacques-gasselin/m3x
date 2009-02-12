@@ -174,7 +174,7 @@ public abstract class Node extends Transformable implements Serialisable
         this.scope = scope;
     }
 
-    public Node getParent()
+    public final Node getParent()
     {
         return parent;
     }
@@ -205,7 +205,7 @@ public abstract class Node extends Transformable implements Serialisable
         setAlphaFactorByte(factor);
     }
 
-    protected void setParent(Node parent)
+    protected final void setParent(final Node parent)
     {
         if ((parent != null) && (getParent() != null))
         {

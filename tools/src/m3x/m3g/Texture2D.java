@@ -157,7 +157,10 @@ public class Texture2D extends Transformable implements SectionSerialisable
 
     public void setBlendColor(List<Short> blendColor)
     {
-        this.blendColor.set(blendColor);
+        if (blendColor != null && blendColor.size() > 0)
+        {
+            this.blendColor.set(blendColor);
+        }
     }
 
     public void setBlending(int func)

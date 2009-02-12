@@ -1237,12 +1237,24 @@
                             <xs:element ref="Image2DInstance"/>
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="blendColor" type="ColorRGB"/>
-                    <xs:attribute name="blending" type="Texture2DBlendModeType"/>
-                    <xs:attribute name="wrappingS" type="Texture2DWrapModeType"/>
-                    <xs:attribute name="wrappingT" type="Texture2DWrapModeType"/>
-                    <xs:attribute name="levelFilter" type="TextureMipmapModeType"/>
-                    <xs:attribute name="imageFilter" type="TextureFilterModeType"/>
+                    <xs:attribute name="blendColor"
+                                  type="ColorRGB"
+                                  default="0 0 0"/>
+                    <xs:attribute name="blending"
+                                  type="Texture2DBlendModeType"
+                                  default="FUNC_MODULATE"/>
+                    <xs:attribute name="wrappingS"
+                                  type="Texture2DWrapModeType"
+                                  default="WRAP_REPEAT"/>
+                    <xs:attribute name="wrappingT"
+                                  type="Texture2DWrapModeType"
+                                  default="WRAP_REPEAT"/>
+                    <xs:attribute name="levelFilter"
+                                  type="TextureMipmapModeType"
+                                  default="FILTER_BASE_LEVEL"/>
+                    <xs:attribute name="imageFilter"
+                                  type="TextureFilterModeType"
+                                  default="FILTER_NEAREST"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
