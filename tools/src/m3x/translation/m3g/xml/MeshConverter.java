@@ -46,7 +46,7 @@ public class MeshConverter extends NodeConverter
     }
 
     protected final void setFromXML(XmlToBinaryTranslator translator,
-        m3x.m3g.Mesh to, m3x.xml.Mesh from)
+        m3x.m3g.Mesh to, m3x.xml.MeshType from)
     {
         super.setFromXML(translator, to, from);
         to.setVertexBuffer(getVertexBuffer(translator, from));
@@ -62,7 +62,7 @@ public class MeshConverter extends NodeConverter
     }
 
     private static m3x.m3g.VertexBuffer getVertexBuffer(
-        XmlToBinaryTranslator translator, m3x.xml.Mesh from)
+        XmlToBinaryTranslator translator, m3x.xml.MeshType from)
     {
         m3x.xml.VertexBuffer vb = getObjectOrInstance(
             from.getVertexBuffer(), from.getVertexBufferInstance());

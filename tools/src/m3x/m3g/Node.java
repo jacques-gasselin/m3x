@@ -174,7 +174,7 @@ public abstract class Node extends Transformable implements Serialisable
         this.scope = scope;
     }
 
-    public final Node getParent()
+    public Node getParent()
     {
         return parent;
     }

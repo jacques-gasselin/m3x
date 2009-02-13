@@ -46,7 +46,7 @@ public class SkinnedMeshConverter extends Object3DConverter
     protected final void setFromXML(XmlToBinaryTranslator translator,
         m3x.m3g.SkinnedMesh to, m3x.xml.SkinnedMesh from)
     {
-        super.setFromXML(translator, to, from);
+        super.setFromXML(translator, to, (m3x.xml.MeshType)from);
 
         to.setSkeleton(getSkeleton(translator, from));
 

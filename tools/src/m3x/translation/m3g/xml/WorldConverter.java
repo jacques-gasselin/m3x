@@ -46,7 +46,7 @@ public class WorldConverter extends GroupConverter
     protected final void setFromXML(XmlToBinaryTranslator translator,
         m3x.m3g.World to, m3x.xml.World from)
     {
-        super.setFromXML(translator, to, from);
+        super.setFromXML(translator, to, (m3x.xml.GroupType)from);
         to.setActiveCamera((m3x.m3g.Camera)
             translator.getReference((m3x.xml.Camera) from.getActiveCamera()));
         to.setBackground((m3x.m3g.Background)

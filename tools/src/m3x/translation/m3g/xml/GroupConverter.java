@@ -47,7 +47,7 @@ public class GroupConverter extends NodeConverter
     }
 
     protected final void setFromXML(XmlToBinaryTranslator translator,
-        m3x.m3g.Group to, m3x.xml.Group from)
+        m3x.m3g.Group to, m3x.xml.GroupType from)
     {
         super.setFromXML(translator, to, from);
         to.setAlphaFactor(from.getAlphaFactor());
@@ -57,8 +57,8 @@ public class GroupConverter extends NodeConverter
         to.setChildNodes(getChildNodes(translator, from));
     }
     
-    private static List<m3x.m3g.Node> getChildNodes(
-        XmlToBinaryTranslator translator, m3x.xml.Group from)
+    private static final List<m3x.m3g.Node> getChildNodes(
+        XmlToBinaryTranslator translator, m3x.xml.GroupType from)
     {
         List<m3x.m3g.Node> childNodes = null;
         if (from.getChildNodes() != null)
