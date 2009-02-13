@@ -316,6 +316,18 @@
             <xs:enumeration value="LOOP"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="KeyframeEncodingType">
+        <xs:annotation>
+            <xs:documentation>
+                The allowed encoding modes for a keyframesequence element
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FLOAT"/>
+            <xs:enumeration value="BYTE"/>
+            <xs:enumeration value="SHORT"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="LightType">
         <xs:annotation>
             <xs:documentation>
@@ -476,18 +488,20 @@
                           type="String"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="section" type="Section"/>
-    <xs:complexType name="Section">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:annotation>
-                <xs:appinfo>
-                    <jaxb:property name="objects"/>
-                </xs:appinfo>
-            </xs:annotation>
-            <xs:group ref="RootElementGroup">
-            </xs:group>
-        </xs:sequence>
-    </xs:complexType>
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property name="objects"/>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:group ref="RootElementGroup">
+                </xs:group>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Helper types -->
     <xs:group name="RootElementGroup">
         <xs:choice>
             <xs:element ref="AnimationController"/>
@@ -503,6 +517,7 @@
             <xs:element ref="Light"/>
             <xs:element ref="Material"/>
             <xs:element ref="Mesh"/>
+            <xs:element ref="MorphingMesh"/>
             <xs:element ref="PolygonMode"/>
             <xs:element ref="SkinnedMesh"/>
             <xs:element ref="Texture2D"/>
@@ -521,102 +536,35 @@
             <xs:element ref="SkinnedMesh"/>
         </xs:choice>
     </xs:group>
-    <!-- Helper types -->
-    <xs:element name="Transform">
-        <xs:annotation>
-            <xs:documentation>
-                Matrix transformations embody mathematical changes to points within a coordinate systems or the
-                coordinate system itself. The Transform element contains a 4-by-4 matrix of floating-point values.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-            <xs:restriction base="Matrix"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="ProjectionTransform">
-        <xs:annotation>
-            <xs:documentation>
-                Matrix transformations embody mathematical changes to points within a coordinate systems or the
-                coordinate system itself. The Transform element contains a 4-by-4 matrix of floating-point values.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-            <xs:restriction base="Matrix"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="translation"
-                default="0.0 0.0 0.0">
-        <xs:simpleType>
-            <xs:restriction base="Vector3D"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="bias"
-                default="0.0 0.0 0.0">
-        <xs:simpleType>
-            <xs:restriction base="Float32List">
-                <xs:minLength value="1"/>
-                <xs:maxLength value="3"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="scale"
-                default="1.0 1.0 1.0">
-        <xs:simpleType>
-            <xs:restriction base="Vector3D"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="orientation"
-                default="0.0 0.0 0.0">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="Vector3D">
-                    <xs:attribute name="angle"
-                                  type="Float32"
-                                  default="0.0"/>
-                </xs:extension>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="palette">
-        <xs:simpleType>
-            <xs:restriction base="UByteList"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="pixels">
-        <xs:simpleType>
-            <xs:restriction base="UByteList"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="keyframes">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="Float32List">
-                    <xs:attribute name="componentCount"
-                                  type="UInt31"
-                                  use="required"/>
-                </xs:extension>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="keytimes">
-        <xs:simpleType>
-            <xs:restriction base="UInt31List"/>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="float_array">
-        <xs:simpleType>
-            <xs:restriction base="Float32List">
-                <xs:minLength value="1"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="int_array">
-        <xs:simpleType>
-            <xs:restriction base="Int32List">
-                <xs:minLength value="1"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
+    <xs:group name="AnimationTrackOrInstance">
+        <xs:choice>
+            <xs:element ref="AnimationTrack"/>
+            <xs:element ref="AnimationTrackInstance"/>
+        </xs:choice>
+    </xs:group>
+    <xs:group name="VertexArrayOrInstance">
+        <xs:choice>
+            <xs:element ref="VertexArray"/>
+            <xs:element ref="VertexArrayInstance"/>
+        </xs:choice>
+    </xs:group>
+    <xs:complexType name="ScaleBiasedVertexArray">
+        <xs:sequence>
+            <xs:element name="bias"
+                        default="0.0 0.0 0.0">
+                <xs:simpleType>
+                    <xs:restriction base="Float32List">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:group ref="VertexArrayOrInstance"/>
+        </xs:sequence>
+        <xs:attribute name="scale"
+                      type="Float32"
+                      default="1.0"/>
+    </xs:complexType>
     <!-- M3G types -->
     <xs:complexType name="InstanceType" abstract="true">
         <xs:annotation>
@@ -640,23 +588,17 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="AnimationTrack">
+                <xs:group ref="AnimationTrackOrInstance">
                     <xs:annotation>
                         <xs:documentation>
                             An object can have any number of animation tracks targeting it.
                         </xs:documentation>
                     </xs:annotation>
-                </xs:element>
-                <xs:element ref="AnimationTrackInstance">
-                    <xs:annotation>
-                        <xs:documentation>
-                            An object can have any number of animation tracks targeting it.
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:element>
+                </xs:group>
             </xs:choice>
         </xs:sequence>
-        <xs:attribute name="id" type="xs:ID">
+        <xs:attribute name="id"
+                      type="xs:ID">
             <xs:annotation>
                 <xs:documentation>
                     The id attribute is a text string containing the unique id of this element.
@@ -664,7 +606,9 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="userID" type="Int32" default="0">
+        <xs:attribute name="userID"
+                      type="Int32"
+                      default="0">
             <xs:annotation>
                 <xs:documentation>
                     The userID attribute is an integer that can be used by an application to find the object in the
@@ -677,10 +621,35 @@
         <xs:complexContent>
             <xs:extension base="Object3D">
                 <xs:sequence>
-                    <xs:element ref="translation" minOccurs="0" maxOccurs="1"/>
-                    <xs:element ref="orientation" minOccurs="0" maxOccurs="1"/>
-                    <xs:element ref="scale" minOccurs="0" maxOccurs="1"/>
-                    <xs:element ref="Transform" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="translation" minOccurs="0" maxOccurs="1"
+                                default="0.0 0.0 0.0">
+                        <xs:simpleType>
+                            <xs:restriction base="Vector3D"/>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="orientation" minOccurs="0" maxOccurs="1"
+                                default="0.0 0.0 0.0">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="Vector3D">
+                                    <xs:attribute name="angle"
+                                                  type="Float32"
+                                                  default="0.0"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="scale" minOccurs="0" maxOccurs="1"
+                                default="1.0 1.0 1.0">
+                        <xs:simpleType>
+                            <xs:restriction base="Vector3D"/>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Transform" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                            <xs:restriction base="Matrix"/>
+                        </xs:simpleType>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -701,10 +670,12 @@
     <xs:complexType name="GroupType">
         <xs:complexContent>
             <xs:extension base="Node">
-                <xs:sequence maxOccurs="unbounded">
-                    <xs:annotation><xs:appinfo>
-                        <jaxb:property name="childNodes"/>
-                    </xs:appinfo></xs:annotation>  
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <jaxb:property name="childNodes"/>
+                        </xs:appinfo>
+                    </xs:annotation>
                     <xs:group ref="NodeElementGroup"/>
                 </xs:sequence>
             </xs:extension>
@@ -824,7 +795,9 @@
                             </xs:element>
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="targetProperty" type="AnimationTargetType" use="required"/>
+                    <xs:attribute name="targetProperty"
+                                  type="AnimationTargetType"
+                                  use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -918,7 +891,11 @@
             <xs:complexContent>
                 <xs:extension base="Node">
                     <xs:sequence>
-                        <xs:element ref="ProjectionTransform" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="ProjectionTransform" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="Matrix"/>
+                            </xs:simpleType>
+                        </xs:element>
                     </xs:sequence>
                     <xs:attribute name="projectionType"
                                   type="CameraProjectionModeType"
@@ -1016,8 +993,16 @@
             <xs:complexContent>
                 <xs:extension base="Image2DType">
                     <xs:sequence>
-                        <xs:element ref="palette" minOccurs="0"/>
-                        <xs:element ref="pixels"/>
+                        <xs:element name="palette" minOccurs="0">
+                            <xs:simpleType>
+                                <xs:restriction base="UByteList"/>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="pixels">
+                            <xs:simpleType>
+                                <xs:restriction base="UByteList"/>
+                            </xs:simpleType>
+                        </xs:element>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -1043,21 +1028,43 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="keytimes"/>
-                        <xs:element ref="keyframes"/>
+                        <xs:element name="keytimes">
+                            <xs:simpleType>
+                                <xs:restriction base="UInt31List"/>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="keyframes">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="Float32List">
+                                        <xs:attribute name="componentCount"
+                                                      type="UInt31"
+                                                      use="required"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                     <xs:attribute name="keyframeCount"
-                                  type="UInt31"/>
+                                  type="UInt31"
+                                  use="required"/>
+                    <xs:attribute name="encoding"
+                                  type="KeyframeEncodingType"
+                                  default="FLOAT"/>
                     <xs:attribute name="duration"
-                                  type="UInt31"/>
+                                  type="UInt31"
+                                  use="required"/>
                     <xs:attribute name="interpolation"
-                                  type="KeyframeInterpolationType"/>
+                                  type="KeyframeInterpolationType"
+                                  use="required"/>
                     <xs:attribute name="validRangeFirst"
-                                  type="UInt31"/>
+                                  type="UInt31"
+                                  default="0"/>
                     <xs:attribute name="validRangeLast"
                                   type="UInt31"/>
                     <xs:attribute name="repeatMode"
-                                  type="KeyframePlaybackType"/>
+                                  type="KeyframePlaybackType"
+                                  default="CONSTANT"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1293,7 +1300,13 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:sequence>
-                        <xs:element ref="int_array"/>
+                        <xs:element name="int_array">
+                            <xs:simpleType>
+                                <xs:restriction base="Int32List">
+                                    <xs:minLength value="1"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
                     </xs:sequence>
                     <xs:attribute name="componentCount"
                                   type="UByte"
@@ -1319,46 +1332,26 @@
                     <xs:sequence>
                         <xs:element name="positions">
                             <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element ref="bias" minOccurs="0"/>
-                                    <xs:choice>
-                                        <xs:element ref="VertexArray"/>
-                                        <xs:element ref="VertexArrayInstance"/>
-                                    </xs:choice>
-                                </xs:sequence>
-                                <xs:attribute name="scale"
-                                              type="Float32"
-                                              default="1.0"/>
+                                <xs:complexContent>
+                                    <xs:extension base="ScaleBiasedVertexArray"/>
+                                </xs:complexContent>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="normals" minOccurs="0">
                             <xs:complexType>
-                                <xs:choice>
-                                    <xs:element ref="VertexArray"/>
-                                    <xs:element ref="VertexArrayInstance"/>
-                                </xs:choice>
+                                <xs:group ref="VertexArrayOrInstance"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="colors" minOccurs="0">
                             <xs:complexType>
-                                <xs:choice>
-                                    <xs:element ref="VertexArray"/>
-                                    <xs:element ref="VertexArrayInstance"/>
-                                </xs:choice>
+                                <xs:group ref="VertexArrayOrInstance"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="texcoords" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element ref="bias" minOccurs="0"/>
-                                    <xs:choice>
-                                        <xs:element ref="VertexArray"/>
-                                        <xs:element ref="VertexArrayInstance"/>
-                                    </xs:choice>
-                                </xs:sequence>
-                                <xs:attribute name="scale"
-                                              type="Float32"
-                                              default="1.0"/>
+                                <xs:complexContent>
+                                    <xs:extension base="ScaleBiasedVertexArray"/>
+                                </xs:complexContent>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>

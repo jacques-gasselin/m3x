@@ -27,6 +27,7 @@
 
 package m3x.translation.m3g.xml;
 
+import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -47,6 +48,17 @@ public class KeyframeSequenceConverter extends Object3DConverter
         m3x.m3g.KeyframeSequence to, m3x.xml.KeyframeSequence from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+        to.setEncoding(from.getEncoding().value());
+        to.setRepeatMode(from.getRepeatMode().value());
+        to.setInterpolationType(from.getInterpolation().value());
+        to.setDuration(from.getDuration());
+        
+        m3x.xml.KeyframeSequence.Keyframes keyframes = from.getKeyframes();
+        to.setSize(from.getKeyframeCount(), keyframes.getComponentCount());
+        to.setValidRange(from.getValidRangeFirst(), from.getValidRangeLast());
+        
+        List<Integer> times = from.getKeytimes();
+        List<Float> values = keyframes.getValue();
+        to.setKeyframes(times, values);
     }
 }

@@ -27,7 +27,6 @@
 
 package m3x.m3g;
 
-import m3x.m3g.KeyframeSequence.FloatKeyFrame;
 
 /**
  *
@@ -41,11 +40,11 @@ public class KeyframeSequenceTest extends AbstractTestCase
     public KeyframeSequenceTest()
     {
         sequence = new KeyframeSequence();
-        FloatKeyFrame[] frames = new FloatKeyFrame[3];
+        /*FloatKeyFrame[] frames = new FloatKeyFrame[3];
         frames[0] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 0, 1});
         frames[1] = new KeyframeSequence.FloatKeyFrame(0, new float[]{1, 0, 0});
         frames[2] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 1, 0});
-        sequence.setKeyframes(frames);
+        sequence.setKeyframes(frames);*/
         sequence.setInterpolationType(KeyframeSequence.STEP);
     }
 

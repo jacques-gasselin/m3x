@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.util.Arrays;
@@ -72,163 +73,35 @@ import java.util.Set;
 public class KeyframeSequence extends Object3D
 {
     /**
-     * Abstract base class for all types of key frames.
-     *
+     * Keyframe class in floating point.
      * @author jsaarinen
+     * @author jgasseli
      */
-    public static abstract class KeyFrame
+    private static final class FloatKeyFrame
     {
         private int time;
+        private final float[] value;
 
-        public KeyFrame(int time)
+        private FloatKeyFrame(int componentCount)
         {
-            this.time = time;
+            value = new float[componentCount];
         }
 
-        public int getTime()
+        public final void set(int time, float[] value)
+        {
+            this.time = time;
+            System.arraycopy(value, 0,
+                this.value, 0, this.value.length);
+        }
+
+        public final int getTime()
         {
             return this.time;
         }
 
-        public boolean equals(Object obj)
+        public final float[] getValue()
         {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof KeyFrame))
-            {
-                return false;
-            }
-            return this.time == ((KeyFrame) obj).time;
-        }
-
-        public abstract int getComponentCount();
-    }
-
-    /**
-     * Keyframe class in floating point.
-     *
-     * @author jsaarinen
-     */
-    public static class FloatKeyFrame extends KeyFrame
-    {
-
-        private float[] vectorValue;
-
-        public FloatKeyFrame(int time, float[] vectorValue)
-        {
-            super(time);
-            this.vectorValue = vectorValue;
-        }
-
-        public float[] getVectorValue()
-        {
-            return this.vectorValue;
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof FloatKeyFrame))
-            {
-                return false;
-            }
-            FloatKeyFrame another = (FloatKeyFrame) obj;
-            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
-        }
-
-        @Override
-        public int getComponentCount()
-        {
-            return this.vectorValue.length;
-        }
-    }
-
-    /**
-     * Keyframe class in integer.
-     *
-     * @author jsaarinen
-     */
-    public static class ByteKeyFrame extends KeyFrame
-    {
-
-        private byte[] vectorValue;
-
-        public ByteKeyFrame(int time, byte[] vectorValue)
-        {
-            super(time);
-            this.vectorValue = vectorValue;
-        }
-
-        public byte[] getVectorValue()
-        {
-            return this.vectorValue;
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof ByteKeyFrame))
-            {
-                return false;
-            }
-            ByteKeyFrame another = (ByteKeyFrame) obj;
-            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
-        }
-
-        @Override
-        public int getComponentCount()
-        {
-            return this.vectorValue.length;
-        }
-    }
-
-    /**
-     * Keyframe class in integer.
-     *
-     * @author jsaarinen
-     */
-    public static class ShortKeyFrame extends KeyFrame
-    {
-
-        private short[] vectorValue;
-
-        public ShortKeyFrame(int time, short[] vectorValue)
-        {
-            super(time);
-            this.vectorValue = vectorValue;
-        }
-
-        public short[] getVectorValue()
-        {
-            return this.vectorValue;
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (!(obj instanceof ShortKeyFrame))
-            {
-                return false;
-            }
-            ShortKeyFrame another = (ShortKeyFrame) obj;
-            return super.equals(obj) && Arrays.equals(this.vectorValue, another.vectorValue);
-        }
-
-        @Override
-        public int getComponentCount()
-        {
-            return this.vectorValue.length;
+            return this.value;
         }
     }
 
@@ -239,9 +112,9 @@ public class KeyframeSequence extends Object3D
     public static final int SPLINE = 178;
     public static final int SQUAD = 179;
     public static final int STEP = 180;
+    
     private static final Set<Integer> INTERPOLATION_MODES = new HashSet<Integer>();
     private static final Set<Integer> REPEAT_MODES = new HashSet<Integer>();
-
 
     static
     {
@@ -255,9 +128,10 @@ public class KeyframeSequence extends Object3D
         REPEAT_MODES.add(LOOP);
     }
     
-    private static final int ENCODING_FLOATS = 0;
-    private static final int ENCODING_BYTES = 1;
-    private static final int ENCODING_SHORTS = 2;
+    public static final int FLOAT = 0;
+    public static final int BYTE = 1;
+    public static final int SHORT = 2;
+    
     private int interpolationType;
     private int repeatMode;
     private int encoding;
@@ -265,9 +139,7 @@ public class KeyframeSequence extends Object3D
     private int validRangeFirst;
     private int validRangeLast;
     private int componentCount;
-    private KeyFrame[] keyFrames;
-    private float[] vectorBias;
-    private float[] vectorScale;
+    private FloatKeyFrame[] keyFrames;
 
     public KeyframeSequence()
     {
@@ -282,76 +154,142 @@ public class KeyframeSequence extends Object3D
         super.deserialise(deserialiser);
         setInterpolationType(deserialiser.readUnsignedByte());
         setRepeatMode(deserialiser.readUnsignedByte());
-        this.encoding = deserialiser.readUnsignedByte();
-        this.duration = deserialiser.readInt();
-        this.validRangeFirst = deserialiser.readInt();
-        this.validRangeLast = deserialiser.readInt();
-        this.componentCount = deserialiser.readInt();
-        int keyframeCount = deserialiser.readInt();
+        final int encoding = deserialiser.readUnsignedByte();
+        setEncoding(encoding);
+        setDuration(deserialiser.readInt());
+        final int first = deserialiser.readInt();
+        final int last = deserialiser.readInt();
+        setValidRange(first, last);
+        final int componentCount = deserialiser.readInt();
+        final int keyframeCount = deserialiser.readInt();
+        setSize(keyframeCount, componentCount);
 
-        switch (this.encoding)
+        KeyframeReader reader = null;
+        switch (encoding)
         {
-            case ENCODING_FLOATS:
-                this.keyFrames = new FloatKeyFrame[keyframeCount];
-                for (int i = 0; i < getKeyframeCount(); i++)
-                {
-                    int time = deserialiser.readInt();
-                    float vectorValue[] = new float[this.componentCount];
-                    for (int j = 0; j < this.componentCount; j++)
-                    {
-                        vectorValue[j] = deserialiser.readFloat();
-                    }
-                    this.keyFrames[i] = new FloatKeyFrame(time, vectorValue);
-                }
+            case FLOAT:
+                reader = new FloatKeyframeReader();
                 break;
-
-            case ENCODING_BYTES:
-                readBiasAndScale(deserialiser);
-                this.keyFrames = new ByteKeyFrame[keyframeCount];
-                for (int i = 0; i < getKeyframeCount(); i++)
-                {
-                    int time = deserialiser.readInt();
-                    byte vectorValue[] = new byte[this.componentCount];
-                    for (int j = 0; j < this.componentCount; j++)
-                    {
-                        vectorValue[j] = deserialiser.readByte();
-                    }
-                    this.keyFrames[i] = new ByteKeyFrame(time, vectorValue);
-                }
+            case BYTE:
+                reader = new ByteKeyframeReader(deserialiser, componentCount);
                 break;
-
-            case ENCODING_SHORTS:
-                readBiasAndScale(deserialiser);
-                this.keyFrames = new ShortKeyFrame[keyframeCount];
-                for (int i = 0; i < getKeyframeCount(); i++)
-                {
-                    int time = deserialiser.readInt();
-                    short vectorValue[] = new short[this.componentCount];
-                    for (int j = 0; j < this.componentCount; j++)
-                    {
-                        vectorValue[j] = deserialiser.readShort();
-                    }
-                    this.keyFrames[i] = new ShortKeyFrame(time, vectorValue);
-                }
+            case SHORT:
+                reader = new ShortKeyframeReader(deserialiser, componentCount);
                 break;
+        }
 
-            default:
-                throw new IllegalStateException("Invalid encoding: " + this.encoding);
+        final float value[] = new float[componentCount];
+        for (int i = 0; i < keyframeCount; ++i)
+        {
+            final int time = deserialiser.readInt();
+            reader.readKeyframe(deserialiser, value, componentCount);
+            setKeyframe(i, time, value);
         }
     }
 
-    private void readBiasAndScale(Deserialiser deserialiser) throws IOException
+    public void setKeyframes(List<Integer> times, List<Float> values)
     {
-        this.vectorBias = new float[this.componentCount];
-        for (int i = 0; i < this.componentCount; i++)
+        final int keyframeCount = getKeyframeCount();
+        final int componentCount = getComponentCount();
+
+        final float[] value = new float[componentCount];
+        for (int i = 0; i < keyframeCount; ++i)
         {
-            this.vectorBias[i] = deserialiser.readFloat();
+            final int time = times.get(i).intValue();
+            final int offset = i * componentCount;
+            for (int j = 0; j < componentCount; ++j)
+            {
+                value[j] = values.get(offset + j).floatValue();
+            }
+            setKeyframe(i, time, value);
+        }
+    }
+
+    /**
+     * Interface for simplifying keyframe deserialising
+     * @author jgasseli
+     */
+    private interface KeyframeReader
+    {
+        public void readKeyframe(Deserialiser deserialiser, float[] value,
+            final int componentCount) throws IOException;
+    }
+
+    private static final class FloatKeyframeReader implements KeyframeReader
+    {
+        public final void readKeyframe(Deserialiser deserialiser, float[] value,
+            final int componentCount) throws IOException
+        {
+            for (int j = 0; j < componentCount; ++j)
+            {
+                value[j] = deserialiser.readFloat();
+            }
+        }
+    }
+    
+    private static abstract class ScaleBiasedKeyframeReader implements KeyframeReader
+    {
+        private final float[] bias;
+        private final float[] scale;
+
+        protected ScaleBiasedKeyframeReader(Deserialiser deserialiser, final int componentCount)
+        {
+            bias = new float[componentCount];
+            scale = new float[componentCount];
         }
 
-        this.vectorScale = new float[this.componentCount];
-        for (int i = 0; i < this.componentCount; i++)
+        public final void readKeyframe(Deserialiser deserialiser, float[] value,
+            final int componentCount) throws IOException
         {
-            this.vectorScale[i] = deserialiser.readFloat();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                final float uniform = readUniform(deserialiser);
+                value[j] = uniform * scale[j] + bias[j];
+            }
+        }
+
+        public abstract float readUniform(Deserialiser deserialiser) throws IOException;
+    }
+
+    private static final class ByteKeyframeReader extends ScaleBiasedKeyframeReader
+    {
+        private static final float FACTOR = 1.0f / 255;
+        
+        public ByteKeyframeReader(Deserialiser deserialiser, int componentCount)
+        {
+            super(deserialiser, componentCount);
+        }
+
+        @Override
+        public final float readUniform(Deserialiser deserialiser) throws IOException
+        {
+            return deserialiser.readUnsignedByte() * FACTOR;
+        }
+    }
+
+    private static final class ShortKeyframeReader extends ScaleBiasedKeyframeReader
+    {
+        private static final float FACTOR = 1.0f / 65535;
+
+        public ShortKeyframeReader(Deserialiser deserialiser, int componentCount)
+        {
+            super(deserialiser, componentCount);
+        }
+
+        @Override
+        public final float readUniform(Deserialiser deserialiser) throws IOException
+        {
+            return deserialiser.readUnsignedShort() * FACTOR;
+        }
+    }
+
+    
+    public void setSize(int keyframeCount, int componentCount)
+    {
+        this.keyFrames = new FloatKeyFrame[keyframeCount];
+        for (int i = 0; i < keyframeCount; ++i)
+        {
+            this.keyFrames[i] = new FloatKeyFrame(componentCount);
         }
     }
 
@@ -360,61 +298,172 @@ public class KeyframeSequence extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.write(this.interpolationType);
-        serialiser.write(this.repeatMode);
-        serialiser.write(getEncoding());
-        serialiser.writeInt(this.duration);
-        serialiser.writeInt(this.validRangeFirst);
-        serialiser.writeInt(this.validRangeLast);
+        serialiser.writeByte(getInterpolationType());
+        serialiser.writeByte(getRepeatMode());
+        final int encoding = getEncoding();
+        serialiser.writeByte(encoding);
+        serialiser.writeInt(getDuration());
+        serialiser.writeInt(getValidRangeFirst());
+        serialiser.writeInt(getValidRangeLast());
 
+        final int componentCount = getComponentCount();
+        final int keyframeCount = getKeyframeCount();
         serialiser.writeInt(componentCount);
-        serialiser.writeInt(getKeyframeCount());
+        serialiser.writeInt(keyframeCount);
 
-        switch (getEncoding())
+        KeyframeWriter writer = null;
+        switch (encoding)
         {
-            case ENCODING_FLOATS:
-                for (FloatKeyFrame keyFrame : (FloatKeyFrame[])this.keyFrames)
-                {
-                    serialiser.writeInt(keyFrame.getTime());
-                    for (float component : keyFrame.getVectorValue())
-                    {
-                        serialiser.writeFloat(component);
-                    }
-                }
+            case FLOAT:
+                writer = new FloatKeyframeWriter();
                 break;
-
-            case ENCODING_BYTES:
-                writeBiasAndScale(serialiser);
-                for (ByteKeyFrame keyFrame : (ByteKeyFrame[])this.keyFrames)
-                {
-                    serialiser.writeInt(keyFrame.getTime());
-                    for (byte component : keyFrame.getVectorValue())
-                    {
-                        serialiser.write(component);
-                    }
-                }
+            case BYTE:
+                writer = new ByteKeyframeWriter(this);
                 break;
-
-            case ENCODING_SHORTS:
-                writeBiasAndScale(serialiser);
-                for (ShortKeyFrame keyFrame : (ShortKeyFrame[])this.keyFrames)
-                {
-                    serialiser.writeInt(keyFrame.getTime());
-                    for (short component : keyFrame.getVectorValue())
-                    {
-                        serialiser.writeShort(component);
-                    }
-                }
+            case SHORT:
+                writer = new ShortKeyframeWriter(this);
                 break;
+        }
 
-            default:
-                assert (false);
+        final float value[] = new float[componentCount];
+        for (int i = 0; i < keyframeCount; ++i)
+        {
+            final int time = getKeyframe(i, value);
+            serialiser.writeInt(time);
+            writer.writeKeyframe(serialiser, value, componentCount);
+        }
+    }
+
+    /**
+     * Interface for simplifying keyframe serialising
+     * @author jgasseli
+     */
+    private interface KeyframeWriter
+    {
+        public void writeKeyframe(Serialiser serialiser, float[] value,
+            final int componentCount) throws IOException;
+    }
+
+    private static final class FloatKeyframeWriter implements KeyframeWriter
+    {
+        public final void writeKeyframe(Serialiser serialiser, float[] value,
+            final int componentCount) throws IOException
+        {
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(value[j]);
+            }
+        }
+    }
+
+    private static abstract class ScaleBiasedKeyframeWriter implements KeyframeWriter
+    {
+        private final float[] bias;
+        private final float[] scale;
+
+        protected ScaleBiasedKeyframeWriter(KeyframeSequence sequence)
+        {
+            final int keyframeCount = sequence.getKeyframeCount();
+            final int componentCount = sequence.getComponentCount();
+            
+            //get max and min
+            final float[] min = new float[componentCount];
+            final float[] max = new float[componentCount];
+            if (keyframeCount > 0)
+            {
+                //set the max and minimum for the first iteration
+                sequence.getKeyframe(0, min);
+                sequence.getKeyframe(0, max);
+            }
+
+            final float[] value = new float[componentCount];
+            for (int i = 0; i < keyframeCount; ++i)
+            {
+                sequence.getKeyframe(i, value);
+                for (int j = 0; j < componentCount; ++j)
+                {
+                    final float v = value[j];
+                    max[j] = Math.max(max[j], v);
+                    min[j] = Math.min(min[j], v);
+                }
+            }
+
+            //bias is min
+            bias = min;
+            //scale is max - min
+            for (int j = 0; j < componentCount; ++j)
+            {
+                max[j] = max[j] - min[j];
+            }
+            scale = max;
+        }
+
+        public final void writeKeyframe(Serialiser serialiser, float[] value,
+            final int componentCount) throws IOException
+        {
+            for (int j = 0; j < componentCount; ++j)
+            {
+                final float uniform = (value[j] - bias[j]) / scale[j];
+                writeUniform(serialiser, uniform);
+            }
+        }
+
+        public abstract void writeUniform(Serialiser serialiser,
+            float uniform) throws IOException;
+    }
+    
+    private static final class ByteKeyframeWriter extends ScaleBiasedKeyframeWriter
+    {
+        private static final int MAX = 255;
+
+        public ByteKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        @Override
+        public void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        {
+            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
+            serialiser.writeByte(value);
+        }
+    }
+
+    private static final class ShortKeyframeWriter extends ScaleBiasedKeyframeWriter
+    {
+        private static final int MAX = 65535;
+
+        public ShortKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        @Override
+        public void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        {
+            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
+            serialiser.writeShort(value);
         }
     }
 
     public int getSectionObjectType()
     {
         return ObjectTypes.KEYFRAME_SEQUENCE;
+    }
+
+    public int getEncoding()
+    {
+        return this.encoding;
+    }
+
+    public void setEncoding(int encoding)
+    {
+        this.encoding = encoding;
+    }
+
+    public void setEncoding(String value)
+    {
+        setEncoding(getFieldValue(value, "encoding"));
     }
 
     public int getInterpolationType()
@@ -431,6 +480,11 @@ public class KeyframeSequence extends Object3D
 
         this.interpolationType = interpolation;
     }
+    
+    public void setInterpolationType(String value)
+    {
+        setInterpolationType(getFieldValue(value, "interpolationType"));
+    }
 
     public int getRepeatMode()
     {
@@ -446,16 +500,11 @@ public class KeyframeSequence extends Object3D
         this.repeatMode = repeatMode;
     }
 
-    public int getEncoding()
+    public void setRepeatMode(String repeatMode)
     {
-        return this.encoding;
+        setRepeatMode(getFieldValue(repeatMode, "repeatMode"));
     }
-
-    private void setEncoding(int encoding)
-    {
-        this.encoding = encoding;
-    }
-
+    
     public int getDuration()
     {
         return this.duration;
@@ -476,67 +525,35 @@ public class KeyframeSequence extends Object3D
         return this.componentCount;
     }
 
-    private void setComponentCount(int componentCount)
-    {
-        this.componentCount = componentCount;
-    }
-
     public int getKeyframeCount()
     {
         return this.keyFrames.length;
     }
 
-    public KeyFrame[] getKeyFrames()
+    public void setDuration(int duration)
     {
-        return this.keyFrames;
+        this.duration = duration;
     }
 
-    public void setKeyframes(FloatKeyFrame[] keyFrames)
+    public void setValidRange(int first, int last)
     {
-        setEncoding(ENCODING_FLOATS);
-        setComponentCount(keyFrames[0].getComponentCount());
-        this.keyFrames = keyFrames;
+        this.validRangeFirst = first;
+        this.validRangeLast = last;
     }
 
-    public void setKeyframes(ShortKeyFrame[] keyFrames)
+    public int getKeyframe(int index, float[] value)
     {
-        setEncoding(ENCODING_SHORTS);
-        setComponentCount(keyFrames[0].getComponentCount());
-        this.keyFrames = keyFrames;
-    }
-
-    public void setKeyframes(ByteKeyFrame[] keyFrames)
-    {
-        setEncoding(ENCODING_BYTES);
-        setComponentCount(keyFrames[0].getComponentCount());
-        this.keyFrames = keyFrames;
-    }
-
-    public void copyKeyframes(KeyFrame[] keyFrames)
-    {
-        System.arraycopy(keyFrames, 0, this.keyFrames, 0, this.keyFrames.length);
-    }
-
-    public float[] getVectorBias()
-    {
-        return this.vectorBias;
-    }
-
-    public float[] getVectorScale()
-    {
-        return this.vectorScale;
-    }
-
-    private void writeBiasAndScale(Serialiser serialiser)
-        throws IOException
-    {
-        for (float component : this.vectorBias)
+        final FloatKeyFrame keyframe = this.keyFrames[index];
+        if (value != null)
         {
-            serialiser.writeFloat(component);
+            System.arraycopy(keyframe.getValue(), 0,
+                value, 0, getComponentCount());
         }
-        for (float component : this.vectorScale)
-        {
-            serialiser.writeFloat(component);
-        }
+        return keyframe.getTime();
+    }
+
+    public void setKeyframe(int index, int time, float[] value)
+    {
+        this.keyFrames[index].set(time, value);
     }
 }

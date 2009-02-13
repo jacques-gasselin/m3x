@@ -46,11 +46,11 @@ public class AnimationTrackTest extends AbstractTestCase
         track.setTargetProperty(AnimationTrack.TRANSLATION);
 
         KeyframeSequence keys = new KeyframeSequence();
-        KeyframeSequence.FloatKeyFrame[] frames = new KeyframeSequence.FloatKeyFrame[3];
+        /*KeyframeSequence.FloatKeyFrame[] frames = new KeyframeSequence.FloatKeyFrame[3];
         frames[0] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 0, 1});
         frames[1] = new KeyframeSequence.FloatKeyFrame(0, new float[]{1, 0, 0});
         frames[2] = new KeyframeSequence.FloatKeyFrame(0, new float[]{0, 1, 0});
-        keys.setKeyframes(frames);
+        keys.setKeyframes(frames);*/
         keys.setInterpolationType(KeyframeSequence.STEP);
         track.setKeyframeSequence(keys);
     }
