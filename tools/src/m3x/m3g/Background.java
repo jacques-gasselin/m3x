@@ -185,6 +185,14 @@ public class Background extends Object3D
     public void setImage(Image2D image)
     {
         this.image = image;
+        if (image == null)
+        {
+            setCrop(0, 0, 0, 0);
+        }
+        else
+        {
+            setCrop(0, 0, image.getWidth(), image.getHeight());
+        }
     }
 
     public void setImageMode(int modeX, int modeY)
