@@ -39,8 +39,9 @@ import m3x.translation.m3g.xml.AnimationControllerConverter;
 import m3x.translation.m3g.xml.AnimationTrackConverter;
 import m3x.translation.m3g.xml.AppearanceConverter;
 import m3x.translation.m3g.xml.BackgroundConverter;
-import m3x.translation.m3g.xml.CameraConverter;
+import m3x.translation.m3g.xml.PerspectiveCameraConverter;
 import m3x.translation.m3g.xml.CompositingModeConverter;
+import m3x.translation.m3g.xml.GenericCameraConverter;
 import m3x.translation.m3g.xml.GroupConverter;
 import m3x.translation.m3g.xml.Image2DConverter;
 import m3x.translation.m3g.xml.KeyframeSequenceConverter;
@@ -48,6 +49,7 @@ import m3x.translation.m3g.xml.LightConverter;
 import m3x.translation.m3g.xml.MaterialConverter;
 import m3x.translation.m3g.xml.MeshConverter;
 import m3x.translation.m3g.xml.MorphingMeshConverter;
+import m3x.translation.m3g.xml.ParallelCameraConverter;
 import m3x.translation.m3g.xml.PolygonModeConverter;
 import m3x.translation.m3g.xml.SkinnedMeshConverter;
 import m3x.translation.m3g.xml.Texture2DConverter;
@@ -79,10 +81,17 @@ public class XmlToBinaryTranslator extends BinaryTranslator
                 AppearanceConverter.class);
         converterMap.put(m3x.xml.Background.class,
                 BackgroundConverter.class);
-        converterMap.put(m3x.xml.Camera.class,
-                CameraConverter.class);
+        converterMap.put(m3x.xml.GenericCamera.class,
+                GenericCameraConverter.class);
+        converterMap.put(m3x.xml.ParallelCamera.class,
+                ParallelCameraConverter.class);
+        converterMap.put(m3x.xml.PerspectiveCamera.class,
+                PerspectiveCameraConverter.class);
         converterMap.put(m3x.xml.CompositingMode.class,
                 CompositingModeConverter.class);
+        //For the skeleton node
+        converterMap.put(m3x.xml.GroupType.class,
+                GroupConverter.class);
         converterMap.put(m3x.xml.Group.class,
                 GroupConverter.class);
         converterMap.put(m3x.xml.Image2D.class,

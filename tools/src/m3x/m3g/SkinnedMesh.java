@@ -51,7 +51,7 @@ import m3x.m3g.util.Object3DReferences;
  */
 public class SkinnedMesh extends Mesh implements SectionSerialisable
 {
-    private static class Bone
+    private static final class Bone
     {
         private Node transformNode;
         private int firstVertex;
@@ -65,10 +65,6 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
             this.firstVertex = firstVertex;
             this.vertexCount = vertexCount;
             this.weight = weight;
-        }
-
-        public Bone()
-        {
         }
 
         public Node getTransformNode()

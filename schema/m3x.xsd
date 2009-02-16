@@ -502,13 +502,20 @@
         </xs:complexType>
     </xs:element>
     <!-- Helper types -->
+    <xs:group name="CameraGroup">
+        <xs:choice>
+            <xs:element ref="GenericCamera"/>
+            <xs:element ref="ParallelCamera"/>
+            <xs:element ref="PerspectiveCamera"/>
+        </xs:choice>
+    </xs:group>
     <xs:group name="RootElementGroup">
         <xs:choice>
             <xs:element ref="AnimationController"/>
             <xs:element ref="AnimationTrack"/>
             <xs:element ref="Appearance"/>
             <xs:element ref="Background"/>
-            <xs:element ref="Camera"/>
+            <xs:group ref="CameraGroup"/>
             <xs:element ref="CompositingMode"/>
             <xs:element ref="Fog"/>
             <xs:element ref="Group"/>
@@ -529,7 +536,7 @@
     </xs:group>
     <xs:group name="NodeElementGroup">
         <xs:choice>
-            <xs:element ref="Camera"/>
+            <xs:group ref="CameraGroup"/>
             <xs:element ref="Group"/>
             <xs:element ref="Light"/>
             <xs:element ref="Mesh"/>
@@ -886,12 +893,12 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    <xs:element name="Camera">
+    <xs:element name="GenericCamera">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Node">
                     <xs:sequence>
-                        <xs:element name="ProjectionTransform" minOccurs="0" maxOccurs="1">
+                        <xs:element name="ProjectionTransform">
                             <xs:simpleType>
                                 <xs:restriction base="Matrix"/>
                             </xs:simpleType>
@@ -899,15 +906,47 @@
                     </xs:sequence>
                     <xs:attribute name="projectionType"
                                   type="CameraProjectionModeType"
-                                  default="GENERIC"/>
-                    <xs:attribute name="fovy"
-                                  type="Float32"/>
-                    <xs:attribute name="aspectRatio"
-                                  type="Float32"/>
-                    <xs:attribute name="near"
-                                  type="Float32"/>
-                    <xs:attribute name="far"
-                                  type="Float32"/>
+                                  fixed="GENERIC"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ParallelOrPerspectiveCamera" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="Node">
+                <xs:attribute name="fovy"
+                              type="Float32"
+                              use="required"/>
+                <xs:attribute name="aspectRatio"
+                              type="Float32"
+                              use="required"/>
+                <xs:attribute name="near"
+                              type="Float32"
+                              use="required"/>
+                <xs:attribute name="far"
+                              type="Float32"
+                              use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="ParallelCamera">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ParallelOrPerspectiveCamera">
+                    <xs:attribute name="projectionType"
+                                  type="CameraProjectionModeType"
+                                  fixed="PARALLEL"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PerspectiveCamera">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ParallelOrPerspectiveCamera">
+                    <xs:attribute name="projectionType"
+                                  type="CameraProjectionModeType"
+                                  fixed="PERSPECTIVE"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1034,18 +1073,15 @@
                             </xs:simpleType>
                         </xs:element>
                         <xs:element name="keyframes">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="Float32List">
-                                        <xs:attribute name="componentCount"
-                                                      type="UInt31"
-                                                      use="required"/>
-                                    </xs:extension>
-                                </xs:simpleContent>
-                            </xs:complexType>
+                            <xs:simpleType>
+                                <xs:restriction base="Float32List"/>
+                            </xs:simpleType>
                         </xs:element>
                     </xs:sequence>
                     <xs:attribute name="keyframeCount"
+                                  type="UInt31"
+                                  use="required"/>
+                    <xs:attribute name="componentCount"
                                   type="UInt31"
                                   use="required"/>
                     <xs:attribute name="encoding"

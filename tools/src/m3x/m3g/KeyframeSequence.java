@@ -84,11 +84,19 @@ public class KeyframeSequence extends Object3D
 
         private FloatKeyFrame(int componentCount)
         {
-            value = new float[componentCount];
+            this.value = new float[componentCount];
         }
 
         public final void set(int time, float[] value)
         {
+            if (value == null)
+            {
+                throw new NullPointerException("value is null");
+            }
+            if (value.length < this.value.length)
+            {
+                throw new IllegalArgumentException("value.length < componentCount");
+            }
             this.time = time;
             System.arraycopy(value, 0,
                 this.value, 0, this.value.length);
@@ -187,24 +195,6 @@ public class KeyframeSequence extends Object3D
         }
     }
 
-    public void setKeyframes(List<Integer> times, List<Float> values)
-    {
-        final int keyframeCount = getKeyframeCount();
-        final int componentCount = getComponentCount();
-
-        final float[] value = new float[componentCount];
-        for (int i = 0; i < keyframeCount; ++i)
-        {
-            final int time = times.get(i).intValue();
-            final int offset = i * componentCount;
-            for (int j = 0; j < componentCount; ++j)
-            {
-                value[j] = values.get(offset + j).floatValue();
-            }
-            setKeyframe(i, time, value);
-        }
-    }
-
     /**
      * Interface for simplifying keyframe deserialising
      * @author jgasseli
@@ -287,6 +277,7 @@ public class KeyframeSequence extends Object3D
     public void setSize(int keyframeCount, int componentCount)
     {
         this.keyFrames = new FloatKeyFrame[keyframeCount];
+        this.componentCount = componentCount;
         for (int i = 0; i < keyframeCount; ++i)
         {
             this.keyFrames[i] = new FloatKeyFrame(componentCount);
@@ -554,6 +545,25 @@ public class KeyframeSequence extends Object3D
 
     public void setKeyframe(int index, int time, float[] value)
     {
-        this.keyFrames[index].set(time, value);
+        final FloatKeyFrame keyframe = this.keyFrames[index];
+        keyframe.set(time, value);
+    }
+
+    public void setKeyframes(List<Integer> keyTimes, List<Float> keyValues)
+    {
+        final int keyframeCount = getKeyframeCount();
+        final int componentCount = getComponentCount();
+
+        final float[] value = new float[componentCount];
+        for (int i = 0; i < keyframeCount; ++i)
+        {
+            final int time = keyTimes.get(i);
+            final int offset = i * componentCount;
+            for (int j = 0; j < componentCount; ++j)
+            {
+                value[j] = keyValues.get(offset + j);
+            }
+            setKeyframe(i, time, value);
+        }
     }
 }

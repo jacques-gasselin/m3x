@@ -33,7 +33,7 @@ import m3x.translation.m3g.XmlToBinaryTranslator;
  * 
  * @author jgasseli
  */
-public class SkinnedMeshConverter extends Object3DConverter
+public class SkinnedMeshConverter extends MeshConverter
 {
     @Override
     public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)

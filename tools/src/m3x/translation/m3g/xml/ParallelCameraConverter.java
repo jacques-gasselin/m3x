@@ -30,27 +30,24 @@ package m3x.translation.m3g.xml;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
- * 
  * @author jgasseli
  */
-public class WorldConverter extends GroupConverter
+public class ParallelCameraConverter extends NodeConverter
 {
     @Override
     public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
     {
-        m3x.m3g.World to = new m3x.m3g.World();
-        setFromXML(translator, to, (m3x.xml.World)from);
+        m3x.m3g.Camera to = new m3x.m3g.Camera();
+        setFromXML(translator, to, (m3x.xml.ParallelCamera)from);
         return to;
     }
 
     protected final void setFromXML(XmlToBinaryTranslator translator,
-        m3x.m3g.World to, m3x.xml.World from)
+        m3x.m3g.Camera to, m3x.xml.ParallelCamera from)
     {
-        super.setFromXML(translator, to, (m3x.xml.GroupType)from);
-        to.setActiveCamera((m3x.m3g.Camera)
-            translator.getReference((m3x.xml.Node) from.getActiveCamera()));
-        to.setBackground((m3x.m3g.Background)
-            translator.getReference((m3x.xml.Background) from.getBackground()));
+        super.setFromXML(translator, to, from);
 
+        to.setParallel(from.getFovy(), from.getAspectRatio(),
+            from.getNear(), from.getFar());
     }
 }

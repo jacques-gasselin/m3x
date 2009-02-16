@@ -53,12 +53,11 @@ public class KeyframeSequenceConverter extends Object3DConverter
         to.setInterpolationType(from.getInterpolation().value());
         to.setDuration(from.getDuration());
         
-        m3x.xml.KeyframeSequence.Keyframes keyframes = from.getKeyframes();
-        to.setSize(from.getKeyframeCount(), keyframes.getComponentCount());
+        to.setSize(from.getKeyframeCount(), from.getComponentCount());
         to.setValidRange(from.getValidRangeFirst(), from.getValidRangeLast());
-        
+
         List<Integer> times = from.getKeytimes();
-        List<Float> values = keyframes.getValue();
+        List<Float> values = from.getKeyframes();
         to.setKeyframes(times, values);
     }
 }

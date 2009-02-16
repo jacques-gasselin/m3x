@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -51,9 +52,9 @@ import m3x.m3g.primitives.Matrix;
  */
 public class Camera extends Node
 {
-    public static final int PROJECTION_TYPE_GENERIC = 48;
-    public static final int PROJECTION_TYPE_PARALLEL = 49;
-    public static final int PROJECTION_TYPE_PERSPECTIVE = 50;
+    public static final int GENERIC = 48;
+    public static final int PARALLEL = 49;
+    public static final int PERSPECTIVE = 50;
 
     private int projectionType;
     private Matrix projectionMatrix;
@@ -73,13 +74,13 @@ public class Camera extends Node
     {
         super.deserialise(deserialiser);
         this.projectionType = deserialiser.readUnsignedByte();
-        if (this.projectionType == PROJECTION_TYPE_GENERIC)
+        if (this.projectionType == GENERIC)
         {
             this.projectionMatrix = new Matrix();
             this.projectionMatrix.deserialise(deserialiser);
         }
-        else if (this.projectionType == PROJECTION_TYPE_PARALLEL ||
-            this.projectionType == PROJECTION_TYPE_PERSPECTIVE)
+        else if (this.projectionType == PARALLEL ||
+            this.projectionType == PERSPECTIVE)
         {
             this.fovy = deserialiser.readFloat();
             this.aspectRatio = deserialiser.readFloat();
@@ -98,7 +99,7 @@ public class Camera extends Node
     {
         super.serialise(serialiser);
         serialiser.write(this.projectionType);
-        if (this.projectionType == PROJECTION_TYPE_GENERIC)
+        if (this.projectionType == GENERIC)
         {
             this.projectionMatrix.serialise(serialiser);
         }
@@ -144,5 +145,29 @@ public class Camera extends Node
     public float getFar()
     {
         return this.far;
+    }
+
+    public void setGeneric(List<Float> projectionTransform)
+    {
+        this.projectionType = GENERIC;
+        this.projectionMatrix = new Matrix(projectionTransform);
+    }
+
+    public void setParallel(float fovy, float aspectRatio, float near, float far)
+    {
+        this.projectionType = PARALLEL;
+        this.fovy = fovy;
+        this.aspectRatio = aspectRatio;
+        this.near = near;
+        this.far = far;
+    }
+
+    public void setPerspective(float fovy, float aspectRatio, float near, float far)
+    {
+        this.projectionType = PERSPECTIVE;
+        this.fovy = fovy;
+        this.aspectRatio = aspectRatio;
+        this.near = near;
+        this.far = far;
     }
 }

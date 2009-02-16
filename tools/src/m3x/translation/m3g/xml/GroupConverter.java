@@ -42,7 +42,7 @@ public class GroupConverter extends NodeConverter
     public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
     {
         m3x.m3g.Group to = new m3x.m3g.Group();
-        setFromXML(translator, to, (m3x.xml.Group)from);
+        setFromXML(translator, to, (m3x.xml.GroupType)from);
         return to;
     }
 
