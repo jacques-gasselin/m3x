@@ -48,16 +48,23 @@ public class VertexArrayConverter extends Object3DConverter
         m3x.m3g.VertexArray to, m3x.xml.VertexArray from)
     {
         super.setFromXML(translator, to, from);
-        final List<Integer> values = from.getIntArray();
-        
-        final int arraySize = values.size();
-        final int componentCount = from.getComponentCount();
-        final int vertexCount = arraySize / componentCount;
-        final String componentTypeStr = from.getComponentType().value();
-        final int componentType = to.getComponentType(componentTypeStr);
-        //System.out.println("componentType: " + componentTypeStr
-        //    + " -> " + componentType);
 
+        final int componentCount = from.getComponentCount();
+        int componentType = 0;
+
+        List<? extends Number> values = null;
+        if (from.getBytes() != null)
+        {
+            componentType = m3x.m3g.VertexArray.BYTE;
+            values = from.getBytes().getValue();
+        }
+        if (from.getShorts() != null)
+        {
+            componentType = m3x.m3g.VertexArray.SHORT;
+            values = from.getShorts().getValue();
+        }
+        
+        final int vertexCount = values.size() / componentCount;
         to.setSizeAndType(vertexCount, componentCount, componentType);
         to.set(0, vertexCount, values);
     }

@@ -193,7 +193,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
             this.encoding = encoding;
         }
 
-        public abstract void set(int firstVertex, int numVertices, List<Integer> values);
+        public abstract void set(int firstVertex, int numVertices, List<? extends Number> values);
     }
 
     private static class ByteValues extends Values
@@ -235,7 +235,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         }
 
         @Override
-        public void set(int firstVertex, int numVertices, List<Integer> values)
+        public void set(int firstVertex, int numVertices, List<? extends Number> values)
         {
             requireListSize(numVertices, values);
             
@@ -335,7 +335,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         }
 
         @Override
-        public void set(int firstVertex, int numVertices, List<Integer> values)
+        public void set(int firstVertex, int numVertices, List<? extends Number> values)
         {
             requireListSize(numVertices, values);
 
@@ -452,7 +452,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         return this.values.getVertexCount();
     }
 
-    public void set(int firstVertex, int numVertices, List<Integer> values)
+    public void set(int firstVertex, int numVertices, List<? extends Number> values)
     {
         this.values.set(firstVertex, numVertices, values);
     }

@@ -3,6 +3,27 @@
     <description>Runs the tests for the M3X project tools.</description>
     <target name="test"
             description="runs the tests">
+        <!-- test the file conversion task -->
+        <taskdef name="m3x_m3g" classname="m3x.translation.m3g.XmlToBinaryTask">
+            <classpath>
+                <pathelement location="${build.dir}"/>
+                <fileset dir="${lib.dir}/jaxb">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+        <m3x_m3g dir="${res.dir}">
+            <classpath>
+                <pathelement location="${build.dir}"/>
+                <fileset dir="${lib.dir}/jaxb">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+            <fileset dir="${res.dir}">
+                <include name="**/*.m3x"/>
+            </fileset>
+            <mapper type="glob" from="*.m3x" to="*.m3g"/>
+        </m3x_m3g>
         <!-- run unit tests -->
         <property name="test.result.dir"
                   location="${test.dir}/result"/>

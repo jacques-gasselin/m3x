@@ -502,20 +502,13 @@
         </xs:complexType>
     </xs:element>
     <!-- Helper types -->
-    <xs:group name="CameraGroup">
-        <xs:choice>
-            <xs:element ref="GenericCamera"/>
-            <xs:element ref="ParallelCamera"/>
-            <xs:element ref="PerspectiveCamera"/>
-        </xs:choice>
-    </xs:group>
     <xs:group name="RootElementGroup">
         <xs:choice>
             <xs:element ref="AnimationController"/>
             <xs:element ref="AnimationTrack"/>
             <xs:element ref="Appearance"/>
             <xs:element ref="Background"/>
-            <xs:group ref="CameraGroup"/>
+            <xs:element ref="Camera"/>
             <xs:element ref="CompositingMode"/>
             <xs:element ref="Fog"/>
             <xs:element ref="Group"/>
@@ -536,7 +529,7 @@
     </xs:group>
     <xs:group name="NodeElementGroup">
         <xs:choice>
-            <xs:group ref="CameraGroup"/>
+            <xs:element ref="Camera"/>
             <xs:element ref="Group"/>
             <xs:element ref="Light"/>
             <xs:element ref="Mesh"/>
@@ -893,60 +886,59 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    <xs:element name="GenericCamera">
+    <xs:complexType name="ParallelOrPerspectiveProjection" abstract="true">
+        <xs:attribute name="fovy"
+                      type="Float32"
+                      use="required"/>
+        <xs:attribute name="aspectRatio"
+                      type="Float32"
+                      use="required"/>
+        <xs:attribute name="near"
+                      type="Float32"
+                      use="required"/>
+        <xs:attribute name="far"
+                      type="Float32"
+                      use="required"/>
+    </xs:complexType>
+    <xs:element name="Camera">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Node">
-                    <xs:sequence>
-                        <xs:element name="ProjectionTransform">
-                            <xs:simpleType>
-                                <xs:restriction base="Matrix"/>
-                            </xs:simpleType>
+                    <xs:choice>
+                        <xs:element name="generic">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="Matrix">
+                                        <xs:attribute name="projectionType"
+                                                      type="CameraProjectionModeType"
+                                                      fixed="GENERIC"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
                         </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="projectionType"
-                                  type="CameraProjectionModeType"
-                                  fixed="GENERIC"/>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:complexType name="ParallelOrPerspectiveCamera" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="Node">
-                <xs:attribute name="fovy"
-                              type="Float32"
-                              use="required"/>
-                <xs:attribute name="aspectRatio"
-                              type="Float32"
-                              use="required"/>
-                <xs:attribute name="near"
-                              type="Float32"
-                              use="required"/>
-                <xs:attribute name="far"
-                              type="Float32"
-                              use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:element name="ParallelCamera">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="ParallelOrPerspectiveCamera">
-                    <xs:attribute name="projectionType"
-                                  type="CameraProjectionModeType"
-                                  fixed="PARALLEL"/>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="PerspectiveCamera">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="ParallelOrPerspectiveCamera">
-                    <xs:attribute name="projectionType"
-                                  type="CameraProjectionModeType"
-                                  fixed="PERSPECTIVE"/>
+                        <xs:element name="parallel">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="ParallelOrPerspectiveProjection">
+                                        <xs:attribute name="projectionType"
+                                                      type="CameraProjectionModeType"
+                                                      fixed="PARALLEL"/>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="perspective">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="ParallelOrPerspectiveProjection">
+                                        <xs:attribute name="projectionType"
+                                                      type="CameraProjectionModeType"
+                                                      fixed="PARALLEL"/>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:choice>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -1335,20 +1327,32 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:sequence>
-                        <xs:element name="int_array">
-                            <xs:simpleType>
-                                <xs:restriction base="Int32List">
-                                    <xs:minLength value="1"/>
-                                </xs:restriction>
-                            </xs:simpleType>
+                    <xs:choice>
+                        <xs:element name="Bytes">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="ByteList">
+                                        <xs:attribute name="componentType"
+                                                      type="VertexArrayDataType"
+                                                      fixed="BYTE"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
                         </xs:element>
-                    </xs:sequence>
+                        <xs:element name="Shorts">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="Int16List">
+                                        <xs:attribute name="componentType"
+                                                      type="VertexArrayDataType"
+                                                      fixed="SHORT"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:choice>
                     <xs:attribute name="componentCount"
                                   type="UByte"
-                                  use="required"/>
-                    <xs:attribute name="componentType"
-                                  type="VertexArrayDataType"
                                   use="required"/>
                 </xs:extension>
             </xs:complexContent>
