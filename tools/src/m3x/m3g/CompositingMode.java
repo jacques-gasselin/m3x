@@ -84,8 +84,8 @@ public class CompositingMode extends Object3D
         setDepthWriteEnabled(deserialiser.readBoolean());
         setColorWriteEnabled(deserialiser.readBoolean());
         setAlphaWriteEnabled(deserialiser.readBoolean());
-        setAlphaThresholdByte(deserialiser.readUnsignedByte());
         setBlending(deserialiser.readUnsignedByte());
+        setAlphaThresholdByte(deserialiser.readUnsignedByte());
         setDepthOffsetFactor(deserialiser.readFloat());
         setDepthOffsetUnits(deserialiser.readFloat());
     }
@@ -99,8 +99,8 @@ public class CompositingMode extends Object3D
         serialiser.writeBoolean(isDepthWriteEnabled());
         serialiser.writeBoolean(isColorWriteEnabled());
         serialiser.writeBoolean(isAlphaWriteEnabled());
-        serialiser.writeByte(getAlphaThresholdByte());
         serialiser.writeByte(getBlending());
+        serialiser.writeByte(getAlphaThresholdByte());
         serialiser.writeFloat(getDepthOffsetFactor());
         serialiser.writeFloat(getDepthOffsetUnits());
     }
@@ -185,14 +185,14 @@ public class CompositingMode extends Object3D
         this.alphaWriteEnabled = alphaWriteEnabled;
     }
 
-    public void setBlending(int blending)
+    public void setBlending(final int mode)
     {
-        if (blending < ALPHA || blending > REPLACE)
+        if (mode < ALPHA || mode > REPLACE)
         {
-            throw new IllegalArgumentException("Invalid blending: " + blending);
+            throw new IllegalArgumentException("Invalid blending: " + mode);
         }
 
-        this.blending = blending;
+        this.blending = mode;
     }
 
     public void setBlending(String blending)
