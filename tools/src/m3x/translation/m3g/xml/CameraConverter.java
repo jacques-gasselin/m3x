@@ -47,13 +47,6 @@ public class CameraConverter extends NodeConverter
     {
         super.setFromXML(translator, to, from);
 
-        final m3x.xml.Camera.Generic generic = from.getGeneric();
-        if (generic != null)
-        {
-            to.setGeneric(generic.getValue());
-            return;
-        }
-
         final m3x.xml.Camera.Parallel parallel = from.getParallel();
         if (parallel != null)
         {
@@ -69,5 +62,13 @@ public class CameraConverter extends NodeConverter
                     perspective.getNear(), perspective.getFar());
             return;
         }
+
+        if (from.getGeneric().size() > 0)
+        {
+            to.setGeneric(from.getGeneric());
+            return;
+        }
+
+        throw new IllegalStateException("Can't convert a camera with no projection");
     }
 }

@@ -53,15 +53,15 @@ public class VertexArrayConverter extends Object3DConverter
         int componentType = 0;
 
         List<? extends Number> values = null;
-        if (from.getBytes() != null)
+        if (from.getByteComponents().size() > 0)
         {
             componentType = m3x.m3g.VertexArray.BYTE;
-            values = from.getBytes().getValue();
+            values = from.getByteComponents();
         }
-        if (from.getShorts() != null)
+        if (from.getShortComponents().size() > 0)
         {
             componentType = m3x.m3g.VertexArray.SHORT;
-            values = from.getShorts().getValue();
+            values = from.getShortComponents();
         }
         
         final int vertexCount = values.size() / componentCount;

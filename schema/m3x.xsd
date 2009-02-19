@@ -83,6 +83,11 @@
     <xs:simpleType name="Float32">
         <xs:restriction base="xs:float"/>
     </xs:simpleType>
+    <xs:simpleType name="Float32GreaterThan0">
+        <xs:restriction base="Float32">
+            <xs:minExclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="String">
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
@@ -238,18 +243,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="CameraProjectionModeType">
-        <xs:annotation>
-            <xs:documentation>
-                The allowed projection matrix modes for a camera element
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="GENERIC"/>
-            <xs:enumeration value="PARALLEL"/>
-            <xs:enumeration value="PERSPECTIVE"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="CompositingModeBlendType">
@@ -448,17 +441,6 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="WRAP_CLAMP"/>
             <xs:enumeration value="WRAP_REPEAT"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="VertexArrayDataType">
-        <xs:annotation>
-            <xs:documentation>
-                The allowed data types for vertex array elements.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="BYTE"/>
-            <xs:enumeration value="SHORT"/>
         </xs:restriction>
     </xs:simpleType>
     <!-- Complex types -->
@@ -886,56 +868,53 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    <xs:complexType name="ParallelOrPerspectiveProjection" abstract="true">
-        <xs:attribute name="fovy"
-                      type="Float32"
-                      use="required"/>
-        <xs:attribute name="aspectRatio"
-                      type="Float32"
-                      use="required"/>
-        <xs:attribute name="near"
-                      type="Float32"
-                      use="required"/>
-        <xs:attribute name="far"
-                      type="Float32"
-                      use="required"/>
+    <xs:complexType name="CameraProjection">
     </xs:complexType>
     <xs:element name="Camera">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Node">
                     <xs:choice>
-                        <xs:element name="generic">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="Matrix">
-                                        <xs:attribute name="projectionType"
-                                                      type="CameraProjectionModeType"
-                                                      fixed="GENERIC"/>
-                                    </xs:extension>
-                                </xs:simpleContent>
-                            </xs:complexType>
+                        <xs:element name="generic"
+                                    default="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1">
+                            <xs:simpleType>
+                                <xs:restriction base="Matrix"/>
+                            </xs:simpleType>
                         </xs:element>
                         <xs:element name="parallel">
                             <xs:complexType>
-                                <xs:complexContent>
-                                    <xs:extension base="ParallelOrPerspectiveProjection">
-                                        <xs:attribute name="projectionType"
-                                                      type="CameraProjectionModeType"
-                                                      fixed="PARALLEL"/>
-                                    </xs:extension>
-                                </xs:complexContent>
+                                <xs:attribute name="fovy"
+                                              type="Float32GreaterThan0"
+                                              use="required"/>
+                                <xs:attribute name="aspectRatio"
+                                              type="Float32GreaterThan0"
+                                              use="required"/>
+                                <xs:attribute name="near"
+                                              type="Float32"
+                                              use="required"/>
+                                <xs:attribute name="far"
+                                              type="Float32"
+                                              use="required"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="perspective">
                             <xs:complexType>
-                                <xs:complexContent>
-                                    <xs:extension base="ParallelOrPerspectiveProjection">
-                                        <xs:attribute name="projectionType"
-                                                      type="CameraProjectionModeType"
-                                                      fixed="PARALLEL"/>
-                                    </xs:extension>
-                                </xs:complexContent>
+                                <xs:attribute name="fovy" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="Float32GreaterThan0">
+                                            <xs:maxExclusive value="180"/>
+                                        </xs:restriction>
+                                    </xs:simpleType>
+                                </xs:attribute>
+                                <xs:attribute name="aspectRatio"
+                                              type="Float32GreaterThan0"
+                                              use="required"/>
+                                <xs:attribute name="near"
+                                              type="Float32GreaterThan0"
+                                              use="required"/>
+                                <xs:attribute name="far"
+                                              type="Float32GreaterThan0"
+                                              use="required"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:choice>
@@ -1328,27 +1307,19 @@
             <xs:complexContent>
                 <xs:extension base="Object3D">
                     <xs:choice>
-                        <xs:element name="Bytes">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="ByteList">
-                                        <xs:attribute name="componentType"
-                                                      type="VertexArrayDataType"
-                                                      fixed="BYTE"/>
-                                    </xs:extension>
-                                </xs:simpleContent>
-                            </xs:complexType>
+                        <xs:element name="byteComponents">
+                            <xs:simpleType>
+                                <xs:restriction base="ByteList">
+                                    <xs:minLength value="1"/>
+                                </xs:restriction>
+                            </xs:simpleType>
                         </xs:element>
-                        <xs:element name="Shorts">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="Int16List">
-                                        <xs:attribute name="componentType"
-                                                      type="VertexArrayDataType"
-                                                      fixed="SHORT"/>
-                                    </xs:extension>
-                                </xs:simpleContent>
-                            </xs:complexType>
+                        <xs:element name="shortComponents">
+                            <xs:simpleType>
+                                <xs:restriction base="Int16List">
+                                    <xs:minLength value="1"/>
+                                </xs:restriction>
+                            </xs:simpleType>
                         </xs:element>
                     </xs:choice>
                     <xs:attribute name="componentCount"
