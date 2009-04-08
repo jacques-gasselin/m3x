@@ -151,9 +151,19 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         }
     }
 
-
+    /**
+     * Converts an M3X xml document root to an M3G root object array.
+     * @param root
+     * @throws NullPointerException if root is null
+     * @return
+     */
     public static m3x.m3g.Object3D[] convertRoot(m3x.xml.M3G root)
     {
+        if (root == null)
+        {
+            throw new NullPointerException("root is null");
+        }
+        
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator(root.getVersion());
         for (m3x.xml.Section section : root.getSection())
         {
@@ -162,6 +172,8 @@ public class XmlToBinaryTranslator extends BinaryTranslator
                 translator.getObject(object);
             }
         }
+
+        //collect the result vector to an array
         Vector<m3x.m3g.Object3D> rootVector = translator.getRootVector();
         m3x.m3g.Object3D[] arr = new m3x.m3g.Object3D[rootVector.size()];
         return rootVector.toArray(arr);
