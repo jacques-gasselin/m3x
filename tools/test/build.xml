@@ -39,7 +39,10 @@
             <!--sysproperty key="java.endorsed.dirs" value="${lib.dir}"/-->
             <classpath>
                 <pathelement location="${test.build.dir}"/>
-                <fileset dir="${lib.dir}"/>
+                <pathelement location="${lib.dir}/junit-4.4.jar"/>
+                <fileset dir="${lib.dir}/jaxb">
+                    <include name="*.jar"/>
+                </fileset>
                 <fileset dir="${dist.dir}"/>
             </classpath>
             

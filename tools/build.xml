@@ -31,7 +31,7 @@
     <target name="pre-build">
         <mkdir dir="${build.m3x.xml.dir}"/>
         <mkdir dir="${build.src.m3x.xml.dir}"/>
-        <mkdir dir="${test.build.dir}" />
+        <mkdir dir="${test.build.dir}"/>
     </target>
     
     <target name="xjc-typedef">
