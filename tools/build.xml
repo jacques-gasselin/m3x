@@ -107,6 +107,7 @@
                debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${src.dir}"/>
+            <include name="**/*.java"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>
             </classpath>
@@ -128,6 +129,7 @@
                debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${test.dir}"/>
+            <include name="**/*.java"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>
                 <fileset dir="${dist.dir}"/>

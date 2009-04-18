@@ -518,6 +518,10 @@ public class KeyframeSequence extends Object3D
 
     public int getKeyframeCount()
     {
+        if (this.keyFrames == null)
+        {
+            return 0;
+        }
         return this.keyFrames.length;
     }
 

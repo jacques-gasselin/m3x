@@ -1323,8 +1323,14 @@
                         </xs:element>
                     </xs:choice>
                     <xs:attribute name="componentCount"
-                                  type="UByte"
-                                  use="required"/>
+                                  use="required">
+                         <xs:simpleType>
+                             <xs:restriction base="Byte">
+                                 <xs:minInclusive value="1"/>
+                                 <xs:maxInclusive value="4"/>
+                             </xs:restriction>
+                         </xs:simpleType>
+                    </xs:attribute>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

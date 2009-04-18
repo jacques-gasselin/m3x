@@ -29,16 +29,19 @@ package m3x.translation.m3g;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.resources.FileResource;
-import org.apache.tools.ant.util.ClasspathUtils;
 import org.apache.tools.ant.util.FileNameMapper;
 
 /**
@@ -48,10 +51,10 @@ import org.apache.tools.ant.util.FileNameMapper;
 public class XmlToBinaryTask extends Task
 {
     private List<FileSet> filesetList;
+    private Path classpath;
     private Mapper mapper;
     private File executeDirectory;
-    private ClasspathUtils.Delegate cpDelegate;
-
+    
     public XmlToBinaryTask()
     {
         filesetList = new Vector<FileSet>();
@@ -60,13 +63,23 @@ public class XmlToBinaryTask extends Task
     @Override
     public void init()
     {
-        this.cpDelegate = ClasspathUtils.getDelegate(this);
         super.init();
     }
 
     public void addFileSet(FileSet fileset)
     {
         filesetList.add(fileset);
+    }
+
+    public void setClasspath(Path p)
+    {
+        this.classpath = p;
+    }
+
+    public Path createClasspath()
+    {
+        this.classpath = new Path(getProject());
+        return this.classpath;
     }
 
     public Mapper createMapper() throws BuildException
@@ -82,11 +95,6 @@ public class XmlToBinaryTask extends Task
         return mapper;
     }
 
-    public Path createClasspath()
-    {
-        return this.cpDelegate.createClasspath();
-    }
-
     public void setDir(File dir)
     {
         executeDirectory = dir;
@@ -95,6 +103,58 @@ public class XmlToBinaryTask extends Task
     @Override
     public void execute()
     {
+        AntClassLoader loader = null;
+        Method convertMethod = null;
+        final String classname = "m3x.translation.m3g.XmlToBinaryTranslator";
+
+        {
+            Class targetClass = null;
+            try
+            {
+                if (classpath == null)
+                {
+                    targetClass = Class.forName(classname);
+                }
+                else
+                {
+                    loader = getProject().createClassLoader(classpath);
+                    loader.setParent(getProject().getCoreLoader());
+                    loader.setParentFirst(false);
+                    loader.addJavaLibraries();
+                    loader.setIsolated(true);
+                    loader.setThreadContextLoader();
+                    loader.forceLoadClass(classname);
+                    targetClass = Class.forName(classname, true, loader);
+                }
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new BuildException("Could not find " + classname + "."
+                                         + " Make sure you have it in your"
+                                         + " classpath");
+            }
+            try
+            {
+                convertMethod = targetClass.getMethod("convert",
+                        new Class[] {File.class, File.class});
+            }
+            catch (NoSuchMethodException e)
+            {
+                throw new BuildException("No method convert(File, File) in "
+                                         + classname);
+            }
+            if (convertMethod == null)
+            {
+                throw new BuildException("Could not find convert(File, File) method in "
+                                         + classname);
+            }
+            if ((convertMethod.getModifiers() & Modifier.STATIC) == 0)
+            {
+                throw new BuildException("convert(File, File) method in " + classname
+                    + " is not declared static");
+            }
+        }
+
         FileNameMapper fnmapper = mapper.getImplementation();
         for (FileSet fs : filesetList)
         {
@@ -108,11 +168,27 @@ public class XmlToBinaryTask extends Task
                     String postMappingPath = fnmapper.mapFileName(preMappingPath)[0];
                     //apply the conversion for the given file names.
                     final File targetFile = new File(postMappingPath);
-                    XmlToBinaryTranslator.convert(sourceFile, targetFile);
+                    convertMethod.invoke(null, 
+                            new Object[] {sourceFile, targetFile});
+                }
+                catch (InvocationTargetException ex)
+                {
+                    String message = ex.getMessage();
+                    if (ex.getCause() != null)
+                    {
+                        message = ex.getCause().getMessage();
+                    }
+                    throw new BuildException("convert(File, File) failed on\n"
+                            + sourceFile + ": "+ message);
+                }
+                catch (IllegalAccessException ex)
+                {
+                    throw new BuildException("invoking convert(File, File) failed"
+                        + " due to an access violation", ex);
                 }
                 catch (IOException ex)
                 {
-                    throw new IllegalArgumentException("file " + sourceFile
+                    throw new BuildException("file " + sourceFile
                         + " does not exist");
                 }
             }
