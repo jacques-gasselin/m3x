@@ -121,10 +121,14 @@ public abstract class Deserialiser
      */
     public static m3x.xml.M3G deserialise(java.io.InputStream stream)
     {
+        //ensure that classpaths used to load this class are used to
+        //load the clases needed by the context.
+        final ClassLoader clsLoader = Deserialiser.class.getClassLoader();
+        
         JAXBContext context = null;
         try
         {
-            context = JAXBContext.newInstance(m3x.xml.M3G.class);
+            context = JAXBContext.newInstance("m3x.xml", clsLoader);
         }
         catch (JAXBException e)
         {

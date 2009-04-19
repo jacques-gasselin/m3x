@@ -6,18 +6,17 @@
         <!-- test the file conversion task -->
         <taskdef name="m3x_m3g" classname="m3x.translation.m3g.XmlToBinaryTask">
             <classpath>
-                <fileset dir="${lib.dir}/jaxb">
-                    <include name="*.jar"/>
-                </fileset>
+                <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
                 <pathelement location="${build.dir}"/>
             </classpath>
         </taskdef>
         <m3x_m3g dir="${res.dir}">
             <classpath>
-                <fileset dir="${lib.dir}/jaxb">
+                <!--fileset dir="${lib.dir}/jaxb">
                     <include name="*.jar"/>
-                </fileset>
+                </fileset-->
                 <pathelement location="${build.dir}"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
             </classpath>
             <fileset dir="${res.dir}">
                 <include name="**/*.m3x"/>

@@ -174,9 +174,10 @@ public class XmlToBinaryTask extends Task
                 catch (InvocationTargetException ex)
                 {
                     String message = ex.getMessage();
-                    if (ex.getCause() != null)
+                    final Throwable cause = ex.getCause();
+                    if (cause != null)
                     {
-                        message = ex.getCause().getMessage();
+                        message = cause.getMessage();
                     }
                     throw new BuildException("convert(File, File) failed on\n"
                             + sourceFile + ": "+ message);
