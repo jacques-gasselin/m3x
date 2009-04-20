@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.util.List;
 import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
@@ -293,5 +294,10 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     public void setDefaultColor(int argb)
     {
         this.defaultColor.set(argb);
+    }
+
+    public void setDefaultColor(List<Short> defaultColor)
+    {
+        this.defaultColor.set(defaultColor);
     }
 }

@@ -49,6 +49,7 @@ public class VertexBufferConverter extends Object3DConverter
     {
         super.setFromXML(translator, to, from);
 
+        to.setDefaultColor(from.getDefaultColor());
         setPositions(translator, to, from.getPositions());
         to.setNormals(getNormals(translator, from.getNormals()));
         to.setColors(getColors(translator, from.getColors()));
