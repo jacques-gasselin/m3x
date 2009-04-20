@@ -75,6 +75,8 @@
         <copy todir="${release.dir}" file="${basedir}/LICENSE"/>
         <copy todir="${release.dir}" file="${basedir}/README"/>
 
+        <zip destfile="${basedir}/release.zip"
+             basedir="${release.dir}"/>
     </target>
     
 </project>
