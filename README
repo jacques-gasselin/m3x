@@ -1,0 +1,112 @@
+M3X - XML tools for M3G
+
+License:
+
+This project is licensed under the BSD license, an OSI approved Open Source license.
+Please read the LICENSE file for more information.
+
+Abstract:
+
+The M3X Project aims to make content creation for JSR184 and JSR297 as easy
+as possible. As a collaborative Open Source project, M3X enables developers
+to create content with a public API that has ongoing industry support.
+
+It provides this with the following components:
+
+* An XML Schema that defines a deterministic mapping between M3G data in XML format
+  and binary format.
+
+* Cross-platform tools to make the conversion an automatic step of a project
+  build cycle.
+
+* An open API for creating, converting to & from, both the XML and Binary
+  representations of M3G data.
+
+* Future development into format conversion from other formats, such as COLLADA.
+
+
+
+1. The M3X XML Schema
+
+The current M3X XML Schema only supports the M3G 1.0 binary format. A second
+schema, supporting M3G 2.0, is currently in development, but is not ready for
+widespread use.
+
+Using the schema, content developers can create compatible XML data without
+explicitly using the M3X API. The schema also allows us to validate data in
+its XML format with relative ease.
+
+XML as an intermediate format works well with Version Control Systems like CVS
+or Subversion. With the tools provided, the conversion to binary is deterministic
+and automated.
+
+
+
+2. Cross-platform Tools
+
+The API is written in Java 1.5. This makes the toolset cross-platform from the
+outset. These tools are not intended to be used on mobile devices, they are meant
+for offline use only.
+
+2.1 XML -> Binary
+
+There are 2 main interfaces to the XML to Binary conversion process, an ANT task
+and a static conversion class with CLI support.
+
+- m3x.translation.m3g.XMLToBinaryTask - is the ANT task for conversion.
+Used just like an ant copy task, with an added classpath element for JAXB.
+
+Defined with:
+    <taskdef name="m3x_m3g" classname="m3x.translation.m3g.XmlToBinaryTask">
+        <classpath>
+            <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
+            <pathelement location="m3x.jar"/>
+        </classpath>
+    </taskdef>
+
+Used as:
+    <m3x_m3g dir="${res.dir}">
+        <classpath>
+            <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
+            <pathelement location="m3x.jar"/>
+        </classpath>
+        <fileset dir="${res.dir}">
+            <include name="**/*.m3x"/>
+        </fileset>
+        <mapper type="glob" from="*.m3x" to="*.m3g"/>
+    </m3x_m3g>
+
+- m3x.translation.m3g.XMLToBinaryTranslator - is the static class with CLI support
+It can also be used from ANT by using the <java> or <apply> task.
+
+Such as:
+    <java classname="m3x.translation.m3g.XMLToBinaryTranslator"
+          fork="true">
+        <classpath>
+            <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
+            <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
+            <pathelement location="m3x.jar"/>
+        </classpath>
+        <arg line="-o ${binary_outfile} ${xml_infile}"/>
+    </java>
+
+
+3. Open API
+
+Please join the M3X project to influence the way M3X develops. It is open for the
+benefit of all developers. Content conversion is a time consuming programming
+task that is best done once, well.
+
+
+4. Future additions
+
+COLLADA support and M3G 2.0 support is highest on the list. They will be added
+as soon as possible. Support for other formats is open to discussion on the
+project website. Visit us at http://m3x.dev.java.net
+
+
+Thanks.
+
+
+
+

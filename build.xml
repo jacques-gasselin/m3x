@@ -4,6 +4,7 @@
     <property name="schema.dir" location="schema"/>
     <property name="lib.dir" location="lib"/>
     <property name="tools.dir" location="tools"/>
+    <property name="release.dir" location="release"/>
     
     <target name="build"
             description="runs the build target in all the subfolders">
@@ -44,6 +45,36 @@
              inheritall="true"
              inheritrefs="true"
              target="test"/>        
+    </target>
+
+    <target name="release"
+            description="creates a release of the m3x package">
+        <delete dir="${release.dir}"/>
+        <mkdir dir="${release.dir}"/>
+
+        <copy todir="${release.dir}/schema">
+            <fileset dir="${basedir}/schema"/>
+        </copy>
+
+        <copy todir="${release.dir}/res">
+            <fileset dir="${tools.dir}/res"/>
+        </copy>
+
+        <copy todir="${release.dir}/api">
+            <fileset dir="${tools.dir}/docs/api"/>
+        </copy>
+
+        <copy todir="${release.dir}/lib/jaxb">
+            <fileset dir="${lib.dir}/jaxb"/>
+        </copy>
+
+        <copy todir="${release.dir}">
+            <fileset dir="${tools.dir}/dist"/>
+        </copy>
+
+        <copy todir="${release.dir}" file="${basedir}/LICENSE"/>
+        <copy todir="${release.dir}" file="${basedir}/README"/>
+
     </target>
     
 </project>
