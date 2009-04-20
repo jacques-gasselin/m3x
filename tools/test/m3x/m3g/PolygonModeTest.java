@@ -33,4 +33,26 @@ package m3x.m3g;
  */
 public class PolygonModeTest extends AbstractTestCase
 {
+    private PolygonMode polygonMode;
+
+    public PolygonModeTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        polygonMode = new PolygonMode();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(polygonMode);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ polygonMode };
+        assertSaveAndLoad(roots);
+    }
 }

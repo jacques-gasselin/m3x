@@ -31,6 +31,28 @@ package m3x.m3g;
  * 
  * @author jgasseli
  */
-public class SpriteTest extends AbstractTestCase
+public class Sprite3DTest extends AbstractTestCase
 {
+    private Sprite3D sprite3D;
+
+    public Sprite3DTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        sprite3D = new Sprite3D();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(sprite3D);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ sprite3D };
+        assertSaveAndLoad(roots);
+    }
 }

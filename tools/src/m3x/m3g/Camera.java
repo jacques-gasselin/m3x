@@ -66,6 +66,7 @@ public class Camera extends Node
     public Camera()
     {
         super();
+        setIdentity();
     }
 
     @Override
@@ -145,6 +146,13 @@ public class Camera extends Node
     public float getFar()
     {
         return this.far;
+    }
+
+    public void setIdentity()
+    {
+        this.projectionType = GENERIC;
+        this.projectionMatrix = new Matrix();
+        this.projectionMatrix.setIdentity();
     }
 
     public void setGeneric(List<Float> projectionTransform)

@@ -33,4 +33,26 @@ package m3x.m3g;
  */
 public class LightTest extends AbstractTestCase
 {
+    private Light light;
+
+    public LightTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        light = new Light();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(light);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ light };
+        assertSaveAndLoad(roots);
+    }
 }

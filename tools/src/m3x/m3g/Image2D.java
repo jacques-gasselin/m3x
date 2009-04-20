@@ -86,6 +86,13 @@ public class Image2D extends Object3D
         super();
     }
 
+    public Image2D(int format, int width, int height)
+    {
+        super();
+        setFormat(format);
+        setSize(width, height);
+    }
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
@@ -130,28 +137,9 @@ public class Image2D extends Object3D
         return ObjectTypes.IMAGE_2D;
     }
 
-    public void setFormat(String formatString)
+    public void setFormat(String format)
     {
-        if (formatString == null)
-        {
-            throw new NullPointerException("format is null");
-        }
-
-        int value = 0;
-        try
-        {
-            Field field = getClass().getField(formatString);
-            value = field.getInt(this);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new IllegalArgumentException("unknown format " + formatString);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new IllegalArgumentException("no access to format " + formatString);
-        }
-        setFormat(value);
+        setFormat(getFieldValue(format, "format"));
     }
 
     public void setFormat(int format)

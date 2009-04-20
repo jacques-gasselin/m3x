@@ -33,4 +33,27 @@ package m3x.m3g;
  */
 public class WorldTest extends AbstractTestCase
 {
+    private World world;
+
+    public WorldTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        world = new World();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(world);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ world };
+        assertSaveAndLoad(roots);
+    }
+
 }

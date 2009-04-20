@@ -33,4 +33,26 @@ package m3x.m3g;
  */
 public class FogTest extends AbstractTestCase
 {
+    private Fog fog;
+
+    public FogTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        fog = new Fog();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(fog);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ fog };
+        assertSaveAndLoad(roots);
+    }
 }

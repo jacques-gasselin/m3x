@@ -61,6 +61,13 @@ public class TriangleStripArray extends IndexBuffer implements SectionSerialisab
         super();
     }
 
+    public TriangleStripArray(int firstIndex, int[] stripLengths)
+    {
+        super();
+        setFirstIndex(firstIndex);
+        setStripLengths(stripLengths);
+    }
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException

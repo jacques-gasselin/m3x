@@ -33,4 +33,26 @@ package m3x.m3g;
  */
 public class MaterialTest extends AbstractTestCase
 {
+    private Material material;
+
+    public MaterialTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        material = new Material();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(material);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ material };
+        assertSaveAndLoad(roots);
+    }
 }

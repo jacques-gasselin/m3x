@@ -33,5 +33,26 @@ package m3x.m3g;
  */
 public class CameraTest extends AbstractTestCase
 {
-    
+    private Camera camera;
+
+    public CameraTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        camera = new Camera();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(camera);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ camera };
+        assertSaveAndLoad(roots);
+    }
 }

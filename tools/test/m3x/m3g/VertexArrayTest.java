@@ -33,4 +33,24 @@ package m3x.m3g;
  */
 public class VertexArrayTest extends AbstractTestCase
 {
+    public VertexArrayTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+    }
+
+    public void testSaveAndLoad()
+    {
+        VertexArray pos = new VertexArray(3, 3, VertexArray.BYTE);
+        pos.set(0, 1, new byte[]{0, 0, 0});
+        pos.set(1, 1, new byte[]{0, 1, 0});
+        pos.set(2, 1, new byte[]{1, 0, 0});
+
+        Object3D[] roots = new Object3D[]{ pos };
+        assertSaveAndLoad(roots);
+    }
+
 }

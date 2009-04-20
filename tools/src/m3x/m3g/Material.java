@@ -57,6 +57,10 @@ public class Material extends Object3D
     public Material()
     {
         super();
+        this.ambientColor = new ColorRGB();
+        this.diffuseColor = new ColorRGBA();
+        this.emissiveColor = new ColorRGB();
+        this.specularColor = new ColorRGB();
     }
 
     @Override
@@ -64,13 +68,9 @@ public class Material extends Object3D
         throws IOException
     {
         super.deserialise(deserialiser);
-        this.ambientColor = new ColorRGB();
         this.ambientColor.deserialise(deserialiser);
-        this.diffuseColor = new ColorRGBA();
         this.diffuseColor.deserialise(deserialiser);
-        this.emissiveColor = new ColorRGB();
         this.emissiveColor.deserialise(deserialiser);
-        this.specularColor = new ColorRGB();
         this.specularColor.deserialise(deserialiser);
         this.shininess = deserialiser.readFloat();
         this.vertexColorTrackingEnabled = deserialiser.readBoolean();

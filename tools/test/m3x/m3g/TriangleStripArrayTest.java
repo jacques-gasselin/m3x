@@ -33,4 +33,20 @@ package m3x.m3g;
  */
 public class TriangleStripArrayTest extends AbstractTestCase
 {
+    public TriangleStripArrayTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+    }
+
+    public void testSaveAndLoad()
+    {
+        IndexBuffer ib = new TriangleStripArray(0, new int[]{3});
+
+        Object3D[] roots = new Object3D[]{ ib };
+        assertSaveAndLoad(roots);
+    }
 }

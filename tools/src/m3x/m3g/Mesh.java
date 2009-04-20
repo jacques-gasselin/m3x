@@ -126,17 +126,25 @@ public class Mesh extends Node implements SectionSerialisable
         super();
     }
 
+    public Mesh(VertexBuffer vertices, IndexBuffer submesh, Appearance appearance)
+    {
+        super();
+        setVertexBuffer(vertices);
+        setSubmeshCount(1);
+        setIndexBuffer(0, submesh);
+        setAppearance(0, appearance);
+    }
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
         setVertexBuffer((VertexBuffer)deserialiser.readReference());
-        final int subMeshCount = deserialiser.readInt();
-        setSubmeshCount(subMeshCount);
-        for (int i = 0; i < subMeshCount; i++)
+        setSubmeshCount(deserialiser.readInt());
+        for (SubMesh subMesh : this.subMeshes)
         {
-            this.subMeshes[i].deserialise(deserialiser);
+            subMesh.deserialise(deserialiser);
         }
     }
 
@@ -158,10 +166,11 @@ public class Mesh extends Node implements SectionSerialisable
     {
         super.setReferenceQueue(queue);
         queue.add(getVertexBuffer());
-        for (int i = 0; i < getSubmeshCount(); ++i)
+        final int subMeshCount = getSubmeshCount();
+        for (int i = 0; i < subMeshCount; ++i)
         {
-            queue.add(getAppearance(i));
             queue.add(getIndexBuffer(i));
+            queue.add(getAppearance(i));
         }
     }
 

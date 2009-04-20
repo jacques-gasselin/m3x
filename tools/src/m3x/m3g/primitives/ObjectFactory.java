@@ -44,7 +44,7 @@ import m3x.m3g.Mesh;
 import m3x.m3g.MorphingMesh;
 import m3x.m3g.PolygonMode;
 import m3x.m3g.SkinnedMesh;
-import m3x.m3g.Sprite;
+import m3x.m3g.Sprite3D;
 import m3x.m3g.Texture2D;
 import m3x.m3g.TriangleStripArray;
 import m3x.m3g.VertexArray;
@@ -108,7 +108,7 @@ abstract class ObjectFactory
             case ObjectTypes.SKINNED_MESH:
                 return new SkinnedMesh();
             case ObjectTypes.SPRITE:
-                return new Sprite();
+                return new Sprite3D();
             case ObjectTypes.TEXTURE_2D:
                 return new Texture2D();
             case ObjectTypes.TRIANGLE_STRIP_ARRAY:

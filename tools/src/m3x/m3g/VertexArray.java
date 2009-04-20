@@ -194,6 +194,8 @@ public class VertexArray extends Object3D implements SectionSerialisable
         }
 
         public abstract void set(int firstVertex, int numVertices, List<? extends Number> values);
+        public abstract void set(int firstVertex, int numVertices, byte[] values);
+        public abstract void set(int firstVertex, int numVertices, short[] values);
     }
 
     private static class ByteValues extends Values
@@ -223,17 +225,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
                 dst, 0, length);
         }
 
-        public void set(int firstVertex, int numVertices, byte[] src)
-        {
-            requireSourceLength(firstVertex, numVertices);
-            requireArrayLength(numVertices, src);
-
-            final int offset = firstVertex * getComponentCount();
-            final int length = numVertices * getComponentCount();
-            System.arraycopy(src, 0,
-                values, offset, length);
-        }
-
         @Override
         public void set(int firstVertex, int numVertices, List<? extends Number> values)
         {
@@ -247,6 +238,22 @@ public class VertexArray extends Object3D implements SectionSerialisable
             }
 
             set(firstVertex, numVertices, src);
+        }
+
+        public void set(int firstVertex, int numVertices, byte[] values)
+        {
+            requireSourceLength(firstVertex, numVertices);
+            requireArrayLength(numVertices, values);
+
+            final int offset = firstVertex * getComponentCount();
+            final int length = numVertices * getComponentCount();
+            System.arraycopy(values, 0,
+                this.values, offset, length);
+        }
+
+        public void set(int firstVertex, int numVertices, short[] values)
+        {
+            throw new IllegalStateException("BYTE array only supports byte[] values");
         }
 
         public void deserialise(Deserialiser deserialiser)
@@ -323,17 +330,6 @@ public class VertexArray extends Object3D implements SectionSerialisable
                 dst, 0, length);
         }
 
-        public void set(int firstVertex, int numVertices, short[] src)
-        {
-            requireSourceLength(firstVertex, numVertices);
-            requireArrayLength(numVertices, src);
-
-            final int offset = firstVertex * getComponentCount();
-            final int length = numVertices * getComponentCount();
-            System.arraycopy(src, 0,
-                values, offset, length);
-        }
-
         @Override
         public void set(int firstVertex, int numVertices, List<? extends Number> values)
         {
@@ -347,6 +343,22 @@ public class VertexArray extends Object3D implements SectionSerialisable
             }
 
             set(firstVertex, numVertices, src);
+        }
+
+        public void set(int firstVertex, int numVertices, byte[] values)
+        {
+            throw new IllegalStateException("SHORT array only supports short[] values");
+        }
+
+        public void set(int firstVertex, int numVertices, short[] values)
+        {
+            requireSourceLength(firstVertex, numVertices);
+            requireArrayLength(numVertices, values);
+
+            final int offset = firstVertex * getComponentCount();
+            final int length = numVertices * getComponentCount();
+            System.arraycopy(values, 0,
+                this.values, offset, length);
         }
 
         public void deserialise(Deserialiser deserialiser)
@@ -402,6 +414,12 @@ public class VertexArray extends Object3D implements SectionSerialisable
         super();
     }
 
+    public VertexArray(int numVertices, int numComponents, int componentType)
+    {
+        super();
+        setSizeAndType(numVertices, numComponents, componentType);
+    }
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
@@ -412,6 +430,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         final int encoding = deserialiser.readUnsignedByte();
         final int vertexCount = deserialiser.readUnsignedShort();
         setSizeAndType(vertexCount, componentCount, componentType);
+        setEncoding(encoding);
     }
 
     @Override
@@ -442,6 +461,11 @@ public class VertexArray extends Object3D implements SectionSerialisable
         return this.values.getComponentCount();
     }
 
+    public void setEncoding(int encoding)
+    {
+        this.values.setEncoding(encoding);
+    }
+    
     public int getEncoding()
     {
         return this.values.getEncoding();
@@ -453,6 +477,16 @@ public class VertexArray extends Object3D implements SectionSerialisable
     }
 
     public void set(int firstVertex, int numVertices, List<? extends Number> values)
+    {
+        this.values.set(firstVertex, numVertices, values);
+    }
+
+    public void set(int firstVertex, int numVertices, byte[] values)
+    {
+        this.values.set(firstVertex, numVertices, values);
+    }
+
+    public void set(int firstVertex, int numVertices, short[] values)
     {
         this.values.set(firstVertex, numVertices, values);
     }
@@ -481,9 +515,9 @@ public class VertexArray extends Object3D implements SectionSerialisable
         assert(getComponentType() == componentType);
     }
 
-    public final int getComponentType(String componentType)
+    public final int getComponentType(String type)
     {
-        return getFieldValue(componentType, "type");
+        return getFieldValue(type, "type");
     }
 
 

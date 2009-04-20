@@ -452,9 +452,9 @@ public class KeyframeSequence extends Object3D
         this.encoding = encoding;
     }
 
-    public void setEncoding(String value)
+    public void setEncoding(String encoding)
     {
-        setEncoding(getFieldValue(value, "encoding"));
+        setEncoding(getFieldValue(encoding, "encoding"));
     }
 
     public int getInterpolationType()
@@ -472,9 +472,9 @@ public class KeyframeSequence extends Object3D
         this.interpolationType = interpolation;
     }
     
-    public void setInterpolationType(String value)
+    public void setInterpolationType(String interpolation)
     {
-        setInterpolationType(getFieldValue(value, "interpolationType"));
+        setInterpolationType(getFieldValue(interpolation, "interpolationType"));
     }
 
     public int getRepeatMode()

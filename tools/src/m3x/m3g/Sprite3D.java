@@ -29,10 +29,8 @@ package m3x.m3g;
 
 import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
-import m3x.m3g.primitives.Matrix;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Sprite<br>
@@ -48,7 +46,7 @@ import m3x.m3g.primitives.Matrix;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Sprite extends Node implements SectionSerialisable
+public class Sprite3D extends Node implements SectionSerialisable
 {
     private Image2D image;
     private Appearance appearance;
@@ -58,7 +56,7 @@ public class Sprite extends Node implements SectionSerialisable
     private int cropWidth;
     private int cropHeight;
 
-    public Sprite()
+    public Sprite3D()
     {
         super();
     }

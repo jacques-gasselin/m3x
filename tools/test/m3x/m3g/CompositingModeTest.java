@@ -33,4 +33,26 @@ package m3x.m3g;
  */
 public class CompositingModeTest extends AbstractTestCase
 {
+    private CompositingMode compositingMode;
+
+    public CompositingModeTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        compositingMode = new CompositingMode();
+    }
+
+    public void testSerializationAndDeserialization()
+    {
+        assertSerialiseSingle(compositingMode);
+    }
+
+    public void testSaveAndLoad()
+    {
+        Object3D[] roots = new Object3D[]{ compositingMode };
+        assertSaveAndLoad(roots);
+    }
 }

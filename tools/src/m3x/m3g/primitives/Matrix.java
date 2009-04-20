@@ -47,17 +47,28 @@ public class Matrix implements Serialisable
     private float[] matrix;
     private final static int MATRIX_LENGTH = 16;
 
-    public Matrix(List<Float> transform)
+    private static final float[] IDENTITY =
     {
-        if (transform.size() < 16)
-        {
-            throw new IllegalArgumentException("size() < 16");
-        }
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    };
+
+    /**
+     * Constructs a new matrix, a zero filled float[] is created at this point,
+     * this is meant to be used with deserialize(), which will
+     * then create the array.
+     */
+    public Matrix()
+    {
         this.matrix = new float[MATRIX_LENGTH];
-        for (int i = 0; i < matrix.length; i++)
-        {
-            this.matrix[i] = transform.get(i);
-        }
+    }
+
+    public Matrix(List<Float> matrix)
+    {
+        this();
+        set(matrix);
     }
 
     /**
@@ -67,8 +78,8 @@ public class Matrix implements Serialisable
      */
     public Matrix(float[] matrix)
     {
-        assert (matrix != null && matrix.length == MATRIX_LENGTH);
-        this.matrix = matrix;
+        this();
+        set(matrix);
     }
 
     /**
@@ -77,21 +88,8 @@ public class Matrix implements Serialisable
      */
     public Matrix(double[] matrix)
     {
-        assert (matrix != null && matrix.length == MATRIX_LENGTH);
-        this.matrix = new float[MATRIX_LENGTH];
-        for (int i = 0; i < matrix.length; i++)
-        {
-            this.matrix[i] = (float) matrix[i];
-        }
-    }
-
-    /**
-     * Constructs a new matrix, no float[] created at this point,
-     * this is meant to be used with deserialize(), which will
-     * then create the array.
-     */
-    public Matrix()
-    {
+        this();
+        set(matrix);
     }
 
     public void deserialise(Deserialiser deserialiser)
@@ -120,9 +118,54 @@ public class Matrix implements Serialisable
         return this.matrix;
     }
 
-    public void setMatrix(float[] matrix)
+    public void setIdentity()
     {
-        this.matrix = matrix;
+        set(IDENTITY);
+    }
+
+    public void set(float[] matrix)
+    {
+        if (matrix == null)
+        {
+            throw new NullPointerException("matrix is null");
+        }
+        if (matrix.length < 16)
+        {
+            throw new IllegalArgumentException("matrix.length < 16");
+        }
+        System.arraycopy(matrix, 0, this.matrix, 0, MATRIX_LENGTH);
+    }
+
+    public void set(double[] matrix)
+    {
+        if (matrix == null)
+        {
+            throw new NullPointerException("matrix is null");
+        }
+        if (matrix.length < 16)
+        {
+            throw new IllegalArgumentException("matrix.length < 16");
+        }
+        for (int i = 0; i < MATRIX_LENGTH; ++i)
+        {
+            this.matrix[i] = (float) matrix[i];
+        }
+    }
+
+    public void set(List<Float> matrix)
+    {
+        if (matrix == null)
+        {
+            throw new NullPointerException("matrix is null");
+        }
+        if (matrix.size() < 16)
+        {
+            throw new IllegalArgumentException("matrix.size() < 16");
+        }
+        for (int i = 0; i < MATRIX_LENGTH; i++)
+        {
+            this.matrix[i] = matrix.get(i);
+        }
     }
 
     @Override

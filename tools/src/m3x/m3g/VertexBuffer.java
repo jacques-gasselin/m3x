@@ -153,9 +153,9 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         this.positions.deserialise(deserialiser);
         this.normals = (VertexArray)deserialiser.readReference();
         this.colors = (VertexArray)deserialiser.readReference();
-        int textureCoordinateArrayCount = deserialiser.readInt();
+        final int textureCoordinateArrayCount = deserialiser.readInt();
         setTexCoordCount(textureCoordinateArrayCount);
-        for (int i = 0; i < textureCoordinateArrayCount; i++)
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
         {
             this.textureCoordinates[i] = new ScaleBiasedVertexArray();
             this.textureCoordinates[i].deserialise(deserialiser);
@@ -171,10 +171,11 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         this.positions.serialise(serialiser);
         serialiser.writeReference(getNormals());
         serialiser.writeReference(getColors());
-        serialiser.writeInt(getTexCoordCount());
-        for (ScaleBiasedVertexArray textureCoordinate : this.textureCoordinates)
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        serialiser.writeInt(textureCoordinateArrayCount);
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
         {
-            textureCoordinate.serialise(serialiser);
+            this.textureCoordinates[i].serialise(serialiser);
         }
     }
 

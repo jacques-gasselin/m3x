@@ -33,4 +33,21 @@ package m3x.m3g;
  */
 public class Texture2DTest extends AbstractTestCase
 {
+    public Texture2DTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+    }
+
+    public void testSaveAndLoad()
+    {
+        Image2D img = new Image2D(Image2D.RGB, 256, 256);
+        Texture2D tex = new Texture2D(img);
+
+        Object3D[] roots = new Object3D[]{ tex };
+        assertSaveAndLoad(roots);
+    }
 }

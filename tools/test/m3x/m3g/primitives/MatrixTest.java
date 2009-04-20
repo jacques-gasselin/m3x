@@ -39,7 +39,7 @@ public class MatrixTest extends AbstractTestCase
     public void testSerializationAndDeserialization()
     {
         Matrix matrix = new Matrix();
-        matrix.setMatrix(new float[]{
+        matrix.set(new float[]{
             0,   1,   2,   3,
             4,   5,   6,   7,
             8,   9,  10,  11,
