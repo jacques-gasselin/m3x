@@ -30,7 +30,6 @@ package m3x.m3g;
 import java.util.List;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
