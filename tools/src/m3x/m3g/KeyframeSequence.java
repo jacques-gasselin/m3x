@@ -306,7 +306,7 @@ public class KeyframeSequence extends Object3D
         switch (encoding)
         {
             case FLOAT:
-                writer = new FloatKeyframeWriter();
+                writer = new FloatKeyframeWriter(this);
                 break;
             case BYTE:
                 writer = new ByteKeyframeWriter(this);
@@ -315,13 +315,14 @@ public class KeyframeSequence extends Object3D
                 writer = new ShortKeyframeWriter(this);
                 break;
         }
-
+        writer.writeScaleAndBias(serialiser);
+        
         final float value[] = new float[componentCount];
         for (int i = 0; i < keyframeCount; ++i)
         {
             final int time = getKeyframe(i, value);
             serialiser.writeInt(time);
-            writer.writeKeyframe(serialiser, value, componentCount);
+            writer.writeKeyframe(serialiser, value);
         }
     }
 
@@ -329,17 +330,47 @@ public class KeyframeSequence extends Object3D
      * Interface for simplifying keyframe serialising
      * @author jgasseli
      */
-    private interface KeyframeWriter
+    private static abstract class KeyframeWriter
     {
-        public void writeKeyframe(Serialiser serialiser, float[] value,
-            final int componentCount) throws IOException;
+        private final int keyframeCount;
+        private final int componentCount;
+
+        protected KeyframeWriter(KeyframeSequence sequence)
+        {
+            keyframeCount = sequence.getKeyframeCount();
+            componentCount = sequence.getComponentCount();
+        }
+
+        final int getKeyframeCount()
+        {
+            return keyframeCount;
+        }
+
+        final int getComponentCount()
+        {
+            return componentCount;
+        }
+
+        abstract void writeScaleAndBias(Serialiser serialiser) throws IOException;
+        
+        abstract void writeKeyframe(Serialiser serialiser, float[] value) throws IOException;
     }
 
-    private static final class FloatKeyframeWriter implements KeyframeWriter
+    private static final class FloatKeyframeWriter extends KeyframeWriter
     {
-        public final void writeKeyframe(Serialiser serialiser, float[] value,
-            final int componentCount) throws IOException
+        protected FloatKeyframeWriter(KeyframeSequence sequence)
         {
+            super(sequence);
+        }
+
+        void writeScaleAndBias(Serialiser serialiser) throws IOException
+        {
+            
+        }
+
+        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
             {
                 serialiser.writeFloat(value[j]);
@@ -347,15 +378,17 @@ public class KeyframeSequence extends Object3D
         }
     }
 
-    private static abstract class ScaleBiasedKeyframeWriter implements KeyframeWriter
+    private static abstract class ScaleBiasedKeyframeWriter extends KeyframeWriter
     {
         private final float[] bias;
         private final float[] scale;
 
         protected ScaleBiasedKeyframeWriter(KeyframeSequence sequence)
         {
-            final int keyframeCount = sequence.getKeyframeCount();
-            final int componentCount = sequence.getComponentCount();
+            super(sequence);
+            
+            final int keyframeCount = getKeyframeCount();
+            final int componentCount = getComponentCount();
             
             //get max and min
             final float[] min = new float[componentCount];
@@ -389,9 +422,22 @@ public class KeyframeSequence extends Object3D
             scale = max;
         }
 
-        public final void writeKeyframe(Serialiser serialiser, float[] value,
-            final int componentCount) throws IOException
+        final void writeScaleAndBias(Serialiser serialiser) throws IOException
         {
+            final int componentCount = getComponentCount();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(bias[j]);
+            }
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(scale[j]);
+            }
+        }
+
+        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
             {
                 final float uniform = (value[j] - bias[j]) / scale[j];
@@ -399,7 +445,7 @@ public class KeyframeSequence extends Object3D
             }
         }
 
-        public abstract void writeUniform(Serialiser serialiser,
+        abstract void writeUniform(Serialiser serialiser,
             float uniform) throws IOException;
     }
     
@@ -413,7 +459,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        public void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        void writeUniform(Serialiser serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
             serialiser.writeByte(value);
@@ -430,7 +476,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        public void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        void writeUniform(Serialiser serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
             serialiser.writeShort(value);
