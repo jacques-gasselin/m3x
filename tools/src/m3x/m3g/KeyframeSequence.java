@@ -155,48 +155,6 @@ public class KeyframeSequence extends Object3D
         setRepeatMode(CONSTANT);
     }
 
-
-    @Override
-    public void deserialise(Deserialiser deserialiser)
-        throws IOException
-    {
-        super.deserialise(deserialiser);
-        setInterpolationType(deserialiser.readUnsignedByte());
-        setRepeatMode(deserialiser.readUnsignedByte());
-        final int encoding = deserialiser.readUnsignedByte();
-        setEncoding(encoding);
-        setDuration(deserialiser.readInt());
-        final int first = deserialiser.readInt();
-        final int last = deserialiser.readInt();
-        setValidRange(first, last);
-        final int componentCount = deserialiser.readInt();
-        final int keyframeCount = deserialiser.readInt();
-        setSize(keyframeCount, componentCount);
-
-        KeyframeReader reader = null;
-        switch (encoding)
-        {
-            case FLOAT:
-                reader = new FloatKeyframeReader(this);
-                break;
-            case BYTE:
-                reader = new ByteKeyframeReader(this);
-                break;
-            case SHORT:
-                reader = new ShortKeyframeReader(this);
-                break;
-        }
-        reader.readScaleAndBias(deserialiser);
-
-        final float value[] = new float[componentCount];
-        for (int i = 0; i < keyframeCount; ++i)
-        {
-            final int time = deserialiser.readInt();
-            reader.readKeyframe(deserialiser, value);
-            setKeyframe(i, time, value);
-        }
-    }
-
     /**
      * Interface for simplifying keyframe deserialising
      * @author jgasseli
@@ -274,6 +232,7 @@ public class KeyframeSequence extends Object3D
             scale = new float[componentCount];
         }
 
+        @Override
         final void readScaleAndBias(Deserialiser deserialiser) throws IOException
         {
             final int componentCount = getComponentCount();
@@ -287,6 +246,7 @@ public class KeyframeSequence extends Object3D
             }
         }
 
+        @Override
         final void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException
         {
             final int componentCount = getComponentCount();
@@ -310,7 +270,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final float readUniform(Deserialiser deserialiser) throws IOException
+        float readUniform(Deserialiser deserialiser) throws IOException
         {
             return deserialiser.readUnsignedByte() * FACTOR;
         }
@@ -326,7 +286,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final float readUniform(Deserialiser deserialiser) throws IOException
+        float readUniform(Deserialiser deserialiser) throws IOException
         {
             return deserialiser.readUnsignedShort() * FACTOR;
         }
@@ -485,6 +445,47 @@ public class KeyframeSequence extends Object3D
         for (int i = 0; i < keyframeCount; ++i)
         {
             this.keyFrames[i] = new FloatKeyFrame(componentCount);
+        }
+    }
+
+    @Override
+    public void deserialise(Deserialiser deserialiser)
+        throws IOException
+    {
+        super.deserialise(deserialiser);
+        setInterpolationType(deserialiser.readUnsignedByte());
+        setRepeatMode(deserialiser.readUnsignedByte());
+        final int encoding = deserialiser.readUnsignedByte();
+        setEncoding(encoding);
+        setDuration(deserialiser.readInt());
+        final int first = deserialiser.readInt();
+        final int last = deserialiser.readInt();
+        setValidRange(first, last);
+        final int componentCount = deserialiser.readInt();
+        final int keyframeCount = deserialiser.readInt();
+        setSize(keyframeCount, componentCount);
+
+        KeyframeReader reader = null;
+        switch (encoding)
+        {
+            case FLOAT:
+                reader = new FloatKeyframeReader(this);
+                break;
+            case BYTE:
+                reader = new ByteKeyframeReader(this);
+                break;
+            case SHORT:
+                reader = new ShortKeyframeReader(this);
+                break;
+        }
+        reader.readScaleAndBias(deserialiser);
+
+        final float value[] = new float[componentCount];
+        for (int i = 0; i < keyframeCount; ++i)
+        {
+            final int time = deserialiser.readInt();
+            reader.readKeyframe(deserialiser, value);
+            setKeyframe(i, time, value);
         }
     }
 
