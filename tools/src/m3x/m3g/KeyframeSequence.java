@@ -155,6 +155,7 @@ public class KeyframeSequence extends Object3D
         setRepeatMode(CONSTANT);
     }
 
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
@@ -176,21 +177,22 @@ public class KeyframeSequence extends Object3D
         switch (encoding)
         {
             case FLOAT:
-                reader = new FloatKeyframeReader();
+                reader = new FloatKeyframeReader(this);
                 break;
             case BYTE:
-                reader = new ByteKeyframeReader(deserialiser, componentCount);
+                reader = new ByteKeyframeReader(this);
                 break;
             case SHORT:
-                reader = new ShortKeyframeReader(deserialiser, componentCount);
+                reader = new ShortKeyframeReader(this);
                 break;
         }
+        reader.readScaleAndBias(deserialiser);
 
         final float value[] = new float[componentCount];
         for (int i = 0; i < keyframeCount; ++i)
         {
             final int time = deserialiser.readInt();
-            reader.readKeyframe(deserialiser, value, componentCount);
+            reader.readKeyframe(deserialiser, value);
             setKeyframe(i, time, value);
         }
     }
@@ -199,17 +201,58 @@ public class KeyframeSequence extends Object3D
      * Interface for simplifying keyframe deserialising
      * @author jgasseli
      */
-    private interface KeyframeReader
+    private static class KeyframeSequenceInfo
     {
-        public void readKeyframe(Deserialiser deserialiser, float[] value,
-            final int componentCount) throws IOException;
+        private final int keyframeCount;
+        private final int componentCount;
+
+        protected KeyframeSequenceInfo(KeyframeSequence sequence)
+        {
+            keyframeCount = sequence.getKeyframeCount();
+            componentCount = sequence.getComponentCount();
+        }
+
+        final int getKeyframeCount()
+        {
+            return keyframeCount;
+        }
+
+        final int getComponentCount()
+        {
+            return componentCount;
+        }
     }
 
-    private static final class FloatKeyframeReader implements KeyframeReader
+
+    private static abstract class KeyframeReader extends KeyframeSequenceInfo
     {
-        public final void readKeyframe(Deserialiser deserialiser, float[] value,
-            final int componentCount) throws IOException
+        protected KeyframeReader(KeyframeSequence sequence)
         {
+            super(sequence);
+        }
+
+        abstract void readScaleAndBias(Deserialiser deserialiser) throws IOException;
+        
+        abstract void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException;
+    }
+
+    private static final class FloatKeyframeReader extends KeyframeReader
+    {
+        FloatKeyframeReader(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+        
+        @Override
+        void readScaleAndBias(Deserialiser deserialiser) throws IOException
+        {
+            //do nothing
+        }
+        
+        @Override
+        void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
             {
                 value[j] = deserialiser.readFloat();
@@ -217,20 +260,36 @@ public class KeyframeSequence extends Object3D
         }
     }
     
-    private static abstract class ScaleBiasedKeyframeReader implements KeyframeReader
+    private static abstract class ScaleBiasedKeyframeReader extends KeyframeReader
     {
         private final float[] bias;
         private final float[] scale;
 
-        protected ScaleBiasedKeyframeReader(Deserialiser deserialiser, final int componentCount)
+        protected ScaleBiasedKeyframeReader(KeyframeSequence sequence)
         {
+            super(sequence);
+            
+            final int componentCount = getComponentCount();
             bias = new float[componentCount];
             scale = new float[componentCount];
         }
 
-        public final void readKeyframe(Deserialiser deserialiser, float[] value,
-            final int componentCount) throws IOException
+        final void readScaleAndBias(Deserialiser deserialiser) throws IOException
         {
+            final int componentCount = getComponentCount();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                bias[j] = deserialiser.readFloat();
+            }
+            for (int j = 0; j < componentCount; ++j)
+            {
+                scale[j] = deserialiser.readFloat();
+            }
+        }
+
+        final void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
             {
                 final float uniform = readUniform(deserialiser);
@@ -238,20 +297,20 @@ public class KeyframeSequence extends Object3D
             }
         }
 
-        public abstract float readUniform(Deserialiser deserialiser) throws IOException;
+        abstract float readUniform(Deserialiser deserialiser) throws IOException;
     }
 
     private static final class ByteKeyframeReader extends ScaleBiasedKeyframeReader
     {
         private static final float FACTOR = 1.0f / 255;
         
-        public ByteKeyframeReader(Deserialiser deserialiser, int componentCount)
+        ByteKeyframeReader(KeyframeSequence sequence)
         {
-            super(deserialiser, componentCount);
+            super(sequence);
         }
 
         @Override
-        public final float readUniform(Deserialiser deserialiser) throws IOException
+        final float readUniform(Deserialiser deserialiser) throws IOException
         {
             return deserialiser.readUnsignedByte() * FACTOR;
         }
@@ -261,18 +320,163 @@ public class KeyframeSequence extends Object3D
     {
         private static final float FACTOR = 1.0f / 65535;
 
-        public ShortKeyframeReader(Deserialiser deserialiser, int componentCount)
+        ShortKeyframeReader(KeyframeSequence sequence)
         {
-            super(deserialiser, componentCount);
+            super(sequence);
         }
 
         @Override
-        public final float readUniform(Deserialiser deserialiser) throws IOException
+        final float readUniform(Deserialiser deserialiser) throws IOException
         {
             return deserialiser.readUnsignedShort() * FACTOR;
         }
     }
 
+    /**
+     * Interface for simplifying keyframe serialising
+     * @author jgasseli
+     */
+    private static abstract class KeyframeWriter extends KeyframeSequenceInfo
+    {
+        protected KeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        abstract void writeScaleAndBias(Serialiser serialiser) throws IOException;
+
+        abstract void writeKeyframe(Serialiser serialiser, float[] value) throws IOException;
+    }
+
+    private static final class FloatKeyframeWriter extends KeyframeWriter
+    {
+        protected FloatKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        @Override
+        void writeScaleAndBias(Serialiser serialiser) throws IOException
+        {
+            //do nothing
+        }
+
+        @Override
+        void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(value[j]);
+            }
+        }
+    }
+
+    private static abstract class ScaleBiasedKeyframeWriter extends KeyframeWriter
+    {
+        private final float[] bias;
+        private final float[] scale;
+
+        protected ScaleBiasedKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+
+            final int keyframeCount = getKeyframeCount();
+            final int componentCount = getComponentCount();
+
+            //get max and min
+            final float[] min = new float[componentCount];
+            final float[] max = new float[componentCount];
+            if (keyframeCount > 0)
+            {
+                //set the max and minimum for the first iteration
+                sequence.getKeyframe(0, min);
+                sequence.getKeyframe(0, max);
+            }
+
+            final float[] value = new float[componentCount];
+            for (int i = 0; i < keyframeCount; ++i)
+            {
+                sequence.getKeyframe(i, value);
+                for (int j = 0; j < componentCount; ++j)
+                {
+                    final float v = value[j];
+                    max[j] = Math.max(max[j], v);
+                    min[j] = Math.min(min[j], v);
+                }
+            }
+
+            //bias is min
+            bias = min;
+            //scale is max - min
+            for (int j = 0; j < componentCount; ++j)
+            {
+                max[j] = max[j] - min[j];
+            }
+            scale = max;
+        }
+
+        @Override
+        final void writeScaleAndBias(Serialiser serialiser) throws IOException
+        {
+            final int componentCount = getComponentCount();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(bias[j]);
+            }
+            for (int j = 0; j < componentCount; ++j)
+            {
+                serialiser.writeFloat(scale[j]);
+            }
+        }
+
+        @Override
+        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        {
+            final int componentCount = getComponentCount();
+            for (int j = 0; j < componentCount; ++j)
+            {
+                final float uniform = (value[j] - bias[j]) / scale[j];
+                writeUniform(serialiser, uniform);
+            }
+        }
+
+        abstract void writeUniform(Serialiser serialiser, float uniform) throws IOException;
+    }
+
+    private static final class ByteKeyframeWriter extends ScaleBiasedKeyframeWriter
+    {
+        private static final int MAX = 255;
+
+        ByteKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        @Override
+        void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        {
+            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
+            serialiser.writeByte(value);
+        }
+    }
+
+    private static final class ShortKeyframeWriter extends ScaleBiasedKeyframeWriter
+    {
+        private static final int MAX = 65535;
+
+        ShortKeyframeWriter(KeyframeSequence sequence)
+        {
+            super(sequence);
+        }
+
+        @Override
+        void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        {
+            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
+            serialiser.writeShort(value);
+        }
+    }
     
     public void setSize(int keyframeCount, int componentCount)
     {
@@ -326,162 +530,6 @@ public class KeyframeSequence extends Object3D
         }
     }
 
-    /**
-     * Interface for simplifying keyframe serialising
-     * @author jgasseli
-     */
-    private static abstract class KeyframeWriter
-    {
-        private final int keyframeCount;
-        private final int componentCount;
-
-        protected KeyframeWriter(KeyframeSequence sequence)
-        {
-            keyframeCount = sequence.getKeyframeCount();
-            componentCount = sequence.getComponentCount();
-        }
-
-        final int getKeyframeCount()
-        {
-            return keyframeCount;
-        }
-
-        final int getComponentCount()
-        {
-            return componentCount;
-        }
-
-        abstract void writeScaleAndBias(Serialiser serialiser) throws IOException;
-        
-        abstract void writeKeyframe(Serialiser serialiser, float[] value) throws IOException;
-    }
-
-    private static final class FloatKeyframeWriter extends KeyframeWriter
-    {
-        protected FloatKeyframeWriter(KeyframeSequence sequence)
-        {
-            super(sequence);
-        }
-
-        void writeScaleAndBias(Serialiser serialiser) throws IOException
-        {
-            
-        }
-
-        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
-        {
-            final int componentCount = getComponentCount();
-            for (int j = 0; j < componentCount; ++j)
-            {
-                serialiser.writeFloat(value[j]);
-            }
-        }
-    }
-
-    private static abstract class ScaleBiasedKeyframeWriter extends KeyframeWriter
-    {
-        private final float[] bias;
-        private final float[] scale;
-
-        protected ScaleBiasedKeyframeWriter(KeyframeSequence sequence)
-        {
-            super(sequence);
-            
-            final int keyframeCount = getKeyframeCount();
-            final int componentCount = getComponentCount();
-            
-            //get max and min
-            final float[] min = new float[componentCount];
-            final float[] max = new float[componentCount];
-            if (keyframeCount > 0)
-            {
-                //set the max and minimum for the first iteration
-                sequence.getKeyframe(0, min);
-                sequence.getKeyframe(0, max);
-            }
-
-            final float[] value = new float[componentCount];
-            for (int i = 0; i < keyframeCount; ++i)
-            {
-                sequence.getKeyframe(i, value);
-                for (int j = 0; j < componentCount; ++j)
-                {
-                    final float v = value[j];
-                    max[j] = Math.max(max[j], v);
-                    min[j] = Math.min(min[j], v);
-                }
-            }
-
-            //bias is min
-            bias = min;
-            //scale is max - min
-            for (int j = 0; j < componentCount; ++j)
-            {
-                max[j] = max[j] - min[j];
-            }
-            scale = max;
-        }
-
-        final void writeScaleAndBias(Serialiser serialiser) throws IOException
-        {
-            final int componentCount = getComponentCount();
-            for (int j = 0; j < componentCount; ++j)
-            {
-                serialiser.writeFloat(bias[j]);
-            }
-            for (int j = 0; j < componentCount; ++j)
-            {
-                serialiser.writeFloat(scale[j]);
-            }
-        }
-
-        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
-        {
-            final int componentCount = getComponentCount();
-            for (int j = 0; j < componentCount; ++j)
-            {
-                final float uniform = (value[j] - bias[j]) / scale[j];
-                writeUniform(serialiser, uniform);
-            }
-        }
-
-        abstract void writeUniform(Serialiser serialiser,
-            float uniform) throws IOException;
-    }
-    
-    private static final class ByteKeyframeWriter extends ScaleBiasedKeyframeWriter
-    {
-        private static final int MAX = 255;
-
-        public ByteKeyframeWriter(KeyframeSequence sequence)
-        {
-            super(sequence);
-        }
-
-        @Override
-        void writeUniform(Serialiser serialiser, float uniform) throws IOException
-        {
-            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
-            serialiser.writeByte(value);
-        }
-    }
-
-    private static final class ShortKeyframeWriter extends ScaleBiasedKeyframeWriter
-    {
-        private static final int MAX = 65535;
-
-        public ShortKeyframeWriter(KeyframeSequence sequence)
-        {
-            super(sequence);
-        }
-
-        @Override
-        void writeUniform(Serialiser serialiser, float uniform) throws IOException
-        {
-            final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
-            serialiser.writeShort(value);
-        }
-    }
 
     public int getSectionObjectType()
     {
