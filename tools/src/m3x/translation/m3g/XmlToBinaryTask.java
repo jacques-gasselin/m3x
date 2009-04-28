@@ -177,10 +177,17 @@ public class XmlToBinaryTask extends Task
                     final Throwable cause = ex.getCause();
                     if (cause != null)
                     {
-                        message = cause.getMessage();
+                        if (cause.getMessage() != null)
+                        {
+                            message = cause.getMessage();
+                        }
+                        else
+                        {
+                            cause.printStackTrace();
+                        }
                     }
                     throw new BuildException("convert(File, File) failed on\n"
-                            + sourceFile + ": "+ message);
+                            + sourceFile + ": "+ message, ex);
                 }
                 catch (IllegalAccessException ex)
                 {

@@ -1050,9 +1050,6 @@
                             </xs:simpleType>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="keyframeCount"
-                                  type="UInt31"
-                                  use="required"/>
                     <xs:attribute name="componentCount"
                                   type="UInt31"
                                   use="required"/>
@@ -1069,7 +1066,8 @@
                                   type="UInt31"
                                   default="0"/>
                     <xs:attribute name="validRangeLast"
-                                  type="UInt31"/>
+                                  type="UInt31"
+                                  default="0"/>
                     <xs:attribute name="repeatMode"
                                   type="KeyframePlaybackType"
                                   default="CONSTANT"/>

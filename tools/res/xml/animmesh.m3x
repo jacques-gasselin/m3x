@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<m3g version="1.0">
+    <section>
+        <AnimationTrack id="track1" targetProperty="TRANSLATION">
+            <KeyframeSequence componentCount="3" duration="1000" interpolation="LINEAR">
+                <keytimes>0 500</keytimes>
+                <keyframes>
+                    0 0 0
+                    0 128 0
+                </keyframes>
+            </KeyframeSequence>
+            <AnimationController/>
+        </AnimationTrack>
+        <VertexArray id="posArray" componentCount="3">
+            <byteComponents>
+               -128 -128 0
+                127 -128 0
+               -128  127 0
+                127  127 0
+            </byteComponents>
+        </VertexArray>
+        <VertexBuffer id="vertexBuffer" defaultColor="127 65 255 255">
+            <positions>
+                <VertexArrayInstance ref="posArray"/>
+            </positions>
+        </VertexBuffer>
+        <Mesh>
+            <AnimationTrackInstance ref="track1"/>
+            <VertexBufferInstance ref="vertexBuffer"/>
+            <submesh>
+                <TriangleStripArray>
+                    <indices>0 1 2 3</indices>
+                    <stripLengths>4</stripLengths>
+                </TriangleStripArray>
+                <Appearance>
+                    <PolygonMode culling="CULL_NONE"/>
+                </Appearance>
+            </submesh>
+        </Mesh>
+    </section>
+</m3g>

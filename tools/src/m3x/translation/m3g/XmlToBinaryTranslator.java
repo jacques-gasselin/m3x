@@ -118,11 +118,30 @@ public class XmlToBinaryTranslator extends BinaryTranslator
 
     public static void convert(File source, File target)
     {
+        if (source == null)
+        {
+            throw new NullPointerException("source is null");
+        }
+        if (!source.exists())
+        {
+            throw new IllegalArgumentException("source file does not exist");
+        }
+        if (target == null)
+        {
+            throw new NullPointerException("target is null");
+        }
+        if (target.exists() && !target.canWrite())
+        {
+            throw new IllegalArgumentException(
+                    "target file exists but is write protected");
+        }
+        
         //deserialise XML stream
         m3x.xml.M3G xmlRoot = null;
         try
         {
-            xmlRoot = m3x.xml.Deserialiser.deserialise(new FileInputStream(source));
+            xmlRoot = m3x.xml.Deserialiser.deserialise(
+                    new FileInputStream(source));
         }
         catch (FileNotFoundException ex)
         {
@@ -131,7 +150,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         }
 
         //translate
-        m3x.m3g.Object3D[] binRoots = XmlToBinaryTranslator.convertRoot(xmlRoot);
+        final m3x.m3g.Object3D[] binRoots = convertRoot(xmlRoot);
 
         //serialise the binary stream
         try
@@ -147,7 +166,8 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         }
         catch (IOException ex)
         {
-            throw new IllegalArgumentException("unable to serialise xml objects", ex);
+            throw new IllegalArgumentException(
+                    "unable to serialise xml objects", ex);
         }
     }
 

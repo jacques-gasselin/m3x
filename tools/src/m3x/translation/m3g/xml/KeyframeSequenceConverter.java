@@ -52,12 +52,12 @@ public class KeyframeSequenceConverter extends Object3DConverter
         to.setRepeatMode(from.getRepeatMode().value());
         to.setInterpolationType(from.getInterpolation().value());
         to.setDuration(from.getDuration());
-        
-        to.setSize(from.getKeyframeCount(), from.getComponentCount());
+
+        final List<Integer> times = from.getKeytimes();
+        to.setSize(times.size(), from.getComponentCount());
         to.setValidRange(from.getValidRangeFirst(), from.getValidRangeLast());
 
-        List<Integer> times = from.getKeytimes();
-        List<Float> values = from.getKeyframes();
+        final List<Float> values = from.getKeyframes();
         to.setKeyframes(times, values);
     }
 }
