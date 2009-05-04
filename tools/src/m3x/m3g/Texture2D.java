@@ -81,6 +81,26 @@ public class Texture2D extends Transformable implements SectionSerialisable
         setImage(image);
     }
 
+    private static boolean isPowerOf2(int value)
+    {
+        return (value & (~(value - 1))) == value;
+    }
+
+    private static void validateWidthAndHeight(int width, int height)
+    {
+        if (width <= 0 || !isPowerOf2(width))
+        {
+            throw new IllegalArgumentException("width must be a positive power of 2,\n"
+                    + "width = " + width);
+        }
+        if (height <= 0 || !isPowerOf2(height))
+        {
+            throw new IllegalArgumentException("height must be a positive power of 2,\n"
+                    + "height = " + height);
+        }
+
+    }
+
     @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
@@ -194,6 +214,10 @@ public class Texture2D extends Transformable implements SectionSerialisable
 
     public void setImage(Image2D image)
     {
+        if (image != null)
+        {
+            validateWidthAndHeight(image.getWidth(), image.getHeight());
+        }
         this.image = image;
     }
 
