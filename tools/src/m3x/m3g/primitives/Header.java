@@ -56,22 +56,22 @@ public class Header implements SectionSerialisable
     {
         deserialiser.readFully(this.version);
         this.hasExternalReferences = deserialiser.readBoolean();
-        this.totalFileSize = deserialiser.readInt();
-        this.approximateContentSize = deserialiser.readInt();
-        this.authoringInformation = deserialiser.readUTF8();
+        setTotalFileSize(deserialiser.readInt());
+        setApproximateContentSize(deserialiser.readInt());
+        setAuthoringInformation(deserialiser.readUTF8());
     }
 
     public void serialise(Serialiser serialiser)
         throws IOException
     {
         serialiser.write(this.version);
-        serialiser.writeBoolean(this.hasExternalReferences);
-        serialiser.writeInt(this.totalFileSize);
-        serialiser.writeInt(this.approximateContentSize);
-        serialiser.writeUTF8(this.authoringInformation);
+        serialiser.writeBoolean(hasExternalReferences());
+        serialiser.writeInt(getTotalFileSize());
+        serialiser.writeInt(getApproximateContentSize());
+        serialiser.writeUTF8(getAuthoringInformation());
     }
 
-    public boolean isHasExternalReferences()
+    public boolean hasExternalReferences()
     {
         return this.hasExternalReferences;
     }
@@ -112,19 +112,19 @@ public class Header implements SectionSerialisable
     {
         if (version.length() != 3)
         {
-            throw new IllegalArgumentException("String of format B.B expected");
+            throw new NumberFormatException("String of format B.B expected");
         }
         if (!Character.isDigit(version.charAt(0)))
         {
-            throw new IllegalArgumentException("Major revision is not a digit");
+            throw new NumberFormatException("Major revision is not a digit");
         }
         if (version.charAt(1) != '.')
         {
-            throw new IllegalArgumentException("String of format B.B expected");
+            throw new NumberFormatException("String of format B.B expected");
         }
         if (!Character.isDigit(version.charAt(2)))
         {
-            throw new IllegalArgumentException("Minor revision is not a digit");
+            throw new NumberFormatException("Minor revision is not a digit");
         }
         //Assume format is B.B
         final int major = Character.digit(version.charAt(0), 10);

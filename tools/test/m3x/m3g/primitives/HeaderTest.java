@@ -25,7 +25,9 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.m3g;
+package m3x.m3g.primitives;
+
+import m3x.m3g.*;
 
 /**
  * 
@@ -33,4 +35,60 @@ package m3x.m3g;
  */
 public class HeaderTest extends AbstractTestCase
 {
+    private Header header;
+
+    public HeaderTest()
+    {
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        header = new Header();
+    }
+
+    public void testGetVersion()
+    {
+        assertEquals("Version must be 1.0",
+                "1.0", header.getVersion());
+    }
+
+    public void testSetVersion()
+    {
+        try
+        {
+            header.setVersion("1");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof NumberFormatException);
+        }
+
+        try
+        {
+            header.setVersion(" 1.0 ");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof NumberFormatException);
+        }
+
+        try
+        {
+            header.setVersion("1 0");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof NumberFormatException);
+        }
+        
+        try
+        {
+            header.setVersion("1.1");
+        }
+        catch (Throwable t)
+        {
+            assertTrue(t instanceof IllegalArgumentException);
+        }
+    }
 }

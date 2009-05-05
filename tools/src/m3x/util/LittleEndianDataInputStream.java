@@ -25,7 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.m3g.util;
+package m3x.util;
 
 import java.io.DataInput;
 import java.io.DataInputStream;

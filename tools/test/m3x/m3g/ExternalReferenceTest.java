@@ -33,5 +33,22 @@ package m3x.m3g;
  */
 public class ExternalReferenceTest extends AbstractTestCase
 {
-    
+    private ExternalReference ref;
+
+    public ExternalReferenceTest()
+    {
+
+    }
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        ref = new ExternalReference();
+    }
+
+    public void testGetURI()
+    {
+        assertEquals("default uri should be null",
+                null, ref.getUri());
+    }
 }

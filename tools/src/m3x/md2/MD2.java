@@ -45,6 +45,8 @@ public class MD2
     private List<String> textureFiles;
     private TextureCoordinateArray texcoords;
 
+    protected static final byte[] MAGIC = {'I', 'D', 'P', '2'};
+    
     public MD2()
     {
         frames = new Vector<VertexArray>();

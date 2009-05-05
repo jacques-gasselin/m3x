@@ -29,33 +29,30 @@ package m3x.m3g;
 
 import java.io.ByteArrayInputStream;
 import m3x.m3g.primitives.FileIdentifier;
-import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Stack;
 import java.util.Vector;
 import m3x.m3g.primitives.Section;
 import m3x.m3g.primitives.Serialisable;
-import m3x.m3g.util.LittleEndianDataInputStream;
+import m3x.util.LittleEndianDeserialiser;
 
 /**
  *
  * @author jgasseli
  */
-public class Deserialiser implements DataInput
+public final class Deserialiser extends LittleEndianDeserialiser
 {
 
     private Vector<Object3D> rootObjects;
     private Vector<Object3D> objects;
-    private Stack<LittleEndianDataInputStream> inputStreams;
 
     public Deserialiser()
     {
+        super();
         rootObjects = new Vector<Object3D>();
         objects = new Vector<Object3D>();
-        inputStreams = new Stack<LittleEndianDataInputStream>();
 
         //always have the null object at index 0
         objects.add(null);
@@ -120,21 +117,6 @@ public class Deserialiser implements DataInput
         popInputStream();
     }
 
-    public void pushInputStream(InputStream stream)
-    {
-        inputStreams.push(new LittleEndianDataInputStream(stream));
-    }
-
-    public void popInputStream()
-    {
-        inputStreams.pop();
-    }
-
-    public LittleEndianDataInputStream getInputStream()
-    {
-        return inputStreams.peek();
-    }
-
     public void addObject(Object3D obj)
     {
         objects.add(obj);
@@ -155,100 +137,19 @@ public class Deserialiser implements DataInput
         return ret;
     }
 
-    public void readFully(byte[] b) throws IOException
-    {
-        getInputStream().readFully(b);
-    }
-
-    public void readFully(byte[] b, int off, int len) throws IOException
-    {
-        getInputStream().readFully(b, off, len);
-    }
-
-    public int skipBytes(int n) throws IOException
-    {
-        return getInputStream().skipBytes(n);
-    }
-
-    public boolean readBoolean() throws IOException
-    {
-        return getInputStream().readBoolean();
-    }
-
-    public byte readByte() throws IOException
-    {
-        return getInputStream().readByte();
-    }
-
     public byte[] readByteArray() throws IOException
     {
-        LittleEndianDataInputStream in = getInputStream();
-        final int length = in.readInt();
+        final int length = readInt();
         byte[] arr = null;
         if (length > 0)
         {
             arr = new byte[length];
             for (int i = 0; i < length; ++i)
             {
-                arr[i] = in.readByte();
+                arr[i] = readByte();
             }
         }
         return arr;
-    }
-
-    public int readUnsignedByte() throws IOException
-    {
-        return getInputStream().readUnsignedByte();
-    }
-
-    public short readShort() throws IOException
-    {
-        return getInputStream().readShort();
-    }
-
-    public int readUnsignedShort() throws IOException
-    {
-        return getInputStream().readUnsignedShort();
-    }
-
-    public char readChar() throws IOException
-    {
-        return getInputStream().readChar();
-    }
-
-    public int readInt() throws IOException
-    {
-        return getInputStream().readInt();
-    }
-
-    public long readLong() throws IOException
-    {
-        return getInputStream().readLong();
-    }
-
-    public float readFloat() throws IOException
-    {
-        return getInputStream().readFloat();
-    }
-
-    public double readDouble() throws IOException
-    {
-        return getInputStream().readDouble();
-    }
-
-    public String readLine() throws IOException
-    {
-        return getInputStream().readLine();
-    }
-
-    public String readUTF() throws IOException
-    {
-        return getInputStream().readUTF();
-    }
-
-    public String readUTF8() throws IOException
-    {
-        return getInputStream().readUTF8();
     }
 
     /**

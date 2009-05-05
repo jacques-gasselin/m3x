@@ -27,20 +27,60 @@
 
 package m3x.md2;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import m3x.util.LittleEndianDeserialiser;
+
 
 /**
  *
  * @author jgasseli
  */
-public final class Deserialiser
+public final class Deserialiser extends LittleEndianDeserialiser
 {
-    private Deserialiser()
+    private MD2 rootObject;
+
+    public Deserialiser()
     {
-        throw new UnsupportedOperationException();
+        super();
+        rootObject = null;
     }
 
-    public static m3x.md2.MD2 deserialise(java.io.InputStream stream)
+    /**
+     * Checks the stream for the correct file identifier.
+     * Do this before actually deserialising the stream.
+     * @param in
+     * @return true if the file identifier is valid.
+     * @throws java.io.IOException
+     */
+    public boolean verifyFileIdentifier(InputStream in)
+        throws IOException
     {
-        throw new UnsupportedOperationException();
+        //compare the bytes at the current position to the
+        //FileIdentifier constant.
+        final byte[] bytes = MD2.MAGIC;
+        byte[] fileIdentifier = new byte[bytes.length];
+        int pos = 0;
+        while (pos < fileIdentifier.length)
+        {
+            int nread = in.read(fileIdentifier, pos, fileIdentifier.length - pos);
+            if (nread == -1)
+            {
+                //EOF
+                throw new EOFException();
+            }
+            pos += nread;
+        }
+        return Arrays.equals(fileIdentifier, bytes);
+    }
+
+    public void deserialise(InputStream stream)
+    {
+        pushInputStream(stream);
+
+
+        popInputStream();
     }
 }

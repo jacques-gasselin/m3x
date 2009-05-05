@@ -44,7 +44,7 @@ import java.util.Vector;
 import java.util.zip.Adler32;
 import m3x.m3g.primitives.Section;
 import m3x.m3g.primitives.SectionSerialisable;
-import m3x.m3g.util.LittleEndianDataOutputStream;
+import m3x.util.LittleEndianDataOutputStream;
 
 /**
  *
