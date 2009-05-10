@@ -62,12 +62,14 @@
     
     <target name="test"
             description="runs the test target in all the subfolders">
+        <echo>*** Testing tools ***</echo>
         <ant antfile="build.xml"
              dir="tools"
              inheritall="true"
              inheritrefs="true"
              target="test"/>
 
+        <echo>*** Testing jsr297 ***</echo>
         <ant antfile="build.xml"
              dir="jsr297"
              inheritall="true"

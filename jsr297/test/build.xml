@@ -10,7 +10,7 @@
         <mkdir dir="${test.result.dir}"/>
         <junit showoutput="true"
                printsummary="on"
-               haltonerror="true"
+               haltonerror="false"
                dir="${test.dir}"
                fork="true">
             <classpath>
@@ -32,11 +32,11 @@
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${test.result.dir}">
+        <!--junitreport todir="${test.result.dir}">
             <fileset dir="${test.result.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${test.result.dir}/html"/>
-        </junitreport>
+        </junitreport-->
     </target>
 </project>

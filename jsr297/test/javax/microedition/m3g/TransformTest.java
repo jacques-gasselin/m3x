@@ -57,6 +57,7 @@ public class TransformTest extends TestCase
         }
         catch (Throwable t)
         {
+            t.printStackTrace();
             fail("default constructor must not throw");
         }
     }
