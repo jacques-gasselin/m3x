@@ -42,6 +42,14 @@ public final class Transform
         set(transform);
     }
 
+    private static final void requireNotNull(VertexArray array)
+    {
+        if (array == null)
+        {
+            throw new NullPointerException("array is null");
+        }
+    }
+
     private static final void requireNotNull(Transform transform)
     {
         if (transform == null)
@@ -82,8 +90,43 @@ public final class Transform
         throw new UnsupportedOperationException();
     }
 
-    //TODO: add all the other stubs
+    public void invert()
+    {
+        throw new UnsupportedOperationException();
+    }
 
+    public void multiply(float scalar)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void postMultiply(Transform transform)
+    {
+        requireNotNull(transform);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public void postRotate(float angle, float ax, float ay, float az)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void postRotateQuat(float qx, float qy, float qz, float qw)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void postScale(float sx, float sy, float sz)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void postTranslate(float tx, float ty, float tz)
+    {
+        throw new UnsupportedOperationException();
+    }
+    
     public void set(float[] matrix)
     {
         requireNotNull(matrix);
@@ -99,6 +142,26 @@ public final class Transform
     }
 
     public void setIdentity()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void transform(float[] vectors)
+    {
+        requireNotNull(vectors);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public void transform(VertexArray in, float[] out, boolean w)
+    {
+        requireNotNull(in);
+        requireNotNull(out);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public void transpose()
     {
         throw new UnsupportedOperationException();
     }
