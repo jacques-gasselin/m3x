@@ -1,81 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="m3x.tools"
-         default="build"
-         basedir=".">
-    <description>Builds the tool packages for the M3X project.</description>
+<project name="jsr297" default="build" basedir=".">
+    <description>Builds the jsr297 work-alike packages for the M3X project.</description>
 
     <property name="docs.dir" location="${basedir}/docs"/>
     <property name="res.dir" location="${basedir}/res"/>
-    <property name="res.xml.dir" location="${res.dir}/xml"/>
     <property name="src.dir" location="${basedir}/src"/>
-    <property name="src.m3x.dir" location="${src.dir}/m3x"/>
     <property name="test.dir" location="${basedir}/test"/>
     <property name="test.build.dir" location="${test.dir}/build"/>
-    <property name="src.m3x.xml.dir" location="${src.m3x.dir}/xml"/>
     <property name="build.dir" location="${basedir}/build"/>
-    <property name="build.src.dir" location="${build.dir}/src"/>
-    <property name="build.src.m3x.dir" location="${build.src.dir}/m3x"/>
-    <property name="build.src.m3x.xml.dir" location="${build.src.m3x.dir}/xml"/>
-    <property name="build.m3x.dir" location="${build.dir}/m3x"/>
-    <property name="build.m3x.xml.dir" location="${build.m3x.dir}/xml"/>
     <property name="dist.dir" location="${basedir}/dist"/>
 
-    <property name="m3x.xml.package" value="m3x.xml"/>
-    <property name="m3x.m3g.package" value="m3x.m3g"/>
-    <property name="m3x.collada.package" value="m3x.collada"/>
-    <property name="m3x.translation.package" value="m3x.translation"/>
-
     <target name="pre-build">
-        <mkdir dir="${build.m3x.xml.dir}"/>
-        <mkdir dir="${build.src.m3x.xml.dir}"/>
+        <mkdir dir="${build.dir}"/>
         <mkdir dir="${test.build.dir}"/>
     </target>
-    
-    <target name="xjc-typedef">
-        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-            <classpath>
-                <fileset dir="${lib.dir}/jaxb">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-        </taskdef>        
-    </target>
 
-    <target name="xml-build" depends="xjc-typedef">
-        <xjc package="${m3x.xml.package}"
-             destdir="${build.src.dir}">
-            <schema file="${schema.dir}/m3x.xsd"/>
-            <depends file="${schema.dir}/m3x.xsd"/>
-            <produces dir="${build.src.dir}/m3x/xml" includes="*.java"/>
-        </xjc>
-        <xjc package="${m3x.collada.package}"
-             destdir="${build.src.dir}">
-            <schema file="${schema.dir}/collada.xsd"/>
-            <depends file="${schema.dir}/collada.xsd"/>
-            <produces dir="${build.src.dir}/m3x/collada" includes="*.java"/>
-        </xjc>
-        <javac destdir="${build.dir}"
-               fork="true"
-               debug="true">
-            <!--compilerarg value="-Xlint:unchecked"/-->
-            <src path="${build.src.dir}"/>
-            <classpath>
-                <fileset dir="${lib.dir}"/>
-            </classpath>
-        </javac>
-        <copy todir="${build.dir}">
-            <fileset dir="${build.src.dir}">
-              <include name="**/jaxb.properties"/>
-            </fileset>
-        </copy>
-        <!--add the schema to the build path-->
-        <copy todir="${build.dir}/m3x/xml"
-              file="${schema.dir}/m3x.xsd"/>
-        <!--add the schema to the build path-->
-        <copy todir="${build.dir}/m3x/collada"
-              file="${schema.dir}/collada.xsd"/>
-    </target>
-    
     <target name="clean">
         <mkdir dir="${test.build.dir}" />
         <delete>
@@ -86,9 +25,9 @@
         </delete>
     </target>
 
-    <target name="build-src" depends="pre-build, xml-build">
+    <target name="build-src" depends="pre-build">
         <taskdef resource="checkstyletask.properties"
-                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>        
+                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle failOnViolation="false"
                     config="${checkstyle.policy}">
             <classpath>
@@ -115,7 +54,7 @@
         </javac>
         <!--build the distributable jar-->
         <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/m3x.jar"
+        <jar destfile="${dist.dir}/m3x-jsr297.jar"
              basedir="${build.dir}">
              <exclude name="src/**/*"/>
         </jar>
@@ -137,13 +76,13 @@
             </classpath>
         </javac>
     </target>
-    
-    <target name="javadoc" depends="pre-build, xml-build">
+
+    <target name="javadoc" depends="build">
         <javadoc destdir="${docs.dir}/api"
                  author="true"
                  version="true"
                  use="true"
-                 windowtitle="m3x Application Programming Interface">
+                 windowtitle="m3x-jsr297 Application Programming Interface">
             <classpath>
                 <fileset dir="${lib.dir}"/>
             </classpath>
@@ -152,14 +91,10 @@
             </fileset>
             <fileset dir="${build.src.dir}" defaultexcludes="yes">
                 <exclude name="**/*.html"/>
-            </fileset>            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
+            </fileset>            <doctitle><![CDATA[<h1>m3x-jsr297 Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
-            <group title="XML Packages" packages="${m3x.xml.package}"/>
-            <group title="M3G Packages" packages="${m3x.m3g.package}, ${m3x.m3g.package}.*"/>
-            <group title="Translation Packages" packages="${m3x.translation.package}, ${m3x.translation.package}.*"/>
-            <link href="http://java.sun.com/developer/technicalArticles/WebServices/jaxb/"/>
             <link href="http://jcp.org/en/jsr/detail?id=297"/>
-        </javadoc>       
+        </javadoc>
     </target>
 
     <target name="test"
@@ -178,4 +113,5 @@
             depends="build-src">
 
     </target>
+
 </project>

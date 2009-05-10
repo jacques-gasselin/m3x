@@ -161,6 +161,7 @@
             <compilation-unit>
                 <package-root>jsr297/test</package-root>
                 <unit-tests/>
+                <classpath mode="compile">lib/junit-4.4.jar:jsr297/build</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

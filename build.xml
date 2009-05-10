@@ -5,11 +5,20 @@
     <property name="lib.dir" location="lib"/>
     <property name="tools.dir" location="tools"/>
     <property name="release.dir" location="release"/>
+    <property name="checkstyle.policy" location="${basedir}/checkstyle-policy.xml"/>
     
     <target name="build"
             description="runs the build target in all the subfolders">
+        <echo>*** Building tools ***</echo>
         <ant antfile="build.xml"
              dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="build"/>
+
+        <echo>*** Building jsr297 ***</echo>
+        <ant antfile="build.xml"
+             dir="jsr297"
              inheritall="true"
              inheritrefs="true"
              target="build"/>
@@ -22,12 +31,25 @@
              inheritall="true"
              inheritrefs="true"
              target="clean"/>
+             
+        <ant antfile="build.xml"
+             dir="jsr297"
+             inheritall="true"
+             inheritrefs="true"
+             target="clean"/>
+
     </target>
     
     <target name="javadoc"
             description="runs the javadoc target in all the subfolders">
         <ant antfile="build.xml"
              dir="tools"
+             inheritall="true"
+             inheritrefs="true"
+             target="javadoc"/>
+
+        <ant antfile="build.xml"
+             dir="jsr297"
              inheritall="true"
              inheritrefs="true"
              target="javadoc"/>
@@ -44,7 +66,13 @@
              dir="tools"
              inheritall="true"
              inheritrefs="true"
-             target="test"/>        
+             target="test"/>
+
+        <ant antfile="build.xml"
+             dir="jsr297"
+             inheritall="true"
+             inheritrefs="true"
+             target="test"/>
     </target>
 
     <target name="release"
