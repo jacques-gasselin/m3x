@@ -39,6 +39,18 @@
                     <location>tools/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>jsr297/src</label>
+                    <type>java</type>
+                    <location>jsr297/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>jsr297/test</label>
+                    <type>java</type>
+                    <location>jsr297/test</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -94,6 +106,14 @@
                         <label>tools/test</label>
                         <location>tools/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>jsr297/src</label>
+                        <location>jsr297/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>jsr297/test</label>
+                        <location>jsr297/test</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -132,6 +152,15 @@
                 <unit-tests/>
                 <classpath mode="compile">lib/junit-4.4.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-impl.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:tools/build</classpath>
                 <built-to>tools/test/build</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>jsr297/src</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>jsr297/test</package-root>
+                <unit-tests/>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
