@@ -115,6 +115,11 @@ public final class Transform
 
     public void postRotate(float angle, float ax, float ay, float az)
     {
+        if (angle != 0 && (ax == 0 && ay == 0 && az == 0))
+        {
+            throw new IllegalArgumentException("angle is nonzero but rotation axis is zero");
+        }
+        
         Matrix4f rotate = new Matrix4f();
         rotate.setIdentity();
         rotate.set(new AxisAngle4f(ax, ay, az, (float)Math.toRadians(angle)));
@@ -123,6 +128,11 @@ public final class Transform
 
     public void postRotateQuat(float qx, float qy, float qz, float qw)
     {
+        if (qx == 0 && qy == 0 && qz == 0 && qw == 0)
+        {
+            throw new IllegalArgumentException("quaternion components are all zero");
+        }
+        
         Matrix4f rotate = new Matrix4f();
         rotate.setIdentity();
         rotate.set(new Quat4f(qx, qy, qz, qw));
