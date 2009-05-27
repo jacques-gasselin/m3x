@@ -49,6 +49,28 @@ public class TransformTest extends TestCase
     {
     }
 
+    private static final void assertEquals(float[] expected, float[] result, float delta)
+    {
+        assertNotNull(expected);
+        assertNotNull(result);
+        assertEquals(expected.length, result.length);
+
+        final int length = expected.length;
+        for (int i = 0; i < length; ++i)
+        {
+            assertEquals(expected[i], result[i], delta);
+        }
+    }
+
+    private static final void assertEquals(float[] expected, Transform result)
+    {
+        assertNotNull(result);
+        
+        float[] mat = new float[16];
+        result.get(mat);
+        assertEquals(expected, mat, 0.001f);
+    }
+
     public void testDefaultConstructor()
     {
         try
@@ -60,5 +82,91 @@ public class TransformTest extends TestCase
             t.printStackTrace();
             fail("default constructor must not throw");
         }
+    }
+
+    private static final float[] IDENTITY = {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    };
+
+    public void testGet()
+    {
+        Transform trans = new Transform();
+        //test NPE handling
+        try
+        {
+            trans.get(null);
+            fail();
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+
+        //test length handling
+        //< 16
+        try
+        {
+            float[] mat = new float[2];
+            trans.get(mat);
+            fail();
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+
+        //> 16
+        try
+        {
+            float[] mat = new float[22];
+            trans.get(mat);
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+
+        //check result
+        //a new transform is expected to be identity
+        assertEquals(IDENTITY, trans);
+    }
+
+    public void testSetMatrix()
+    {
+        Transform trans = new Transform();
+        //test NPE handling
+        try
+        {
+            trans.set((float[])null);
+            fail();
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+
+        float[] expected = new float[16];
+        for (int i = 0; i < 16; ++i)
+        {
+            expected[i] = i;
+        }
+        trans.set(expected);
+        //elements should have retained row-major order
+        assertEquals(expected, trans);
     }
 }

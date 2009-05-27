@@ -57,6 +57,14 @@ public final class Transform
         }
     }
 
+    private static final void requireMinLength(float[] arr, int length, String name)
+    {
+        if (arr.length < length)
+        {
+            throw new IllegalArgumentException(name + ".length < " + length);
+        }
+    }
+
     public void add(Transform transform)
     {
         requireNotNull(transform, "transform");
@@ -77,8 +85,15 @@ public final class Transform
     public void get(float[] matrix)
     {
         requireNotNull(matrix, "matrix");
+        requireMinLength(matrix, 16, "matrix");
 
-        throw new UnsupportedOperationException();
+        //row-major
+        float[] rowValues = new float[4];
+        for (int row = 0; row < 4; ++row)
+        {
+            this.matrix.getRow(row, rowValues);
+            System.arraycopy(rowValues, 0, matrix, row * 4, 4);
+        }
     }
 
     public void invert()
@@ -138,6 +153,7 @@ public final class Transform
     public void set(float[] matrix)
     {
         requireNotNull(matrix, "matrix");
+        requireMinLength(matrix, 16, "matrix");
 
         this.matrix.set(matrix);
     }
