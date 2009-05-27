@@ -27,6 +27,7 @@
 
 package m3x.md2;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
@@ -34,7 +35,7 @@ import java.util.Vector;
  *
  * @author jgasseli
  */
-public class MD2
+public class MD2 implements Serialisable
 {
     private int textureWidth;
     private int textureHeight;
@@ -78,5 +79,33 @@ public class MD2
         updateVertexCount();
         
         return vertexCount;
+    }
+
+    public void deserialise(Deserialiser deserialiser) throws IOException
+    {
+        //read in the header data
+        final int version = deserialiser.readInt();
+        if (version != 8)
+        {
+            throw new IllegalArgumentException("MD2 version must be 8");
+        }
+
+        textureWidth = deserialiser.readInt();
+        textureHeight = deserialiser.readInt();
+
+        final int frameByteSize = deserialiser.readInt();
+        final int textureCount = deserialiser.readInt();
+        vertexCount = deserialiser.readInt();
+
+        final int textureCoordCount = deserialiser.readInt();
+        final int triangleCount = deserialiser.readInt();
+
+        //ignored here, only really useful on old GL implementations.
+        final int glCommandCount = deserialiser.readInt();
+
+        final int frameCount = deserialiser.readInt();
+
+        //TODO read the rest of the structure
+        throw new UnsupportedOperationException("not complete yet");
     }
 }

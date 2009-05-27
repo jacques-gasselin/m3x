@@ -45,7 +45,7 @@ public final class Deserialiser extends LittleEndianDeserialiser
     public Deserialiser()
     {
         super();
-        rootObject = null;
+        rootObject = new MD2();
     }
 
     /**
@@ -76,10 +76,11 @@ public final class Deserialiser extends LittleEndianDeserialiser
         return Arrays.equals(fileIdentifier, bytes);
     }
 
-    public void deserialise(InputStream stream)
+    public void deserialise(InputStream stream) throws IOException
     {
         pushInputStream(stream);
 
+        rootObject.deserialise(this);
 
         popInputStream();
     }
