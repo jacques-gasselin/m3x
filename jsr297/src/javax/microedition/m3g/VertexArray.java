@@ -33,4 +33,72 @@ package javax.microedition.m3g;
 public class VertexArray
 {
 
+    public static final int BYTE = 1;
+    public static final int SHORT = 2;
+    public static final int FIXED = 3;
+    public static final int FLOAT = 4;
+    public static final int HALF = 5;
+
+    private int vertexCount;
+    private int componentCount;
+    private int componentType;
+    
+    public VertexArray(int numVertices, int numComponents, int componentType)
+    {
+    }
+
+    public void get(int firstVertex, int numVertices, byte[] dst)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void get(int firstVertex, int numVertices, float[] dst)
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    public void get(int firstVertex, int numVertices, int[] dst)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void get(int firstVertex, int numVertices, short[] dst)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getComponentCount()
+    {
+        return componentCount;
+    }
+
+    public int getComponentType()
+    {
+        return componentType;
+    }
+
+    public int getVertexCount()
+    {
+        return vertexCount;
+    }
+
+    public void set(int firstVertex, int numVertices, byte[] src)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void set(int firstVertex, int numVertices, float[] src)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void set(int firstVertex, int numVertices, int[] src)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void set(int firstVertex, int numVertices, short[] src)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

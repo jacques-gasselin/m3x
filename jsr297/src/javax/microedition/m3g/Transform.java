@@ -27,11 +27,18 @@
 
 package javax.microedition.m3g;
 
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector4f;
+
 /**
  * @author jgasseli
  */
 public final class Transform
 {
+    private Matrix4f matrix = new Matrix4f();
+    
     public Transform()
     {
         setIdentity();
@@ -42,40 +49,24 @@ public final class Transform
         set(transform);
     }
 
-    private static final void requireNotNull(VertexArray array)
+    private static final void requireNotNull(Object obj, String name)
     {
-        if (array == null)
+        if (obj == null)
         {
-            throw new NullPointerException("array is null");
+            throw new NullPointerException(name + " is null");
         }
     }
 
-    private static final void requireNotNull(Transform transform)
-    {
-        if (transform == null)
-        {
-            throw new NullPointerException("transform is null");
-        }
-    }
-
-    private static final void requireNotNull(float[] matrix)
-    {
-        if (matrix == null)
-        {
-            throw new NullPointerException("matrix is null");
-        }
-    }
-    
     public void add(Transform transform)
     {
-        requireNotNull(transform);
+        requireNotNull(transform, "transform");
 
-        throw new UnsupportedOperationException();
+        this.matrix.add(transform.matrix);
     }
 
     public float determinant()
     {
-        throw new UnsupportedOperationException();
+        return this.matrix.determinant();
     }
 
     public float determinant3x3()
@@ -85,84 +76,110 @@ public final class Transform
 
     public void get(float[] matrix)
     {
-        requireNotNull(matrix);
+        requireNotNull(matrix, "matrix");
 
         throw new UnsupportedOperationException();
     }
 
     public void invert()
     {
-        throw new UnsupportedOperationException();
+        this.matrix.invert();
     }
 
     public void multiply(float scalar)
     {
-        throw new UnsupportedOperationException();
+        this.matrix.mul(scalar);
     }
 
     public void postMultiply(Transform transform)
     {
-        requireNotNull(transform);
-        
-        throw new UnsupportedOperationException();
+        requireNotNull(transform, "transform");
+
+        this.matrix.mul(transform.matrix);
     }
 
     public void postRotate(float angle, float ax, float ay, float az)
     {
-        throw new UnsupportedOperationException();
+        Matrix4f rotate = new Matrix4f();
+        rotate.setIdentity();
+        rotate.set(new AxisAngle4f(ax, ay, az, (float)Math.toRadians(angle)));
+        this.matrix.mul(rotate);
     }
 
     public void postRotateQuat(float qx, float qy, float qz, float qw)
     {
-        throw new UnsupportedOperationException();
+        Matrix4f rotate = new Matrix4f();
+        rotate.setIdentity();
+        rotate.set(new Quat4f(qx, qy, qz, qw));
+        this.matrix.mul(rotate);
     }
 
     public void postScale(float sx, float sy, float sz)
     {
-        throw new UnsupportedOperationException();
+        Matrix4f scale = new Matrix4f();
+        scale.setIdentity();
+        scale.m00 = sx;
+        scale.m11 = sy;
+        scale.m22 = sz;
+        scale.m33 = 1;
+        this.matrix.mul(scale);
     }
 
     public void postTranslate(float tx, float ty, float tz)
     {
-        throw new UnsupportedOperationException();
+        Matrix4f trans = new Matrix4f();
+        trans.setIdentity();
+        trans.m03 = tx;
+        trans.m13 = ty;
+        trans.m23 = tz;
+        this.matrix.mul(trans);
     }
     
     public void set(float[] matrix)
     {
-        requireNotNull(matrix);
+        requireNotNull(matrix, "matrix");
 
-        throw new UnsupportedOperationException();
+        this.matrix.set(matrix);
     }
 
     public void set(Transform transform)
     {
-        requireNotNull(transform);
-        
-        throw new UnsupportedOperationException();
+        requireNotNull(transform, "transform");
+
+        this.matrix.set(transform.matrix);
     }
 
     public void setIdentity()
     {
-        throw new UnsupportedOperationException();
+        this.matrix.setIdentity();
     }
 
     public void transform(float[] vectors)
     {
-        requireNotNull(vectors);
+        requireNotNull(vectors, "vectors");
+
+        final int vecCount = vectors.length >> 2;
+        if (vecCount == 0)
+        {
+            return;
+        }
         
+        Vector4f vec = new Vector4f();
+        
+        this.matrix.transform(vec);
         throw new UnsupportedOperationException();
     }
 
     public void transform(VertexArray in, float[] out, boolean w)
     {
-        requireNotNull(in);
-        requireNotNull(out);
+        requireNotNull(in, "in");
+        requireNotNull(out, "out");
         
         throw new UnsupportedOperationException();
     }
 
     public void transpose()
     {
-        throw new UnsupportedOperationException();
+        this.matrix.transpose();
     }
 }
