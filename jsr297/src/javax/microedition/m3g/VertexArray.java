@@ -30,7 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class VertexArray
+public class VertexArray extends Object3D
 {
 
     public static final int BYTE = 1;

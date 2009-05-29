@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.Hashtable;
+
 /**
  * @author jgasseli
  */
@@ -43,6 +45,9 @@ public class Graphics3D
     public static final int VALIDATE = 256;
 
     private static Graphics3D instance;
+
+    private Object target;
+    private RenderTarget renderTarget;
 
     protected Graphics3D()
     {
@@ -85,6 +90,131 @@ public class Graphics3D
             }
         }
 
+        throw new UnsupportedOperationException();
+    }
+
+    public void clear(Background background)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Camera getCamera()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getDepthRangeFar()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getDepthRangeNear()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getHints()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public static Graphics3D getInstance()
+    {
+        synchronized(Graphics3D.class)
+        {
+            if (instance == null)
+            {
+                instance = new Graphics3D();
+            }
+        }
+        return instance;
+    }
+
+    public Light getLight(int index, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getLightCount()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public static Hashtable getProperties()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public static Hashtable getProperties(Object target)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getRenderingFlags()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Object getTarget()
+    {
+        return target;
+    }
+
+    public int getViewportHeight()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getViewportWidth()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getViewportX()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getViewportY()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isDepthBufferEnabled()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void releaseTarget()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(Node node, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(RenderPass renderPass)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
+            Appearance appearance, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
+            Appearance appearance, Transform transform, int scope)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
+            ShaderAppearance appearance, Transform transform)
+    {
         throw new UnsupportedOperationException();
     }
 }

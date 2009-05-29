@@ -30,7 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Light extends Node
+public class IndexBuffer extends Object3D
 {
 
 }

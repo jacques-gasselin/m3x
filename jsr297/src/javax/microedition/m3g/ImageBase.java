@@ -30,7 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public abstract class ImageBase
+public abstract class ImageBase extends Object3D
 {
     public static final int ALPHA = 96;
     public static final int LUMINANCE = 97;

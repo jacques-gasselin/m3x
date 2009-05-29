@@ -30,7 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Light extends Node
+public class AppearanceBase extends Object3D
 {
 
 }
