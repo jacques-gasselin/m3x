@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.Hashtable;
+import javax.microedition.m3g.Renderer;
 
 /**
  * @author jgasseli
@@ -78,7 +79,7 @@ public class Graphics3D
         if (target instanceof RenderTarget)
         {
             //good to go
-            throw new UnsupportedOperationException();
+            this.renderTarget = (RenderTarget) target;
         }
         else
         {
@@ -90,12 +91,13 @@ public class Graphics3D
             }
         }
 
-        throw new UnsupportedOperationException();
+        this.target = target;
     }
 
     public void clear(Background background)
     {
-        throw new UnsupportedOperationException();
+        Renderer renderer = renderTarget.bindTarget();
+        renderer.clear(background);
     }
 
     public Camera getCamera()
@@ -214,6 +216,36 @@ public class Graphics3D
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             ShaderAppearance appearance, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void render(World world)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void resetLights()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setCamera(Camera camera, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDepthRange(float near, float far)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setLight(int index, Light light, Transform transform)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setViewport(int x, int y, int width, int height)
     {
         throw new UnsupportedOperationException();
     }

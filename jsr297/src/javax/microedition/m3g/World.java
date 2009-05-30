@@ -28,39 +28,9 @@
 package javax.microedition.m3g;
 
 /**
- * This is a modified version of RenderTarget. Used here to illustrate a more
- * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public class ImageRenderTarget extends RenderTarget
+public class World extends Group
 {
-    public int getWidth()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    public int getHeight()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean isDepthBuffered()
-    {
-        return false;
-    }
-
-    public boolean isStencilBuffered()
-    {
-        return false;
-    }
-
-    public Renderer bindTarget()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void releaseTarget()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

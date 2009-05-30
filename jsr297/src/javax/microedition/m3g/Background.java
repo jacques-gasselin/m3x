@@ -32,5 +32,143 @@ package javax.microedition.m3g;
  */
 public class Background extends Object3D
 {
+    @Deprecated
+    public static final int BORDER = 32;
+    @Deprecated
+    public static final int REPEAT = 33;
 
+    public Background()
+    {
+        
+    }
+
+    public int getColor()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getColorClearMask()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public int getCropHeight()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public int getCropWidth()
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Deprecated
+    public int getCropX()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public int getCropY()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getDepth()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public Image2D getImage()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public int getImageModeX()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public int getImageModeY()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getStencil()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getStencilClearMask()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public boolean isColorClearEnabled()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isDepthClearEnabled()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setColor(int argb)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setColorClearEnable(boolean enable)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setColorClearMask(int mask)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setCrop(int cropX, int cropY, int width, int height)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDepth(float depth)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDepthClearEnable(boolean enable)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public void setImage(Image2D image)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public void setImageMode(int modeX, int modeY)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setStencil(int stencil)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setStencilClearMask(int mask)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

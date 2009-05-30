@@ -25,42 +25,57 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.microedition.m3g;
+package javax.microedition.m3g.opengl;
+
+import javax.microedition.m3g.Renderer;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.microedition.m3g.RenderTarget;
 
 /**
- * This is a modified version of RenderTarget. Used here to illustrate a more
- * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public class ImageRenderTarget extends RenderTarget
+public class GLRenderTarget extends RenderTarget
 {
+    private GLAutoDrawable drawable;
+    private GLRenderer renderer;
+    
+    public GLRenderTarget(GLAutoDrawable drawable)
+    {
+        this.drawable = drawable;
+    }
+    
     public int getWidth()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return drawable.getWidth();
     }
 
     public int getHeight()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return drawable.getHeight();
     }
 
     public boolean isDepthBuffered()
     {
-        return false;
+        GLCapabilities caps = drawable.getChosenGLCapabilities();
+        return caps.getDoubleBuffered();
     }
 
     public boolean isStencilBuffered()
     {
-        return false;
+        GLCapabilities caps = drawable.getChosenGLCapabilities();
+        return caps.getStencilBits() > 0;
     }
 
     public Renderer bindTarget()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        renderer.setGL(drawable.getGL());
+        return renderer;
     }
 
     public void releaseTarget()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        //disable any more rendering
+        renderer.setGL(null);
+    }    
 }

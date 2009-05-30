@@ -32,11 +32,14 @@ package javax.microedition.m3g;
  * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public interface RenderTarget
+public abstract class RenderTarget
 {
-    public int getWidth();
-    public int getHeight();
+    public abstract int getWidth();
+    public abstract int getHeight();
     
-    public boolean isDepthBuffered();
-    public boolean isStencilBuffered();
+    public abstract boolean isDepthBuffered();
+    public abstract boolean isStencilBuffered();
+
+    public abstract Renderer bindTarget();
+    public abstract void releaseTarget();
 }

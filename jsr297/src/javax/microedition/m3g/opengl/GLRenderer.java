@@ -25,42 +25,51 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.microedition.m3g;
+package javax.microedition.m3g.opengl;
+
+import javax.media.opengl.GL;
+import javax.microedition.m3g.Background;
+import javax.microedition.m3g.Renderer;
 
 /**
- * This is a modified version of RenderTarget. Used here to illustrate a more
- * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public class ImageRenderTarget extends RenderTarget
+public class GLRenderer extends Renderer
 {
-    public int getWidth()
+    private GL gl;
+    
+    public GLRenderer()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+
     }
 
-    public int getHeight()
+    public void setGL(GL gl)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.gl = gl;
+        clearCachedObjects();
     }
 
-    public boolean isDepthBuffered()
+    /**
+     * Clears any cached state objects
+     */
+    private void clearCachedObjects()
     {
-        return false;
+        //TODO clear cached objects.
+        //Used to lessen state changes in the renderer.
     }
 
-    public boolean isStencilBuffered()
+    @Override
+    public void clear(Background background)
     {
-        return false;
+        final float byteToUniform = 1.0f / 255;
+        
+        final int argb = background.getColor();
+        final float red = byteToUniform * ((argb >> 16) & 0xff);
+        final float green = byteToUniform * ((argb >> 8) & 0xff);
+        final float blue = byteToUniform * ((argb >> 0) & 0xff);
+        final float alpha = byteToUniform * ((argb >> 24) & 0xff);
+
+        throw new UnsupportedOperationException();
     }
 
-    public Renderer bindTarget()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void releaseTarget()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
