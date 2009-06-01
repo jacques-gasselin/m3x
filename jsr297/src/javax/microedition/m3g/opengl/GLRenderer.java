@@ -66,42 +66,49 @@ public class GLRenderer extends Renderer
     @Override
     public void clear(Background background)
     {
-        final float byteToUniform = 1.0f / 255;
-        
         int clearColorARGB = 0xff000000; //default to full alpha black
+        int colorMask = 0xffffffff; //clear all color channels
         int clearStencil = 0;
+        int stencilMask = 0xffffffff; //clear all stencil bits
         float clearDepth = 1.0f;
         int clearFlags = 0;
 
         if (background != null)
         {
             clearColorARGB = background.getColor();
+            colorMask = background.getColorClearMask();
+
             clearStencil = background.getStencil();
+            stencilMask = background.getStencilClearMask();
+            
             clearDepth = background.getDepth();
             clearFlags |= (background.isDepthClearEnabled()
                     ? GL.GL_DEPTH_BUFFER_BIT : 0);
-            clearFlags |= (background.getColorClearMask() != 0
-                    ? GL.GL_COLOR_BUFFER_BIT : 0);
-            clearFlags |= (background.getStencilClearMask() != 0
-                    ? GL.GL_STENCIL_BUFFER_BIT : 0);
         }
         else
         {
             //clear all buffers if no background is given
             clearFlags |= GL.GL_DEPTH_BUFFER_BIT;
-            clearFlags |= GL.GL_COLOR_BUFFER_BIT;
-            clearFlags |= GL.GL_STENCIL_BUFFER_BIT;
         }
 
+        clearFlags |= (colorMask != 0 ? GL.GL_COLOR_BUFFER_BIT : 0);
+        clearFlags |= (stencilMask != 0 ? GL.GL_STENCIL_BUFFER_BIT : 0);
 
-        final float red = byteToUniform * ((clearColorARGB >> 16) & 0xff);
-        final float green = byteToUniform * ((clearColorARGB >> 8) & 0xff);
-        final float blue = byteToUniform * ((clearColorARGB >> 0) & 0xff);
-        final float alpha = byteToUniform * ((clearColorARGB >> 24) & 0xff);
+        final boolean redMask = ((colorMask >> 16) & 0xff) != 0;
+        final boolean greenMask = ((colorMask >> 8) & 0xff) != 0;
+        final boolean blueMask = ((colorMask >> 0) & 0xff) != 0;
+        final boolean alphaMask = ((colorMask >> 24) & 0xff) != 0;
+
+        final float ubyteToFloat = 1.0f / 255;
+        final float redColor = ubyteToFloat * ((clearColorARGB >> 16) & 0xff);
+        final float greenColor = ubyteToFloat * ((clearColorARGB >> 8) & 0xff);
+        final float blueColor = ubyteToFloat * ((clearColorARGB >> 0) & 0xff);
+        final float alphaColor = ubyteToFloat * ((clearColorARGB >> 24) & 0xff);
 
         final GL gl = getGL();
-
-        gl.glClearColor(red, green, blue, alpha);
+        gl.glColorMask(redMask, greenMask, blueMask, alphaMask);
+        gl.glClearColor(redColor, greenColor, blueColor, alphaColor);
+        gl.glStencilMask(stencilMask);
         gl.glClearStencil(clearStencil);
         gl.glClearDepth(clearDepth);
         gl.glClear(clearFlags);
