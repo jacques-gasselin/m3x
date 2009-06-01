@@ -36,16 +36,21 @@ import javax.microedition.m3g.Renderer;
  */
 public class GLRenderer extends Renderer
 {
-    private GL gl;
+    private GL instanceGL;
     
     public GLRenderer()
     {
 
     }
 
+    public GL getGL()
+    {
+        return instanceGL;
+    }
+
     public void setGL(GL gl)
     {
-        this.gl = gl;
+        this.instanceGL = gl;
         clearCachedObjects();
     }
 
@@ -63,13 +68,43 @@ public class GLRenderer extends Renderer
     {
         final float byteToUniform = 1.0f / 255;
         
-        final int argb = background.getColor();
-        final float red = byteToUniform * ((argb >> 16) & 0xff);
-        final float green = byteToUniform * ((argb >> 8) & 0xff);
-        final float blue = byteToUniform * ((argb >> 0) & 0xff);
-        final float alpha = byteToUniform * ((argb >> 24) & 0xff);
+        int clearColorARGB = 0xff000000; //default to full alpha black
+        int clearStencil = 0;
+        float clearDepth = 1.0f;
+        int clearFlags = 0;
 
-        throw new UnsupportedOperationException();
+        if (background != null)
+        {
+            clearColorARGB = background.getColor();
+            clearStencil = background.getStencil();
+            clearDepth = background.getDepth();
+            clearFlags |= (background.isDepthClearEnabled()
+                    ? GL.GL_DEPTH_BUFFER_BIT : 0);
+            clearFlags |= (background.getColorClearMask() != 0
+                    ? GL.GL_COLOR_BUFFER_BIT : 0);
+            clearFlags |= (background.getStencilClearMask() != 0
+                    ? GL.GL_STENCIL_BUFFER_BIT : 0);
+        }
+        else
+        {
+            //clear all buffers if no background is given
+            clearFlags |= GL.GL_DEPTH_BUFFER_BIT;
+            clearFlags |= GL.GL_COLOR_BUFFER_BIT;
+            clearFlags |= GL.GL_STENCIL_BUFFER_BIT;
+        }
+
+
+        final float red = byteToUniform * ((clearColorARGB >> 16) & 0xff);
+        final float green = byteToUniform * ((clearColorARGB >> 8) & 0xff);
+        final float blue = byteToUniform * ((clearColorARGB >> 0) & 0xff);
+        final float alpha = byteToUniform * ((clearColorARGB >> 24) & 0xff);
+
+        final GL gl = getGL();
+
+        gl.glClearColor(red, green, blue, alpha);
+        gl.glClearStencil(clearStencil);
+        gl.glClearDepth(clearDepth);
+        gl.glClear(clearFlags);
     }
 
 }
