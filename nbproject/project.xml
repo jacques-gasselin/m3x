@@ -51,6 +51,12 @@
                     <location>jsr297/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>jsr297/demo</label>
+                    <type>java</type>
+                    <location>jsr297/demo</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -114,6 +120,10 @@
                         <label>jsr297/test</label>
                         <location>jsr297/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>jsr297/demo</label>
+                        <location>jsr297/demo</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -163,6 +173,11 @@
                 <package-root>jsr297/test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">lib/junit-4.4.jar:jsr297/build</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>jsr297/demo</package-root>
+                <classpath mode="compile">jsr297/dist/m3x-jsr297.jar:lib/jogl/jogl.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
