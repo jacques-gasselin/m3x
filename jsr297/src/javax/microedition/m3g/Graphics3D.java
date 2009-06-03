@@ -28,7 +28,6 @@
 package javax.microedition.m3g;
 
 import java.util.Hashtable;
-import javax.microedition.m3g.Renderer;
 
 /**
  * @author jgasseli
@@ -49,6 +48,7 @@ public class Graphics3D
 
     private Object target;
     private RenderTarget renderTarget;
+    private Renderer renderer;
 
     protected Graphics3D()
     {
@@ -79,7 +79,7 @@ public class Graphics3D
         if (target instanceof RenderTarget)
         {
             //good to go
-            this.renderTarget = (RenderTarget) target;
+            renderTarget = (RenderTarget) target;
         }
         else
         {
@@ -92,11 +92,11 @@ public class Graphics3D
         }
 
         this.target = target;
+        renderer = renderTarget.bindTarget();
     }
 
     public void clear(Background background)
     {
-        Renderer renderer = renderTarget.bindTarget();
         renderer.clear(background);
     }
 
@@ -189,7 +189,12 @@ public class Graphics3D
 
     public void releaseTarget()
     {
-        throw new UnsupportedOperationException();
+        if (renderTarget != null)
+        {
+            renderTarget.releaseTarget();
+        }
+        renderer = null;
+        target = null;
     }
 
     public void render(Node node, Transform transform)

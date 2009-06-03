@@ -43,6 +43,7 @@ public class GLRenderTarget extends RenderTarget
     public GLRenderTarget(GLAutoDrawable drawable)
     {
         this.drawable = drawable;
+        this.renderer = new GLRenderer();
     }
     
     public int getWidth()

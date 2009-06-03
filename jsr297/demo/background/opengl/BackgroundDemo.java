@@ -15,12 +15,15 @@ public class BackgroundDemo extends Frame
 {
     private static class BackgroundCanvas extends GLCanvas
     {
-        Background background = new Background();
+        Background background;
         RenderTarget renderTarget;
 
         public BackgroundCanvas()
         {
             renderTarget = new GLRenderTarget(this);
+            background = new Background();
+            //Magenta color
+            background.setColor(0xffff00ff);
         }
 
         @Override

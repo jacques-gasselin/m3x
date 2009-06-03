@@ -37,19 +37,36 @@ public class Background extends Object3D
     @Deprecated
     public static final int REPEAT = 33;
 
+    private int colorClearMask;
+    private int color;
+    private boolean depthClearEnabled;
+    private float depth;
+    private int stencilClearMask;
+    private int stencil;
+    private Image2D image;
+    private int imageModeX;
+    private int imageModeY;
+    
     public Background()
     {
-        
+        setColorClearMask(0xffffffff);
+        setColor(0x00000000);
+        setDepthClearEnable(true);
+        setDepth(1.0f);
+        setStencilClearMask(0xffffffff);
+        setStencil(0);
+        setImage(null);
+        setImageMode(BORDER, BORDER);
     }
 
     public int getColor()
     {
-        throw new UnsupportedOperationException();
+        return color;
     }
 
     public int getColorClearMask()
     {
-        throw new UnsupportedOperationException();
+        return colorClearMask;
     }
 
     @Deprecated
@@ -78,53 +95,54 @@ public class Background extends Object3D
 
     public float getDepth()
     {
-        throw new UnsupportedOperationException();
+        return depth;
     }
 
     @Deprecated
     public Image2D getImage()
     {
-        throw new UnsupportedOperationException();
+        return image;
     }
 
     @Deprecated
     public int getImageModeX()
     {
-        throw new UnsupportedOperationException();
+        return imageModeX;
     }
 
     @Deprecated
     public int getImageModeY()
     {
-        throw new UnsupportedOperationException();
+        return imageModeY;
     }
 
     public int getStencil()
     {
-        throw new UnsupportedOperationException();
+        return stencil;
     }
 
     public int getStencilClearMask()
     {
-        throw new UnsupportedOperationException();
+        return stencilClearMask;
     }
 
     @Deprecated
     public boolean isColorClearEnabled()
     {
-        throw new UnsupportedOperationException();
+        return colorClearMask != 0;
     }
 
     public boolean isDepthClearEnabled()
     {
-        throw new UnsupportedOperationException();
+        return depthClearEnabled;
     }
 
     public void setColor(int argb)
     {
-        throw new UnsupportedOperationException();
+        color = argb;
     }
 
+    @Deprecated
     public void setColorClearEnable(boolean enable)
     {
         throw new UnsupportedOperationException();
@@ -132,7 +150,7 @@ public class Background extends Object3D
 
     public void setColorClearMask(int mask)
     {
-        throw new UnsupportedOperationException();
+        colorClearMask = mask;
     }
 
     public void setCrop(int cropX, int cropY, int width, int height)
@@ -142,33 +160,43 @@ public class Background extends Object3D
 
     public void setDepth(float depth)
     {
-        throw new UnsupportedOperationException();
+        //silently clamp to the range [0, 1]
+        if (depth > 1.0f)
+        {
+            depth = 1.0f;
+        }
+        if (depth < 0.0f)
+        {
+            depth = 0.0f;
+        }
+        this.depth = depth;
     }
 
     public void setDepthClearEnable(boolean enable)
     {
-        throw new UnsupportedOperationException();
+        depthClearEnabled = enable;
     }
 
     @Deprecated
     public void setImage(Image2D image)
     {
-        throw new UnsupportedOperationException();
+        this.image = image;
     }
 
     @Deprecated
     public void setImageMode(int modeX, int modeY)
     {
-        throw new UnsupportedOperationException();
+        imageModeX = modeX;
+        imageModeY = modeY;
     }
 
     public void setStencil(int stencil)
     {
-        throw new UnsupportedOperationException();
+        this.stencil = stencil;
     }
 
     public void setStencilClearMask(int mask)
     {
-        throw new UnsupportedOperationException();
+        stencilClearMask = mask;
     }
 }
