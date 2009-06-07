@@ -30,6 +30,7 @@
             <env key="DYLD_LIBRARY_PATH"
                  path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="run.classpath"/>
+            <jvmarg value="-Xdock:name=BackgroundDemo"/>
         </java>
     </target>
 

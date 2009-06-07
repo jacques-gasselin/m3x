@@ -2,6 +2,8 @@ package background.opengl;
 
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.media.opengl.GLCanvas;
@@ -15,36 +17,6 @@ import javax.microedition.m3g.opengl.GLRenderTarget;
  */
 public class BackgroundDemo extends Frame implements WindowListener
 {
-
-    public void windowOpened(WindowEvent e)
-    {
-    }
-
-    public void windowClosing(WindowEvent e)
-    {
-        System.exit(0);
-    }
-
-    public void windowClosed(WindowEvent e)
-    {
-    }
-
-    public void windowIconified(WindowEvent e)
-    {
-    }
-
-    public void windowDeiconified(WindowEvent e)
-    {
-    }
-
-    public void windowActivated(WindowEvent e)
-    {
-    }
-
-    public void windowDeactivated(WindowEvent e)
-    {
-    }
-    
     private static class BackgroundCanvas extends GLCanvas implements Runnable
     {
         Background background;
@@ -113,6 +85,55 @@ public class BackgroundDemo extends Frame implements WindowListener
     public static void main(String[] args)
     {
         Frame frame = new BackgroundDemo();
+
+        if (false)
+        {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+            try
+            {
+                if (gd.isFullScreenSupported())
+                {
+                    frame.setUndecorated(true);
+                    gd.setFullScreenWindow(frame);
+                }
+            }
+            finally
+            {
+                gd.setFullScreenWindow(null);
+            }
+        }
+        
         frame.setVisible(true);
+    }
+
+    public void windowOpened(WindowEvent e)
+    {
+    }
+
+    public void windowClosing(WindowEvent e)
+    {
+        System.exit(0);
+    }
+
+    public void windowClosed(WindowEvent e)
+    {
+    }
+
+    public void windowIconified(WindowEvent e)
+    {
+    }
+
+    public void windowDeiconified(WindowEvent e)
+    {
+    }
+
+    public void windowActivated(WindowEvent e)
+    {
+    }
+
+    public void windowDeactivated(WindowEvent e)
+    {
     }
 }
