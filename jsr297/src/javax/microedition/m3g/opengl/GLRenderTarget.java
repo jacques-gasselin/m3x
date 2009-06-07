@@ -31,6 +31,7 @@ import javax.microedition.m3g.Renderer;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GL;
 import javax.microedition.m3g.RenderTarget;
 
 /**
@@ -44,7 +45,7 @@ public class GLRenderTarget extends RenderTarget
     public GLRenderTarget(GLAutoDrawable drawable)
     {
         this.drawable = drawable;
-        renderer = new GLRenderer(this);
+        renderer = new GLRenderer();
     }
     
     public int getWidth()
@@ -83,14 +84,18 @@ public class GLRenderTarget extends RenderTarget
         requireValidContext(context);
         
         context.makeCurrent();
-        renderer.setGL(context.getGL());
+        final GL gl = context.getGL();
+        //enable vertical sync
+        gl.setSwapInterval(1);
+        renderer.bind(gl, getWidth(), getHeight());
         return renderer;
     }
 
     public void releaseTarget()
     {
         //disable any more rendering
-        renderer.setGL(null);
+        renderer.release();
+        
         final GLContext context = drawable.getContext();
         requireValidContext(context);
         
