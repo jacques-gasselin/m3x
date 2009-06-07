@@ -30,6 +30,7 @@ package javax.microedition.m3g.opengl;
 import javax.microedition.m3g.Renderer;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
 import javax.microedition.m3g.RenderTarget;
 
 /**
@@ -43,7 +44,7 @@ public class GLRenderTarget extends RenderTarget
     public GLRenderTarget(GLAutoDrawable drawable)
     {
         this.drawable = drawable;
-        this.renderer = new GLRenderer();
+        renderer = new GLRenderer(this);
     }
     
     public int getWidth()
@@ -68,9 +69,21 @@ public class GLRenderTarget extends RenderTarget
         return caps.getStencilBits() > 0;
     }
 
+    private static final void requireValidContext(GLContext context)
+    {
+        if (context == null)
+        {
+            throw new IllegalStateException("no GL context");
+        }
+    }
+
     public Renderer bindTarget()
     {
-        renderer.setGL(drawable.getGL());
+        final GLContext context = drawable.getContext();
+        requireValidContext(context);
+        
+        context.makeCurrent();
+        renderer.setGL(context.getGL());
         return renderer;
     }
 
@@ -78,5 +91,9 @@ public class GLRenderTarget extends RenderTarget
     {
         //disable any more rendering
         renderer.setGL(null);
+        final GLContext context = drawable.getContext();
+        requireValidContext(context);
+        
+        context.release();
     }    
 }

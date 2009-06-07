@@ -94,6 +94,11 @@
                 <location>tools/test/build</location>
                 <build-target>build</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>jsr297/build</location>
+                <build-target>build</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -178,6 +183,7 @@
             <compilation-unit>
                 <package-root>jsr297/demo</package-root>
                 <classpath mode="compile">jsr297/dist/m3x-jsr297.jar:lib/jogl/jogl.jar</classpath>
+                <built-to>jsr297/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

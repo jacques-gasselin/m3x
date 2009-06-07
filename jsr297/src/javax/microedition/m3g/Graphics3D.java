@@ -93,6 +93,7 @@ public class Graphics3D
 
         this.target = target;
         renderer = renderTarget.bindTarget();
+        renderer.setViewport(0, 0, renderTarget.getWidth(), renderTarget.getHeight());
     }
 
     public void clear(Background background)

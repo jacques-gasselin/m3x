@@ -29,6 +29,7 @@ package javax.microedition.m3g.opengl;
 
 import javax.media.opengl.GL;
 import javax.microedition.m3g.Background;
+import javax.microedition.m3g.RenderTarget;
 import javax.microedition.m3g.Renderer;
 
 /**
@@ -37,10 +38,11 @@ import javax.microedition.m3g.Renderer;
 public class GLRenderer extends Renderer
 {
     private GL instanceGL;
+    private RenderTarget target;
     
-    public GLRenderer()
+    public GLRenderer(RenderTarget target)
     {
-
+        this.target = target;
     }
 
     public GL getGL()
@@ -112,6 +114,15 @@ public class GLRenderer extends Renderer
         gl.glClearStencil(clearStencil);
         gl.glClearDepth(clearDepth);
         gl.glClear(clearFlags);
+    }
+
+    @Override
+    public void setViewport(int x, int y, int width, int height)
+    {
+        final GL gl = getGL();
+
+        //OpenGL uses lower-left as origin
+        gl.glViewport(x, target.getHeight() - (y + height), width, height);
     }
 
 }

@@ -2,6 +2,8 @@
 <project name="jsr297" default="build" basedir=".">
     <description>Builds the jsr297 work-alike packages for the M3X project.</description>
 
+    <property name="lib.dir" location="${basedir}/../lib"/>
+
     <property name="docs.dir" location="${basedir}/docs"/>
     <property name="res.dir" location="${basedir}/res"/>
     <property name="src.dir" location="${basedir}/src"/>
@@ -11,6 +13,7 @@
     <property name="demo.build.dir" location="${demo.dir}/build"/>
     <property name="build.dir" location="${basedir}/build"/>
     <property name="dist.dir" location="${basedir}/dist"/>
+    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy.xml"/>
 
     <target name="pre-build">
         <mkdir dir="${build.dir}"/>
