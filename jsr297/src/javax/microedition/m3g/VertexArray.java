@@ -27,6 +27,13 @@
 
 package javax.microedition.m3g;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
 /**
  * @author jgasseli
  */
@@ -42,29 +49,203 @@ public class VertexArray extends Object3D
     private int vertexCount;
     private int componentCount;
     private int componentType;
+
+    private Buffer buffer;
+
+    VertexArray()
+    {
+        //leave it uninitialised.
+        //init later using set()
+    }
     
     public VertexArray(int numVertices, int numComponents, int componentType)
     {
+        set(numVertices, numComponents, componentType);
     }
 
+    void set(int numVertices, int numComponents, int componentType)
+    {
+        vertexCount = numVertices;
+        componentCount = numComponents;
+        this.componentType = componentType;
+        
+        buffer = allocate(getVertexCount(), getComponentCount(), getComponentType());
+    }
+
+    private static final Buffer allocate(int numVertices, int numComponents, int componentType)
+    {
+        final int componentByteSize;
+        switch (componentType)
+        {
+            case BYTE:
+                componentByteSize = 1;
+                break;
+            case SHORT:
+            case HALF:
+                componentByteSize = 2;
+                break;
+            case FIXED:
+            case FLOAT:
+                componentByteSize = 4;
+                break;
+            default:
+                componentByteSize = 0;
+                throw new IllegalArgumentException("invalid componentType");
+        }
+
+        final int capacity = numVertices * numComponents * componentByteSize;
+        //ensure we get a direct native buffer
+        ByteBuffer ret = ByteBuffer.allocateDirect(capacity);
+        ret.order(ByteOrder.nativeOrder());
+
+        switch (componentType)
+        {
+            case SHORT:
+            case HALF:
+                return ret.asShortBuffer();
+            case FIXED:
+                return ret.asIntBuffer();
+            case FLOAT:
+                return ret.asFloatBuffer();
+            default:
+                return ret;
+        }
+    }
+
+    private static final void requireNotNull(Object obj, String name)
+    {
+        if (obj == null)
+        {
+            throw new NullPointerException(name + " is null");
+        }
+    }
+
+    private final void requireValidIndexAndLength(int firstVertex, int numVertices, int length)
+    {
+        if (numVertices < 0)
+        {
+            throw new IllegalArgumentException("numVertices < 0");
+        }
+        if (length < numVertices * getComponentCount())
+        {
+            throw new IllegalArgumentException("length < numVertices * getComponentCount()");
+        }
+        if (firstVertex < 0)
+        {
+            throw new IndexOutOfBoundsException("firstVertex < 0");
+        }
+        if (firstVertex + numVertices > getVertexCount())
+        {
+            throw new IndexOutOfBoundsException("firstVertex + numVertices > getVertexCount()");
+        }
+    }
+
+    private final void requireByteType()
+    {
+        if (getComponentType() != BYTE)
+        {
+            throw new IllegalStateException("componentType is not BYTE");
+        }
+    }
+
+    private final void requireShortType()
+    {
+        if (getComponentType() != SHORT && getComponentType() != HALF)
+        {
+            throw new IllegalStateException("componentType is not one of [SHORT, HALF]");
+        }
+    }
+
+    private final void requireFixedType()
+    {
+        if (getComponentType() != FIXED)
+        {
+            throw new IllegalStateException("componentType is not FIXED");
+        }
+    }
+
+    private final void requireFloatType()
+    {
+        if (getComponentType() != FLOAT && getComponentType() != HALF)
+        {
+            throw new IllegalStateException("componentType is not one of [FLOAT, HALF]");
+        }
+    }
+
+    private final ByteBuffer positionByteBuffer(int firstVertex)
+    {
+        ByteBuffer buf = (ByteBuffer) buffer;
+        buf.position(firstVertex * getComponentCount());
+        return buf;
+    }
+
+    private final ShortBuffer positionShortBuffer(int firstVertex)
+    {
+        ShortBuffer buf = (ShortBuffer) buffer;
+        buf.position(firstVertex * getComponentCount());
+        return buf;
+    }
+
+    private final IntBuffer positionIntBuffer(int firstVertex)
+    {
+        IntBuffer buf = (IntBuffer) buffer;
+        buf.position(firstVertex * getComponentCount());
+        return buf;
+    }
+
+    private final FloatBuffer positionFloatBuffer(int firstVertex)
+    {
+        FloatBuffer buf = (FloatBuffer) buffer;
+        buf.position(firstVertex * getComponentCount());
+        return buf;
+    }
+    
     public void get(int firstVertex, int numVertices, byte[] dst)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(dst, "dst");
+        requireByteType();
+        requireValidIndexAndLength(firstVertex, numVertices, dst.length);
+
+        ByteBuffer buf = positionByteBuffer(firstVertex);
+        buf.get(dst, 0, numVertices * getComponentCount());
     }
 
     public void get(int firstVertex, int numVertices, float[] dst)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(dst, "dst");
+        requireValidIndexAndLength(firstVertex, numVertices, dst.length);
+
+        if (getComponentType() == FLOAT)
+        {
+            //no conversion
+            FloatBuffer buf = positionFloatBuffer(firstVertex);
+            buf.get(dst, 0, numVertices * getComponentCount());
+        }
+        else
+        {
+            //convert to float
+            throw new UnsupportedOperationException();
+        }
     }
     
     public void get(int firstVertex, int numVertices, int[] dst)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(dst, "dst");
+        requireFixedType();
+        requireValidIndexAndLength(firstVertex, numVertices, dst.length);
+
+        IntBuffer buf = positionIntBuffer(firstVertex);
+        buf.get(dst, 0, numVertices * getComponentCount());
     }
 
     public void get(int firstVertex, int numVertices, short[] dst)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(dst, "dst");
+        requireShortType();
+        requireValidIndexAndLength(firstVertex, numVertices, dst.length);
+
+        ShortBuffer buf = positionShortBuffer(firstVertex);
+        buf.get(dst, 0, numVertices * getComponentCount());
     }
 
     public int getComponentCount()
@@ -84,21 +265,47 @@ public class VertexArray extends Object3D
 
     public void set(int firstVertex, int numVertices, byte[] src)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(src, "src");
+        requireByteType();
+        requireValidIndexAndLength(firstVertex, numVertices, src.length);
+
+        ByteBuffer buf = positionByteBuffer(firstVertex);
+        buf.put(src, 0, numVertices * getComponentCount());
     }
 
     public void set(int firstVertex, int numVertices, float[] src)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(src, "src");
+        requireFloatType();
+        requireValidIndexAndLength(firstVertex, numVertices, src.length);
+
+        if (getComponentType() == FLOAT)
+        {
+            FloatBuffer buf = positionFloatBuffer(firstVertex);
+            buf.put(src, 0, numVertices * getComponentCount());
+        }
+        else
+        {
+            throw new UnsupportedOperationException("HALF not supported yet");
+        }
     }
 
     public void set(int firstVertex, int numVertices, int[] src)
     {
-        throw new UnsupportedOperationException();
+        requireNotNull(src, "src");
+        requireFixedType();
+        requireValidIndexAndLength(firstVertex, numVertices, src.length);
+        
+        IntBuffer buf = positionIntBuffer(firstVertex);
+        buf.put(src, 0, numVertices * getComponentCount());
     }
 
     public void set(int firstVertex, int numVertices, short[] src)
     {
+        requireNotNull(src, "src");
+        requireShortType();
+        requireValidIndexAndLength(firstVertex, numVertices, src.length);
+        
         throw new UnsupportedOperationException();
     }
 }

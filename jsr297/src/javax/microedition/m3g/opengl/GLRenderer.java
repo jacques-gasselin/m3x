@@ -127,9 +127,9 @@ public class GLRenderer extends Renderer
     public void setViewport(int x, int y, int width, int height)
     {
         final GL gl = getGL();
-
         //OpenGL uses lower-left as origin
         gl.glViewport(x, this.height - (y + height), width, height);
     }
 
+    
 }
