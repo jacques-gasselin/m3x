@@ -104,6 +104,7 @@
 
         <copy todir="${release.dir}" file="${basedir}/LICENSE"/>
         <copy todir="${release.dir}" file="${basedir}/README"/>
+        <copy todir="${release.dir}" file="${basedir}/ChangeLog"/>
 
         <zip destfile="${basedir}/release.zip"
              basedir="${release.dir}"/>
