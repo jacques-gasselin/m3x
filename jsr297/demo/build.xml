@@ -26,7 +26,8 @@
             depends="build-jsr297">
 
         <!--run the background demo-->
-        <java classname="background.opengl.BackgroundDemo">
+        <java classname="background.opengl.BackgroundDemo"
+              fork="true">
             <env key="DYLD_LIBRARY_PATH"
                  path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="run.classpath"/>

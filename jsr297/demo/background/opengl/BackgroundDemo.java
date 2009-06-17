@@ -1,13 +1,12 @@
 package background.opengl;
 
 import java.awt.Color;
+import java.awt.DisplayMode;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
@@ -89,9 +88,7 @@ public class BackgroundDemo extends Frame
     BackgroundDemo()
     {
         super("BackgroundDemo");
-        setSize(800, 600);
         add(new BackgroundCanvas());
-
         addWindowListener(new WindowAdapter());
     }
 
@@ -99,23 +96,28 @@ public class BackgroundDemo extends Frame
     {
         Frame frame = new BackgroundDemo();
 
-        if (false)
-        {
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice gd = ge.getDefaultScreenDevice();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        assert(ge != null);
 
-            try
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        assert(gd != null);
+
+        try
+        {
+            //try setting fullscreen mode
+            DisplayMode dm = gd.getDisplayMode();
+            if (gd.isFullScreenSupported())
             {
-                if (gd.isFullScreenSupported())
-                {
-                    frame.setUndecorated(true);
-                    gd.setFullScreenWindow(frame);
-                }
+                frame.setSize(dm.getWidth(), dm.getHeight());
+                frame.setUndecorated(true);
+                gd.setFullScreenWindow(frame);
             }
-            finally
-            {
-                gd.setFullScreenWindow(null);
-            }
+        }
+        catch (Throwable t)
+        {
+            //unable to set full screen
+            gd.setFullScreenWindow(null);
+            frame.setUndecorated(true);
         }
         
         frame.setVisible(true);
