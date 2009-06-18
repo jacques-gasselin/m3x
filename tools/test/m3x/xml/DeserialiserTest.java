@@ -108,7 +108,7 @@ public class DeserialiserTest extends TestCase
             m3x.xml.M3G root = Deserialiser.deserialise(in);
             assertNotNull("deserialised root must not be null",
                 root);
-            List<m3x.xml.Section> sections = root.getSection();
+            List<m3x.xml.Section> sections = root.getSections();
             assertEquals("Should have 1 section only",
                 1, sections.size());
             Section section = sections.get(0);

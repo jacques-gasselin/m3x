@@ -185,7 +185,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         }
         
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator(root.getVersion());
-        for (m3x.xml.Section section : root.getSection())
+        for (m3x.xml.Section section : root.getSections())
         {
             for (m3x.xml.Object3D object : section.getObjects())
             {

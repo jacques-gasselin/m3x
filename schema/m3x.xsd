@@ -455,6 +455,11 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property name="sections"/>
+                    </xs:appinfo>
+                </xs:annotation>
                 <xs:element ref="section" minOccurs="1" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>

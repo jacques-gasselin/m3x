@@ -56,7 +56,7 @@ public abstract class TranslatorSupport extends TestCase
   protected static m3x.xml.Object3D searchObjectIndex(M3G root, int searchKey)
   {
     int index = 1;
-    for (m3x.xml.Section section : root.getSection())
+    for (m3x.xml.Section section : root.getSections())
     {
       for (m3x.xml.Object3D object : section.getObjects())
       {
