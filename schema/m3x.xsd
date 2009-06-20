@@ -287,7 +287,7 @@
     <xs:simpleType name="KeyframeInterpolationType">
         <xs:annotation>
             <xs:documentation>
-                The allowed interpolation modes for a keyframesequence element
+                The allowed interpolation modes for a KeyframeSequence element
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -301,7 +301,7 @@
     <xs:simpleType name="KeyframePlaybackType">
         <xs:annotation>
             <xs:documentation>
-                The allowed playback modes for a keyframesequence element
+                The allowed playback modes for a KeyframeSequence element
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -312,7 +312,7 @@
     <xs:simpleType name="KeyframeEncodingType">
         <xs:annotation>
             <xs:documentation>
-                The allowed encoding modes for a keyframesequence element
+                The allowed encoding modes for a KeyframeSequence element
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -529,10 +529,28 @@
             <xs:element ref="AnimationTrackInstance"/>
         </xs:choice>
     </xs:group>
+    <xs:group name="AppearanceOrInstance">
+        <xs:choice>
+            <xs:element ref="Appearance"/>
+            <xs:element ref="AppearanceInstance"/>
+        </xs:choice>
+    </xs:group>
+    <xs:group name="IndexBufferOrInstance">
+        <xs:choice>
+            <xs:element ref="TriangleStripArray"/>
+            <xs:element ref="TriangleStripArrayInstance"/>
+        </xs:choice>
+    </xs:group>
     <xs:group name="VertexArrayOrInstance">
         <xs:choice>
             <xs:element ref="VertexArray"/>
             <xs:element ref="VertexArrayInstance"/>
+        </xs:choice>
+    </xs:group>
+    <xs:group name="VertexBufferOrInstance">
+        <xs:choice>
+            <xs:element ref="VertexBuffer"/>
+            <xs:element ref="VertexBufferInstance"/>
         </xs:choice>
     </xs:group>
     <xs:complexType name="ScaleBiasedVertexArray">
@@ -552,6 +570,14 @@
         <xs:attribute name="scale"
                       type="Float32"
                       default="1.0"/>
+    </xs:complexType>
+    <xs:complexType name="MorphTarget">
+        <xs:sequence>
+            <xs:group ref="VertexBufferOrInstance"/>
+        </xs:sequence>
+        <xs:attribute name="weight"
+                      type="Float32"
+                      default="0.0"/>
     </xs:complexType>
     <!-- M3G types -->
     <xs:complexType name="InstanceType" abstract="true">
@@ -706,21 +732,12 @@
         <xs:complexContent>
             <xs:extension base="Node">
                 <xs:sequence>
-                    <xs:choice>
-                        <xs:element ref="VertexBufferInstance"/>
-                        <xs:element ref="VertexBuffer"/>
-                    </xs:choice>
+                    <xs:group ref="VertexBufferOrInstance"/>
                     <xs:element name="submesh" minOccurs="1" maxOccurs="unbounded">
                         <xs:complexType>
                             <xs:sequence>
-                                <xs:choice>
-                                    <xs:element ref="TriangleStripArrayInstance"/>
-                                    <xs:element ref="TriangleStripArray"/>
-                                </xs:choice>
-                                <xs:choice minOccurs="0">
-                                    <xs:element ref="AppearanceInstance"/>
-                                    <xs:element ref="Appearance"/>
-                                </xs:choice>
+                                <xs:group ref="IndexBufferOrInstance"/>
+                                <xs:group ref="AppearanceOrInstance" minOccurs="0"/>
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -1164,14 +1181,11 @@
             <xs:complexContent>
                 <xs:extension base="MeshType">
                     <xs:sequence>
-                        <xs:element name="morphtarget" maxOccurs="unbounded">
+                        <xs:element name="morphTarget" maxOccurs="unbounded">
                             <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element ref="VertexBufferInstance"/>
-                                </xs:sequence>
-                                <xs:attribute name="weight"
-                                              type="Float32"
-                                              use="required"/>
+                                <xs:complexContent>
+                                    <xs:extension base="MorphTarget"/>
+                                </xs:complexContent>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
