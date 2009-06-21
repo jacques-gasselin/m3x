@@ -45,6 +45,14 @@
             ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         </xs:documentation>
+        <xs:appinfo>
+            <!--Intern all strings-->
+            <jaxb:globalBindings>
+                <jaxb:javaType name="String"
+                               xmlType="xs:string"
+                               parseMethod="m3x.xml.StringInterner.intern"/>
+            </jaxb:globalBindings>
+        </xs:appinfo>
     </xs:annotation>
     <!-- Import xml::base -->
     <xs:import namespace="http://www.w3.org/XML/1998/namespace"

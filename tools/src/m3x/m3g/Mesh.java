@@ -126,6 +126,31 @@ public class Mesh extends Node implements SectionSerialisable
         super();
     }
 
+    public Mesh(VertexBuffer vertices, IndexBuffer[] submeshes, Appearance[] appearances)
+    {
+        super();
+        setVertexBuffer(vertices);
+
+        if (submeshes == null)
+        {
+            throw new NullPointerException("submeshes is null");
+        }
+        final int submeshCount = submeshes.length;
+        setSubmeshCount(submeshCount);
+        for (int i = 0; i < submeshCount; ++i)
+        {
+            setIndexBuffer(i, submeshes[i]);
+        }
+
+        if (appearances != null)
+        {
+            for (int i = 0; i < submeshCount; ++i)
+            {
+                setAppearance(i, appearances[i]);
+            }
+        }
+    }
+
     public Mesh(VertexBuffer vertices, IndexBuffer submesh, Appearance appearance)
     {
         super();
@@ -184,11 +209,11 @@ public class Mesh extends Node implements SectionSerialisable
     {
         if (index < 0)
         {
-            throw new IllegalArgumentException("index < 0");
+            throw new IndexOutOfBoundsException("index < 0");
         }
         if (index >= getSubmeshCount())
         {
-            throw new IllegalArgumentException("index >= getSubmeshCount()");
+            throw new IndexOutOfBoundsException("index >= getSubmeshCount()");
         }
     }
 
@@ -230,11 +255,20 @@ public class Mesh extends Node implements SectionSerialisable
 
     public void setIndexBuffer(int index, IndexBuffer indexBuffer)
     {
+        if (indexBuffer == null)
+        {
+            throw new NullPointerException("indexBuffer is null");
+        }
         getSubMesh(index).setIndexBuffer(indexBuffer);
     }
 
     public void setSubmeshCount(int submeshCount)
     {
+        if (submeshCount < 1)
+        {
+            throw new IllegalArgumentException("submeshCount < 1");
+        }
+
         this.subMeshes = new SubMesh[submeshCount];
         for (int i = 0; i < submeshCount; ++i)
         {
@@ -244,6 +278,10 @@ public class Mesh extends Node implements SectionSerialisable
 
     public void setVertexBuffer(VertexBuffer vertexBuffer)
     {
+        if (vertexBuffer == null)
+        {
+            throw new NullPointerException("vertexBuffer is null");
+        }
         this.vertexBuffer = vertexBuffer;
     }
 }

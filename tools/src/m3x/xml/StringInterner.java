@@ -25,37 +25,21 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.m3g;
+package m3x.xml;
+import javax.xml.bind.DatatypeConverter;
 
 /**
- * 
  * @author jgasseli
  */
-public class MorphingMeshTest extends AbstractTestCase
+public abstract class StringInterner
 {
-    public MorphingMeshTest()
+    private StringInterner()
     {
+        //disable construction
     }
-
-    @Override
-    protected void setUp() throws Exception
+    
+    public static String intern(String value)
     {
-    }
-
-    public void testSaveAndLoad()
-    {
-        VertexArray pos = new VertexArray(3, 3, VertexArray.BYTE);
-        pos.set(0, 1, new byte[]{0, 0, 0});
-        pos.set(1, 1, new byte[]{0, 1, 0});
-        pos.set(2, 1, new byte[]{1, 0, 0});
-        VertexBuffer vb = new VertexBuffer();
-        vb.setPositions(pos, 1.0f, null);
-
-        IndexBuffer ib = new TriangleStripArray(0, new int[]{3});
-        Appearance ap = new Appearance();
-        MorphingMesh mesh = new MorphingMesh(vb, null, ib, ap);
-
-        Object3D[] roots = new Object3D[]{ mesh };
-        assertSaveAndLoad(roots);
+        return DatatypeConverter.parseString(value).intern();
     }
 }

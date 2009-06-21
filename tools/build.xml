@@ -58,7 +58,10 @@
                fork="true"
                debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
-            <src path="${build.src.dir}"/>
+            <src>
+                <pathelement location="${build.src.dir}"/>
+                <pathelement location="${src.dir}/m3x/xml"/>
+            </src>
             <classpath>
                 <fileset dir="${lib.dir}"/>
             </classpath>
@@ -86,9 +89,9 @@
         </delete>
     </target>
 
-    <target name="build-src" depends="pre-build, xml-build">
+    <target name="checkstyle-src">
         <taskdef resource="checkstyletask.properties"
-                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>        
+                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle failOnViolation="false"
                     config="${checkstyle.policy}">
             <classpath>
@@ -99,6 +102,9 @@
                 <exclude name="**/*.html"/>
             </fileset>
         </checkstyle>
+    </target>
+    
+    <target name="build-src" depends="pre-build, checkstyle-src, xml-build">
         <depend srcdir="${src.dir}"
                 destdir="${build.dir}"
                 cache="depcache"

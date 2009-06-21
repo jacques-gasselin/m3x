@@ -44,30 +44,33 @@ import java.io.IOException;
  */
 public class MorphingMesh extends Mesh
 {
-    public static class TargetBuffer implements Serialisable
+    private static final class MorphTarget implements Serialisable
     {
+        private VertexBuffer target;
+        private float weight;
 
-        private VertexBuffer morphTarget;
-        private float initialWeight;
-
-        public TargetBuffer()
+        public MorphTarget()
         {
         }
 
-        public TargetBuffer(VertexBuffer morphTarget, float initialWeight)
+        public VertexBuffer getTarget()
         {
-            this.morphTarget = morphTarget;
-            this.initialWeight = initialWeight;
+            return this.target;
         }
 
-        public VertexBuffer getMorphTarget()
+        public void setTarget(VertexBuffer target)
         {
-            return this.morphTarget;
+            this.target = target;
         }
 
-        public float getInitialWeight()
+        public float getWeight()
         {
-            return this.initialWeight;
+            return this.weight;
+        }
+
+        public void setWeight(float weight)
+        {
+            this.weight = weight;
         }
 
         @Override
@@ -77,35 +80,45 @@ public class MorphingMesh extends Mesh
             {
                 return true;
             }
-            if (!(obj instanceof TargetBuffer))
+            if (!(obj instanceof MorphTarget))
             {
                 return false;
             }
-            TargetBuffer another = (TargetBuffer) obj;
-            return this.morphTarget.equals(another.morphTarget) &&
-                   this.initialWeight == another.initialWeight;
+            MorphTarget another = (MorphTarget) obj;
+            return this.target.equals(another.target) &&
+                   this.weight == another.weight;
         }
 
         public void deserialise(Deserialiser deserialiser)
             throws IOException
         {
-            this.morphTarget = (VertexBuffer)deserialiser.readReference();
-            this.initialWeight = deserialiser.readFloat();
+            setTarget((VertexBuffer) deserialiser.readReference());
+            setWeight(deserialiser.readFloat());
         }
 
         public void serialise(Serialiser serialiser)
             throws IOException
         {
-            serialiser.writeReference(getMorphTarget());
-            serialiser.writeFloat(initialWeight);
+            serialiser.writeReference(getTarget());
+            serialiser.writeFloat(getWeight());
         }
     }
     
-    private TargetBuffer[] morphTargets;
+    private MorphTarget[] morphTargets;
 
     public MorphingMesh()
     {
         super();
+    }
+
+    public MorphingMesh(VertexBuffer base, VertexBuffer[] targets, IndexBuffer[] submeshes, Appearance[] appearances)
+    {
+        super(base, submeshes, appearances);
+    }
+
+    public MorphingMesh(VertexBuffer base, VertexBuffer[] targets, IndexBuffer submesh, Appearance appearance)
+    {
+        super(base, submesh, appearance);
     }
 
     @Override
@@ -113,12 +126,11 @@ public class MorphingMesh extends Mesh
         throws IOException
     {
         super.deserialise(deserialiser);
-        int morphTargetCount = deserialiser.readInt();
-        this.morphTargets = new TargetBuffer[morphTargetCount];
-        for (int i = 0; i < this.morphTargets.length; i++)
+        final int morphTargetCount = deserialiser.readInt();
+        setMorphTargetCount(morphTargetCount);
+        for (int i = 0; i < morphTargetCount; ++i)
         {
-            this.morphTargets[i] = new TargetBuffer();
-            this.morphTargets[i].deserialise(deserialiser);
+            morphTargets[i].deserialise(deserialiser);
         }
     }
 
@@ -127,10 +139,12 @@ public class MorphingMesh extends Mesh
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeInt(this.morphTargets.length);
-        for (TargetBuffer targetBuffer : this.morphTargets)
+        final int morphTargetCount = getMorphTargetCount();
+        serialiser.writeInt(morphTargetCount);
+        for (int i = 0; i < morphTargetCount; ++i)
         {
-            targetBuffer.serialise(serialiser);
+            MorphTarget target = morphTargets[i];
+            target.serialise(serialiser);
         }
     }
 
@@ -140,13 +154,40 @@ public class MorphingMesh extends Mesh
         return ObjectTypes.MORPHING_MESH;
     }
 
-    public int getMorphTargetCount()
+    public VertexBuffer getMorphTarget(int index)
     {
-        return this.morphTargets.length;
+        return morphTargets[index].getTarget();
     }
 
-    public TargetBuffer[] getMorphTargets()
+    public int getMorphTargetCount()
     {
-        return this.morphTargets;
+        return morphTargets.length;
+    }
+
+    private void setMorphTargetCount(int morphTargetCount)
+    {
+        morphTargets = new MorphTarget[morphTargetCount];
+        for (int i = 0; i < morphTargetCount; ++i)
+        {
+            morphTargets[i] = new MorphTarget();
+        }
+    }
+
+    public void getWeights(float[] weights)
+    {
+        if (weights == null)
+        {
+            throw new NullPointerException("weights is null");
+        }
+        final int morphTargetCount = getMorphTargetCount();
+        if (weights.length < morphTargetCount)
+        {
+            throw new IllegalArgumentException("weights.length < getMorphTargetCount()");
+        }
+
+        for (int i = 0; i < morphTargetCount; ++i)
+        {
+            weights[i] = morphTargets[i].getWeight();
+        }
     }
 }
