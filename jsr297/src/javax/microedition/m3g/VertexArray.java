@@ -39,7 +39,6 @@ import java.nio.ShortBuffer;
  */
 public class VertexArray extends Object3D
 {
-
     public static final int BYTE = 1;
     public static final int SHORT = 2;
     public static final int FIXED = 3;
@@ -50,8 +49,16 @@ public class VertexArray extends Object3D
     private int componentCount;
     private int componentType;
 
-    private Buffer buffer;
+    private ByteBuffer directBuffer;
+    private Buffer directBufferView;
+    /**Used for buffers that may be sparse*/
+    private int vertexByteStride;
+    private boolean bufferIsSparse;
 
+    /**
+     * Package protected default constructor used for Deserialising.
+     *
+     */
     VertexArray()
     {
         //leave it uninitialised.
@@ -63,53 +70,59 @@ public class VertexArray extends Object3D
         set(numVertices, numComponents, componentType);
     }
 
+    private static final int getComponentByteSize(int componentType)
+    {
+        switch (componentType)
+        {
+            case BYTE:
+                return 1;
+            case SHORT:
+            case HALF:
+                return 2;
+            case FIXED:
+            case FLOAT:
+                return 4;
+            default:
+                throw new IllegalArgumentException("invalid componentType");
+        }
+    }
+
     void set(int numVertices, int numComponents, int componentType)
     {
         vertexCount = numVertices;
         componentCount = numComponents;
         this.componentType = componentType;
-        
-        buffer = allocate(getVertexCount(), getComponentCount(), getComponentType());
-    }
 
-    private static final Buffer allocate(int numVertices, int numComponents, int componentType)
-    {
-        final int componentByteSize;
+        //tightly packed array
+        bufferIsSparse = false;
+        vertexByteStride = getComponentCount() * getComponentByteSize(componentType);
+        directBuffer = allocate(getVertexCount(), getVertexByteStride(), getComponentType());
         switch (componentType)
         {
             case BYTE:
-                componentByteSize = 1;
+                directBufferView = directBuffer;
                 break;
             case SHORT:
             case HALF:
-                componentByteSize = 2;
+                directBufferView = directBuffer.asShortBuffer();
                 break;
             case FIXED:
-            case FLOAT:
-                componentByteSize = 4;
+                directBufferView = directBuffer.asIntBuffer();
                 break;
-            default:
-                componentByteSize = 0;
-                throw new IllegalArgumentException("invalid componentType");
+            case FLOAT:
+                directBufferView = directBuffer.asFloatBuffer();
+                break;
         }
 
-        final int capacity = numVertices * numComponents * componentByteSize;
+    }
+
+    private static final ByteBuffer allocate(int numVertices, int vertexByteStride, int componentType)
+    {
+        final int capacity = numVertices * vertexByteStride;
         //ensure we get a direct native buffer
         ByteBuffer ret = ByteBuffer.allocateDirect(capacity);
         ret.order(ByteOrder.nativeOrder());
-
-        switch (componentType)
-        {
-            case SHORT:
-            case HALF:
-                return ret.asShortBuffer();
-            case FIXED:
-                return ret.asIntBuffer();
-            case FLOAT:
-                return ret.asFloatBuffer();
-            default:
-                return ret;
-        }
+        return ret;
     }
 
     private static final void requireNotNull(Object obj, String name)
@@ -172,31 +185,31 @@ public class VertexArray extends Object3D
         }
     }
 
-    private final ByteBuffer positionByteBuffer(int firstVertex)
+    private final ByteBuffer positionByteBuffer(int vertex)
     {
-        ByteBuffer buf = (ByteBuffer) buffer;
-        buf.position(firstVertex * getComponentCount());
+        ByteBuffer buf = getDirectBuffer();
+        buf.position(vertex * getVertexByteStride());
         return buf;
     }
 
-    private final ShortBuffer positionShortBuffer(int firstVertex)
+    private final ShortBuffer positionShortBuffer(int vertex)
     {
-        ShortBuffer buf = (ShortBuffer) buffer;
-        buf.position(firstVertex * getComponentCount());
+        ShortBuffer buf = (ShortBuffer) getDirectBufferView();
+        buf.position((vertex * getVertexByteStride()) >> 1);
         return buf;
     }
 
-    private final IntBuffer positionIntBuffer(int firstVertex)
+    private final IntBuffer positionIntBuffer(int vertex)
     {
-        IntBuffer buf = (IntBuffer) buffer;
-        buf.position(firstVertex * getComponentCount());
+        IntBuffer buf = (IntBuffer) getDirectBufferView();
+        buf.position((vertex * getVertexByteStride()) >> 2);
         return buf;
     }
 
-    private final FloatBuffer positionFloatBuffer(int firstVertex)
+    private final FloatBuffer positionFloatBuffer(int vertex)
     {
-        FloatBuffer buf = (FloatBuffer) buffer;
-        buf.position(firstVertex * getComponentCount());
+        FloatBuffer buf = (FloatBuffer) getDirectBufferView();
+        buf.position((vertex * getVertexByteStride()) >> 2);
         return buf;
     }
     
@@ -206,6 +219,7 @@ public class VertexArray extends Object3D
         requireByteType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
+        //BYTE type is always the direct buffer
         ByteBuffer buf = positionByteBuffer(firstVertex);
         buf.get(dst, 0, numVertices * getComponentCount());
     }
@@ -218,8 +232,27 @@ public class VertexArray extends Object3D
         if (getComponentType() == FLOAT)
         {
             //no conversion
-            FloatBuffer buf = positionFloatBuffer(firstVertex);
-            buf.get(dst, 0, numVertices * getComponentCount());
+            if (!bufferIsSparse)
+            {
+                //we can use a bulk get
+                FloatBuffer buf = positionFloatBuffer(firstVertex);
+                buf.get(dst, 0, numVertices * getComponentCount());
+            }
+            else
+            {
+                //sparse buffer requires a more cautious approach to putting
+                final int lastVertex = firstVertex + numVertices;
+                int dstIndex = 0;
+                for (int vertex = firstVertex; vertex < lastVertex; ++vertex)
+                {
+                    //put into the direct buffer, vertex by vertex
+                    ByteBuffer buf = positionByteBuffer(vertex);
+                    for (int component = 0; component < getComponentCount(); ++component)
+                    {
+                        dst[dstIndex++] = buf.getFloat();
+                    }
+                }
+            }
         }
         else
         {
@@ -234,8 +267,15 @@ public class VertexArray extends Object3D
         requireFixedType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
-        IntBuffer buf = positionIntBuffer(firstVertex);
-        buf.get(dst, 0, numVertices * getComponentCount());
+        if (!bufferIsSparse)
+        {
+            IntBuffer buf = positionIntBuffer(firstVertex);
+            buf.get(dst, 0, numVertices * getComponentCount());
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public void get(int firstVertex, int numVertices, short[] dst)
@@ -244,8 +284,15 @@ public class VertexArray extends Object3D
         requireShortType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
-        ShortBuffer buf = positionShortBuffer(firstVertex);
-        buf.get(dst, 0, numVertices * getComponentCount());
+        if (!bufferIsSparse)
+        {
+            ShortBuffer buf = positionShortBuffer(firstVertex);
+            buf.get(dst, 0, numVertices * getComponentCount());
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public int getComponentCount()
@@ -261,6 +308,21 @@ public class VertexArray extends Object3D
     public int getVertexCount()
     {
         return vertexCount;
+    }
+
+    int getVertexByteStride()
+    {
+        return vertexByteStride;
+    }
+
+    ByteBuffer getDirectBuffer()
+    {
+        return directBuffer;
+    }
+
+    Buffer getDirectBufferView()
+    {
+        return directBufferView;
     }
 
     public void set(int firstVertex, int numVertices, byte[] src)
@@ -281,8 +343,15 @@ public class VertexArray extends Object3D
 
         if (getComponentType() == FLOAT)
         {
-            FloatBuffer buf = positionFloatBuffer(firstVertex);
-            buf.put(src, 0, numVertices * getComponentCount());
+            if (!bufferIsSparse)
+            {
+                FloatBuffer buf = positionFloatBuffer(firstVertex);
+                buf.put(src, 0, numVertices * getComponentCount());
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
         }
         else
         {
@@ -295,9 +364,16 @@ public class VertexArray extends Object3D
         requireNotNull(src, "src");
         requireFixedType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
-        
-        IntBuffer buf = positionIntBuffer(firstVertex);
-        buf.put(src, 0, numVertices * getComponentCount());
+
+        if (!bufferIsSparse)
+        {
+            IntBuffer buf = positionIntBuffer(firstVertex);
+            buf.put(src, 0, numVertices * getComponentCount());
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public void set(int firstVertex, int numVertices, short[] src)
@@ -305,7 +381,22 @@ public class VertexArray extends Object3D
         requireNotNull(src, "src");
         requireShortType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
-        
-        throw new UnsupportedOperationException();
+
+        if (getComponentType() == SHORT)
+        {
+            if (!bufferIsSparse)
+            {
+                ShortBuffer buf = positionShortBuffer(firstVertex);
+                buf.put(src, 0, numVertices * getComponentCount());
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+        else
+        {
+            throw new UnsupportedOperationException("HALF not supported yet");
+        }
     }
 }
