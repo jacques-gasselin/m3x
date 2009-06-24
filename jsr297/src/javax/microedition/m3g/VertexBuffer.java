@@ -32,5 +32,79 @@ package javax.microedition.m3g;
  */
 public class VertexBuffer extends Object3D
 {
+    public VertexBuffer()
+    {
 
+    }
+
+    public void commit()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getAttribute(String name, boolean signedNormalized[],
+            float[] defaultValue)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getAttributeCount()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public String[] getAttributeNames()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getBoneIndices()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getBoneWeights()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getColors()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getDefaultColor()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getDefaultPointSize()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getNormals()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getPositions(float[] scaleBias)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public VertexArray getTexCoords(int index, float[] scaleBias)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getVertexCount()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isMutable()
+    {
+        throw new UnsupportedOperationException();
+    }
 }
