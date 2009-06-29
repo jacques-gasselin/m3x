@@ -107,4 +107,54 @@ public class VertexBuffer extends Object3D
     {
         throw new UnsupportedOperationException();
     }
+
+    public void setAttribute(String name, float v0, float v1, float v2, float v3)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setAttribute(String name, VertexArray attributes, boolean signed, boolean normalized)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setBoneInfluences(VertexArray boneIndices, VertexArray boneWeights)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setColors(VertexArray colors)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDefaultColor(int argb)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setDefaultPointSize(float pointSize)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setNormals(VertexArray normals)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setPointSizes(VertexArray pointSizes)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setPositions(VertexArray positions, float scale, float[] bias)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setTexCoords(int index, VertexArray texCoords, float scale, float[] bias)
+    {
+        throw new UnsupportedOperationException();
+    }
 }
