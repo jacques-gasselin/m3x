@@ -41,17 +41,15 @@ import m3x.m3g.Serialiser;
 public interface Serialisable
 {  
     /**
-     * Constructs a M3G object from a stream.
-     * The user is responsible for handling the stream.
+     * Deserialises an M3G object. The desrialiser object takes care of
+     * checksums, compression and endianess.
+     * Implementing classes are responsible for reading the correct
+     * values from the deserialiser.
      *
-     * @param dataInputStream
-     *  The stream which from the M3G object is read.
-     *
-     * @param m3gVersion
+     * @param deserialiser The object used to abstract reading values from
+     * an m3g data source.
      *
      * @throws IOException
-     * @throws FileFormatException
-     *  When the input data was somehow invalid from the M3G specification point of view.
      */
     void deserialise(Deserialiser deserialiser)
         throws IOException;

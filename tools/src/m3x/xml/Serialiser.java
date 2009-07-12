@@ -76,7 +76,7 @@ public class Serialiser
      * 
      * @param object - the object to write.
      * @param stream - the output stream to write to.
-     * @param format - whether the output should be formatted.
+     * @param formatted - whether the output should be formatted.
      * @throws NullPointerException - if object is null
      * @throws NullPointerException - if stream is null
      * @throws IllegalArgumentException - if there is an error in serialising

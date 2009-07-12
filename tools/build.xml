@@ -158,7 +158,8 @@
             </fileset>
             <fileset dir="${build.src.dir}" defaultexcludes="yes">
                 <exclude name="**/*.html"/>
-            </fileset>            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
+            </fileset>
+            <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
             <group title="XML Packages" packages="${m3x.xml.package}"/>
             <group title="M3G Packages" packages="${m3x.m3g.package}, ${m3x.m3g.package}.*"/>

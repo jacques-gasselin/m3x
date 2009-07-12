@@ -48,12 +48,13 @@ public abstract class Loader
     }
 
     /**
-     * Instantiates a M3GObject from a given byte array.
+     * Loads the root objects from an m3g byte array.
      *
-     * @param bytes
-     * @return
+     * @param bytes an m3g byte array to deserialise from
+     * @return an array containing the root objects
      * @throws IOException
-     * @throws FileFormatException
+     * @throws IllegalStateException if the array does not have
+     * a valid file identifier.
      */
     public static Object3D[] load(byte[] bytes) throws IOException
     {
@@ -61,12 +62,13 @@ public abstract class Loader
     }
 
     /**
-     * Instantiates a M3GObject from a given stream.
+     * Loads the root objects from an m3g data stream.
      *
-     * @param inputStream
-     * @return
-     * @throws IOException
-     * @throws FileFormatException
+     * @param inputStream an m3g data stream to deserialise from
+     * @return an array containing the root objects
+     * @throws IOException if there is an error reading the stream
+     * @throws IllegalStateException if the data stream does not have
+     * a valid file identifier.
      */
     public static Object3D[] load(InputStream inputStream) throws IOException
     {

@@ -112,9 +112,7 @@
             <fileset dir="${src.dir}" defaultexcludes="yes">
                 <exclude name="**/*.html"/>
             </fileset>
-            <fileset dir="${build.src.dir}" defaultexcludes="yes">
-                <exclude name="**/*.html"/>
-            </fileset>            <doctitle><![CDATA[<h1>m3x-jsr297 Application Programming Interface</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>m3x-jsr297 Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
             <link href="http://jcp.org/en/jsr/detail?id=297"/>
         </javadoc>

@@ -163,7 +163,10 @@
 		<xs:restriction base="xs:token"/>
 	</xs:simpleType>
 	<xs:simpleType name="uint">
-		<xs:restriction base="xs:unsignedLong"/>
+		<xs:restriction base="xs:long">
+            <xs:minInclusive value="0"/>
+            <xs:maxExclusive value="2147483648"/>
+        </xs:restriction>
 	</xs:simpleType>
 	<!-- Container Types -->
 	<xs:simpleType name="ListOfBools">
@@ -511,54 +514,23 @@
 	</xs:element>
 	<!-- Dataflow Elements -->
 	<xs:element name="accessor">
-		<xs:annotation>
-			<xs:documentation>
-			The accessor element declares an access pattern to one of the array elements: float_array,
-			int_array, Name_array, bool_array, and IDREF_array. The accessor element describes access
-			to arrays that are organized in either an interleaved or non-interleaved manner, depending
-			on the offset and stride attributes.
-			</xs:documentation>
-		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="param" minOccurs="0" maxOccurs="unbounded">
-					<xs:annotation>
-						<xs:documentation>
-						The accessor element may have any number of param elements.
-						</xs:documentation>
-					</xs:annotation>
-				</xs:element>
+				<xs:element ref="param"
+                            minOccurs="0"
+                            maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="count" type="uint" use="required">
-				<xs:annotation>
-					<xs:documentation>
-					The count attribute indicates the number of times the array is accessed. Required attribute.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="offset" type="uint" default="0">
-				<xs:annotation>
-					<xs:documentation>
-					The offset attribute indicates the index of the first value to be read from the array.
-					The default value is 0. Optional attribute.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="source" type="xs:anyURI">
-				<xs:annotation>
-					<xs:documentation>
-					The source attribute indicates the location of the array to access using a URL expression. Required attribute.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="stride" type="uint" default="1">
-				<xs:annotation>
-					<xs:documentation>
-					The stride attribute indicates number of values to be considered a unit during each access to
-					the array. The default value is 1, indicating that a single value is accessed. Optional attribute.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
+			<xs:attribute name="count"
+                          type="uint"
+                          use="required"/>
+			<xs:attribute name="offset"
+                          type="uint"
+                          default="0"/>
+			<xs:attribute name="source"
+                          type="xs:anyURI"/>
+			<xs:attribute name="stride"
+                          type="uint"
+                          default="1"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="param">
