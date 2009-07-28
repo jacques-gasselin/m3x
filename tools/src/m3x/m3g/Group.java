@@ -114,7 +114,12 @@ public class Group extends Node
         {
             throw new IllegalArgumentException("index >= getChildCount()");
         }
-        return childNodes.get(index);
+        final Node child = childNodes.get(index);
+        if (child == null)
+        {
+            throw new IllegalStateException("child is null");
+        }
+        return child;
     }
 
     public List<Node> getChildNodes()

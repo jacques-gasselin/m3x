@@ -40,12 +40,14 @@ import java.io.OutputStream;
  */
 public class Serialiser
 {
-    /**The JAXB mashaller that is responsible for converting
+    /**
+     * The JAXB mashaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
     private Marshaller xmlMarshaller = null;
 
-    /**Creates a new Serialiser that is bound to the m3x.xml JAXB context.
+    /**
+     * Creates a new Serialiser that is bound to the m3x.xml JAXB context.
      * @throws NoClassDefFoundError - if unable to bind the xml schema
      * @throws IllegalArgumentException - if unable to create a marshaller
      */
@@ -72,7 +74,8 @@ public class Serialiser
         }
     }
     
-    /**Serialise an M3G object and write it to the output stream given.
+    /**
+     * Serialise an M3G object and write it to the output stream given.
      * 
      * @param object - the object to write.
      * @param stream - the output stream to write to.
@@ -94,7 +97,7 @@ public class Serialiser
         }
         try
         {
-            xmlMarshaller.setProperty("jaxb.formatted.output", new Boolean(formatted));
+            xmlMarshaller.setProperty("jaxb.formatted.output", Boolean.valueOf(formatted));
             xmlMarshaller.marshal(object, stream);
         }
         catch (JAXBException e)

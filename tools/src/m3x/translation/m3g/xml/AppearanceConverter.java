@@ -48,6 +48,7 @@ public class AppearanceConverter extends Object3DConverter
         m3x.m3g.Appearance to, m3x.xml.Appearance from)
     {
         super.setFromXML(translator, to, from);
+        to.setLayer(from.getLayer());
         to.setCompositingMode(getCompositingMode(translator, from));
         to.setFog(getFog(translator, from));
         to.setPolygonMode(getPolygonMode(translator, from));
