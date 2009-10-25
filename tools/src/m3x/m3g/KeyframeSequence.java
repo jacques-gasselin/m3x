@@ -420,6 +420,9 @@ public class KeyframeSequence extends Object3D
         }
     }
 
+    /**
+     * This is untested and may have an error in it.
+     */
     private static final class ShortKeyframeWriter extends ScaleBiasedKeyframeWriter
     {
         private static final int MAX = 65535;
