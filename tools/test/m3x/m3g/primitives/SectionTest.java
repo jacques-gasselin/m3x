@@ -34,5 +34,9 @@ import m3x.m3g.AbstractTestCase;
  * @author jgasseli
  */
 public class SectionTest extends AbstractTestCase
-{ 
+{
+    public void testNew()
+    {
+        Section s = new Section();
+    }
 }

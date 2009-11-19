@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * 
  * @author jgasseli
  */
 public class PolygonModeTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.PolygonMode pm = new m3x.xml.PolygonMode();
+
+        m3x.m3g.PolygonMode binPm = (m3x.m3g.PolygonMode) translator.getObject(pm);
+    }
 }

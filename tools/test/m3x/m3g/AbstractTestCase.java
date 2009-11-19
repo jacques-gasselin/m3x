@@ -32,9 +32,14 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import junit.framework.AssertionFailedError;
 import m3x.m3g.primitives.Serialisable;
 
@@ -47,6 +52,37 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractTestCase extends TestCase
 {
+    private final List<Object3D> getDepthFirstReferences(Object3D root)
+    {
+         ArrayList<Object3D> openList = new ArrayList<Object3D>();
+         //keeps track of all opened and closed objects so the list is unique
+         HashSet<Object3D> openedSet = new HashSet<Object3D>();
+         ArrayList<Object3D> closedList = new ArrayList<Object3D>();
+         
+         openList.add(root);
+         openedSet.add(root);
+         
+         //run a search on the open list until exhausted
+         while (openList.size() > 0)
+         {
+             Object3D top = openList.remove(openList.size() - 1);
+             closedList.add(top);
+
+             final int referenceCount = top.getReferences(null);
+             Object3D[] references = new Object3D[referenceCount];
+             top.getReferences(references);
+
+             for (Object3D obj : references)
+             {
+                 if (openedSet.add(obj))
+                 {
+                     openList.add(obj);
+                 }
+             }
+         }
+
+         return closedList;
+    }
 
     protected void assertSaveAndLoad(Object3D[] roots)
     {
@@ -59,12 +95,48 @@ public abstract class AbstractTestCase extends TestCase
 
             Object3D[] loadRoots = Loader.load(data);
 
+            //check that the roots are correct
             for (int i = 0; i < roots.length; ++i)
             {
-                roots[i].equals(loadRoots[i]);
+                final Object3D root = roots[i];
+                final Object3D loadRoot = loadRoots[i];
+                
+                try
+                {
+                    assertEquals(root, loadRoot);
+                }
+                catch (AssertionFailedError e)
+                {
+                    System.err.println("roots: " + Arrays.toString(roots));
+                    System.err.println("loadRoots: " + Arrays.toString(loadRoots));
+                    throw e;
+                }
+                
+                //check that the references are correct
+                List<Object3D> rootReferences = getDepthFirstReferences(root);
+                List<Object3D> loadRootReferences = getDepthFirstReferences(loadRoot);
+
+                final int referenceCount = rootReferences.size();
+                try
+                {
+                    assertEquals(referenceCount, loadRootReferences.size());
+                    for (int r = 0; r < referenceCount; ++r)
+                    {
+                        final Object3D a = rootReferences.get(r);
+                        final Object3D b = loadRootReferences.get(r);
+                        assertEquals(a, b);
+                    }
+                }
+                catch (AssertionFailedError e)
+                {
+                    System.err.println("rootReferences: " + rootReferences.toString());
+                    System.err.println("loadRootReferences: " + loadRootReferences.toString());
+                    throw e;
+                }
             }
+
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             e.printStackTrace();
             fail(e.toString());

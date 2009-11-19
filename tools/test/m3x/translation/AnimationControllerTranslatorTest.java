@@ -50,11 +50,11 @@ public class AnimationControllerTranslatorTest extends TranslatorSupport
 
         AnimationController m3gAC = (AnimationController) translator.getObject(ac);
 
-        assertTrue(ac.getActiveIntervalEnd() == m3gAC.getActiveIntervalEnd());
-        assertTrue(ac.getActiveIntervalStart() == m3gAC.getActiveIntervalStart());
-        assertTrue(ac.getReferenceSequenceTime() == m3gAC.getPosition(m3gAC.getRefWorldTime()));
-        assertTrue(ac.getReferenceWorldTime() == m3gAC.getRefWorldTime());
-        assertTrue(ac.getSpeed() == m3gAC.getSpeed());
-        assertTrue(ac.getWeight() == m3gAC.getWeight());
+        assertEquals(ac.getActiveIntervalEnd(), m3gAC.getActiveIntervalEnd());
+        assertEquals(ac.getActiveIntervalStart(), m3gAC.getActiveIntervalStart());
+        assertEquals(ac.getReferenceSequenceTime(), m3gAC.getPosition(m3gAC.getRefWorldTime()));
+        assertEquals(ac.getReferenceWorldTime(), m3gAC.getRefWorldTime());
+        assertEquals(ac.getSpeed(), m3gAC.getSpeed());
+        assertEquals(ac.getWeight(), m3gAC.getWeight());
     }
 }

@@ -54,7 +54,8 @@ public class LittleEndianDataInputStream extends Object
      */
     public LittleEndianDataInputStream(InputStream in)
     {
-        if (in == null) {
+        if (in == null)
+        {
             throw new NullPointerException("in is null");
         }
         dataInputStream = new DataInputStream(in);
@@ -69,7 +70,8 @@ public class LittleEndianDataInputStream extends Object
      */
     public LittleEndianDataInputStream(DataInputStream in)
     {
-        if (in == null) {
+        if (in == null)
+        {
             throw new NullPointerException("in is null");
         }
         dataInputStream = in;

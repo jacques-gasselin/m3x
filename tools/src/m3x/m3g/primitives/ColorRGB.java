@@ -115,9 +115,9 @@ public class ColorRGB implements Serialisable
 
     public void serialise(Serialiser serialiser) throws IOException
     {
-        serialiser.writeByte(getR());
-        serialiser.writeByte(getG());
-        serialiser.writeByte(getB());
+        serialiser.writeUnsignedByte(getR());
+        serialiser.writeUnsignedByte(getG());
+        serialiser.writeUnsignedByte(getB());
     }
 
     public void set(int r, int g, int b)

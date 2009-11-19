@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * @author jsaarinen
  * @author jgasseli
  */
 public class BackgroundTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Background bg = new m3x.xml.Background();
+
+        m3x.m3g.Background binBg = (m3x.m3g.Background) translator.getObject(bg);
+    }
 }

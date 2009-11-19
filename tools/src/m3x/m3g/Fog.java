@@ -96,7 +96,7 @@ public class Fog extends Object3D
     {
         super.serialise(serialiser);
         this.color.serialise(serialiser);
-        serialiser.writeByte(getMode());
+        serialiser.writeUnsignedByte(getMode());
         if (getMode() == EXPONENTIAL)
         {
             serialiser.writeFloat(getDensity());

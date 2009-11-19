@@ -31,8 +31,7 @@ import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 import m3x.m3g.util.Object3DReferences;
 
 /**
@@ -89,17 +88,31 @@ public class SkinnedMesh extends Mesh implements SectionSerialisable
     }
     
     private Group skeleton;
-    private List<Bone> boneReferences;
+    private final ArrayList<Bone> boneReferences = new ArrayList<Bone>();
 
     public SkinnedMesh()
     {
         super();
-        resetBones(10);
+    }
+
+    public SkinnedMesh(VertexBuffer vertices, IndexBuffer[] submeshes,
+            Appearance[] appearances, Group skeleton)
+    {
+        super(vertices, submeshes, appearances);
+        setSkeleton(skeleton);
+    }
+
+    public SkinnedMesh(VertexBuffer vertices, IndexBuffer submesh,
+            Appearance appearance, Group skeleton)
+    {
+        super(vertices, submesh, appearance);
+        setSkeleton(skeleton);
     }
 
     private final void resetBones(int capacity)
     {
-        boneReferences = new Vector<Bone>(capacity);
+        boneReferences.clear();
+        boneReferences.ensureCapacity(capacity);
     }
 
     public void addTransform(Node bone, int weight, int firstVertex, int vertexCount)

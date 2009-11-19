@@ -27,10 +27,21 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * 
  * @author jgasseli
  */
 public class CompositingModeTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.CompositingMode cm = new m3x.xml.CompositingMode();
+
+        m3x.m3g.CompositingMode binCm = (m3x.m3g.CompositingMode)
+                translator.getObject(cm);
+    }
 }

@@ -30,7 +30,10 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Image2D
+public class Image2D extends ImageBase
 {
-
+    public Image2D(int format, int width, int height)
+    {
+        super(format, width, height, true);
+    }
 }

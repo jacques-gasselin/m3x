@@ -47,7 +47,7 @@ public class Graphics3D
     private static Graphics3D instance;
 
     private Object target;
-    private RenderTarget renderTarget;
+    private AbstractRenderTarget renderTarget;
     private Renderer renderer;
 
     protected Graphics3D()
@@ -76,10 +76,10 @@ public class Graphics3D
 
     public void bindTarget(Object target, int flags)
     {
-        if (target instanceof RenderTarget)
+        if (target instanceof AbstractRenderTarget)
         {
             //good to go
-            renderTarget = (RenderTarget) target;
+            renderTarget = (AbstractRenderTarget) target;
         }
         else
         {

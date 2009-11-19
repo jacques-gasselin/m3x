@@ -133,7 +133,7 @@ public abstract class IndexBuffer extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeByte(getEncoding());
+        serialiser.writeUnsignedByte(getEncoding());
         if (!isExplicit())
         {
             final int first = getFirstIndex();
@@ -144,11 +144,11 @@ public abstract class IndexBuffer extends Object3D
                     break;
 
                 case ENCODING_BYTE:
-                    serialiser.writeByte(first);
+                    serialiser.writeUnsignedByte(first);
                     break;
 
                 case ENCODING_SHORT:
-                    serialiser.writeShort(first);
+                    serialiser.writeUnsignedShort(first);
                     break;
             }
         }
@@ -159,25 +159,29 @@ public abstract class IndexBuffer extends Object3D
             switch (getEncoding())
             {
                 case ENCODING_EXPLICIT | ENCODING_INT:
+                {
                     for (int index : dataIndicies)
                     {
                         serialiser.writeInt(index);
                     }
                     break;
-
+                }
                 case ENCODING_EXPLICIT | ENCODING_BYTE:
+                {
                     for (int index : dataIndicies)
                     {
-                        serialiser.writeByte(index);
+                        serialiser.writeUnsignedByte(index);
                     }
                     break;
-
+                }
                 case ENCODING_EXPLICIT | ENCODING_SHORT:
+                {
                     for (int index : dataIndicies)
                     {
-                        serialiser.writeShort(index);
+                        serialiser.writeUnsignedShort(index);
                     }
                     break;
+                }
             }
         }
     }

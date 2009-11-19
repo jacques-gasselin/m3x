@@ -12,7 +12,8 @@
                printsummary="on"
                haltonerror="false"
                dir="${test.dir}"
-               fork="true">
+               fork="true"
+               forkmode="once">
             <classpath>
                 <pathelement location="${test.build.dir}"/>
                 <pathelement location="${lib.dir}/junit-4.4.jar"/>

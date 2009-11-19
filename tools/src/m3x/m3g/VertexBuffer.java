@@ -61,12 +61,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
 
         private VertexArray array;
         private float scale;
-        private Vector3D bias;
-
-        public ScaleBiasedVertexArray()
-        {
-            this.bias = new Vector3D();
-        }
+        private final Vector3D bias = new Vector3D();
 
         public VertexArray getArray()
         {
@@ -187,7 +182,8 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         queue.add(getPositionsArray());
         queue.add(getNormals());
         queue.add(getColors());
-        for (int i = 0; i < getTexCoordCount(); ++i)
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
         {
             queue.add(getTexCoordsArray(i));
         }

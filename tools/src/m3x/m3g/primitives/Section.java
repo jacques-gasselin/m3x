@@ -50,6 +50,8 @@ import m3x.m3g.Object3D;
  */
 public class Section
 {
+    private static final boolean DEBUG_SERIALIZE = false;
+
     /**
      * Enum for this.objects being not compressed.
      */
@@ -114,10 +116,10 @@ public class Section
         }
 
         // read Section.objects bytes
+        final int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
         byte[] objectData = new byte[this.uncompressedLength];
         if (this.compressionScheme == ZLIB_32K_COMPRESSED_ADLER32)
         {
-            int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
             byte[] compressedData = new byte[compressedLength];
             deserialiser.readFully(compressedData);
             //this.calculateChecksum(compressedData);
@@ -125,8 +127,8 @@ public class Section
             inflater.setInput(compressedData);
             try
             {
-                int n = inflater.inflate(objectData);
-                if (n != objectData.length)
+                final int n = inflater.inflate(objectData);
+                if (n != this.uncompressedLength)
                 {
                     throw new IOException("Decompression failed!");
                 }
@@ -139,6 +141,10 @@ public class Section
         }
         else
         {
+            if (compressedLength != uncompressedLength)
+            {
+                throw new IllegalStateException("uncompressed length is not section length - 13");
+            }
             // uncompressed, just read the array
             deserialiser.readFully(objectData);
             //this.calculateChecksum(objectsAsBytes);
@@ -159,6 +165,12 @@ public class Section
                 final int objectType = deserialiser.readUnsignedByte();
                 final int length = deserialiser.readInt();
                 Serialisable obj = ObjectFactory.getInstance(objectType);
+                if (DEBUG_SERIALIZE)
+                {
+                    System.err.printf("Deserialized %s: type %d of length %d\n",
+                            obj.getClass().getSimpleName(), objectType, length);
+                    System.err.flush();
+                }
                 obj.deserialise(deserialiser);
                 if (objectType == 0)
                 {
@@ -179,6 +191,7 @@ public class Section
         deserialiser.popInputStream();
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)
@@ -224,8 +237,16 @@ public class Section
                 //Byte          ObjectType
                 //UInt32        Length
                 //Byte[Length]  Data
-                serialiser.write(obj.getSectionObjectType());
-                serialiser.writeInt(objData.length);
+                final int objectType = obj.getSectionObjectType();
+                final int length = objData.length;
+                if (DEBUG_SERIALIZE)
+                {
+                    System.err.printf("Serialized %s: type %d of length %d\n",
+                            obj.getClass().getSimpleName(), objectType, length);
+                    System.err.flush();
+                }
+                serialiser.writeUnsignedByte(objectType);
+                serialiser.writeInt(length);
                 serialiser.write(objData);
                 serialiser.addObject(obj);
             }
@@ -258,7 +279,7 @@ public class Section
         //write out the section
         Adler32 adler = new Adler32();
         serialiser.startChecksum(adler);
-        serialiser.write(this.compressionScheme);
+        serialiser.writeUnsignedByte(this.compressionScheme);
         serialiser.writeInt(this.totalSectionLength);
         serialiser.writeInt(this.uncompressedLength);
         serialiser.write(objectData);

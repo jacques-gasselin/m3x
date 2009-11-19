@@ -107,7 +107,7 @@ public class Light extends Node
         serialiser.writeFloat(getLinearAttenuation());
         serialiser.writeFloat(getQuadraticAttenuation());
         this.color.serialise(serialiser);
-        serialiser.writeByte(getMode());
+        serialiser.writeUnsignedByte(getMode());
         serialiser.writeFloat(getIntensity());
         serialiser.writeFloat(getSpotAngle());
         serialiser.writeFloat(getSpotExponent());

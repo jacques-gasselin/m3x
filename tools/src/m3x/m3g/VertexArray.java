@@ -431,6 +431,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         final int vertexCount = deserialiser.readUnsignedShort();
         setSizeAndType(vertexCount, componentCount, componentType);
         setEncoding(encoding);
+        this.values.deserialise(deserialiser);
     }
 
     @Override
@@ -439,10 +440,10 @@ public class VertexArray extends Object3D implements SectionSerialisable
     {
         super.serialise(serialiser);
 
-        serialiser.writeByte(getComponentType());
-        serialiser.writeByte(getComponentCount());
-        serialiser.writeByte(getEncoding());
-        serialiser.writeShort(getVertexCount());
+        serialiser.writeUnsignedByte(getComponentType());
+        serialiser.writeUnsignedByte(getComponentCount());
+        serialiser.writeUnsignedByte(getEncoding());
+        serialiser.writeUnsignedShort(getVertexCount());
         this.values.serialise(serialiser);
     }
 

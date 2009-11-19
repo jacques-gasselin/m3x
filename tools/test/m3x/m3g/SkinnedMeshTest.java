@@ -33,4 +33,21 @@ package m3x.m3g;
  */
 public class SkinnedMeshTest extends AbstractTestCase
 {
+    public void testSaveAndLoad()
+    {
+        VertexArray pos = new VertexArray(3, 3, VertexArray.BYTE);
+        pos.set(0, 1, new byte[]{0, 0, 0});
+        pos.set(1, 1, new byte[]{0, 1, 0});
+        pos.set(2, 1, new byte[]{1, 0, 0});
+        VertexBuffer vb = new VertexBuffer();
+        vb.setPositions(pos, 1.0f, null);
+
+        IndexBuffer ib = new TriangleStripArray(0, new int[]{3});
+        Appearance ap = new Appearance();
+        Group skeleton = new Group();
+        SkinnedMesh mesh = new SkinnedMesh(vb, ib, ap, skeleton);
+
+        Object3D[] roots = new Object3D[]{ mesh };
+        assertSaveAndLoad(roots);
+    }
 }

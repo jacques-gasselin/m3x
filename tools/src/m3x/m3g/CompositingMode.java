@@ -99,8 +99,8 @@ public class CompositingMode extends Object3D
         serialiser.writeBoolean(isDepthWriteEnabled());
         serialiser.writeBoolean(isColorWriteEnabled());
         serialiser.writeBoolean(isAlphaWriteEnabled());
-        serialiser.writeByte(getBlending());
-        serialiser.writeByte(getAlphaThresholdByte());
+        serialiser.writeUnsignedByte(getBlending());
+        serialiser.writeUnsignedByte(getAlphaThresholdByte());
         serialiser.writeFloat(getDepthOffsetFactor());
         serialiser.writeFloat(getDepthOffsetUnits());
     }

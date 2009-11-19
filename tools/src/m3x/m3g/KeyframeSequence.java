@@ -416,7 +416,7 @@ public class KeyframeSequence extends Object3D
         void writeUniform(Serialiser serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
-            serialiser.writeByte(value);
+            serialiser.writeUnsignedByte(value);
         }
     }
 
@@ -436,7 +436,7 @@ public class KeyframeSequence extends Object3D
         void writeUniform(Serialiser serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
-            serialiser.writeShort(value);
+            serialiser.writeUnsignedShort(value);
         }
     }
     
@@ -496,10 +496,10 @@ public class KeyframeSequence extends Object3D
         throws IOException
     {
         super.serialise(serialiser);
-        serialiser.writeByte(getInterpolationType());
-        serialiser.writeByte(getRepeatMode());
+        serialiser.writeUnsignedByte(getInterpolationType());
+        serialiser.writeUnsignedByte(getRepeatMode());
         final int encoding = getEncoding();
-        serialiser.writeByte(encoding);
+        serialiser.writeUnsignedByte(encoding);
         serialiser.writeInt(getDuration());
         serialiser.writeInt(getValidRangeFirst());
         serialiser.writeInt(getValidRangeLast());

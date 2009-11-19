@@ -146,4 +146,9 @@ public class LittleEndianDataOutputStream implements DataOutput
         }
         this.dos.writeByte(0);
     }
+
+    public void flush() throws IOException
+    {
+        this.dos.flush();
+    }
 }

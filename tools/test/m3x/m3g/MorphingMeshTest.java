@@ -53,7 +53,9 @@ public class MorphingMeshTest extends AbstractTestCase
 
         IndexBuffer ib = new TriangleStripArray(0, new int[]{3});
         Appearance ap = new Appearance();
-        MorphingMesh mesh = new MorphingMesh(vb, null, ib, ap);
+
+        VertexBuffer[] targets = new VertexBuffer[2];
+        MorphingMesh mesh = new MorphingMesh(vb, targets, ib, ap);
 
         Object3D[] roots = new Object3D[]{ mesh };
         assertSaveAndLoad(roots);

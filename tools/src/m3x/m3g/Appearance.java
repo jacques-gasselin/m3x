@@ -87,9 +87,9 @@ public class Appearance extends Object3D
         setFog((Fog)deserialiser.readReference());
         setPolygonMode((PolygonMode)deserialiser.readReference());
         setMaterial((Material)deserialiser.readReference());
-        final int texturesLength = deserialiser.readInt();
-        setTextureCount(texturesLength);
-        for (int i = 0; i < texturesLength; ++i)
+        final int textureCount = deserialiser.readInt();
+        setTextureCount(textureCount);
+        for (int i = 0; i < textureCount; ++i)
         {
             setTexture(i, (Texture2D)deserialiser.readReference());
         }
@@ -105,8 +105,9 @@ public class Appearance extends Object3D
         serialiser.writeReference(getFog());
         serialiser.writeReference(getPolygonMode());
         serialiser.writeReference(getMaterial());
-        serialiser.writeInt(getTextureCount());
-        for (int i = 0; i < getTextureCount(); ++i)
+        final int textureCount = getTextureCount();
+        serialiser.writeInt(textureCount);
+        for (int i = 0; i < textureCount; ++i)
         {
             serialiser.writeReference(getTexture(i));
         }

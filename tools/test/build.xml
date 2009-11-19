@@ -32,7 +32,8 @@
                printsummary="on"
                haltonerror="false"
                dir="${test.dir}"
-               fork="true">
+               fork="true"
+               forkmode="once">
             <!-- jaxb-api.jar included in ${lib.dir} causes error with some
                  environments, if not included into endorsed dirs path -->
             <!--sysproperty key="java.endorsed.dirs" value="${lib.dir}"/-->

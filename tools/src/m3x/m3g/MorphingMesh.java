@@ -111,14 +111,28 @@ public class MorphingMesh extends Mesh
         super();
     }
 
+    private static final void requireTargetsNotNull(VertexBuffer[] targets)
+    {
+        if (targets == null)
+        {
+            throw new NullPointerException("targets is null");
+        }
+    }
+    
     public MorphingMesh(VertexBuffer base, VertexBuffer[] targets, IndexBuffer[] submeshes, Appearance[] appearances)
     {
         super(base, submeshes, appearances);
+
+        requireTargetsNotNull(targets);
+        setMorphTargetCount(targets.length);
     }
 
     public MorphingMesh(VertexBuffer base, VertexBuffer[] targets, IndexBuffer submesh, Appearance appearance)
     {
         super(base, submesh, appearance);
+
+        requireTargetsNotNull(targets);
+        setMorphTargetCount(targets.length);
     }
 
     @Override
@@ -161,6 +175,10 @@ public class MorphingMesh extends Mesh
 
     public int getMorphTargetCount()
     {
+        if (morphTargets == null)
+        {
+            return 0;
+        }
         return morphTargets.length;
     }
 

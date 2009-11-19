@@ -33,6 +33,7 @@ import m3x.m3g.primitives.Serialisable;
 import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -233,7 +234,15 @@ public class Serialiser implements DataOutput
 
     public void popOutputStream()
     {
-        outputStreams.pop();
+        LittleEndianDataOutputStream top = outputStreams.pop();
+        try
+        {
+            top.flush();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void pushOutputStream(OutputStream out)
@@ -266,8 +275,31 @@ public class Serialiser implements DataOutput
         getOutputStream().writeBoolean(v);
     }
 
+    public void writeUnsignedByte(int v) throws IOException
+    {
+        if (v < 0)
+        {
+            throw new IllegalArgumentException("v < 0");
+        }
+        if (v > 255)
+        {
+            throw new IllegalArgumentException("v > 255");
+        }
+        
+        getOutputStream().writeByte(v);
+    }
+
     public void writeByte(int v) throws IOException
     {
+        if (v < Byte.MIN_VALUE)
+        {
+            throw new IllegalArgumentException("v < Byte.MIN_VALUE");
+        }
+        if (v > Byte.MAX_VALUE)
+        {
+            throw new IllegalArgumentException("v > Byte.MAX_VALUE");
+        }
+
         getOutputStream().writeByte(v);
     }
 
@@ -288,8 +320,31 @@ public class Serialiser implements DataOutput
         }
     }
 
+    public void writeUnsignedShort(int v) throws IOException
+    {
+        if (v < 0)
+        {
+            throw new IllegalArgumentException("v < 0");
+        }
+        if (v > 65535)
+        {
+            throw new IllegalArgumentException("v > 65535");
+        }
+
+        getOutputStream().writeShort(v);
+    }
+
     public void writeShort(int v) throws IOException
     {
+        if (v < Short.MIN_VALUE)
+        {
+            throw new IllegalArgumentException("v < Short.MIN_VALUE");
+        }
+        if (v > Short.MAX_VALUE)
+        {
+            throw new IllegalArgumentException("v > Short.MAX_VALUE");
+        }
+
         getOutputStream().writeShort(v);
     }
 
@@ -341,6 +396,10 @@ public class Serialiser implements DataOutput
     public void writeReference(Object object) throws IOException
     {
         final int index = getObjectIndex(object);
+        if (index < 0)
+        {
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
         //System.out.println(object + " : " + index);
         writeInt(index);
     }

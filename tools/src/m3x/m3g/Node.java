@@ -95,6 +95,63 @@ public abstract class Node extends Transformable implements Serialisable
     }
 
     @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+
+        final Node that = (Node) obj;
+        if (this.renderingEnabled != that.renderingEnabled)
+        {
+            return false;
+        }
+
+        if (this.pickingEnabled != that.pickingEnabled)
+        {
+            return false;
+        }
+
+        if (this.alphaFactor != that.alphaFactor)
+        {
+            return false;
+        }
+
+        if (this.scope != that.scope)
+        {
+            return false;
+        }
+
+        if (this.hasAlignment != that.hasAlignment)
+        {
+            return false;
+        }
+
+        if (this.hasAlignment)
+        {
+            if (this.yReference != that.yReference)
+            {
+                return false;
+            }
+            if (this.zReference != that.zReference)
+            {
+                return false;
+            }
+            if (this.yTarget != that.yTarget)
+            {
+                return false;
+            }
+            if (this.yReference != that.yReference)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public void deserialise(Deserialiser deserialiser)
         throws IOException
     {

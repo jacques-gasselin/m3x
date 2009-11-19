@@ -156,17 +156,22 @@ public abstract class Object3D implements SectionSerialisable
     {
         setUserID(deserialiser.readInt());
         final int numTracks = deserialiser.readInt();
+        if (numTracks < 0)
+        {
+            throw new ArrayIndexOutOfBoundsException("numTracks < 0");
+        }
+        
         for (int i = 0; i < numTracks; ++i)
         {
             addAnimationTrack((AnimationTrack)deserialiser.readReference());
         }
 
-        this.userParameterCount = deserialiser.readInt();
-        this.userParameters = new UserParameter[this.userParameterCount];
+        userParameterCount = deserialiser.readInt();
+        userParameters = new UserParameter[this.userParameterCount];
         for (int i = 0; i < this.userParameters.length; ++i)
         {
-            this.userParameters[i] = new UserParameter();
-            this.userParameters[i].deserialise(deserialiser);
+            userParameters[i] = new UserParameter();
+            userParameters[i].deserialise(deserialiser);
         }
     }
 

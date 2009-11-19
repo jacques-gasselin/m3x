@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="m3x-IDE">
-    <property name="lib.dir" location="lib"/>
-    <property name="dist.dir" location="dist"/>
+    <property location="test" name="test.dir"/>
+    <property location="lib" name="lib.dir"/>
+    <property location="dist" name="dist.dir"/>
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
     <target name="run-selected-file-in-demo">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
-            <env key="DYLD_LIBRARY_PATH"
-                 path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath>
                 <pathelement location="${dist.dir}/m3x-jsr297.jar"/>
                 <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
@@ -18,5 +18,14 @@
                 <pathelement location="jsr297/build"/>
             </classpath>
         </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
+    <target name="compile-selected-files-in-test">
+        <fail unless="files">Must set property 'files'</fail>
+        <mkdir dir="tools/test/build"/>
+        <javac destdir="tools/test/build" includes="${files}" source="1.5" srcdir="tools/test">
+            <classpath path="lib/junit-4.4.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-impl.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:tools/build"/>
+        </javac>
     </target>
 </project>

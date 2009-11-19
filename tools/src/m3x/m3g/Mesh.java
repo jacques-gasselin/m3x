@@ -32,7 +32,6 @@ import m3x.m3g.primitives.SectionSerialisable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.util.Object3DReferences;
 
 /**
@@ -112,9 +111,40 @@ public class Mesh extends Node implements SectionSerialisable
             {
                 return false;
             }
-            SubMesh another = (SubMesh) obj;
-            return this.indexBuffer.equals(another.indexBuffer) &&
-                this.appearance.equals(another.appearance);
+            
+            SubMesh that = (SubMesh) obj;
+            //null guard the checks
+            if (this.indexBuffer == null)
+            {
+                if (that.indexBuffer != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (this.indexBuffer.equals(that.indexBuffer))
+                {
+                    return false;
+                }
+            }
+
+            if (this.appearance == null)
+            {
+                if (that.appearance != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!this.appearance.equals(that.appearance))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 
@@ -158,6 +188,34 @@ public class Mesh extends Node implements SectionSerialisable
         setSubmeshCount(1);
         setIndexBuffer(0, submesh);
         setAppearance(0, appearance);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+
+        final Mesh that = (Mesh) obj;
+        final int submeshCount = getSubmeshCount();
+        if (submeshCount != that.getSubmeshCount())
+        {
+            return false;
+        }
+
+        for (int i = 0; i < submeshCount; ++i)
+        {
+            SubMesh submeshA = getSubMesh(i);
+            SubMesh submeshB = that.getSubMesh(i);
+            if (submeshA.equals(submeshB))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

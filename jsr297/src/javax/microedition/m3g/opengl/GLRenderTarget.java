@@ -32,12 +32,12 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GL;
-import javax.microedition.m3g.RenderTarget;
+import javax.microedition.m3g.AbstractRenderTarget;
 
 /**
  * @author jgasseli
  */
-public class GLRenderTarget extends RenderTarget
+public class GLRenderTarget extends AbstractRenderTarget
 {
     private GLAutoDrawable drawable;
     private GLRenderer renderer;

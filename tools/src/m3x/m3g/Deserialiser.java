@@ -160,12 +160,21 @@ public final class Deserialiser extends LittleEndianDeserialiser
      */
     public Object3D readReference() throws IOException
     {
-        int index = readInt();
-        Object3D obj = objects.elementAt(index);
-        if (rootObjects.contains(obj))
+        final int index = readInt();
+        if (index < 0)
         {
-            rootObjects.remove(obj);
+            throw new ArrayIndexOutOfBoundsException("index < 0");
         }
+        if (index >= objects.size())
+        {
+            throw new ArrayIndexOutOfBoundsException("index >= objects.size()");
+        }
+        
+        final Object3D obj = objects.elementAt(index);
+        //rely on the implementation to make remove a no-op if obj is not
+        //in the collection.
+        rootObjects.remove(obj);
+        
         System.out.println(index + " : " + obj);
         return obj;
     }
