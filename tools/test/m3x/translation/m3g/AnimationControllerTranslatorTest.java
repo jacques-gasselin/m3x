@@ -25,13 +25,36 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
+package m3x.translation.m3g;
 
+import m3x.translation.*;
+import m3x.m3g.AnimationController;
 
 /**
- * @author jsaarinen
+ * 
  * @author jgasseli
  */
-public class KeyframeSequenceTranslatorTest extends TranslatorSupport
+public class AnimationControllerTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
+        ac.setActiveIntervalEnd(1);
+        ac.setActiveIntervalStart(2);
+        ac.setReferenceSequenceTime(0.5f);
+        ac.setReferenceWorldTime(3);
+        ac.setSpeed(1.0f);
+        ac.setWeight(2.0f);
+
+        AnimationController m3gAC = (AnimationController) translator.getObject(ac);
+
+        assertEquals(ac.getActiveIntervalEnd(), m3gAC.getActiveIntervalEnd());
+        assertEquals(ac.getActiveIntervalStart(), m3gAC.getActiveIntervalStart());
+        assertEquals(ac.getReferenceSequenceTime(), m3gAC.getPosition(m3gAC.getRefWorldTime()));
+        assertEquals(ac.getReferenceWorldTime(), m3gAC.getRefWorldTime());
+        assertEquals(ac.getSpeed(), m3gAC.getSpeed());
+        assertEquals(ac.getWeight(), m3gAC.getWeight());
+    }
 }

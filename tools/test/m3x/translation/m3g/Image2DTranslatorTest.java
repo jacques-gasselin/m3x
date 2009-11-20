@@ -25,7 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
+package m3x.translation.m3g;
 
 /**
  *

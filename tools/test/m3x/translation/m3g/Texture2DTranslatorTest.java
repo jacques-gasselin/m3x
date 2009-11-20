@@ -25,29 +25,12 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
-
-import m3x.m3g.AnimationTrack;
-import m3x.translation.m3g.XmlToBinaryTranslator;
-import m3x.xml.AnimationTargetType;
+package m3x.translation.m3g;
 
 /**
- * @author jsaarinen
+ * 
  * @author jgasseli
  */
-public class AnimationTrackTranslatorTest extends TranslatorSupport
+public class Texture2DTranslatorTest extends TranslatorSupport
 {
-    public void testTranslator()
-    {
-        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
-        
-        m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
-        m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
-        m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
-        at.setController(ac);
-        at.setKeyframeSequence(ks);
-        at.setTargetProperty(AnimationTargetType.COLOR);
-
-        AnimationTrack m3gAt = (AnimationTrack) translator.getObject(at);
-    }
 }

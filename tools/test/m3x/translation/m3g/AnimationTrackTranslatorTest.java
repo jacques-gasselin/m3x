@@ -25,23 +25,28 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
+package m3x.translation.m3g;
 
-import m3x.translation.m3g.XmlToBinaryTranslator;
+import m3x.m3g.AnimationTrack;
+import m3x.xml.AnimationTargetType;
 
 /**
- * 
+ * @author jsaarinen
  * @author jgasseli
  */
-public class CompositingModeTranslatorTest extends TranslatorSupport
+public class AnimationTrackTranslatorTest extends TranslatorSupport
 {
     public void testTranslator()
     {
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+        
+        m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
+        m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
+        m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
+        at.setController(ac);
+        at.setKeyframeSequence(ks);
+        at.setTargetProperty(AnimationTargetType.COLOR);
 
-        m3x.xml.CompositingMode cm = new m3x.xml.CompositingMode();
-
-        m3x.m3g.CompositingMode binCm = (m3x.m3g.CompositingMode)
-                translator.getObject(cm);
+        AnimationTrack m3gAt = (AnimationTrack) translator.getObject(at);
     }
 }

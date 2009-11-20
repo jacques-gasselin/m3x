@@ -25,22 +25,13 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
+package m3x.translation.m3g;
 
-import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
- *
+ * @author jsaarinen
  * @author jgasseli
  */
-public class FogTranslatorTest extends TranslatorSupport
+public class KeyframeSequenceTranslatorTest extends TranslatorSupport
 {
-    public void testTranslator()
-    {
-        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
-
-        m3x.xml.Fog fog = new m3x.xml.Fog();
-
-        m3x.m3g.Fog binFog = (m3x.m3g.Fog) translator.getObject(fog);
-    }
 }

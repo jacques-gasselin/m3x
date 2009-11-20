@@ -25,22 +25,20 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
-
-import m3x.translation.m3g.XmlToBinaryTranslator;
+package m3x.translation.m3g;
 
 /**
  * 
  * @author jgasseli
  */
-public class CameraTranslatorTest extends TranslatorSupport
+public class PolygonModeTranslatorTest extends TranslatorSupport
 {
     public void testTranslator()
     {
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
 
-        m3x.xml.Camera cam = new m3x.xml.Camera();
+        m3x.xml.PolygonMode pm = new m3x.xml.PolygonMode();
 
-        m3x.m3g.Camera binCam = (m3x.m3g.Camera) translator.getObject(cam);
+        m3x.m3g.PolygonMode binPm = (m3x.m3g.PolygonMode) translator.getObject(pm);
     }
 }

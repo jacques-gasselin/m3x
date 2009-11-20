@@ -25,22 +25,21 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation;
-
-import m3x.translation.m3g.XmlToBinaryTranslator;
+package m3x.translation.m3g;
 
 /**
  * 
  * @author jgasseli
  */
-public class LightTranslatorTest extends TranslatorSupport
+public class CompositingModeTranslatorTest extends TranslatorSupport
 {
     public void testTranslator()
     {
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
 
-        m3x.xml.Light light = new m3x.xml.Light();
+        m3x.xml.CompositingMode cm = new m3x.xml.CompositingMode();
 
-        m3x.m3g.Light binLight = (m3x.m3g.Light) translator.getObject(light);
+        m3x.m3g.CompositingMode binCm = (m3x.m3g.CompositingMode)
+                translator.getObject(cm);
     }
 }
