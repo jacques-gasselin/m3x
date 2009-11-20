@@ -40,6 +40,7 @@ public abstract class IndexBuffer extends Object3D
     public static final int ENCODING_INT = 0;
     public static final int ENCODING_BYTE = 1;
     public static final int ENCODING_SHORT = 2;
+    private static final int ENCODING_MASK = 127;
     public static final int ENCODING_EXPLICIT = 128;
 
     private int encoding;
@@ -58,10 +59,15 @@ public abstract class IndexBuffer extends Object3D
         }
     }
 
-    public IndexBuffer()
+    IndexBuffer()
+    {
+        this(ENCODING_SHORT);
+    }
+
+    IndexBuffer(int encoding)
     {
         super();
-        setEncoding(ENCODING_SHORT);
+        setEncoding(encoding);
     }
 
     @Override
@@ -70,11 +76,12 @@ public abstract class IndexBuffer extends Object3D
     {
         super.deserialise(deserialiser);
         setEncoding(deserialiser.readUnsignedByte());
+        final int encodingSize = getEncoding() & ENCODING_MASK;
         if (!isExplicit())
         {
             //implicit indices
             int first = 0;
-            switch (getEncoding())
+            switch (encodingSize)
             {
                 case ENCODING_INT:
                     first = deserialiser.readInt();
@@ -98,31 +105,36 @@ public abstract class IndexBuffer extends Object3D
             final int indicesLength = deserialiser.readInt();
             final int[] dataIndices = new int[indicesLength];
             //explicit indices
-            switch (getEncoding())
+            switch (encodingSize)
             {
-                case ENCODING_EXPLICIT | ENCODING_INT:
+                case ENCODING_INT:
+                {
                     for (int i = 0; i < indicesLength; i++)
                     {
                         dataIndices[i] = deserialiser.readInt();
                     }
                     break;
-
-                case ENCODING_EXPLICIT | ENCODING_BYTE:
+                }
+                case ENCODING_BYTE:
+                {
                     for (int i = 0; i < indicesLength; i++)
                     {
                         dataIndices[i] = deserialiser.readUnsignedByte();
                     }
                     break;
-
-                case ENCODING_EXPLICIT | ENCODING_SHORT:
+                }
+                case ENCODING_SHORT:
+                {
                     for (int i = 0; i < indicesLength; i++)
                     {
                         dataIndices[i] = deserialiser.readUnsignedShort();
                     }
                     break;
-
+                }
                 default:
+                {
                     throw new IllegalArgumentException("Invalid encoding: " + getEncoding());
+                }
             }
             setIndices(dataIndices);
         }
@@ -140,16 +152,20 @@ public abstract class IndexBuffer extends Object3D
             switch (getEncoding())
             {
                 case ENCODING_INT:
+                {
                     serialiser.writeInt(first);
                     break;
-
+                }
                 case ENCODING_BYTE:
+                {
                     serialiser.writeUnsignedByte(first);
                     break;
-
+                }
                 case ENCODING_SHORT:
+                {
                     serialiser.writeUnsignedShort(first);
                     break;
+                }
             }
         }
         else
@@ -187,12 +203,12 @@ public abstract class IndexBuffer extends Object3D
     }
 
 
-    public int getEncoding()
+    public final int getEncoding()
     {
         return this.encoding;
     }
 
-    public int getIndexCount()
+    public final int getIndexCount()
     {
         if (this.indices == null)
         {
@@ -211,12 +227,12 @@ public abstract class IndexBuffer extends Object3D
         return this.firstIndex;
     }
 
-    public boolean isExplicit()
+    public final boolean isExplicit()
     {
         return (getEncoding() & ENCODING_EXPLICIT) == ENCODING_EXPLICIT;
     }
 
-    public void setEncoding(int encoding)
+    public final void setEncoding(int encoding)
     {
         this.encoding = encoding;
     }
@@ -243,13 +259,20 @@ public abstract class IndexBuffer extends Object3D
         {
             throw new IllegalArgumentException("indices == null");
         }
+        final int length = indices.length;
+        if (length == 0)
+        {
+            throw new IllegalArgumentException("indices is empty");
+        }
         final int maximum = getEncodingMaximum();
-        for (int i = 0; i < indices.length; ++i)
+        for (int i = 0; i < length; ++i)
         {
             final int index = indices[i];
             requireIndexInRange(index, maximum);
         }
-        this.indices = indices;
+        //copy the values in
+        this.indices = new int[length];
+        System.arraycopy(indices, 0, this.indices, 0, length);
     }
 
     public void setFirstIndex(int firstIndex)
