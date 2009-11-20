@@ -159,12 +159,14 @@ public class Mesh extends Node implements SectionSerialisable
     public Mesh(VertexBuffer vertices, IndexBuffer[] submeshes, Appearance[] appearances)
     {
         super();
-        setVertexBuffer(vertices);
-
+        
         if (submeshes == null)
         {
             throw new NullPointerException("submeshes is null");
         }
+
+        setVertexBuffer(vertices);
+
         final int submeshCount = submeshes.length;
         setSubmeshCount(submeshCount);
         for (int i = 0; i < submeshCount; ++i)
@@ -316,6 +318,49 @@ public class Mesh extends Node implements SectionSerialisable
         if (indexBuffer == null)
         {
             throw new NullPointerException("indexBuffer is null");
+        }
+        //check the indices for validity
+        VertexBuffer vb = getVertexBuffer();
+        if (vb != null)
+        {
+            final int vertexCount = vb.getVertexCount();
+            if (indexBuffer.isExplicit())
+            {
+                final int[] indices = indexBuffer.getIndices();
+                final int indexCount = indices.length;
+                for (int i = 0; i < indexCount; ++i)
+                {
+                    if (indices[i] >= vertexCount)
+                    {
+                        throw new IndexOutOfBoundsException("indexBuffer.getIndices()["
+                                + i + "] >= vertexCount");
+                    }
+                }
+            }
+            else
+            {
+                final int firstIndex = indexBuffer.getFirstIndex();
+                if (firstIndex >= vertexCount)
+                {
+                    throw new IndexOutOfBoundsException("indexBuffer.getFirstIndex()"
+                            + " >= vertexCount");
+                }
+                if (indexBuffer instanceof TriangleStripArray)
+                {
+                    TriangleStripArray tsa = (TriangleStripArray) indexBuffer;
+                    //check to see if the implicit indices go over the vertex count
+                    int sum = 0;
+                    for (int l : tsa.getStripLengths())
+                    {
+                        sum += l;
+                    }
+                    if ((firstIndex + sum) > vertexCount)
+                    {
+                        throw new IndexOutOfBoundsException("implicit indices will"
+                                + " exceed vertexCount");
+                    }
+                }
+            }
         }
         getSubMesh(index).setIndexBuffer(indexBuffer);
     }

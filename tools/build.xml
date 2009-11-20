@@ -4,6 +4,11 @@
          basedir=".">
     <description>Builds the tool packages for the M3X project.</description>
 
+    <!-- Adding these suggested by maxgilead to allow use of this build.xml file directly. -->
+    <property name="schema.dir" location="${basedir}/../schema"/>
+    <property name="lib.dir" location="${basedir}/../lib"/>
+    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy.xml"/>
+
     <property name="docs.dir" location="${basedir}/docs"/>
     <property name="res.dir" location="${basedir}/res"/>
     <property name="res.xml.dir" location="${res.dir}/xml"/>

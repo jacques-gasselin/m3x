@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="m3x" default="build" basedir=".">
     <description>Builds the all the packages for the M3X project.</description>
-    <property name="schema.dir" location="schema"/>
-    <property name="lib.dir" location="lib"/>
-    <property name="tools.dir" location="tools"/>
-    <property name="release.dir" location="release"/>
+    <property name="schema.dir" location="${basedir}/schema"/>
+    <property name="lib.dir" location="${basedir}/lib"/>
+    <property name="tools.dir" location="${basedir}/tools"/>
+    <property name="release.dir" location="${basedir}/release"/>
     <property name="checkstyle.policy" location="${basedir}/checkstyle-policy.xml"/>
     
     <target name="build"

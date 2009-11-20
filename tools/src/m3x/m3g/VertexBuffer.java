@@ -82,26 +82,56 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
             return this.scale;
         }
 
-        public void setArray(VertexArray array)
+        private static final void requireArrayNotNull(VertexArray array)
         {
             if (array == null)
             {
                 throw new NullPointerException("array is null");
             }
+        }
+
+        private static final void requireValidBias(float[] bias, VertexArray array)
+        {
+            if (array == null || bias == null)
+            {
+                return;
+            }
+
+            if (bias.length < Math.min(3, array.getComponentCount()))
+            {
+                throw new IllegalArgumentException("bias.length < min(3, array.getComponentCount())");
+            }
+        }
+
+        public void set(VertexArray array, float scale, float[] bias)
+        {
+            //apply the tests early to assert atomicity
+            requireArrayNotNull(array);
+            requireValidBias(bias, array);
+
+            setArray(array);
+            setScale(scale);
+            setBias(bias);
+        }
+
+        public void setArray(VertexArray array)
+        {
+            requireArrayNotNull(array);
+            
             this.array = array;
         }
 
         public void setBias(float[] bias)
         {
+            requireValidBias(bias, this.array);
             if (bias == null)
             {
-                bias = new float[3];
+                this.bias.set(0.0f, 0.0f, 0.0f);
             }
-            if (bias.length != 3)
+            else
             {
-                throw new IllegalArgumentException("bias does not have 3 components");
+                this.bias.set(bias);
             }
-            this.bias.set(bias[0], bias[1], bias[2]);
         }
 
         public void setScale(float scale)
@@ -131,6 +161,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     private VertexArray normals;
     private VertexArray colors;
     private ScaleBiasedVertexArray[] textureCoordinates;
+    private int vertexCount;
 
     public VertexBuffer()
     {
@@ -248,21 +279,66 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         return this.textureCoordinates[index].getScale();
     }
 
+    public int getVertexCount()
+    {
+        return this.vertexCount;
+    }
+
     public void setColors(VertexArray va)
     {
+        //check the vertex counts for potential mismatch
+        //to maintain atomicity apply all checks before committing.
+        int count = 0;
+        //check all the other arrays first
+        count = updateVAVertexCount(count, getPositionsArray());
+        count = updateVAVertexCount(count, getNormals());
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
+        {
+            count = updateVAVertexCount(count, getTexCoordsArray(i));
+        }
+        count = updateVAVertexCount(count, va);
+
         this.colors = va;
+        this.vertexCount = count;
     }
 
     public void setNormals(VertexArray va)
     {
+        //check the vertex counts for potential mismatch
+        //to maintain atomicity apply all checks before committing.
+        int count = 0;
+        //check all the other arrays first
+        count = updateVAVertexCount(count, getPositionsArray());
+        count = updateVAVertexCount(count, getColors());
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
+        {
+            count = updateVAVertexCount(count, getTexCoordsArray(i));
+        }
+        count = updateVAVertexCount(count, va);
+        
         this.normals = va;
+        this.vertexCount = count;
     }
 
-    public void setPositions(VertexArray va, float scale, float[] bias)
+    public synchronized void setPositions(VertexArray va, float scale, float[] bias)
     {
-        this.positions.setArray(va);
-        this.positions.setScale(scale);
-        this.positions.setBias(bias);
+        //check the vertex counts for potential mismatch
+        //to maintain atomicity apply all checks before committing.
+        int count = 0;
+        //check all the other arrays first
+        count = updateVAVertexCount(count, getColors());
+        count = updateVAVertexCount(count, getNormals());
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
+        {
+            count = updateVAVertexCount(count, getTexCoordsArray(i));
+        }
+        count = updateVAVertexCount(count, va);
+
+        this.positions.set(va, scale, bias);
+        this.vertexCount = count;
     }
 
     public void setTexCoordCount(int texCoordCount)
@@ -280,11 +356,27 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
         }
     }
 
-    public void setTexCoords(int index, VertexArray va, float scale, float[] bias)
+    public synchronized void setTexCoords(int index, VertexArray va, float scale, float[] bias)
     {
-        this.textureCoordinates[index].setArray(va);
-        this.textureCoordinates[index].setScale(scale);
-        this.textureCoordinates[index].setBias(bias);
+        //check the vertex counts for potential mismatch
+        //to maintain atomicity apply all checks before committing.
+        int count = 0;
+        //check all the other arrays first
+        count = updateVAVertexCount(count, getPositionsArray());
+        count = updateVAVertexCount(count, getColors());
+        count = updateVAVertexCount(count, getNormals());
+        final int textureCoordinateArrayCount = getTexCoordCount();
+        for (int i = 0; i < textureCoordinateArrayCount; ++i)
+        {
+            if (i != index)
+            {
+                count = updateVAVertexCount(count, getTexCoordsArray(i));
+            }
+        }
+        count = updateVAVertexCount(count, va);
+        
+        this.textureCoordinates[index].set(va, scale, bias);
+        this.vertexCount = count;
     }
 
     public void setDefaultColor(int argb)
@@ -296,4 +388,24 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     {
         this.defaultColor.set(defaultColor);
     }
+
+    private static final int updateVAVertexCount(int count, VertexArray va)
+    {
+        if (va == null)
+        {
+            return count;
+        }
+        final int vaCount = va.getVertexCount();
+        //is this the first vertex array in the buffer?
+        if (count == 0)
+        {
+            return vaCount;
+        }
+        if (count != vaCount)
+        {
+            throw new IllegalArgumentException("va.getVertexCount() != getVertexCount()");
+        }
+        return count;
+    }
+
 }

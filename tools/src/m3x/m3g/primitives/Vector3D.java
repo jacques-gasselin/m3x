@@ -65,11 +65,66 @@ public class Vector3D implements Serialisable
 
     public void set(List<Float> value)
     {
-        if (value.size() < 3)
+        switch (value.size())
         {
-            throw new IllegalArgumentException("size() < 3");
+            case 0:
+            {
+                throw new IllegalArgumentException("value is empty");
+            }
+            default:
+            case 3:
+            {
+                x = value.get(0);
+                y = value.get(1);
+                z = value.get(2);
+                break;
+            }
+            case 2:
+            {
+                x = value.get(0);
+                y = value.get(1);
+                z = 0.0f;
+                break;
+            }
+            case 1:
+            {
+                x = value.get(0);
+                y = 0.0f;
+                z = 0.0f;
+            }
         }
-        set(value.get(0), value.get(1), value.get(2));
+    }
+
+    public void set(float[] value)
+    {
+        switch (value.length)
+        {
+            case 0:
+            {
+                throw new IllegalArgumentException("value is empty");
+            }
+            default:
+            case 3:
+            {
+                x = value[0];
+                y = value[1];
+                z = value[2];
+                break;
+            }
+            case 2:
+            {
+                x = value[0];
+                y = value[1];
+                z = 0.0f;
+                break;
+            }
+            case 1:
+            {
+                x = value[0];
+                y = 0.0f;
+                z = 0.0f;
+            }
+        }
     }
 
     public void set(float x, float y, float z)
