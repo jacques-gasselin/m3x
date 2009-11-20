@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * 
  * @author jgasseli
  */
 public class LightTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Light light = new m3x.xml.Light();
+
+        m3x.m3g.Light binLight = (m3x.m3g.Light) translator.getObject(light);
+    }
 }

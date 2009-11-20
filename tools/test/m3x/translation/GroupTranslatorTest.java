@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * 
  * @author jgasseli
  */
-public class GroupTranslatorText extends TranslatorSupport
+public class GroupTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Group g = new m3x.xml.Group();
+
+        m3x.m3g.Group binG = (m3x.m3g.Group) translator.getObject(g);
+    }
 }

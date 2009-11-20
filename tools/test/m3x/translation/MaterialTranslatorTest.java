@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * @author jsaarinen
  * @author jgasseli
  */
 public class MaterialTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Material material = new m3x.xml.Material();
+
+        m3x.m3g.Material binMaterial = (m3x.m3g.Material) translator.getObject(material);
+    }
 }

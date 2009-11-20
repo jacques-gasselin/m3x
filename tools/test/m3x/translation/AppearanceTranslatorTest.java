@@ -27,10 +27,20 @@
 
 package m3x.translation;
 
+import m3x.translation.m3g.XmlToBinaryTranslator;
+
 /**
  * @author jsaarinen
  * @author jgasseli
  */
 public class AppearanceTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Appearance ap = new m3x.xml.Appearance();
+
+        m3x.m3g.Appearance binAp = (m3x.m3g.Appearance) translator.getObject(ap);
+    }
 }
