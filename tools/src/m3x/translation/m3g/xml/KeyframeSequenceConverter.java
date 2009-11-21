@@ -47,6 +47,12 @@ public class KeyframeSequenceConverter extends Object3DConverter
     protected final void setFromXML(XmlToBinaryTranslator translator,
         m3x.m3g.KeyframeSequence to, m3x.xml.KeyframeSequence from)
     {
+        if (from.getInterpolation() == null)
+        {
+            throw new IllegalArgumentException("XML KeyframeSequence is missing " +
+                    "the interpolation property.");
+        }
+        
         super.setFromXML(translator, to, from);
         to.setEncoding(from.getEncoding().value());
         to.setRepeatMode(from.getRepeatMode().value());

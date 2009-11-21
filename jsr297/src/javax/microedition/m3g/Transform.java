@@ -30,6 +30,7 @@ package javax.microedition.m3g;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
+import javax.vecmath.SingularMatrixException;
 import javax.vecmath.Vector4f;
 
 /**
@@ -96,9 +97,20 @@ public final class Transform
         }
     }
 
+    /**
+     * Inverts the transform matrix.
+     * @throws ArithmeticException if the matrix is not invertible.
+     */
     public void invert()
     {
-        this.matrix.invert();
+        try
+        {
+            this.matrix.invert();
+        }
+        catch (SingularMatrixException e)
+        {
+            throw new ArithmeticException("singular matrix - non invertible");
+        }
     }
 
     public void multiply(float scalar)

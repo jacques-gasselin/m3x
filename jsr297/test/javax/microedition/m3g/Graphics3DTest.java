@@ -1,7 +1,6 @@
 package javax.microedition.m3g;
 
 import junit.framework.TestCase;
-import quicktime.qd3d.camera.CameraData;
 
 /**
  * @author jgasseli
@@ -23,13 +22,13 @@ public class Graphics3DTest extends TestCase
 
     public void testGetCameraNull()
     {
-        g3d.getCamera(null);
+        assertNull(g3d.getCamera(null));
     }
 
     public void testGetCamera()
     {
         Transform t = new Transform();
-        g3d.getCamera(t);
+        assertNull(g3d.getCamera(t));
     }
 
     public void testSetCameraNullNull()
@@ -47,5 +46,34 @@ public class Graphics3DTest extends TestCase
     {
         Camera c = new Camera();
         g3d.setCamera(c, null);
+    }
+
+    public void testSetCameraNonIvertibleZero()
+    {
+        Camera c = new Camera();
+        Transform t = new Transform();
+        float[] m = {
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0 };
+        t.set(m);
+        try
+        {
+            g3d.setCamera(c, t);
+            fail("must throw AE");
+        }
+        catch (ArithmeticException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetCamera()
+    {
+        Camera c = new Camera();
+        Transform t = new Transform();
+        g3d.setCamera(c, t);
+        assertEquals(c, g3d.getCamera(t));
     }
 }

@@ -29,6 +29,7 @@ package m3x.translation.m3g;
 
 import m3x.m3g.AnimationTrack;
 import m3x.xml.AnimationTargetType;
+import m3x.xml.KeyframeInterpolationType;
 
 /**
  * @author jsaarinen
@@ -42,11 +43,36 @@ public class AnimationTrackTranslatorTest extends TranslatorSupport
         
         m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
         m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
+        ks.setInterpolation(KeyframeInterpolationType.LINEAR);
         m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
+        
         at.setController(ac);
         at.setKeyframeSequence(ks);
         at.setTargetProperty(AnimationTargetType.COLOR);
 
         AnimationTrack m3gAt = (AnimationTrack) translator.getObject(at);
+    }
+
+    public void testTranslatorNoInterpolation()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.AnimationTrack at = new m3x.xml.AnimationTrack();
+        m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
+        m3x.xml.AnimationController ac = new m3x.xml.AnimationController();
+
+        at.setController(ac);
+        at.setKeyframeSequence(ks);
+        at.setTargetProperty(AnimationTargetType.COLOR);
+
+        try
+        {
+            translator.getObject(at);
+            fail("there should be no default for KeyframeSequence interpolation");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
     }
 }
