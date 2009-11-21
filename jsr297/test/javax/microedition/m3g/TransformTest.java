@@ -71,7 +71,7 @@ public class TransformTest extends TestCase
         assertEquals(expected, mat, 0.001f);
     }
 
-    public void testDefaultConstructor()
+    public void testNew()
     {
         try
         {

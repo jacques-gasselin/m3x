@@ -49,6 +49,10 @@ public class Graphics3D
     private Object target;
     private AbstractRenderTarget renderTarget;
     private Renderer renderer;
+    private Camera camera;
+    private final Transform cameraTransform = new Transform();
+    private final Transform inverseCameraTransform = new Transform();
+
 
     protected Graphics3D()
     {
@@ -96,14 +100,32 @@ public class Graphics3D
         renderer.setViewport(0, 0, renderTarget.getWidth(), renderTarget.getHeight());
     }
 
+    /**
+     * Clears the currently bound target with the values conatined in the
+     * Background object.
+     * 
+     * @param background the parameters to use for clearing.
+     */
     public void clear(Background background)
     {
         renderer.clear(background);
     }
 
-    public Camera getCamera()
+    /**
+     * Gets the current camera used for immediate mode rendering.
+     * 
+     * @param transform if not null will contain the model to world transform
+     * of the camera.
+     * @return the current camera.
+     * @see #setCamera(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform)
+     */
+    public Camera getCamera(Transform transform)
     {
-        throw new UnsupportedOperationException();
+        if (transform != null)
+        {
+            transform.set(cameraTransform);
+        }
+        return this.camera;
     }
 
     public float getDepthRangeFar()
@@ -158,6 +180,13 @@ public class Graphics3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Gets the currently bound target.
+     *
+     * @return the current target, or null if none is bound.
+     * @see #bindTarget(java.lang.Object, int)
+     * @see #releaseTarget()
+     */
     public Object getTarget()
     {
         return target;
@@ -188,6 +217,12 @@ public class Graphics3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Releases the current target. This will make getTarget() return null
+     * until another target is bound.
+     * @see #bindTarget(java.lang.Object, int)
+     * @see #getTarget()
+     */
     public void releaseTarget()
     {
         if (renderTarget != null)
@@ -236,9 +271,29 @@ public class Graphics3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Sets the current camera used for immediate mode rendering.
+     *
+     * @param camera the camera to set, or null to unset.
+     * @param transform the model to world transfor of the camera, or null for
+     * identity.
+     * @throws ArithmeticException if transform is not null and not invertible.
+     * @see #getCamera(javax.microedition.m3g.Transform)
+     */
     public void setCamera(Camera camera, Transform transform)
     {
-        throw new UnsupportedOperationException();
+        if (transform != null)
+        {
+            this.cameraTransform.set(transform);
+            this.inverseCameraTransform.set(transform);
+            this.inverseCameraTransform.invert();
+        }
+        else
+        {
+            this.cameraTransform.setIdentity();
+            this.inverseCameraTransform.setIdentity();
+        }
+        this.camera = camera;
     }
 
     public void setDepthRange(float near, float far)
