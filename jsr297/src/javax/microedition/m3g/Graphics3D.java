@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -44,7 +45,8 @@ public class Graphics3D
     public static final int STENCIL = 128;
     public static final int VALIDATE = 256;
 
-    private static Graphics3D instance;
+    private static final Graphics3D INSTANCE = new Graphics3D();
+    private static final int LIGHTS_LIST_CAPACITY = 32;
 
     private Object target;
     private AbstractRenderTarget renderTarget;
@@ -52,16 +54,47 @@ public class Graphics3D
     private Camera camera;
     private final Transform cameraTransform = new Transform();
     private final Transform inverseCameraTransform = new Transform();
-
+    private final ArrayList<Light> lights = new ArrayList<Light>(LIGHTS_LIST_CAPACITY);
+    private final ArrayList<Transform> lightTransforms = new ArrayList<Transform>(LIGHTS_LIST_CAPACITY);
 
     protected Graphics3D()
     {
         
     }
 
+    /**
+     * Adds a light to the end of the lights array. The index of the added light
+     * is returned for later use with setLight and getLight.
+     * 
+     * @param light the light to add
+     * @param transform the model to world transform for the light, or null for
+     * identity.
+     * @return the index of the light into the lights array
+     * @throws NullPointerException if light is null
+     * @see #setLight(int, javax.microedition.m3g.Light, javax.microedition.m3g.Transform)
+     * @see #getLight(int, javax.microedition.m3g.Transform)
+     */
     public int addLight(Light light, Transform transform)
     {
-        throw new UnsupportedOperationException();
+        if (light == null)
+        {
+            throw new NullPointerException("light is null");
+        }
+
+        final Transform lightTransform;
+        if (transform != null)
+        {
+            lightTransform = new Transform(transform);
+        }
+        else
+        {
+            lightTransform = new Transform();
+        }
+
+        lights.add(light);
+        lightTransforms.add(transform);
+
+        return lights.size();
     }
 
     public void bindTarget(Object target)
@@ -80,6 +113,15 @@ public class Graphics3D
 
     public void bindTarget(Object target, int flags)
     {
+        if (target == null)
+        {
+            throw new NullPointerException("target is null");
+        }
+        if (this.target != null)
+        {
+            throw new IllegalStateException("Graphics3D already has a bound target");
+        }
+        
         if (target instanceof AbstractRenderTarget)
         {
             //good to go
@@ -145,24 +187,47 @@ public class Graphics3D
 
     public static Graphics3D getInstance()
     {
-        synchronized(Graphics3D.class)
-        {
-            if (instance == null)
-            {
-                instance = new Graphics3D();
-            }
-        }
-        return instance;
+        return INSTANCE;
     }
 
+    /**
+     * Gets the light at the given index.
+     * 
+     * @param index
+     * @param transform the transform to store the light transform in, or null to
+     * ignore the light transform.
+     * @return the light at the index
+     * @throws IndexOutOfBoundsException if index < 0 or index >= getLightCount()
+     * @see #setLight(int, javax.microedition.m3g.Light, javax.microedition.m3g.Transform)
+     * @see #getLightCount()
+     */
     public Light getLight(int index, Transform transform)
     {
-        throw new UnsupportedOperationException();
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException("index < 0");
+        }
+        if (index >= getLightCount())
+        {
+            throw new IndexOutOfBoundsException("index >= getLightCount()");
+        }
+
+        if (transform != null)
+        {
+            transform.set(this.lightTransforms.get(index));
+        }
+
+        return this.lights.get(index);
     }
 
+    /**
+     * Gets the count of lights in the light array.
+     *
+     * @return the count of lights
+     */
     public int getLightCount()
     {
-        throw new UnsupportedOperationException();
+        return this.lights.size();
     }
 
     public static Hashtable getProperties()
@@ -266,9 +331,15 @@ public class Graphics3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Resets the lights array.
+     */
     public void resetLights()
     {
-        throw new UnsupportedOperationException();
+        this.lights.clear();
+        //TODO: cache the unused transform objects here to avoid
+        //allocations for addLight
+        this.lightTransforms.clear();
     }
 
     /**

@@ -33,4 +33,12 @@ package m3x.translation.m3g;
  */
 public class Texture2DTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.Texture2D tex = new m3x.xml.Texture2D();
+
+        m3x.m3g.Texture2D binTex = (m3x.m3g.Texture2D) translator.getObject(tex);
+    }
 }

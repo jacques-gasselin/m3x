@@ -52,7 +52,8 @@
                 closure="yes"/>
         <javac destdir="${build.dir}"
                fork="true"
-               debug="true">
+               debug="true"
+               failonerror="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${src.dir}"/>
             <include name="**/*.java"/>
@@ -73,7 +74,8 @@
                 closure="yes"/>
         <javac destdir="${test.build.dir}"
                fork="true"
-               debug="true">
+               debug="true"
+               failonerror="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${test.dir}"/>
             <include name="**/*.java"/>
@@ -89,7 +91,8 @@
                 closure="yes"/>
         <javac destdir="${demo.build.dir}"
                fork="true"
-               debug="true">
+               debug="true"
+               failonerror="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
             <src path="${demo.dir}"/>
             <include name="**/*.java"/>

@@ -138,6 +138,16 @@
                 <location>jsr297/build</location>
                 <build-target>build</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>jsr297/build</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>jsr297/build</location>
+                <build-target>build</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -210,13 +220,15 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/src</package-root>
-                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar</classpath>
+                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build</classpath>
+                <built-to>jsr297/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">jsr297/build:lib/junit-4.4.jar:lib/jogl/jogl.jar</classpath>
+                <classpath mode="compile">lib/junit-4.4.jar:lib/jogl/jogl.jar:jsr297/build</classpath>
+                <built-to>jsr297/test/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
