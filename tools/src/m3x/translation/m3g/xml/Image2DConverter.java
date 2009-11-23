@@ -27,6 +27,7 @@
 
 package m3x.translation.m3g.xml;
 
+import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -64,9 +65,22 @@ public class Image2DConverter extends Object3DConverter
         super.setFromXML(translator, to, from);
 
         to.setFormat(from.getFormat().value());
-        to.setMutable(from.isMutable());
         to.setSize(width, height);
-        to.setPixels(from.getPixels());
-        to.setPalette(from.getPalette());
+
+        final boolean mutable = from.isMutable();
+        to.setMutable(mutable);
+        if (!mutable)
+        {
+            List<Short> pixels = from.getPalette();
+            if (pixels == null || pixels.size() == 0)
+            {
+                to.clearPixels();
+            }
+            else
+            {
+                to.setPixels(from.getPixels());
+            }
+            to.setPalette(from.getPalette());
+        }
     }
 }

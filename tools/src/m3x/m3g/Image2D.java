@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.awt.Color;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -79,6 +80,41 @@ public class Image2D extends Object3D
         {
             throw new IllegalArgumentException("Invalid height: " + height);
         }
+    }
+
+    private final int getBytesPerPixel()
+    {
+        switch (getFormat())
+        {
+            case ALPHA:
+                return 1;
+            case LUMINANCE:
+                return 1;
+            case LUMINANCE_ALPHA:
+                return 2;
+            case RGB:
+                return 3;
+            case RGBA:
+                return 4;
+            default:
+                throw new IllegalStateException("format is not valid");
+        }
+    }
+
+    private final int getByteCount(int level)
+    {
+        int w = getWidth() >> level;
+        if (w < 1)
+        {
+            w = 1;
+        }
+        int h = getHeight() >> level;
+        if (h < 1)
+        {
+            h = 1;
+        }
+
+        return w * h * getBytesPerPixel();
     }
 
     public Image2D()
@@ -241,14 +277,23 @@ public class Image2D extends Object3D
 
     public void setPixels(List<Short> pixels)
     {
-        byte[] signedPixels = null;
-        if ((pixels != null) && (pixels.size() > 0))
+        if (pixels == null)
         {
-            signedPixels = new byte[pixels.size()];
-            for (int i = 0; i < pixels.size(); ++i)
-            {
-                signedPixels[i] = uintToByte(pixels.get(i));
-            }
+            throw new NullPointerException("pixels is null");
+        }
+        //level 0 only
+        final int size = getByteCount(0);
+        if (pixels.size() < size)
+        {
+            throw new IllegalArgumentException("pixels is not large enough to fill" +
+                    " mipmap level 0. Size needed is " + size + "B but pixels.size()" +
+                    " is only " + pixels.size() + "B");
+        }
+
+        final byte[] signedPixels = new byte[size];
+        for (int i = 0; i < size; ++i)
+        {
+            signedPixels[i] = uintToByte(pixels.get(i));
         }
         setPixels(signedPixels);
     }
@@ -266,6 +311,13 @@ public class Image2D extends Object3D
         {
             this.mipmapData = null;
         }
+    }
+
+    public void clearPixels()
+    {
+        //single level only
+        this.mipmapData = new byte[1][];
+        this.mipmapData[0] = new byte[getByteCount(0)];
     }
 
     public byte[] getPixels()
