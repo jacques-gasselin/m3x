@@ -32,11 +32,11 @@ import java.io.InputStream;
 import java.util.List;
 import junit.framework.TestCase;
 
-/**Test case for m3x.xml.Deserialiser
+/**Test case for m3x.xml.Deserializer
  *
  * @author jgasseli
  */
-public class DeserialiserTest extends TestCase
+public class DeserializerTest extends TestCase
 {
    
     /**Sets up the test case fixture.
@@ -55,10 +55,10 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should throw here
-            Deserialiser.deserialise(in);
+            Deserializer.deserialise(in);
             fail("Should throw here because the file is empty");
         }
-        catch (Deserialiser.ValidationException e)
+        catch (Deserializer.ValidationException e)
         {
             
         }
@@ -78,10 +78,10 @@ public class DeserialiserTest extends TestCase
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         try
         {
-            Deserialiser.deserialise(in);
+            Deserializer.deserialise(in);
             fail("Should throw here because the section is empty");
         }
-        catch (Deserialiser.ValidationException e)
+        catch (Deserializer.ValidationException e)
         {
             assertTrue(e.getLine() == 3);
         }
@@ -105,7 +105,7 @@ public class DeserialiserTest extends TestCase
         try
         {
             //Should not throw here
-            m3x.xml.M3G root = Deserialiser.deserialise(in);
+            m3x.xml.M3G root = Deserializer.deserialise(in);
             assertNotNull("deserialised root must not be null",
                 root);
             List<m3x.xml.Section> sections = root.getSections();
@@ -138,10 +138,10 @@ public class DeserialiserTest extends TestCase
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         try
         {
-            Deserialiser.deserialise(in);
+            Deserializer.deserialise(in);
             fail("Should throw here because an instance can't be a root object");
         }
-        catch (Deserialiser.ValidationException e)
+        catch (Deserializer.ValidationException e)
         {
             assertTrue(e.getLine() == 5);
         }
@@ -164,10 +164,10 @@ public class DeserialiserTest extends TestCase
         InputStream in = new ByteArrayInputStream(xmlString.getBytes());
         try
         {
-            Deserialiser.deserialise(in);
+            Deserializer.deserialise(in);
             fail("Should throw here because a track needs a sequence");
         }
-        catch (Deserialiser.ValidationException e)
+        catch (Deserializer.ValidationException e)
         {
             assertTrue(e.getLine() == 4);
         }

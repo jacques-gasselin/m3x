@@ -25,20 +25,15 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation.m3g;
+package m3x.collada;
 
 /**
- *
  * @author jgasseli
  */
-public class Image2DTranslatorTest extends TranslatorSupport
+public abstract class BaseObject
 {
-    public void testTranslator()
+    BaseObject()
     {
-        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
-
-        m3x.xml.Image2D img = new m3x.xml.Image2D();
-
-        m3x.m3g.Image2D binImg = (m3x.m3g.Image2D) translator.getObject(img);
+        BaseObjectDatabase.registerObjectCreation(this);
     }
 }

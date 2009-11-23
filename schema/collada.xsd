@@ -7,6 +7,7 @@
            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
            elementFormDefault="qualified"
            jaxb:version="2.0"
+           jaxb:extensionBindingPrefixes="xjc"
            version="1.0"
            xml:lang="EN">
     <!-- BEGIN Schema -->
@@ -78,6 +79,14 @@
 
             ----
         </xs:documentation>
+        <xs:appinfo>
+            <!--jaxb:bindings node="//xs:element[@name='COLLADA']/xs:complexType">
+                <xjc:superClass name="m3x.collada.BaseObjectDatabase"/>
+            </jaxb:bindings-->
+            <jaxb:globalBindings>
+                <xjc:superClass name="m3x.collada.BaseObject"/>
+            </jaxb:globalBindings>
+        </xs:appinfo>
     </xs:annotation>
     <!-- Import xml::base -->
     <xs:import namespace="http://www.w3.org/XML/1998/namespace"
@@ -85,7 +94,12 @@
     <!-- Root Element -->
     <xs:element name="COLLADA">
         <xs:annotation>
-            <xs:appinfo>enable-xmlns</xs:appinfo>
+            <xs:appinfo>
+                enable-xmlns
+                <jaxb:bindings node="../../../xs:complexType">
+                    <xjc:superClass name="m3x.collada.BaseObjectDatabase"/>
+                </jaxb:bindings>
+            </xs:appinfo>
             <xs:documentation>
                 The COLLADA element is the root of the document that describes
                 the content of a JSR184/297 compatible COLLADA file.

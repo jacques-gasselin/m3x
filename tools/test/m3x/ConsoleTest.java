@@ -163,7 +163,7 @@ public final class ConsoleTest extends Object
             inStream = System.in;
         }
 
-        final m3x.xml.M3G root = m3x.xml.Deserialiser.deserialise(inStream);
+        final m3x.xml.M3G root = m3x.xml.Deserializer.deserialise(inStream);
         
         return new ConsoleTest(root);
     }

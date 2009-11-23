@@ -42,19 +42,19 @@ import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-/**The Deserialiser class hides the complexities of binding a JAXB context
+/**The Deserializer class hides the complexities of binding a JAXB context
  * and unmarshalling the classes.
  * The xml classes use refid references that need to be resolved in order to
  * make a properly referenced translation.
  *
  * @author jgasseli
  */
-public abstract class Deserialiser
+public abstract class Deserializer
 {
     /**The JAXB unsmahaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
-    private Deserialiser()
+    private Deserializer()
     {
 
     }
@@ -119,7 +119,7 @@ public abstract class Deserialiser
      * or the sections are empty
      * @throws ValidationException - if the stream in invalid
      */
-    public static m3x.collada.COLLADA deserialise(java.io.InputStream stream)
+    public static m3x.collada.COLLADA deserialize(java.io.InputStream stream)
     {
         JAXBContext context = null;
         try

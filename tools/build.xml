@@ -54,11 +54,13 @@
             <produces dir="${build.src.dir}/m3x/xml" includes="*.java"/>
         </xjc>
         <xjc package="${m3x.collada.package}"
-             destdir="${build.src.dir}">
+             destdir="${build.src.dir}"
+             extension="true">
             <schema file="${schema.dir}/collada.xsd"/>
             <depends file="${schema.dir}/collada.xsd"/>
             <produces dir="${build.src.dir}/m3x/collada" includes="*.java"/>
         </xjc>
+        <echo>Compiling sources</echo>
         <javac destdir="${build.dir}"
                fork="true"
                debug="true">
@@ -66,6 +68,7 @@
             <src>
                 <pathelement location="${build.src.dir}"/>
                 <pathelement location="${src.dir}/m3x/xml"/>
+                <pathelement location="${src.dir}/m3x/collada"/>
             </src>
             <classpath>
                 <fileset dir="${lib.dir}"/>

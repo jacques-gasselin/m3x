@@ -34,4 +34,13 @@ package m3x.translation.m3g;
  */
 public class KeyframeSequenceTranslatorTest extends TranslatorSupport
 {
+    public void testTranslator()
+    {
+        XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
+
+        m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
+
+        m3x.m3g.KeyframeSequence binKs = (m3x.m3g.KeyframeSequence)
+                translator.getObject(ks);
+    }
 }

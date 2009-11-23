@@ -140,7 +140,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         m3x.xml.M3G xmlRoot = null;
         try
         {
-            xmlRoot = m3x.xml.Deserialiser.deserialise(
+            xmlRoot = m3x.xml.Deserializer.deserialise(
                     new FileInputStream(source));
         }
         catch (FileNotFoundException ex)
