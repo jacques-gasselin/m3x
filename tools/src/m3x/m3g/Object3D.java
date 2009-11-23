@@ -30,8 +30,8 @@ package m3x.m3g;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Vector;
-import m3x.m3g.primitives.SectionSerialisable;
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.SectionSerializable;
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.util.Object3DReferences;
 
 /**
@@ -47,14 +47,14 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public abstract class Object3D implements SectionSerialisable
+public abstract class Object3D implements SectionSerializable
 {
     private int userID;
     private Vector<AnimationTrack> animationTracks;
     private int userParameterCount;
     private UserParameter[] userParameters;
 
-    public static class UserParameter implements Serialisable
+    public static class UserParameter implements Serializable
     {
 
         private int parameterID;
@@ -80,7 +80,7 @@ public abstract class Object3D implements SectionSerialisable
             return this.parameterValue;
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             this.parameterID = deserialiser.readInt();
@@ -89,7 +89,7 @@ public abstract class Object3D implements SectionSerialisable
             deserialiser.readFully(this.parameterValue);
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             serialiser.writeInt(this.parameterID);
@@ -151,7 +151,7 @@ public abstract class Object3D implements SectionSerialisable
         return true;
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         setUserID(deserialiser.readInt());
@@ -175,7 +175,7 @@ public abstract class Object3D implements SectionSerialisable
         }
     }
 
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         serialiser.writeInt(this.userID);

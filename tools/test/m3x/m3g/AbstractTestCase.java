@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import junit.framework.AssertionFailedError;
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 
 import junit.framework.TestCase;
 
@@ -143,17 +143,17 @@ public abstract class AbstractTestCase extends TestCase
         }
     }
 
-    protected void assertSerialiseSingle(Serialisable from, Serialisable to)
+    protected void assertSerialiseSingle(Serializable from, Serializable to)
     {
         try
         {
             //Serialise
-            Serialiser serialiser = new Serialiser("1.0", null);
-            byte[] serialised = serialiser.serialiseSingle(from);
+            Serializer serialiser = new Serializer("1.0", null);
+            byte[] serialised = serialiser.serializeSingle(from);
 
             //Deserialise
-            Deserialiser deserialiser = new Deserialiser();
-            deserialiser.deserialiseSingle(serialised, to);
+            Deserializer deserialiser = new Deserializer();
+            deserialiser.deserializeSingle(serialised, to);
 
             assertTrue(from.equals(to));
         }
@@ -164,13 +164,13 @@ public abstract class AbstractTestCase extends TestCase
         }
     }
 
-    protected void assertSerialiseSingle(Serialisable from)
+    protected void assertSerialiseSingle(Serializable from)
     {
         Class cls = from.getClass();
-        Serialisable to = null;
+        Serializable to = null;
         try
         {
-            to = (Serialisable)cls.newInstance();
+            to = (Serializable)cls.newInstance();
         }
         catch (InstantiationException e)
         {

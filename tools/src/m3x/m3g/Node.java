@@ -27,7 +27,7 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 import java.io.IOException;
 
 /**
@@ -48,7 +48,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public abstract class Node extends Transformable implements Serialisable
+public abstract class Node extends Transformable implements Serializable
 {
     public static final int NONE = 144;
     public static final int ORIGIN = 145;
@@ -152,7 +152,7 @@ public abstract class Node extends Transformable implements Serialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -172,7 +172,7 @@ public abstract class Node extends Transformable implements Serialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

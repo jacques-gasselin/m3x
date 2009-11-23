@@ -27,7 +27,7 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ import java.io.IOException;
  */
 public class MorphingMesh extends Mesh
 {
-    private static final class MorphTarget implements Serialisable
+    private static final class MorphTarget implements Serializable
     {
         private VertexBuffer target;
         private float weight;
@@ -89,14 +89,14 @@ public class MorphingMesh extends Mesh
                    this.weight == another.weight;
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             setTarget((VertexBuffer) deserialiser.readReference());
             setWeight(deserialiser.readFloat());
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             serialiser.writeReference(getTarget());
@@ -136,7 +136,7 @@ public class MorphingMesh extends Mesh
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -149,7 +149,7 @@ public class MorphingMesh extends Mesh
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

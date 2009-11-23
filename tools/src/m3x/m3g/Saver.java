@@ -50,8 +50,8 @@ public abstract class Saver
             String version, String author)
         throws IOException
     {
-        Serialiser serialiser = new Serialiser(version, author);
+        Serializer serialiser = new Serializer(version, author);
         serialiser.writeFileIdentifier(outputStream);
-        serialiser.serialise(outputStream, roots);
+        serialiser.serialize(outputStream, roots);
     }
 }

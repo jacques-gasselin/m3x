@@ -28,8 +28,8 @@
 package m3x.m3g.primitives;
 
 import java.io.IOException;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
 /**
  * See http://java2me.org/m3g/file-format.html#Header<br>
@@ -37,7 +37,7 @@ import m3x.m3g.Serialiser;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Header implements SectionSerialisable
+public class Header implements SectionSerializable
 {  
     private boolean hasExternalReferences;
     private int totalFileSize;
@@ -51,7 +51,7 @@ public class Header implements SectionSerialisable
         setVersion(1, 0);
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         deserialiser.readFully(this.version);
@@ -61,7 +61,7 @@ public class Header implements SectionSerialisable
         setAuthoringInformation(deserialiser.readUTF8());
     }
 
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         serialiser.write(this.version);

@@ -28,7 +28,7 @@
 package m3x.m3g;
 
 import java.util.List;
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Texture2D extends Transformable implements SectionSerialisable
+public class Texture2D extends Transformable implements SectionSerializable
 {
     public static final int FILTER_BASE_LEVEL = 208;
     public static final int FILTER_LINEAR = 209;
@@ -102,7 +102,7 @@ public class Texture2D extends Transformable implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -117,7 +117,7 @@ public class Texture2D extends Transformable implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

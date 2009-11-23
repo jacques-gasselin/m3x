@@ -67,7 +67,7 @@ abstract class ObjectFactory
 
     }
 
-    public static final SectionSerialisable getInstance(int objectType)
+    public static final SectionSerializable getInstance(int objectType)
     {
         switch (objectType)
         {

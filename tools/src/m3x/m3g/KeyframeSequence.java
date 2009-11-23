@@ -188,9 +188,9 @@ public class KeyframeSequence extends Object3D
             super(sequence);
         }
 
-        abstract void readScaleAndBias(Deserialiser deserialiser) throws IOException;
+        abstract void readScaleAndBias(Deserializer deserialiser) throws IOException;
         
-        abstract void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException;
+        abstract void readKeyframe(Deserializer deserialiser, float[] value) throws IOException;
     }
 
     private static final class FloatKeyframeReader extends KeyframeReader
@@ -201,13 +201,13 @@ public class KeyframeSequence extends Object3D
         }
         
         @Override
-        void readScaleAndBias(Deserialiser deserialiser) throws IOException
+        void readScaleAndBias(Deserializer deserialiser) throws IOException
         {
             //do nothing
         }
         
         @Override
-        void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException
+        void readKeyframe(Deserializer deserialiser, float[] value) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -232,7 +232,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final void readScaleAndBias(Deserialiser deserialiser) throws IOException
+        final void readScaleAndBias(Deserializer deserialiser) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -246,7 +246,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final void readKeyframe(Deserialiser deserialiser, float[] value) throws IOException
+        final void readKeyframe(Deserializer deserialiser, float[] value) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -256,7 +256,7 @@ public class KeyframeSequence extends Object3D
             }
         }
 
-        abstract float readUniform(Deserialiser deserialiser) throws IOException;
+        abstract float readUniform(Deserializer deserialiser) throws IOException;
     }
 
     private static final class ByteKeyframeReader extends ScaleBiasedKeyframeReader
@@ -269,7 +269,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        float readUniform(Deserialiser deserialiser) throws IOException
+        float readUniform(Deserializer deserialiser) throws IOException
         {
             return deserialiser.readUnsignedByte() * FACTOR;
         }
@@ -285,7 +285,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        float readUniform(Deserialiser deserialiser) throws IOException
+        float readUniform(Deserializer deserialiser) throws IOException
         {
             return deserialiser.readUnsignedShort() * FACTOR;
         }
@@ -302,9 +302,9 @@ public class KeyframeSequence extends Object3D
             super(sequence);
         }
 
-        abstract void writeScaleAndBias(Serialiser serialiser) throws IOException;
+        abstract void writeScaleAndBias(Serializer serialiser) throws IOException;
 
-        abstract void writeKeyframe(Serialiser serialiser, float[] value) throws IOException;
+        abstract void writeKeyframe(Serializer serialiser, float[] value) throws IOException;
     }
 
     private static final class FloatKeyframeWriter extends KeyframeWriter
@@ -315,13 +315,13 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        void writeScaleAndBias(Serialiser serialiser) throws IOException
+        void writeScaleAndBias(Serializer serialiser) throws IOException
         {
             //do nothing
         }
 
         @Override
-        void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        void writeKeyframe(Serializer serialiser, float[] value) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -376,7 +376,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final void writeScaleAndBias(Serialiser serialiser) throws IOException
+        final void writeScaleAndBias(Serializer serialiser) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -390,7 +390,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        final void writeKeyframe(Serialiser serialiser, float[] value) throws IOException
+        final void writeKeyframe(Serializer serialiser, float[] value) throws IOException
         {
             final int componentCount = getComponentCount();
             for (int j = 0; j < componentCount; ++j)
@@ -400,7 +400,7 @@ public class KeyframeSequence extends Object3D
             }
         }
 
-        abstract void writeUniform(Serialiser serialiser, float uniform) throws IOException;
+        abstract void writeUniform(Serializer serialiser, float uniform) throws IOException;
     }
 
     private static final class ByteKeyframeWriter extends ScaleBiasedKeyframeWriter
@@ -413,7 +413,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        void writeUniform(Serializer serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
             serialiser.writeUnsignedByte(value);
@@ -433,7 +433,7 @@ public class KeyframeSequence extends Object3D
         }
 
         @Override
-        void writeUniform(Serialiser serialiser, float uniform) throws IOException
+        void writeUniform(Serializer serialiser, float uniform) throws IOException
         {
             final int value = Math.max(0, Math.min(MAX, Math.round(uniform * MAX)));
             serialiser.writeUnsignedShort(value);
@@ -451,7 +451,7 @@ public class KeyframeSequence extends Object3D
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -492,7 +492,7 @@ public class KeyframeSequence extends Object3D
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

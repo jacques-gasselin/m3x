@@ -28,7 +28,7 @@
 package m3x.m3g;
 
 import java.util.List;
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 import java.io.IOException;
 
 import m3x.m3g.primitives.Matrix;
@@ -51,7 +51,7 @@ import m3x.m3g.primitives.Vector3D;
  * @author jsaarinen
  * @author jgasseli
  */
-public abstract class Transformable extends Object3D implements Serialisable
+public abstract class Transformable extends Object3D implements Serializable
 {
     private Vector3D translation;
     private Vector3D scale;
@@ -72,7 +72,7 @@ public abstract class Transformable extends Object3D implements Serialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -103,7 +103,7 @@ public abstract class Transformable extends Object3D implements Serialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

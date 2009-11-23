@@ -29,7 +29,7 @@ package m3x.m3g;
 
 import java.io.ByteArrayOutputStream;
 import m3x.m3g.primitives.Header;
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -44,21 +44,21 @@ import java.util.Stack;
 import java.util.Vector;
 import java.util.zip.Adler32;
 import m3x.m3g.primitives.Section;
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.util.LittleEndianDataOutputStream;
 
 /**
  *
  * @author jgasseli
  */
-public class Serialiser implements DataOutput
+public class Serializer implements DataOutput
 {
     private String version;
     private String author;
     private Stack<LittleEndianDataOutputStream> outputStreams;
     private Map<Object, Integer> objectToIndexMap;
     
-    public Serialiser(String version, String author)
+    public Serializer(String version, String author)
     {
         this.version = version;
         this.author = author;
@@ -105,12 +105,12 @@ public class Serialiser implements DataOutput
         }
         //get the index it should have
         //add 1 because null is index 0
-        value = new Integer(objectToIndexMap.size() + 1);
+        value = Integer.valueOf(objectToIndexMap.size() + 1);
         //store it in the mapping as a new key
         objectToIndexMap.put(key, value);
     }
 
-    public byte[] serialiseSingle(Serialisable object) throws IOException
+    public byte[] serializeSingle(Serializable object) throws IOException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         pushOutputStream(out);
@@ -121,7 +121,7 @@ public class Serialiser implements DataOutput
         return out.toByteArray();
     }
 
-    public void serialiseSingle(OutputStream out, Serialisable object) throws IOException
+    public void serializeSingle(OutputStream out, Serializable object) throws IOException
     {
         pushOutputStream(out);
 
@@ -130,7 +130,7 @@ public class Serialiser implements DataOutput
         popOutputStream();
     }
 
-    public void serialise(OutputStream out, Object3D[] roots) throws IOException
+    public void serialize(OutputStream out, Object3D[] roots) throws IOException
     {
         pushOutputStream(out);
         
@@ -147,7 +147,7 @@ public class Serialiser implements DataOutput
             //Write the header out once just to get the size
             ByteArrayOutputStream headerStream = new ByteArrayOutputStream();
             pushOutputStream(headerStream);
-            headerSection.serialise(this, new SectionSerialisable[]{ headerObject });
+            headerSection.serialise(this, new SectionSerializable[]{ headerObject });
             popOutputStream();
             headerStream.flush();
             headerSize = headerStream.size();
@@ -160,8 +160,8 @@ public class Serialiser implements DataOutput
             
             Section contentSection = new Section(Section.UNCOMPRESSED_ADLER32);
             //get the objects in depth first order
-            List<SectionSerialisable> dfoObjects = getDepthFirstOrderList(roots);
-            SectionSerialisable[] objects = new SectionSerialisable[dfoObjects.size()];
+            List<SectionSerializable> dfoObjects = getDepthFirstOrderList(roots);
+            SectionSerializable[] objects = new SectionSerializable[dfoObjects.size()];
             dfoObjects.toArray(objects);
 
             pushOutputStream(contentStream);
@@ -182,19 +182,19 @@ public class Serialiser implements DataOutput
         //assume the file identifier has already been written
         //serialise the header section again to make sure the right sizes
         //are written.
-        headerSection.serialise(this, new SectionSerialisable[]{ headerObject });
+        headerSection.serialise(this, new SectionSerializable[]{ headerObject });
         //write out the content data we serialised earlier
         write(contentData);
         
         popOutputStream();
     }
 
-    private List<SectionSerialisable> getDepthFirstOrderList(Object3D[] roots)
+    private List<SectionSerializable> getDepthFirstOrderList(Object3D[] roots)
     {
         //store the objects in leaf first order from a depth-first search.
-        List<SectionSerialisable> objects = new Vector<SectionSerialisable>();
+        List<SectionSerializable> objects = new Vector<SectionSerializable>();
         //use a containment set to ensure there are no duplicates.
-        Set<SectionSerialisable> containmentSet = new HashSet<SectionSerialisable>();
+        Set<SectionSerializable> containmentSet = new HashSet<SectionSerializable>();
 
         for (Object3D root : roots)
         {
@@ -206,7 +206,7 @@ public class Serialiser implements DataOutput
     }
 
     private void processDepthFirstOrderList(Object3D object,
-            List<SectionSerialisable> objects, Set<SectionSerialisable> containmentSet)
+            List<SectionSerializable> objects, Set<SectionSerializable> containmentSet)
     {
         if (containmentSet.contains(object))
         {

@@ -35,20 +35,20 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Vector;
 import m3x.m3g.primitives.Section;
-import m3x.m3g.primitives.Serialisable;
-import m3x.util.LittleEndianDeserialiser;
+import m3x.m3g.primitives.Serializable;
+import m3x.util.LittleEndianDeserializer;
 
 /**
  *
  * @author jgasseli
  */
-public final class Deserialiser extends LittleEndianDeserialiser
+public final class Deserializer extends LittleEndianDeserializer
 {
 
     private Vector<Object3D> rootObjects;
     private Vector<Object3D> objects;
 
-    public Deserialiser()
+    public Deserializer()
     {
         super();
         rootObjects = new Vector<Object3D>();
@@ -86,7 +86,7 @@ public final class Deserialiser extends LittleEndianDeserialiser
         return Arrays.equals(fileIdentifier, bytes);
     }
 
-    public void deserialise(InputStream stream) throws IOException
+    public void deserialize(InputStream stream) throws IOException
     {
         pushInputStream(stream);
 
@@ -106,7 +106,7 @@ public final class Deserialiser extends LittleEndianDeserialiser
         popInputStream();
     }
 
-    public void deserialiseSingle(byte[] data, Serialisable object)
+    public void deserializeSingle(byte[] data, Serializable object)
         throws IOException
     {
         ByteArrayInputStream in = new ByteArrayInputStream(data);

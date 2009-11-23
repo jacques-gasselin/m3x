@@ -31,14 +31,14 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import m3x.util.LittleEndianDeserialiser;
+import m3x.util.LittleEndianDeserializer;
 
 
 /**
  *
  * @author jgasseli
  */
-public final class Deserialiser extends LittleEndianDeserialiser
+public final class Deserialiser extends LittleEndianDeserializer
 {
     private MD2 rootObject;
 

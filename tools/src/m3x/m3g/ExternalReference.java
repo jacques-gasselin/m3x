@@ -27,7 +27,7 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public class ExternalReference implements SectionSerialisable
+public class ExternalReference implements SectionSerializable
 {
     private String uri;
 
@@ -51,13 +51,13 @@ public class ExternalReference implements SectionSerialisable
         super();
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         this.uri = deserialiser.readUTF8();
     }
 
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         // .. write the string data in raw UTF-8..

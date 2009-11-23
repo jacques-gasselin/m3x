@@ -28,8 +28,8 @@
 package m3x.m3g.primitives;
 
 import java.io.IOException;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
 /**
  * All M3G objects that can be serialized will implement
@@ -38,7 +38,7 @@ import m3x.m3g.Serialiser;
  * @author jsaarinen
  * @author jgasseli
  */
-public interface Serialisable
+public interface Serializable
 {  
     /**
      * Deserialises an M3G object. The desrialiser object takes care of
@@ -46,12 +46,12 @@ public interface Serialisable
      * Implementing classes are responsible for reading the correct
      * values from the deserialiser.
      *
-     * @param deserialiser The object used to abstract reading values from
+     * @param deserializer The object used to abstract reading values from
      * an m3g data source.
      *
      * @throws IOException
      */
-    void deserialise(Deserialiser deserialiser)
+    void deserialise(Deserializer deserializer)
         throws IOException;
   
     /**
@@ -61,14 +61,9 @@ public interface Serialisable
      * It is up to the caller of this method to set up and clean up
      * the output stream.
      *
-     * @param dataOutputStream
-     *  Where data will be written to.
-     *
-     * @param m3gVersion TODO
-     *
-     * @throws IOException
-     *  When something nasty happened.
+     * @param serializer the serializer to write with.
+     * @throws IOException if serializing fails on IO.
      */
-    void serialise(Serialiser serialiser)
+    void serialise(Serializer serializer)
         throws IOException;
 }

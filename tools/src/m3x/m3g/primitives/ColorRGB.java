@@ -30,14 +30,14 @@ package m3x.m3g.primitives;
 import java.io.IOException;
 
 import java.util.List;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
 /**
  * @author jsaarinen
  * @author jgasseli
  */
-public class ColorRGB implements Serialisable
+public class ColorRGB implements Serializable
 {
     private int r,  g,  b;
 
@@ -83,7 +83,7 @@ public class ColorRGB implements Serialisable
             && this.b == color.b;
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         this.r = deserialiser.readUnsignedByte();
@@ -113,7 +113,7 @@ public class ColorRGB implements Serialisable
         return this.b;
     }
 
-    public void serialise(Serialiser serialiser) throws IOException
+    public void serialise(Serializer serialiser) throws IOException
     {
         serialiser.writeUnsignedByte(getR());
         serialiser.writeUnsignedByte(getG());

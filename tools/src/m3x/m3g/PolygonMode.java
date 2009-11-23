@@ -27,7 +27,7 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public class PolygonMode extends Object3D implements SectionSerialisable
+public class PolygonMode extends Object3D implements SectionSerializable
 {
     public static final int CULL_BACK = 160;
     public static final int CULL_FRONT = 161;
@@ -66,7 +66,7 @@ public class PolygonMode extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -79,7 +79,7 @@ public class PolygonMode extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

@@ -169,4 +169,165 @@ public class TransformTest extends TestCase
         //elements should have retained row-major order
         assertEquals(expected, trans);
     }
+
+    public void testTranslate1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 1, 0, 2,
+            0, 0, 1, 3,
+            0, 0, 0, 1
+        };
+        
+        assertEquals(expected, trans);
+    }
+
+    public void testTranslate2()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        trans.postTranslate(3, 2, 1);
+
+        float[] expected = {
+            1, 0, 0, 4,
+            0, 1, 0, 4,
+            0, 0, 1, 4,
+            0, 0, 0, 1
+        };
+        
+        assertEquals(expected, trans);
+    }
+
+    public void testTranslate3()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        trans.postTranslate(3, 2, 1);
+        trans.postTranslate(-4, -4, -4);
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        };
+        
+        assertEquals(expected, trans);
+    }
+
+    public void testScale1()
+    {
+        Transform trans = new Transform();
+        trans.postScale(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 2, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+        
+        assertEquals(expected, trans);
+    }
+
+    public void testScale2()
+    {
+        Transform trans = new Transform();
+        trans.postScale(1, 2, 3);
+        trans.postScale(3, 2, 1);
+
+        float[] expected = {
+            3, 0, 0, 0,
+            0, 4, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+        
+        assertEquals(expected, trans);
+    }
+
+    public void testTranslateScale1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        trans.postScale(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 2, 0, 2,
+            0, 0, 3, 3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testInvertTranslate1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        trans.invert();
+
+        float[] expected = {
+            1, 0, 0, -1,
+            0, 1, 0, -2,
+            0, 0, 1, -3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testInvertTranslate2()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(4, 0, 3);
+        trans.invert();
+
+        float[] expected = {
+            1, 0, 0, -4,
+            0, 1, 0, 0,
+            0, 0, 1, -3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testInvertTranslateScale1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(3, 2, 1);
+        trans.postScale(2, 1, 3);
+        trans.invert();
+
+        float[] expected = {
+            0.5f, 0,        0, -1.5f,
+            0,    1,        0, -2,
+            0,    0, 1 / 3.0f, -1 / 3.0f,
+            0,    0,        0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testInvertTranslateScale2()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(3, 2, 1);
+        trans.postScale(2, 3, 1);
+        trans.invert();
+
+        float[] expected = {
+            0.5f, 0,        0, -1.5f,
+            0,    1 / 3.0f, 0, -2 / 3.0f,
+            0,    0,        1, -1,
+            0,    0,        0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
 }

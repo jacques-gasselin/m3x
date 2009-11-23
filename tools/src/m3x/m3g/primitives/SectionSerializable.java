@@ -33,7 +33,7 @@ package m3x.m3g.primitives;
  * 
  * @author jsaarinen
  */
-public interface SectionSerialisable extends Serialisable
+public interface SectionSerializable extends Serializable
 {
     /**
      * Returns the object type byte specified in the M3G specification.

@@ -27,7 +27,7 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ import java.io.IOException;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Sprite3D extends Node implements SectionSerialisable
+public class Sprite3D extends Node implements SectionSerializable
 {
     private Image2D image;
     private Appearance appearance;
@@ -62,7 +62,7 @@ public class Sprite3D extends Node implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -76,7 +76,7 @@ public class Sprite3D extends Node implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

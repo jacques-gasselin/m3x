@@ -104,7 +104,7 @@ public class AnimationController extends Object3D
      * @throws FileFormatException
      */
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -122,7 +122,7 @@ public class AnimationController extends Object3D
      * Serialization done as specified in the class JavaDoc.
      */
     @Override
-    public void serialise(Serialiser serialiser) throws IOException
+    public void serialise(Serializer serialiser) throws IOException
     {
         super.serialise(serialiser);
         serialiser.writeFloat(getSpeed());

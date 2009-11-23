@@ -35,8 +35,8 @@ import java.util.zip.Adler32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 import m3x.m3g.Object3D;
 
 
@@ -99,7 +99,7 @@ public class Section
         }
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         this.compressionScheme = deserialiser.readUnsignedByte();
@@ -164,7 +164,7 @@ public class Section
             {
                 final int objectType = deserialiser.readUnsignedByte();
                 final int length = deserialiser.readInt();
-                Serialisable obj = ObjectFactory.getInstance(objectType);
+                Serializable obj = ObjectFactory.getInstance(objectType);
                 if (DEBUG_SERIALIZE)
                 {
                     System.err.printf("Deserialized %s: type %d of length %d\n",
@@ -215,7 +215,7 @@ public class Section
      * fields of this object are written into the output stream,
      * integers are converted into little endian format.
      */
-    public void serialise(Serialiser serialiser, SectionSerialisable[] objects)
+    public void serialise(Serializer serialiser, SectionSerializable[] objects)
         throws IOException
     {
         //serialise the objects to a byte array
@@ -224,7 +224,7 @@ public class Section
         {
             ByteArrayOutputStream perObjectStream = new ByteArrayOutputStream();
             //wrap each object in a SectionObject
-            for (SectionSerialisable obj : objects)
+            for (SectionSerializable obj : objects)
             {
                 perObjectStream.reset();
                 serialiser.pushOutputStream(perObjectStream);

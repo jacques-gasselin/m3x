@@ -30,14 +30,14 @@ package m3x.m3g.primitives;
 import java.io.IOException;
 
 import java.util.List;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
 /**
  * @author jsaarinen
  * @author jgasseli
  */
-public class ColorRGBA extends ColorRGB implements Serialisable
+public class ColorRGBA extends ColorRGB implements Serializable
 {
     private int a;
 
@@ -68,7 +68,7 @@ public class ColorRGBA extends ColorRGB implements Serialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -76,7 +76,7 @@ public class ColorRGBA extends ColorRGB implements Serialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

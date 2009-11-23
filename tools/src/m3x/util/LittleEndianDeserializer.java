@@ -36,11 +36,11 @@ import java.util.Stack;
  *
  * @author jgasseli
  */
-public abstract class LittleEndianDeserialiser implements DataInput
+public abstract class LittleEndianDeserializer implements DataInput
 {
     private Stack<LittleEndianDataInputStream> inputStreams;
 
-    public LittleEndianDeserialiser()
+    public LittleEndianDeserializer()
     {
         inputStreams = new Stack<LittleEndianDataInputStream>();
     }

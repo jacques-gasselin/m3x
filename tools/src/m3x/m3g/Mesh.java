@@ -27,8 +27,8 @@
 
 package m3x.m3g;
 
-import m3x.m3g.primitives.Serialisable;
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -46,9 +46,9 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Mesh extends Node implements SectionSerialisable
+public class Mesh extends Node implements SectionSerializable
 {
-    private static class SubMesh implements Serialisable
+    private static class SubMesh implements Serializable
     {
 
         private IndexBuffer indexBuffer;
@@ -86,14 +86,14 @@ public class Mesh extends Node implements SectionSerialisable
             this.indexBuffer = indexBuffer;
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             this.indexBuffer = (IndexBuffer)deserialiser.readReference();
             this.appearance = (Appearance)deserialiser.readReference();
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             serialiser.writeReference(getIndexBuffer());
@@ -221,7 +221,7 @@ public class Mesh extends Node implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -234,7 +234,7 @@ public class Mesh extends Node implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

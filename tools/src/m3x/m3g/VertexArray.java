@@ -28,11 +28,11 @@
 package m3x.m3g;
 
 import java.util.List;
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import m3x.m3g.primitives.Serialisable;
+import m3x.m3g.primitives.Serializable;
 
 
 /**
@@ -60,7 +60,7 @@ import m3x.m3g.primitives.Serialisable;
  * @author jsaarinen
  * @author jgasseli
  */
-public class VertexArray extends Object3D implements SectionSerialisable
+public class VertexArray extends Object3D implements SectionSerializable
 {
     public static final int BYTE = 1;
     public static final int SHORT = 2;
@@ -116,7 +116,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
         }
     }
 
-    private static abstract class Values implements Serialisable
+    private static abstract class Values implements Serializable
     {
         private int vertexCount;
         private int componentCount;
@@ -256,7 +256,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
             throw new IllegalStateException("BYTE array only supports byte[] values");
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             final int length = getVertexCount() * getComponentCount();
@@ -278,7 +278,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
             }
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             final int length = getVertexCount() * getComponentCount();
@@ -361,7 +361,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
                 this.values, offset, length);
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             final int length = getVertexCount() * getComponentCount();
@@ -383,7 +383,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
             }
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             final int length = getVertexCount() * getComponentCount();
@@ -421,7 +421,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -435,7 +435,7 @@ public class VertexArray extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

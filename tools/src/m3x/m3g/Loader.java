@@ -72,13 +72,13 @@ public abstract class Loader
      */
     public static Object3D[] load(InputStream inputStream) throws IOException
     {
-        Deserialiser deserialiser = new Deserialiser();
+        Deserializer deserialiser = new Deserializer();
         if (!deserialiser.verifyFileIdentifier(inputStream))
         {
             throw new IllegalStateException("wrong file identifier");
         }
 
-        deserialiser.deserialise(inputStream);
+        deserialiser.deserialize(inputStream);
 
         return deserialiser.getRootObjects();
     }

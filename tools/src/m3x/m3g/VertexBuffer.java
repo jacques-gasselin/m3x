@@ -28,8 +28,8 @@
 package m3x.m3g;
 
 import java.util.List;
-import m3x.m3g.primitives.Serialisable;
-import m3x.m3g.primitives.SectionSerialisable;
+import m3x.m3g.primitives.Serializable;
+import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
@@ -54,9 +54,9 @@ import m3x.m3g.util.Object3DReferences;
  * @author jsaarinen
  * @author jgasseli
  */
-public class VertexBuffer extends Object3D implements SectionSerialisable
+public class VertexBuffer extends Object3D implements SectionSerializable
 {
-    private static class ScaleBiasedVertexArray implements Serialisable
+    private static class ScaleBiasedVertexArray implements Serializable
     {
 
         private VertexArray array;
@@ -139,7 +139,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
             this.scale = scale;
         }
 
-        public void deserialise(Deserialiser deserialiser)
+        public void deserialise(Deserializer deserialiser)
             throws IOException
         {
             setArray((VertexArray)deserialiser.readReference());
@@ -147,7 +147,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
             setScale(deserialiser.readFloat());
         }
 
-        public void serialise(Serialiser serialiser)
+        public void serialise(Serializer serialiser)
             throws IOException
         {
             serialiser.writeReference(getArray());
@@ -172,7 +172,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         super.deserialise(deserialiser);
@@ -190,7 +190,7 @@ public class VertexBuffer extends Object3D implements SectionSerialisable
     }
 
     @Override
-    public void serialise(Serialiser serialiser)
+    public void serialise(Serializer serialiser)
         throws IOException
     {
         super.serialise(serialiser);

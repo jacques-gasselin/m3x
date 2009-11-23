@@ -30,8 +30,8 @@ package m3x.m3g.primitives;
 import java.io.IOException;
 
 import java.util.List;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
 /**
  * A normal 4x4 matrix using floating point elements.
@@ -39,13 +39,13 @@ import m3x.m3g.Serialiser;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Matrix implements Serialisable
+public class Matrix implements Serializable
 {
+    private final static int MATRIX_LENGTH = 16;
     /**
      * The 4x4 matrix.
      */
-    private float[] matrix;
-    private final static int MATRIX_LENGTH = 16;
+    private float[] matrix = new float[MATRIX_LENGTH];
 
     private static final float[] IDENTITY =
     {
@@ -62,12 +62,10 @@ public class Matrix implements Serialisable
      */
     public Matrix()
     {
-        this.matrix = new float[MATRIX_LENGTH];
     }
 
     public Matrix(List<Float> matrix)
     {
-        this();
         set(matrix);
     }
 
@@ -78,7 +76,6 @@ public class Matrix implements Serialisable
      */
     public Matrix(float[] matrix)
     {
-        this();
         set(matrix);
     }
 
@@ -88,11 +85,10 @@ public class Matrix implements Serialisable
      */
     public Matrix(double[] matrix)
     {
-        this();
         set(matrix);
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         this.matrix = new float[MATRIX_LENGTH];
@@ -105,7 +101,7 @@ public class Matrix implements Serialisable
     /**
      * Writes float array to the stream.
      */
-    public void serialise(Serialiser serialiser) throws java.io.IOException
+    public void serialise(Serializer serialiser) throws java.io.IOException
     {
         for (float element : this.matrix)
         {
@@ -162,7 +158,7 @@ public class Matrix implements Serialisable
         {
             throw new IllegalArgumentException("matrix.size() < 16");
         }
-        for (int i = 0; i < MATRIX_LENGTH; i++)
+        for (int i = 0; i < MATRIX_LENGTH; ++i)
         {
             this.matrix[i] = matrix.get(i);
         }

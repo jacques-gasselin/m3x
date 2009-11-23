@@ -30,10 +30,10 @@ package m3x.m3g.primitives;
 import java.io.IOException;
 
 import java.util.List;
-import m3x.m3g.Deserialiser;
-import m3x.m3g.Serialiser;
+import m3x.m3g.Deserializer;
+import m3x.m3g.Serializer;
 
-public class Vector3D implements Serialisable
+public class Vector3D implements Serializable
 {
     private float x,  y,  z;
 
@@ -48,7 +48,7 @@ public class Vector3D implements Serialisable
     {
     }
 
-    public void deserialise(Deserialiser deserialiser)
+    public void deserialise(Deserializer deserialiser)
         throws IOException
     {
         x = deserialiser.readFloat();
@@ -56,7 +56,7 @@ public class Vector3D implements Serialisable
         z = deserialiser.readFloat();
     }
 
-    public void serialise(Serialiser serialiser) throws IOException
+    public void serialise(Serializer serialiser) throws IOException
     {
         serialiser.writeFloat(x);
         serialiser.writeFloat(y);
