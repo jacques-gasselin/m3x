@@ -30,6 +30,7 @@ package m3x.m3g;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
 
+import java.util.List;
 import m3x.m3g.primitives.ColorRGB;
 
 /**
@@ -145,6 +146,11 @@ public class Fog extends Object3D
     public void setDensity(float density)
     {
         this.density = density;
+    }
+
+    public void setColor(List<Short> color)
+    {
+        this.color.set(color);
     }
 
     public void setColor(int rgb)

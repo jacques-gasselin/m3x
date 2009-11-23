@@ -49,14 +49,96 @@ import org.xml.sax.SAXParseException;
  *
  * @author jgasseli
  */
-public abstract class Deserializer
+public final class Deserializer
 {
+    private static Unmarshaller unmarshaller;
+
+    /**
+     * Tries to initialize the xml unmashaller if it is not already initialized.
+     * @throws NoClassDefFoundError if unable to receive a context to the m3x.xml
+     * databinding schema.
+     * @throws IllegalStateException if the context can not create the unmarshaller.
+     */
+    private static final void initializeOnce()
+    {
+        //skip if already initialized
+        if (unmarshaller != null)
+        {
+            return;
+        }
+        
+        //ensure that classpaths used to load this class are used to
+        //load the clases needed by the context.
+        final ClassLoader clsLoader = Deserializer.class.getClassLoader();
+
+        JAXBContext context = null;
+        try
+        {
+            context = JAXBContext.newInstance("m3x.xml", clsLoader);
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+            throw new NoClassDefFoundError("Unable to parse the m3x schema. " +
+                    "The m3x.xml classes may be missing from your distribution.");
+        }
+
+        try
+        {
+            unmarshaller = context.createUnmarshaller();
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+            throw new IllegalStateException("Unable to create unmarshaller. " +
+                    "The ObjectFactory class may be missing in the m3x.xml package");
+        }
+
+        //set the validation handler
+        try
+        {
+            unmarshaller.setEventHandler(new ValidationHandler());
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+            unmarshaller = null;
+            throw new IllegalStateException(
+                "can't set validation handler");
+        }
+
+        //set a validating schema
+        if (true)
+        {
+            Schema validatingSchema = unmarshaller.getSchema();
+            if (validatingSchema == null)
+            {
+                //load it from the packaged schema
+                SchemaFactory schemaFactory = SchemaFactory.newInstance(
+                    XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                Source schemaSource = new StreamSource(
+                    m3x.xml.M3G.class.getResourceAsStream("m3x.xsd"));
+                try
+                {
+                    validatingSchema = schemaFactory.newSchema(schemaSource);
+                    unmarshaller.setSchema(validatingSchema);
+                }
+                catch (SAXException e)
+                {
+                    e.printStackTrace();
+                    throw new IllegalStateException(
+                        "unable to load the m3x schema");
+                }
+            }
+        }
+    }
+
     /**The JAXB unsmahaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
-    private Deserializer()
+    public Deserializer()
     {
-        
+        initializeOnce();
     }
 
     public static final class ValidationException extends RuntimeException
@@ -119,71 +201,8 @@ public abstract class Deserializer
      * or the sections are empty
      * @throws ValidationException - if the stream in invalid
      */
-    public static m3x.xml.M3G deserialise(java.io.InputStream stream)
+    public m3x.xml.M3G deserialize(java.io.InputStream stream)
     {
-        //ensure that classpaths used to load this class are used to
-        //load the clases needed by the context.
-        final ClassLoader clsLoader = Deserializer.class.getClassLoader();
-        
-        JAXBContext context = null;
-        try
-        {
-            context = JAXBContext.newInstance("m3x.xml", clsLoader);
-        }
-        catch (JAXBException e)
-        {
-            e.printStackTrace();
-            throw new AssertionError("unable to parse the m3x schema");
-        }
-
-        Unmarshaller unmarshaller = null;
-        try
-        {
-            unmarshaller = context.createUnmarshaller();
-        }
-        catch (JAXBException e)
-        {
-            e.printStackTrace();
-            throw new AssertionError("unable to create unmarshaller");
-        }
-
-        //set the validation handler
-        try
-        {
-            unmarshaller.setEventHandler(new ValidationHandler());
-        }
-        catch (JAXBException e)
-        {
-            e.printStackTrace();
-            throw new AssertionError(
-                "can't set validation handler");
-        }
-
-        //set a validating schema
-        if (true)
-        {
-            Schema validatingSchema = unmarshaller.getSchema();
-            if (validatingSchema == null)
-            {
-                //load it from the packaged schema
-                SchemaFactory schemaFactory = SchemaFactory.newInstance(
-                    XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Source schemaSource = new StreamSource(
-                    m3x.xml.M3G.class.getResourceAsStream("m3x.xsd"));
-                try
-                {
-                    validatingSchema = schemaFactory.newSchema(schemaSource);
-                    unmarshaller.setSchema(validatingSchema);
-                }
-                catch (SAXException e)
-                {
-                    e.printStackTrace();
-                    throw new AssertionError(
-                        "unable to load the m3x schema");
-                }
-            }
-        }
-
         try
         {
             return (m3x.xml.M3G) unmarshaller.unmarshal(stream);

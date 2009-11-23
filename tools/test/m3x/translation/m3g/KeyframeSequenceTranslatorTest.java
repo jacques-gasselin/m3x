@@ -27,6 +27,8 @@
 
 package m3x.translation.m3g;
 
+import m3x.xml.KeyframeInterpolationType;
+
 
 /**
  * @author jsaarinen
@@ -39,6 +41,7 @@ public class KeyframeSequenceTranslatorTest extends TranslatorSupport
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
 
         m3x.xml.KeyframeSequence ks = new m3x.xml.KeyframeSequence();
+        ks.setInterpolation(KeyframeInterpolationType.LINEAR);
 
         m3x.m3g.KeyframeSequence binKs = (m3x.m3g.KeyframeSequence)
                 translator.getObject(ks);

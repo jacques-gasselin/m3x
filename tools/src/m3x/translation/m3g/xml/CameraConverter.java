@@ -27,6 +27,7 @@
 
 package m3x.translation.m3g.xml;
 
+import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -63,12 +64,17 @@ public class CameraConverter extends NodeConverter
             return;
         }
 
-        if (from.getGeneric().size() > 0)
+        //if neither parallel or perspective assume it is generic.
+        List<Float> genericProjection = from.getGeneric();
+        if (genericProjection.size() == 0)
         {
-            to.setGeneric(from.getGeneric());
-            return;
+            //assume indentity matrix if not set
+            to.setIdentity();
+        }
+        else
+        {
+            to.setGeneric(genericProjection);
         }
 
-        throw new IllegalStateException("Can't convert a camera with no projection");
     }
 }

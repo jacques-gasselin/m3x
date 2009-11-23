@@ -27,6 +27,7 @@
 
 package m3x.translation.m3g.xml;
 
+import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -48,7 +49,16 @@ public class BackgroundConverter extends Object3DConverter
     {
         super.setFromXML(translator, to, from);
 
-        to.setColor(from.getColor());
+        final List<Short> xmlColor = from.getColor();
+        if (xmlColor == null || xmlColor.size() == 0)
+        {
+            //defaults to ARGB(255, 0, 0, 0)
+            to.setColor(0xff000000);
+        }
+        else
+        {
+            to.setColor(xmlColor);
+        }
         to.setImage(getImage2D(translator, from));
         //set crop
         {

@@ -46,10 +46,26 @@ public class Image2DConverter extends Object3DConverter
     protected final void setFromXML(XmlToBinaryTranslator translator,
         m3x.m3g.Image2D to, m3x.xml.Image2D from)
     {
+        if (from.getFormat() == null)
+        {
+            throw new IllegalArgumentException("no image format set");
+        }
+        final int width = from.getWidth();
+        if (width <= 0)
+        {
+            throw new IllegalArgumentException("Invalid width: " + width);
+        }
+        final int height = from.getHeight();
+        if (height <= 0)
+        {
+            throw new IllegalArgumentException("Invalid height: " + height);
+        }
+        
         super.setFromXML(translator, to, from);
+
         to.setFormat(from.getFormat().value());
         to.setMutable(from.isMutable());
-        to.setSize(from.getWidth(), from.getHeight());
+        to.setSize(width, height);
         to.setPixels(from.getPixels());
         to.setPalette(from.getPalette());
     }

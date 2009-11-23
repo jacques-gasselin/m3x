@@ -27,6 +27,7 @@
 
 package m3x.translation.m3g.xml;
 
+import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -47,6 +48,19 @@ public class FogConverter extends Object3DConverter
         m3x.m3g.Fog to, m3x.xml.Fog from)
     {
         super.setFromXML(translator, to, from);
-        //TODO implement
+
+        final List<Short> xmlColor = from.getColor();
+        if (xmlColor == null || xmlColor.size() == 0)
+        {
+            //defaults to RGB(0, 0, 0)
+            to.setColor(0x000000);
+        }
+        else
+        {
+            to.setColor(xmlColor);
+        }
+        to.setMode(from.getMode().value());
+        to.setDensity(from.getDensity());
+        to.setLinear(from.getNear(), from.getFar());
     }
 }

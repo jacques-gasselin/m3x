@@ -38,20 +38,54 @@ import java.io.OutputStream;
  * @author imsteve
  * @author jgasseli
  */
-public class Serialiser
+public final class Serializer
 {
     /**
      * The JAXB mashaller that is responsible for converting
      * an XML document into m3x.xml classes.
      */
-    private Marshaller xmlMarshaller = null;
+    private static Marshaller marshaller = null;
+
+    private static final void initializeOnce()
+    {
+        //skip if already initialized
+        if (marshaller != null)
+        {
+            return;
+        }
+
+        //ensure that classpaths used to load this class are used to
+        //load the clases needed by the context.
+        final ClassLoader clsLoader = Serializer.class.getClassLoader();
+
+        JAXBContext context = null;
+        try
+        {
+            context = JAXBContext.newInstance("m3x.xml", clsLoader);
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+            throw new NoClassDefFoundError("unable to parse the m3x schema");
+        }
+
+        try
+        {
+            marshaller = context.createMarshaller();
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+            throw new IllegalStateException("unable to create unmarshaller");
+        }
+    }
 
     /**
      * Creates a new Serialiser that is bound to the m3x.xml JAXB context.
      * @throws NoClassDefFoundError - if unable to bind the xml schema
      * @throws IllegalArgumentException - if unable to create a marshaller
      */
-    public Serialiser()
+    public Serializer()
     {
         //create the unmarshaller
         JAXBContext context = null;
@@ -66,7 +100,7 @@ public class Serialiser
         
         try
         {
-            xmlMarshaller = context.createMarshaller();
+            marshaller = context.createMarshaller();
         }
         catch (JAXBException e)
         {
@@ -85,7 +119,7 @@ public class Serialiser
      * @throws IllegalArgumentException - if there is an error in serialising
      * the object to the stream
      */
-    public void serialise(m3x.xml.M3G object, OutputStream stream, boolean formatted)
+    public void serialize(m3x.xml.M3G object, OutputStream stream, boolean formatted)
     {
         if (object == null)
         {
@@ -97,8 +131,8 @@ public class Serialiser
         }
         try
         {
-            xmlMarshaller.setProperty("jaxb.formatted.output", Boolean.valueOf(formatted));
-            xmlMarshaller.marshal(object, stream);
+            marshaller.setProperty("jaxb.formatted.output", Boolean.valueOf(formatted));
+            marshaller.marshal(object, stream);
         }
         catch (JAXBException e)
         {

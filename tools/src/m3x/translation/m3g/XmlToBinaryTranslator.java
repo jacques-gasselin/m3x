@@ -41,6 +41,7 @@ import m3x.translation.m3g.xml.AppearanceConverter;
 import m3x.translation.m3g.xml.BackgroundConverter;
 import m3x.translation.m3g.xml.CameraConverter;
 import m3x.translation.m3g.xml.CompositingModeConverter;
+import m3x.translation.m3g.xml.FogConverter;
 import m3x.translation.m3g.xml.GroupConverter;
 import m3x.translation.m3g.xml.Image2DConverter;
 import m3x.translation.m3g.xml.KeyframeSequenceConverter;
@@ -83,6 +84,8 @@ public class XmlToBinaryTranslator extends BinaryTranslator
                 CameraConverter.class);
         converterMap.put(m3x.xml.CompositingMode.class,
                 CompositingModeConverter.class);
+        converterMap.put(m3x.xml.Fog.class,
+                FogConverter.class);
         //For the skeleton node
         converterMap.put(m3x.xml.GroupType.class,
                 GroupConverter.class);
@@ -140,8 +143,8 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         m3x.xml.M3G xmlRoot = null;
         try
         {
-            xmlRoot = m3x.xml.Deserializer.deserialise(
-                    new FileInputStream(source));
+            final m3x.xml.Deserializer deserializer = new m3x.xml.Deserializer();
+            xmlRoot = deserializer.deserialize(new FileInputStream(source));
         }
         catch (FileNotFoundException ex)
         {

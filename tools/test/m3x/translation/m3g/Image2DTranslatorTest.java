@@ -27,6 +27,8 @@
 
 package m3x.translation.m3g;
 
+import m3x.xml.Image2DColorType;
+
 /**
  *
  * @author jgasseli
@@ -38,6 +40,9 @@ public class Image2DTranslatorTest extends TranslatorSupport
         XmlToBinaryTranslator translator = new XmlToBinaryTranslator("1.0");
 
         m3x.xml.Image2D img = new m3x.xml.Image2D();
+        img.setFormat(Image2DColorType.RGB);
+        img.setWidth(256);
+        img.setHeight(256);
 
         m3x.m3g.Image2D binImg = (m3x.m3g.Image2D) translator.getObject(img);
     }
