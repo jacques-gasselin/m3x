@@ -29,7 +29,10 @@ package m3x;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**Console test reader for the M3X tool-suite.
  * 
@@ -144,12 +147,12 @@ public final class ConsoleTest extends Object
         }
         
         //process the file input option
-        InputStream inStream = null;
+        Reader inputReader = null;
         if (infile != null)
         {
             try
             {
-                inStream = new FileInputStream(infile);
+                inputReader = new FileReader(infile);
             }
             catch (FileNotFoundException e)
             {
@@ -160,11 +163,11 @@ public final class ConsoleTest extends Object
         else
         {
             //no input file given, use system in.
-            inStream = System.in;
+            inputReader = new InputStreamReader(System.in);
         }
 
         final m3x.xml.Deserializer deserializer = new m3x.xml.Deserializer();
-        final m3x.xml.M3G root = deserializer.deserialize(inStream);
+        final m3x.xml.M3G root = deserializer.deserialize(inputReader);
         
         return new ConsoleTest(root);
     }

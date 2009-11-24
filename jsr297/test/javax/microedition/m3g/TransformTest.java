@@ -170,6 +170,38 @@ public class TransformTest extends TestCase
         assertEquals(expected, trans);
     }
 
+    public void testPostMultiplyNull()
+    {
+        Transform trans = new Transform();
+        try
+        {
+            trans.postMultiply(null);
+            fail("must throw NPE");
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+    }
+
+    public void testPostMultiply1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        Transform t2 = new Transform();
+        t2.postScale(1, 2, 3);
+        trans.postMultiply(t2);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 2, 0, 2,
+            0, 0, 3, 3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
     public void testTranslate1()
     {
         Transform trans = new Transform();
@@ -215,6 +247,38 @@ public class TransformTest extends TestCase
             0, 0, 0, 1
         };
         
+        assertEquals(expected, trans);
+    }
+
+    public void testTranspose1()
+    {
+        Transform trans = new Transform();
+        trans.postTranslate(1, 2, 3);
+        trans.transpose();
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            1, 2, 3, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testTranspose2()
+    {
+        Transform trans = new Transform();
+        trans.postScale(1, 2, 3);
+        trans.transpose();
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 2, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+
         assertEquals(expected, trans);
     }
 
@@ -265,6 +329,65 @@ public class TransformTest extends TestCase
         assertEquals(expected, trans);
     }
 
+    public void testRotateIllegal()
+    {
+        Transform trans = new Transform();
+        try
+        {
+            trans.postRotate(1, 0, 0, 0);
+            fail("must throw IEA as angle is non-zero and axis is zero");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testRotate1()
+    {
+        Transform trans = new Transform();
+        trans.postRotate(10, 0, 1, 0);
+
+        float[] expected = {
+            0.9848078f,    0,    0.1736482f,   0,
+            0,             1,    0,            0,
+           -0.1736482f,    0,    0.9848078f,   0,
+            0,             0,    0,            1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testRotate1Normalized()
+    {
+        Transform trans = new Transform();
+        trans.postRotate(10, 0, 2, 0);
+
+        float[] expected = {
+            0.9848078f,    0,    0.1736482f,   0,
+            0,             1,    0,            0,
+           -0.1736482f,    0,    0.9848078f,   0,
+            0,             0,    0,            1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testRotate2()
+    {
+        Transform trans = new Transform();
+        trans.postRotate(25, 1, 1, 1);
+
+        float[] expected = {
+            0.9375385f,   -0.2127680f,    0.2752295f,    0,
+            0.2752295f,    0.9375385f,   -0.2127680f,    0,
+           -0.2127680f,    0.2752295f,    0.9375385f,    0,
+            0,             0,             0,             1
+        };
+
+        assertEquals(expected, trans);
+    }
+    
     public void testInvertTranslate1()
     {
         Transform trans = new Transform();
@@ -275,7 +398,7 @@ public class TransformTest extends TestCase
             1, 0, 0, -1,
             0, 1, 0, -2,
             0, 0, 1, -3,
-            0, 0, 0, 1
+            0, 0, 0,  1
         };
 
         assertEquals(expected, trans);
@@ -289,9 +412,9 @@ public class TransformTest extends TestCase
 
         float[] expected = {
             1, 0, 0, -4,
-            0, 1, 0, 0,
+            0, 1, 0,  0,
             0, 0, 1, -3,
-            0, 0, 0, 1
+            0, 0, 0,  1
         };
 
         assertEquals(expected, trans);
@@ -308,7 +431,7 @@ public class TransformTest extends TestCase
             0.5f, 0,        0, -1.5f,
             0,    1,        0, -2,
             0,    0, 1 / 3.0f, -1 / 3.0f,
-            0,    0,        0, 1
+            0,    0,        0,  1
         };
 
         assertEquals(expected, trans);
@@ -325,7 +448,7 @@ public class TransformTest extends TestCase
             0.5f, 0,        0, -1.5f,
             0,    1 / 3.0f, 0, -2 / 3.0f,
             0,    0,        1, -1,
-            0,    0,        0, 1
+            0,    0,        0,  1
         };
 
         assertEquals(expected, trans);

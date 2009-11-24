@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         try
         {
             final m3x.xml.Deserializer deserializer = new m3x.xml.Deserializer();
-            xmlRoot = deserializer.deserialize(new FileInputStream(source));
+            xmlRoot = deserializer.deserialize(new FileReader(source));
         }
         catch (FileNotFoundException ex)
         {

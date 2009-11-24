@@ -27,8 +27,8 @@
 
 package m3x.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 import junit.framework.TestCase;
 
@@ -38,21 +38,12 @@ import junit.framework.TestCase;
  */
 public class DeserializerTest extends TestCase
 {
-    private Deserializer deserializer;
-    
-    /**Sets up the test case fixture.
-     * Creates a new instance of an m3x.xml.Deserialiser.
-     */
-    @Override
-    public void setUp()
-    {
-       deserializer = new Deserializer();
-    }
+    private Deserializer deserializer = new Deserializer();
     
     public void testDeserialiseEmptyFile()
     {
         String xmlString = "<?xml version=\"1.0\"?>\n";
-        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        Reader in = new StringReader(xmlString);
         try
         {
             //Should throw here
@@ -76,7 +67,7 @@ public class DeserializerTest extends TestCase
                 + "<m3g>\n"
                 + "    <section/>\n"
                 + "</m3g>";
-        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        Reader in = new StringReader(xmlString);
         try
         {
             deserializer.deserialize(in);
@@ -102,7 +93,7 @@ public class DeserializerTest extends TestCase
             + "        <AnimationController/>\n"
             + "    </section>\n"
             + "</m3g>";
-        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        Reader in = new StringReader(xmlString);
         try
         {
             //Should not throw here
@@ -136,7 +127,7 @@ public class DeserializerTest extends TestCase
             + "        <AnimationControllerInstance ref=\"ac0\"/>\n"
             + "    </section>\n"
             + "</m3g>";
-        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        Reader in = new StringReader(xmlString);
         try
         {
             deserializer.deserialize(in);
@@ -162,7 +153,7 @@ public class DeserializerTest extends TestCase
             + "        <AnimationTrack id=\"at0\"/>\n"
             + "    </section>\n"
             + "</m3g>";
-        InputStream in = new ByteArrayInputStream(xmlString.getBytes());
+        Reader in = new StringReader(xmlString);
         try
         {
             deserializer.deserialize(in);

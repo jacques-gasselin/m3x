@@ -27,6 +27,7 @@
 
 package m3x.xml;
 
+import java.io.InputStreamReader;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -195,17 +196,42 @@ public final class Deserializer
 
     /**Deserialise an input stream that contains an XML document.
      * 
-     * @param stream - the inout stream to read from.
+     * @param stream - the input stream to read from.
      * @return - the root M3G object
      * @throws IllegalArgumentException - if the stream is unable to be read
      * or the sections are empty
-     * @throws ValidationException - if the stream in invalid
+     * @throws ValidationException if the stream is invalid
+     * @throws NullPointerException if stream is null
      */
     public m3x.xml.M3G deserialize(java.io.InputStream stream)
     {
+        if (stream == null)
+        {
+            throw new NullPointerException("stream is null");
+        }
+
+        return deserialize(new InputStreamReader(stream));
+    }
+
+    /**Deserialise an input stream that contains an XML document.
+     *
+     * @param reader the reader to read from.
+     * @return the root M3G object
+     * @throws IllegalArgumentException if the reader is unable to be read
+     * or the sections are empty
+     * @throws ValidationException if the reader is invalid
+     * @throws NullPointerException if reader is null
+     */
+    public m3x.xml.M3G deserialize(java.io.Reader reader)
+    {
+        if (reader == null)
+        {
+            throw new NullPointerException("reader is null");
+        }
+        
         try
         {
-            return (m3x.xml.M3G) unmarshaller.unmarshal(stream);
+            return (m3x.xml.M3G) unmarshaller.unmarshal(reader);
         }
         catch (UnmarshalException e)
         {
@@ -225,6 +251,5 @@ public final class Deserializer
             throw new AssertionError(
                 "unmarshaller should only throw UnmarshalException");
         }
-
     }
 }
