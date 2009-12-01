@@ -27,11 +27,102 @@
 
 package javax.microedition.m3g;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * @author jgasseli
  */
 public class VertexBuffer extends Object3D
 {
+    private static final class ScaleBiasedVertexArray
+    {
+
+        private VertexArray array;
+        private float scale;
+        private final float[] bias = new float[3];
+
+        public VertexArray getArray()
+        {
+            return this.array;
+        }
+
+        public float[] getBias()
+        {
+            return this.bias;
+        }
+
+        public float getScale()
+        {
+            return this.scale;
+        }
+
+        private static final void requireArrayNotNull(VertexArray array)
+        {
+            if (array == null)
+            {
+                throw new NullPointerException("array is null");
+            }
+        }
+
+        private static final void requireValidBias(float[] bias, VertexArray array)
+        {
+            if (array == null || bias == null)
+            {
+                return;
+            }
+
+            if (bias.length < Math.min(3, array.getComponentCount()))
+            {
+                throw new IllegalArgumentException("bias.length < min(3, array.getComponentCount())");
+            }
+        }
+
+        public void set(VertexArray array, float scale, float[] bias)
+        {
+            //apply the tests early to assert atomicity
+            requireArrayNotNull(array);
+            requireValidBias(bias, array);
+
+            setArray(array);
+            setScale(scale);
+            setBias(bias);
+        }
+
+        public void setArray(VertexArray array)
+        {
+            requireArrayNotNull(array);
+
+            this.array = array;
+        }
+
+        public void setBias(float[] bias)
+        {
+            requireValidBias(bias, this.array);
+            
+            Arrays.fill(this.bias, 0.0f);
+            if (bias != null)
+            {
+                System.arraycopy(bias, 0,
+                        this.bias, 0,
+                        Math.min(3, array.getComponentCount()));
+            }
+        }
+
+        public void setScale(float scale)
+        {
+            this.scale = scale;
+        }
+    }
+
+    private boolean mutable = true;
+    private int vertexCount;
+    private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
+    private VertexArray normals;
+    private VertexArray colors;
+    private final ArrayList<ScaleBiasedVertexArray> textureCoordinates =
+            new ArrayList<ScaleBiasedVertexArray>();
+    
     public VertexBuffer()
     {
 
@@ -150,7 +241,7 @@ public class VertexBuffer extends Object3D
 
     public void setPositions(VertexArray positions, float scale, float[] bias)
     {
-        throw new UnsupportedOperationException();
+        this.positions.set(positions, scale, bias);
     }
 
     public void setTexCoords(int index, VertexArray texCoords, float scale, float[] bias)
