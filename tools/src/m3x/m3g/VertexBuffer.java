@@ -32,6 +32,8 @@ import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
 
 import m3x.m3g.primitives.ColorRGBA;
 import m3x.m3g.primitives.Vector3D;
@@ -56,6 +58,92 @@ import m3x.m3g.util.Object3DReferences;
  */
 public class VertexBuffer extends Object3D implements SectionSerializable
 {
+
+    private static final class VertexCounter
+    {
+        private int count;
+        private final IdentityHashMap<VertexArray, VertexArray> arrays =
+                new IdentityHashMap<VertexArray, VertexArray>();
+
+        private VertexCounter()
+        {
+
+        }
+
+        private int getCount()
+        {
+            return this.count;
+        }
+
+        private void replace(VertexArray oldVA, VertexArray newVA)
+        {
+            remove(oldVA);
+            add(newVA);
+        }
+
+        private void remove(VertexArray va)
+        {
+            //no-op for null arrays
+            if (va == null)
+            {
+                return;
+            }
+
+            //is this vertex array in the buffer?
+            if (this.arrays.remove(va) == null)
+            {
+                throw new IllegalStateException("va does not belong to the counter");
+            }
+            if (this.count == 0)
+            {
+                throw new IllegalStateException("va was never counted");
+            }
+            if (this.count != va.getVertexCount())
+            {
+                throw new IllegalStateException("va.getVertexCount() != getVertexCount()");
+            }
+
+            //is the counter empty now?
+            if (this.arrays.size() == 0)
+            {
+                this.count = 0;
+            }
+        }
+
+        private void add(VertexArray va)
+        {
+            //no-op for null arrays
+            if (va == null)
+            {
+                return;
+            }
+
+            //is this vertex array in the buffer?
+            if (this.arrays.containsKey(va))
+            {
+                throw new IllegalStateException("va already belongs to the counter."
+                        + this.arrays);
+            }
+            final int vaCount = va.getVertexCount();
+            //is it the first vertex array?
+            if (this.count == 0)
+            {
+                if (this.arrays.size() != 0)
+                {
+                    throw new IllegalStateException("current count is incorrect");
+                }
+
+                this.count = vaCount;
+            }
+            else if (this.count != vaCount)
+            {
+                throw new IllegalArgumentException("va.getVertexCount() != getVertexCount()");
+            }
+
+            this.arrays.put(va, va);
+        }
+    }
+
     private static class ScaleBiasedVertexArray implements Serializable
     {
 
@@ -156,18 +244,16 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         }
     }
 
-    private ColorRGBA defaultColor;
-    private ScaleBiasedVertexArray positions;
+    private final ColorRGBA defaultColor = new ColorRGBA();
+    private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
     private VertexArray normals;
     private VertexArray colors;
     private ScaleBiasedVertexArray[] textureCoordinates;
-    private int vertexCount;
+    private final VertexCounter vertexCounter = new VertexCounter();
 
     public VertexBuffer()
     {
         super();
-        this.defaultColor = new ColorRGBA();
-        this.positions = new ScaleBiasedVertexArray();
         setDefaultColor(0xffffffff);
     }
 
@@ -281,64 +367,31 @@ public class VertexBuffer extends Object3D implements SectionSerializable
 
     public int getVertexCount()
     {
-        return this.vertexCount;
+        return this.vertexCounter.getCount();
     }
 
-    public void setColors(VertexArray va)
+    public synchronized void setColors(VertexArray va)
     {
         //check the vertex counts for potential mismatch
-        //to maintain atomicity apply all checks before committing.
-        int count = 0;
-        //check all the other arrays first
-        count = updateVAVertexCount(count, getPositionsArray());
-        count = updateVAVertexCount(count, getNormals());
-        final int textureCoordinateArrayCount = getTexCoordCount();
-        for (int i = 0; i < textureCoordinateArrayCount; ++i)
-        {
-            count = updateVAVertexCount(count, getTexCoordsArray(i));
-        }
-        count = updateVAVertexCount(count, va);
+        this.vertexCounter.replace(this.colors, va);
 
         this.colors = va;
-        this.vertexCount = count;
     }
 
-    public void setNormals(VertexArray va)
+    public synchronized void setNormals(VertexArray va)
     {
         //check the vertex counts for potential mismatch
-        //to maintain atomicity apply all checks before committing.
-        int count = 0;
-        //check all the other arrays first
-        count = updateVAVertexCount(count, getPositionsArray());
-        count = updateVAVertexCount(count, getColors());
-        final int textureCoordinateArrayCount = getTexCoordCount();
-        for (int i = 0; i < textureCoordinateArrayCount; ++i)
-        {
-            count = updateVAVertexCount(count, getTexCoordsArray(i));
-        }
-        count = updateVAVertexCount(count, va);
+        this.vertexCounter.replace(this.normals, va);
         
         this.normals = va;
-        this.vertexCount = count;
     }
 
     public synchronized void setPositions(VertexArray va, float scale, float[] bias)
     {
         //check the vertex counts for potential mismatch
-        //to maintain atomicity apply all checks before committing.
-        int count = 0;
-        //check all the other arrays first
-        count = updateVAVertexCount(count, getColors());
-        count = updateVAVertexCount(count, getNormals());
-        final int textureCoordinateArrayCount = getTexCoordCount();
-        for (int i = 0; i < textureCoordinateArrayCount; ++i)
-        {
-            count = updateVAVertexCount(count, getTexCoordsArray(i));
-        }
-        count = updateVAVertexCount(count, va);
+        this.vertexCounter.replace(this.positions.getArray(), va);
 
         this.positions.set(va, scale, bias);
-        this.vertexCount = count;
     }
 
     public void setTexCoordCount(int texCoordCount)
@@ -356,27 +409,26 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         }
     }
 
+    private final void requireValidTextureIndex(int index)
+    {
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException("index < 0");
+        }
+        if (index >= getTexCoordCount())
+        {
+            throw new IndexOutOfBoundsException("index >= getTexCoordCount()");
+        }
+    }
+
     public synchronized void setTexCoords(int index, VertexArray va, float scale, float[] bias)
     {
+        requireValidTextureIndex(index);
+
         //check the vertex counts for potential mismatch
-        //to maintain atomicity apply all checks before committing.
-        int count = 0;
-        //check all the other arrays first
-        count = updateVAVertexCount(count, getPositionsArray());
-        count = updateVAVertexCount(count, getColors());
-        count = updateVAVertexCount(count, getNormals());
-        final int textureCoordinateArrayCount = getTexCoordCount();
-        for (int i = 0; i < textureCoordinateArrayCount; ++i)
-        {
-            if (i != index)
-            {
-                count = updateVAVertexCount(count, getTexCoordsArray(i));
-            }
-        }
-        count = updateVAVertexCount(count, va);
+        this.vertexCounter.replace(this.positions.getArray(), va);
         
         this.textureCoordinates[index].set(va, scale, bias);
-        this.vertexCount = count;
     }
 
     public void setDefaultColor(int argb)
@@ -388,24 +440,4 @@ public class VertexBuffer extends Object3D implements SectionSerializable
     {
         this.defaultColor.set(defaultColor);
     }
-
-    private static final int updateVAVertexCount(int count, VertexArray va)
-    {
-        if (va == null)
-        {
-            return count;
-        }
-        final int vaCount = va.getVertexCount();
-        //is this the first vertex array in the buffer?
-        if (count == 0)
-        {
-            return vaCount;
-        }
-        if (count != vaCount)
-        {
-            throw new IllegalArgumentException("va.getVertexCount() != getVertexCount()");
-        }
-        return count;
-    }
-
 }

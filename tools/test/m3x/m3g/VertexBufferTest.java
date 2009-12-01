@@ -54,4 +54,160 @@ public class VertexBufferTest extends AbstractTestCase
         Object3D[] roots = new Object3D[]{ vb };
         assertSaveAndLoad(roots);
     }
+
+    public void testConstructor()
+    {
+        VertexBuffer vb = new VertexBuffer();
+    }
+
+    private static final void createPositions(VertexBuffer vb, int vertexCount, int numComponents, float[] bias)
+    {
+        VertexArray pos = new VertexArray(vertexCount, numComponents, VertexArray.BYTE);
+        vb.setPositions(pos, 1.0f, bias);
+    }
+
+    private static final void createPositions(VertexBuffer vb, int numComponents, float[] bias)
+    {
+        createPositions(vb, 3, numComponents, bias);
+    }
+
+    private static final void createNormals(VertexBuffer vb, int vertexCount)
+    {
+        VertexArray norm = new VertexArray(vertexCount, 3, VertexArray.BYTE);
+        vb.setNormals(norm);
+    }
+
+    private static final void createNormals(VertexBuffer vb)
+    {
+        createNormals(vb, 3);
+    }
+
+    public void testSetPositions1BiasNull()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 1, null);
+    }
+
+    public void testSetPositions2BiasNull()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 2, null);
+    }
+
+    public void testSetPositions3BiasNull()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 3, null);
+    }
+
+    public void testSetPositions4BiasNull()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 4, null);
+    }
+
+    public void testSetPositions1Bias1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 1, new float[]{ 0 });
+    }
+
+    public void testSetPositions2Bias1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            createPositions(vb, 2, new float[]{ 0 });
+            fail("insufficient bias length, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+    }
+
+    public void testSetPositions3Bias1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            createPositions(vb, 3, new float[]{ 0 });
+            fail("insufficient bias length, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+    }
+
+    public void testSetPositions4Bias1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            createPositions(vb, 4, new float[]{ 0 });
+            fail("insufficient bias length, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+
+    }
+
+    public void testSetPositions2Bias2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 2, new float[]{ 0, 0 });
+    }
+
+    public void testSetPositions3Bias2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            createPositions(vb, 3, new float[]{ 0, 0 });
+            fail("insufficient bias length, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+    }
+
+    public void testSetPositions4Bias2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            createPositions(vb, 4, new float[]{ 0, 0 });
+            fail("insufficient bias length, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+    }
+
+    public void testSet3Positions4And3Normals3()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 3, 4, null);
+        createNormals(vb, 3);
+    }
+
+    public void testSet4Positions4And3Normals3()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        createPositions(vb, 4, 4, null);
+        try
+        {
+            createNormals(vb, 3);
+            fail("vertex count mismatch, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //success
+        }
+    }
 }
