@@ -32,7 +32,6 @@ import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.SectionSerializable;
 import m3x.m3g.primitives.ObjectTypes;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 
 import m3x.m3g.primitives.ColorRGBA;
@@ -144,9 +143,8 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         }
     }
 
-    private static class ScaleBiasedVertexArray implements Serializable
+    private static final class ScaleBiasedVertexArray implements Serializable
     {
-
         private VertexArray array;
         private float scale;
         private final Vector3D bias = new Vector3D();
@@ -158,11 +156,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
 
         public float[] getBias()
         {
-            float[] ret = new float[3];
-            ret[0] = bias.getX();
-            ret[1] = bias.getY();
-            ret[2] = bias.getZ();
-            return ret;
+            return bias.get();
         }
 
         public float getScale()

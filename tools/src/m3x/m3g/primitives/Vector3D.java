@@ -35,13 +35,11 @@ import m3x.m3g.Serializer;
 
 public class Vector3D implements Serializable
 {
-    private float x,  y,  z;
+    private float x, y, z;
 
     public Vector3D(float x, float y, float z)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        set(x, y, z);
     }
 
     public Vector3D()
@@ -51,16 +49,16 @@ public class Vector3D implements Serializable
     public void deserialise(Deserializer deserialiser)
         throws IOException
     {
-        x = deserialiser.readFloat();
-        y = deserialiser.readFloat();
-        z = deserialiser.readFloat();
+        setX(deserialiser.readFloat());
+        setY(deserialiser.readFloat());
+        setZ(deserialiser.readFloat());
     }
 
     public void serialise(Serializer serialiser) throws IOException
     {
-        serialiser.writeFloat(x);
-        serialiser.writeFloat(y);
-        serialiser.writeFloat(z);
+        serialiser.writeFloat(getX());
+        serialiser.writeFloat(getY());
+        serialiser.writeFloat(getZ());
     }
 
     public void set(List<Float> value)
@@ -74,23 +72,18 @@ public class Vector3D implements Serializable
             default:
             case 3:
             {
-                x = value.get(0);
-                y = value.get(1);
-                z = value.get(2);
+                set(value.get(0), value.get(1), value.get(2));
                 break;
             }
             case 2:
             {
-                x = value.get(0);
-                y = value.get(1);
-                z = 0.0f;
+                set(value.get(0), value.get(1), 0.0f);
                 break;
             }
             case 1:
             {
-                x = value.get(0);
-                y = 0.0f;
-                z = 0.0f;
+                set(value.get(0), 0.0f, 0.0f);
+                break;
             }
         }
     }
@@ -106,32 +99,47 @@ public class Vector3D implements Serializable
             default:
             case 3:
             {
-                x = value[0];
-                y = value[1];
-                z = value[2];
+                set(value[0], value[1], value[2]);
                 break;
             }
             case 2:
             {
-                x = value[0];
-                y = value[1];
-                z = 0.0f;
+                set(value[0], value[1], 0.0f);
                 break;
             }
             case 1:
             {
-                x = value[0];
-                y = 0.0f;
-                z = 0.0f;
+                set(value[0], 0.0f, 0.0f);
+                break;
             }
         }
     }
 
     public void set(float x, float y, float z)
     {
+        setX(x);
+        setY(y);
+        setZ(z);
+    }
+
+    public void setX(float x)
+    {
         this.x = x;
+    }
+
+    public void setY(float y)
+    {
         this.y = y;
+    }
+
+    public void setZ(float z)
+    {
         this.z = z;
+    }
+
+    public float[] get()
+    {
+        return new float[]{ x, y, z };
     }
 
     public float getX()
@@ -149,6 +157,7 @@ public class Vector3D implements Serializable
         return z;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == this)
@@ -160,8 +169,8 @@ public class Vector3D implements Serializable
             return false;
         }
         Vector3D another = (Vector3D) obj;
-        return this.x == another.x
-            && this.y == another.y
-            && this.z == another.z;
+        return getX() == another.getX()
+            && getY() == another.getY()
+            && getZ() == another.getZ();
     }
 }
