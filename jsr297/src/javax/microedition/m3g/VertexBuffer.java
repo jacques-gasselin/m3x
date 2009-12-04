@@ -29,12 +29,98 @@ package javax.microedition.m3g;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.IdentityHashMap;
 
 /**
  * @author jgasseli
  */
 public class VertexBuffer extends Object3D
 {
+    private static final class VertexCounter
+    {
+        private int count;
+        private final IdentityHashMap<VertexArray, VertexArray> arrays =
+                new IdentityHashMap<VertexArray, VertexArray>();
+
+        private VertexCounter()
+        {
+
+        }
+
+        private int getCount()
+        {
+            return this.count;
+        }
+
+        private void replace(VertexArray oldVA, VertexArray newVA)
+        {
+            remove(oldVA);
+            add(newVA);
+        }
+
+        private void remove(VertexArray va)
+        {
+            //no-op for null arrays
+            if (va == null)
+            {
+                return;
+            }
+
+            //is this vertex array in the buffer?
+            if (this.arrays.remove(va) == null)
+            {
+                throw new IllegalStateException("va does not belong to the counter");
+            }
+            if (this.count == 0)
+            {
+                throw new IllegalStateException("va was never counted");
+            }
+            if (this.count != va.getVertexCount())
+            {
+                throw new IllegalStateException("va.getVertexCount() != getVertexCount()");
+            }
+
+            //is the counter empty now?
+            if (this.arrays.size() == 0)
+            {
+                this.count = 0;
+            }
+        }
+
+        private void add(VertexArray va)
+        {
+            //no-op for null arrays
+            if (va == null)
+            {
+                return;
+            }
+
+            //is this vertex array in the buffer?
+            if (this.arrays.containsKey(va))
+            {
+                throw new IllegalStateException("va already belongs to the counter."
+                        + this.arrays);
+            }
+            final int vaCount = va.getVertexCount();
+            //is it the first vertex array?
+            if (this.count == 0)
+            {
+                if (this.arrays.size() != 0)
+                {
+                    throw new IllegalStateException("current count is incorrect");
+                }
+
+                this.count = vaCount;
+            }
+            else if (this.count != vaCount)
+            {
+                throw new IllegalArgumentException("va.getVertexCount() != getVertexCount()");
+            }
+
+            this.arrays.put(va, va);
+        }
+    }
+
     private static final class ScaleBiasedVertexArray
     {
 
@@ -116,7 +202,7 @@ public class VertexBuffer extends Object3D
     }
 
     private boolean mutable = true;
-    private int vertexCount;
+    private final VertexCounter vertexCounter = new VertexCounter();
     private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
     private VertexArray normals;
     private VertexArray colors;
@@ -216,7 +302,10 @@ public class VertexBuffer extends Object3D
 
     public void setColors(VertexArray colors)
     {
-        throw new UnsupportedOperationException();
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(this.colors, colors);
+
+        this.colors = colors;
     }
 
     public void setDefaultColor(int argb)
@@ -231,7 +320,10 @@ public class VertexBuffer extends Object3D
 
     public void setNormals(VertexArray normals)
     {
-        throw new UnsupportedOperationException();
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(this.normals, normals);
+
+        this.normals = normals;
     }
 
     public void setPointSizes(VertexArray pointSizes)
@@ -239,8 +331,11 @@ public class VertexBuffer extends Object3D
         throw new UnsupportedOperationException();
     }
 
-    public void setPositions(VertexArray positions, float scale, float[] bias)
+    public synchronized void setPositions(VertexArray positions, float scale, float[] bias)
     {
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(this.positions.getArray(), positions);
+
         this.positions.set(positions, scale, bias);
     }
 
