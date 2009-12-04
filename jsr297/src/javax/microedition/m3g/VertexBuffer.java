@@ -231,16 +231,41 @@ public class VertexBuffer extends Object3D
     }
 
     private boolean mutable = true;
+    private int defaultColorARGB;
+    private float defaultPointSize;
     private final VertexCounter vertexCounter = new VertexCounter();
     private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
     private VertexArray normals;
     private VertexArray colors;
-    private final ArrayList<ScaleBiasedVertexArray> textureCoordinates =
-            new ArrayList<ScaleBiasedVertexArray>();
+    private VertexArray boneWeights;
+    private VertexArray boneIndices;
+    private static final int MAX_TEXTURE_COORDS = 8;
+    private final ScaleBiasedVertexArray[] textureCoordinates =
+            new ScaleBiasedVertexArray[MAX_TEXTURE_COORDS];
     
     public VertexBuffer()
     {
 
+    }
+
+    private final void requireMutable()
+    {
+        if (!isMutable())
+        {
+            throw new IllegalStateException("this bufferer is immutable");
+        }
+    }
+
+    private final void requireValidTextureIndex(int index)
+    {
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException("index < 0");
+        }
+        if (index >= MAX_TEXTURE_COORDS)
+        {
+            throw new IndexOutOfBoundsException("index >= N, the implementation maximum");
+        }
     }
 
     public void commit()
@@ -266,12 +291,12 @@ public class VertexBuffer extends Object3D
 
     public VertexArray getBoneIndices()
     {
-        throw new UnsupportedOperationException();
+        return this.boneIndices;
     }
 
     public VertexArray getBoneWeights()
     {
-        throw new UnsupportedOperationException();
+        return this.boneWeights;
     }
 
     public VertexArray getColors()
@@ -281,12 +306,12 @@ public class VertexBuffer extends Object3D
 
     public int getDefaultColor()
     {
-        throw new UnsupportedOperationException();
+        return this.defaultColorARGB;
     }
 
     public float getDefaultPointSize()
     {
-        throw new UnsupportedOperationException();
+        return this.defaultPointSize;
     }
 
     public VertexArray getNormals()
@@ -303,7 +328,13 @@ public class VertexBuffer extends Object3D
 
     public VertexArray getTexCoords(int index, float[] scaleBias)
     {
-        throw new UnsupportedOperationException();
+        requireValidTextureIndex(index);
+
+        ScaleBiasedVertexArray sbva = this.textureCoordinates[index];
+
+        sbva.getScaleAndBias(scaleBias);
+
+        return sbva.getArray();
     }
 
     public int getVertexCount()
@@ -328,11 +359,16 @@ public class VertexBuffer extends Object3D
 
     public void setBoneInfluences(VertexArray boneIndices, VertexArray boneWeights)
     {
-        throw new UnsupportedOperationException();
+        requireMutable();
+        
+        this.boneIndices = boneIndices;
+        this.boneWeights = boneWeights;
     }
 
     public void setColors(VertexArray colors)
     {
+        requireMutable();
+        
         //check the vertex counts for potential mismatch
         this.vertexCounter.replace(this.colors, colors);
 
@@ -341,16 +377,23 @@ public class VertexBuffer extends Object3D
 
     public void setDefaultColor(int argb)
     {
-        throw new UnsupportedOperationException();
+        this.defaultColorARGB = argb;
     }
 
     public void setDefaultPointSize(float pointSize)
     {
-        throw new UnsupportedOperationException();
+        if (pointSize <= 0)
+        {
+            throw new IllegalArgumentException("pointSize <= 0");
+        }
+        
+        this.defaultPointSize = pointSize;
     }
 
     public void setNormals(VertexArray normals)
     {
+        requireMutable();
+        
         //check the vertex counts for potential mismatch
         this.vertexCounter.replace(this.normals, normals);
 
@@ -359,11 +402,15 @@ public class VertexBuffer extends Object3D
 
     public void setPointSizes(VertexArray pointSizes)
     {
+        requireMutable();
+        
         throw new UnsupportedOperationException();
     }
 
     public synchronized void setPositions(VertexArray positions, float scale, float[] bias)
     {
+        requireMutable();
+        
         //check the vertex counts for potential mismatch
         this.vertexCounter.replace(this.positions.getArray(), positions);
 
@@ -372,6 +419,13 @@ public class VertexBuffer extends Object3D
 
     public void setTexCoords(int index, VertexArray texCoords, float scale, float[] bias)
     {
-        throw new UnsupportedOperationException();
+        requireMutable();
+        requireValidTextureIndex(index);
+
+        ScaleBiasedVertexArray sbva = this.textureCoordinates[index];
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(sbva.getArray(), texCoords);
+
+        sbva.set(texCoords, scale, bias);
     }
 }
