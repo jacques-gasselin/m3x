@@ -151,6 +151,19 @@ public class VertexBuffer extends Object3D
             }
         }
 
+        private static final void requireValidScaleAndBias(float[] scaleBias, VertexArray array)
+        {
+            if (array == null || scaleBias == null)
+            {
+                return;
+            }
+
+            if (scaleBias.length < Math.min(4, array.getComponentCount() + 1))
+            {
+                throw new IllegalArgumentException("scaleBias.length < min(4, array.getComponentCount() + 1)");
+            }
+        }
+
         private static final void requireValidBias(float[] bias, VertexArray array)
         {
             if (array == null || bias == null)
@@ -198,6 +211,22 @@ public class VertexBuffer extends Object3D
         public void setScale(float scale)
         {
             this.scale = scale;
+        }
+
+        private void getScaleAndBias(float[] scaleBias)
+        {
+            if (this.array != null)
+            {
+                requireValidScaleAndBias(scaleBias, this.array);
+
+                if (scaleBias != null)
+                {
+                    scaleBias[0] = this.scale;
+                    System.arraycopy(this.bias, 0,
+                            scaleBias, 1,
+                            Math.min(3, this.array.getComponentCount()));
+                }
+            }
         }
     }
 
@@ -247,7 +276,7 @@ public class VertexBuffer extends Object3D
 
     public VertexArray getColors()
     {
-        throw new UnsupportedOperationException();
+        return this.colors;
     }
 
     public int getDefaultColor()
@@ -262,12 +291,14 @@ public class VertexBuffer extends Object3D
 
     public VertexArray getNormals()
     {
-        throw new UnsupportedOperationException();
+        return this.normals;
     }
 
     public VertexArray getPositions(float[] scaleBias)
     {
-        throw new UnsupportedOperationException();
+        this.positions.getScaleAndBias(scaleBias);
+        
+        return this.positions.getArray();
     }
 
     public VertexArray getTexCoords(int index, float[] scaleBias)
@@ -277,12 +308,12 @@ public class VertexBuffer extends Object3D
 
     public int getVertexCount()
     {
-        throw new UnsupportedOperationException();
+        return this.vertexCounter.getCount();
     }
 
     public boolean isMutable()
     {
-        throw new UnsupportedOperationException();
+        return this.mutable;
     }
 
     public void setAttribute(String name, float v0, float v1, float v2, float v3)

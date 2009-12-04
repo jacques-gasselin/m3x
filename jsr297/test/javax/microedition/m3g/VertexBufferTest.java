@@ -71,6 +71,36 @@ public class VertexBufferTest extends TestCase
         createNormals(vb, 3);
     }
 
+    public void testGetPositionsNullBiasNull()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertNull(vb.getPositions(null));
+    }
+
+    public void testGetPositionsNullBias1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertNull(vb.getPositions(new float[1]));
+    }
+
+    public void testGetPositionsNullBias2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertNull(vb.getPositions(new float[2]));
+    }
+
+    public void testGetPositionsNullBias3()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertNull(vb.getPositions(new float[3]));
+    }
+
+    public void testGetPositionsNullBias4()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertNull(vb.getPositions(new float[4]));
+    }
+
     public void testSetPositions1BiasNull()
     {
         VertexBuffer vb = new VertexBuffer();
