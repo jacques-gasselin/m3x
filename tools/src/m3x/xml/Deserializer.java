@@ -44,9 +44,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**The Deserializer class hides the complexities of binding a JAXB context
- * and unmarshalling the classes. 
- * The xml classes use refid references that need to be resolved in order to
- * make a properly referenced translation. 
+ * and unmarshalling the classes. The xml classes use refid references that
+ * need to be resolved in order to make a properly referenced translation.
  *
  * @author jgasseli
  */

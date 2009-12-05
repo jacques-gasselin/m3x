@@ -49,9 +49,14 @@ public class VertexBufferTest extends TestCase
         }
     }
 
-    private static final void createPositions(VertexBuffer vb, int vertexCount, int numComponents, float[] bias)
+    private static final VertexArray createByteVA(int numVertices, int numComponents)
     {
-        VertexArray pos = new VertexArray(vertexCount, numComponents, VertexArray.BYTE);
+        return new VertexArray(numVertices, numComponents, VertexArray.BYTE);
+    }
+
+    private static final void createPositions(VertexBuffer vb, int numVertices, int numComponents, float[] bias)
+    {
+        VertexArray pos = createByteVA(numVertices, numComponents);
         vb.setPositions(pos, 1.0f, bias);
     }
 
@@ -62,7 +67,7 @@ public class VertexBufferTest extends TestCase
 
     private static final void createNormals(VertexBuffer vb, int vertexCount)
     {
-        VertexArray norm = new VertexArray(vertexCount, 3, VertexArray.BYTE);
+        VertexArray norm = createByteVA(vertexCount, 3);
         vb.setNormals(norm);
     }
 
@@ -228,5 +233,105 @@ public class VertexBufferTest extends TestCase
         {
             //success
         }
+    }
+
+    public void testSetNormals1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            vb.setNormals(createByteVA(3, 1));
+            fail("normals must have 3 components, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetNormals2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            vb.setNormals(createByteVA(3, 2));
+            fail("normals must have 3 components, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetNormals3()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        vb.setNormals(createByteVA(3, 3));
+    }
+
+    public void testSetNormals4()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            vb.setNormals(createByteVA(3, 4));
+            fail("normals must have 3 components, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetColors1()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            vb.setColors(createByteVA(3, 1));
+            fail("normals must have 3 components, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetColors2()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        try
+        {
+            vb.setColors(createByteVA(3, 2));
+            fail("normals must have 3 components, must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetColors3()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        vb.setColors(createByteVA(3, 3));
+    }
+
+    public void testSetColors4()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        vb.setColors(createByteVA(3, 4));
+    }
+
+    public void testIsMutable()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertTrue(vb.isMutable());
+    }
+
+    public void testGetVertexCount()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertEquals(0, vb.getVertexCount());
     }
 }

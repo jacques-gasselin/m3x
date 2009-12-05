@@ -27,7 +27,6 @@
 
 package javax.microedition.m3g;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 
@@ -237,6 +236,7 @@ public class VertexBuffer extends Object3D
     private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
     private VertexArray normals;
     private VertexArray colors;
+    private VertexArray pointSizes;
     private VertexArray boneWeights;
     private VertexArray boneIndices;
     private static final int MAX_TEXTURE_COORDS = 8;
@@ -319,6 +319,11 @@ public class VertexBuffer extends Object3D
         return this.normals;
     }
 
+    public VertexArray getPointSizes()
+    {
+        return this.pointSizes;
+    }
+
     public VertexArray getPositions(float[] scaleBias)
     {
         this.positions.getScaleAndBias(scaleBias);
@@ -360,6 +365,10 @@ public class VertexBuffer extends Object3D
     public void setBoneInfluences(VertexArray boneIndices, VertexArray boneWeights)
     {
         requireMutable();
+
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(this.boneIndices, boneIndices);
+        this.vertexCounter.replace(this.boneWeights, boneWeights);
         
         this.boneIndices = boneIndices;
         this.boneWeights = boneWeights;
@@ -368,6 +377,19 @@ public class VertexBuffer extends Object3D
     public void setColors(VertexArray colors)
     {
         requireMutable();
+
+        if (colors != null)
+        {
+            final int componentCount = colors.getComponentCount();
+            if (componentCount < 3)
+            {
+                throw new IllegalArgumentException("colors.getComponentCount() < 3");
+            }
+            if (componentCount > 4)
+            {
+                throw new IllegalArgumentException("colors.getComponentCount() > 4");
+            }
+        }
         
         //check the vertex counts for potential mismatch
         this.vertexCounter.replace(this.colors, colors);
@@ -394,6 +416,11 @@ public class VertexBuffer extends Object3D
     {
         requireMutable();
         
+        if (normals != null && normals.getComponentCount() != 3)
+        {
+            throw new IllegalArgumentException("normals.getComponentCount() != 3");
+        }
+
         //check the vertex counts for potential mismatch
         this.vertexCounter.replace(this.normals, normals);
 
@@ -403,8 +430,11 @@ public class VertexBuffer extends Object3D
     public void setPointSizes(VertexArray pointSizes)
     {
         requireMutable();
+
+        //check the vertex counts for potential mismatch
+        this.vertexCounter.replace(this.pointSizes, pointSizes);
         
-        throw new UnsupportedOperationException();
+        this.pointSizes = pointSizes;
     }
 
     public synchronized void setPositions(VertexArray positions, float scale, float[] bias)
