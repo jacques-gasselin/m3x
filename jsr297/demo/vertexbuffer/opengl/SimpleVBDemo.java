@@ -1,33 +1,5 @@
-/*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * - Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+package vertexbuffer.opengl;
 
-package background.opengl;
-
-import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -38,27 +10,34 @@ import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
+import javax.microedition.m3g.Appearance;
+import javax.microedition.m3g.IndexBuffer;
+import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 
 /**
  * @author jgasseli
  */
-public class BackgroundDemo extends Frame
+public class SimpleVBDemo extends Frame
 {
     private static final boolean FULLSCREEN = false;
     
-    private static class BackgroundCanvas extends GLCanvas implements Runnable
+    private static class SimpleVBCanvas extends GLCanvas implements Runnable
     {
-        Background background;
-        AbstractRenderTarget renderTarget;
-        float hue;
-        final float saturation = 1.0f;
-        final float brightness = 1.0f;
+        private Background background;
+        private AbstractRenderTarget renderTarget;
 
-        public BackgroundCanvas()
+        private VertexBuffer vertexBuffer;
+        private IndexBuffer primitives;
+        private Appearance appearance;
+        
+        public SimpleVBCanvas()
         {
             renderTarget = new GLRenderTarget(this);
             background = new Background();
+            background.setColor(0x1f1f1f);
+
+            vertexBuffer = new VertexBuffer();
 
             new Thread(this).start();
         }
@@ -73,10 +52,11 @@ public class BackgroundDemo extends Frame
             try
             {
                 g3d.bindTarget(renderTarget);
-                final int color = Color.HSBtoRGB(hue, saturation, brightness);
-                background.setColor(color);
-                hue += 0.01f;
                 g3d.clear(background);
+
+                //TODO
+                //g3d.render(vertexBuffer, primitives, appearance, null);
+
             }
             catch (Throwable t)
             {
@@ -114,16 +94,16 @@ public class BackgroundDemo extends Frame
         }
     }
 
-    BackgroundDemo()
+    SimpleVBDemo()
     {
-        super("BackgroundDemo");
-        add(new BackgroundCanvas());
+        super("SimpleVBDemo");
+        add(new SimpleVBCanvas());
         addWindowListener(new WindowAdapter());
     }
 
     public static void main(String[] args)
     {
-        Frame frame = new BackgroundDemo();
+        Frame frame = new SimpleVBDemo();
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         assert(ge != null);
@@ -155,7 +135,7 @@ public class BackgroundDemo extends Frame
         {
             frame.setSize(800, 600);
         }
-        
+
         frame.setVisible(true);
     }
 
