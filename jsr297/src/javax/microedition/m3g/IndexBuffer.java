@@ -37,7 +37,9 @@ public class IndexBuffer extends Object3D
     public static final int POINT_SPRITES = 10;
 
     private boolean readable = true;
-    private int type;
+    private int primitiveType;
+    
+    private int[] stripLengths;
 
     /**
      * Package protected constructor to allow uninitialised construction
@@ -49,34 +51,55 @@ public class IndexBuffer extends Object3D
 
     public IndexBuffer(int type, int[] stripLengths, int firstIndex)
     {
-        setType(type);
+        setPrimitiveType(type);
         
         throw new UnsupportedOperationException();
     }
 
     public IndexBuffer(int type, int[] stripLengths, int[] indices)
     {
-        setType(type);
+        setPrimitiveType(type);
         
         throw new UnsupportedOperationException();
     }
 
     public IndexBuffer(int type, int primitiveCount, int firstIndex)
     {
-        setType(type);
+        setPrimitiveType(type);
 
         throw new UnsupportedOperationException();
     }
 
     public IndexBuffer(int type, int primitiveCount, int[] indices)
     {
-        setType(type);
+        setPrimitiveType(type);
         
         throw new UnsupportedOperationException();
     }
 
-    void setType(int type)
+    private static final int getIndicesPerPrimitive(int type)
     {
+        switch (type)
+        {
+            case TRIANGLES:
+                return 3;
+            case LINES:
+                return 2;
+            case POINT_SPRITES:
+                return 1;
+            default:
+                throw new IllegalArgumentException("unknown type");
+        }
+    }
+
+    void setPrimitiveType(int type)
+    {
+        //require immutability
+        if (getPrimitiveType() != 0)
+        {
+            throw new IllegalStateException("type is already set");
+        }
+
         if (type < TRIANGLES)
         {
             throw new IllegalArgumentException("type < TRIANGLES");
@@ -86,7 +109,54 @@ public class IndexBuffer extends Object3D
             throw new IllegalArgumentException("type > POINT_SPRITES");
         }
         
-        this.type = type;
+        this.primitiveType = type;
+    }
+
+    void setStripLengths(int[] stripLengths)
+    {
+        //require immutability
+        if (this.stripLengths != null)
+        {
+            throw new IllegalStateException("stripLengths are already set");
+        }
+        //require type to be set first
+        if (getPrimitiveType() == 0)
+        {
+            throw new IllegalStateException("type is not set");
+        }
+        if (getPrimitiveType() == POINT_SPRITES)
+        {
+            throw new IllegalStateException("POINT_SPRITES can not be stripped");
+        }
+
+        if (stripLengths == null)
+        {
+            throw new NullPointerException("stripLengths is null");
+        }
+        if (stripLengths.length == 0)
+        {
+            throw new IllegalArgumentException("stripLengths is empty");
+        }
+
+        //require valid strip lengths
+        final int indicesPerPrimitive = getIndicesPerPrimitive(getPrimitiveType());
+        final int count = stripLengths.length;
+        for (int i = 0; i < count; ++i)
+        {
+            if (stripLengths[i] < indicesPerPrimitive)
+            {
+                throw new IllegalArgumentException("stripLengths[" + i + "] is " +
+                        stripLengths[i] + ", less than the required " +
+                        indicesPerPrimitive);
+            }
+        }
+
+        this.stripLengths = stripLengths;
+    }
+
+    boolean isStripped()
+    {
+        return this.stripLengths != null;
     }
 
     public void commit()
@@ -102,6 +172,11 @@ public class IndexBuffer extends Object3D
     public void getIndices(int[] indices)
     {
         throw new UnsupportedOperationException();
+    }
+
+    public int getPrimitiveType()
+    {
+        return this.primitiveType;
     }
 
     public boolean isReadable()
