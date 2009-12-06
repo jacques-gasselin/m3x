@@ -32,5 +32,80 @@ package javax.microedition.m3g;
  */
 public class IndexBuffer extends Object3D
 {
+    public static final int TRIANGLES = 8;
+    public static final int LINES = 9;
+    public static final int POINT_SPRITES = 10;
 
+    private boolean readable = true;
+    private int type;
+
+    /**
+     * Package protected constructor to allow uninitialised construction
+     * in Loader.
+     */
+    IndexBuffer()
+    {
+    }
+
+    public IndexBuffer(int type, int[] stripLengths, int firstIndex)
+    {
+        setType(type);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public IndexBuffer(int type, int[] stripLengths, int[] indices)
+    {
+        setType(type);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public IndexBuffer(int type, int primitiveCount, int firstIndex)
+    {
+        setType(type);
+
+        throw new UnsupportedOperationException();
+    }
+
+    public IndexBuffer(int type, int primitiveCount, int[] indices)
+    {
+        setType(type);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    void setType(int type)
+    {
+        if (type < TRIANGLES)
+        {
+            throw new IllegalArgumentException("type < TRIANGLES");
+        }
+        if (type > POINT_SPRITES)
+        {
+            throw new IllegalArgumentException("type > POINT_SPRITES");
+        }
+        
+        this.type = type;
+    }
+
+    public void commit()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getIndexCount()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void getIndices(int[] indices)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isReadable()
+    {
+        return this.readable;
+    }
 }

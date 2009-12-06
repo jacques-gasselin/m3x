@@ -12,6 +12,7 @@ import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.IndexBuffer;
+import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 
@@ -38,6 +39,11 @@ public class SimpleVBDemo extends Frame
             background.setColor(0x1f1f1f);
 
             vertexBuffer = new VertexBuffer();
+            VertexArray positions = new VertexArray(3, 3, VertexArray.BYTE);
+            positions.set(0, 1, new byte[]{ 0, 0, 0 });
+            positions.set(1, 1, new byte[]{ 1, 0, 0 });
+            positions.set(2, 1, new byte[]{ 1, 1, 0 });
+            vertexBuffer.setPositions(positions, 1.0f, null);
 
             new Thread(this).start();
         }
