@@ -11,6 +11,7 @@ import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
+import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.IndexBuffer;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
@@ -31,6 +32,7 @@ public class SimpleVBDemo extends Frame
         private VertexBuffer vertexBuffer;
         private IndexBuffer primitives;
         private Appearance appearance;
+        private Camera camera;
         
         public SimpleVBCanvas()
         {
@@ -49,6 +51,8 @@ public class SimpleVBDemo extends Frame
                     new int[]{0, 1, 2});
 
             appearance = new Appearance();
+
+            camera = new Camera();
             
             new Thread(this).start();
         }
@@ -65,7 +69,7 @@ public class SimpleVBDemo extends Frame
                 g3d.bindTarget(renderTarget);
                 g3d.clear(background);
 
-                //TODO
+                g3d.setCamera(camera, null);
                 g3d.render(vertexBuffer, primitives, appearance, null);
 
             }

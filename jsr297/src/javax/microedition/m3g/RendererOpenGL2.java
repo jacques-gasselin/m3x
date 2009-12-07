@@ -323,7 +323,7 @@ public class RendererOpenGL2 extends Renderer
             }
 
             gl.glVertexPointer(positions.getVertexCount(), glType,
-                    positions.getVertexByteStride(), positions.getDirectBuffer());
+                    positions.getVertexByteStride(), positions.getBuffer());
         }
 
         //TODO normals

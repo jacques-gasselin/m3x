@@ -296,7 +296,14 @@ public class IndexBuffer extends Object3D
 
     public int getIndexCount()
     {
-        throw new UnsupportedOperationException();
+        if (isStripped())
+        {
+            return sum(stripLengths);
+        }
+        else
+        {
+            return getIndicesPerPrimitive(primitiveType) * primitiveCount;
+        }
     }
 
     public void getIndices(int[] indices)

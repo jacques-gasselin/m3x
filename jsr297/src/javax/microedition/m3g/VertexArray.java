@@ -315,14 +315,19 @@ public class VertexArray extends Object3D
         return vertexByteStride;
     }
 
-    ByteBuffer getDirectBuffer()
+    private final ByteBuffer getDirectBuffer()
     {
         return directBuffer;
     }
 
-    Buffer getDirectBufferView()
+    private final Buffer getDirectBufferView()
     {
         return directBufferView;
+    }
+
+    final Buffer getBuffer()
+    {
+        return directBuffer.rewind();
     }
 
     public void set(int firstVertex, int numVertices, byte[] src)
