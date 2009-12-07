@@ -28,8 +28,12 @@
 package javax.microedition.m3g.opengl;
 
 import javax.media.opengl.GL;
+import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
+import javax.microedition.m3g.IndexBuffer;
 import javax.microedition.m3g.Renderer;
+import javax.microedition.m3g.Transform;
+import javax.microedition.m3g.VertexBuffer;
 
 /**
  * @author jgasseli
@@ -39,6 +43,8 @@ public class GLRenderer extends Renderer
     private GL instanceGL;
     private int width;
     private int height;
+
+    private final Transform modelTransform = new Transform();
     
     public GLRenderer()
     {
@@ -129,6 +135,56 @@ public class GLRenderer extends Renderer
         final GL gl = getGL();
         //OpenGL uses lower-left as origin
         gl.glViewport(x, this.height - (y + height), width, height);
+    }
+
+    @Override
+    public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope)
+    {
+        if (vertices == null)
+        {
+            throw new NullPointerException("vertices is null");
+        }
+        if (primitives == null)
+        {
+            throw new NullPointerException("primitives is null");
+        }
+        if (appearance == null)
+        {
+            throw new NullPointerException("appearance is null");
+        }
+
+        final GL gl = getGL();
+        setModelTransform(transform);
+        setAppearance(gl, appearance);
+        setVertexBuffer(gl, vertices);
+        render(gl, primitives);
+    }
+
+    private void setModelTransform(Transform transform)
+    {
+        if (transform != null)
+        {
+            this.modelTransform.set(transform);
+        }
+        else
+        {
+            this.modelTransform.setIdentity();
+        }
+    }
+
+    private void setAppearance(GL gl, Appearance appearance)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void setVertexBuffer(GL gl, VertexBuffer vertices)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void render(GL gl, IndexBuffer primitives)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     

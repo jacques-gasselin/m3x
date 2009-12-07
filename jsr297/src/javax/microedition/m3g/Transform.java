@@ -180,6 +180,12 @@ public final class Transform
         this.matrix.set(matrix);
     }
 
+    /**
+     * Sets the value of this transform to a copy of the passed in transform.
+     *
+     * @param transform the transform to copy from
+     * @throws NullPointerException if transform is null
+     */
     public void set(Transform transform)
     {
         requireNotNull(transform, "transform");
@@ -187,6 +193,9 @@ public final class Transform
         this.matrix.set(transform.matrix);
     }
 
+    /**
+     * Sets this transform to the identity 4x4 matrix.
+     */
     public void setIdentity()
     {
         this.matrix.setIdentity();

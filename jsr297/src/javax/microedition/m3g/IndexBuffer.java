@@ -27,6 +27,10 @@
 
 package javax.microedition.m3g;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
+
 /**
  * @author jgasseli
  */
@@ -38,7 +42,10 @@ public class IndexBuffer extends Object3D
 
     private boolean readable = true;
     private int primitiveType;
-    
+
+    private int firstIndex = -1;
+    private int primitiveCount;
+    private ShortBuffer indices;
     private int[] stripLengths;
 
     /**
@@ -52,29 +59,43 @@ public class IndexBuffer extends Object3D
     public IndexBuffer(int type, int[] stripLengths, int firstIndex)
     {
         setPrimitiveType(type);
-        
-        throw new UnsupportedOperationException();
+        setStripLengths(stripLengths);
+        final int indexCount = sum(stripLengths);
+        setImplicitIndex(firstIndex, indexCount);
     }
 
     public IndexBuffer(int type, int[] stripLengths, int[] indices)
     {
         setPrimitiveType(type);
-        
-        throw new UnsupportedOperationException();
+        setStripLengths(stripLengths);
+        final int indexCount = sum(stripLengths);
+        setExplicitIndices(indices, indexCount);
     }
 
     public IndexBuffer(int type, int primitiveCount, int firstIndex)
     {
         setPrimitiveType(type);
-
-        throw new UnsupportedOperationException();
+        setPrimitiveCount(primitiveCount);
+        final int indexCount = getIndicesPerPrimitive(type) * primitiveCount;
+        setImplicitIndex(firstIndex, indexCount);
     }
 
     public IndexBuffer(int type, int primitiveCount, int[] indices)
     {
         setPrimitiveType(type);
-        
-        throw new UnsupportedOperationException();
+        setPrimitiveCount(primitiveCount);
+        final int indexCount = getIndicesPerPrimitive(type) * primitiveCount;
+        setExplicitIndices(indices, indexCount);
+    }
+
+    private static final int sum(int[] stripLengths)
+    {
+        int result = 0;
+        for (int l : stripLengths)
+        {
+            result += l;
+        }
+        return result;
     }
 
     private static final int getIndicesPerPrimitive(int type)
@@ -92,7 +113,7 @@ public class IndexBuffer extends Object3D
         }
     }
 
-    void setPrimitiveType(int type)
+    private final void setPrimitiveType(int type)
     {
         //require immutability
         if (getPrimitiveType() != 0)
@@ -112,7 +133,22 @@ public class IndexBuffer extends Object3D
         this.primitiveType = type;
     }
 
-    void setStripLengths(int[] stripLengths)
+    private final void setPrimitiveCount(int primitiveCount)
+    {
+        //require immutability
+        if (isStripped())
+        {
+            throw new IllegalStateException("stripping is already set");
+        }
+        if (primitiveCount < 0)
+        {
+            throw new IndexOutOfBoundsException("primitiveCount < 0");
+        }
+
+        this.primitiveCount = primitiveCount;
+    }
+
+    private final void setStripLengths(int[] stripLengths)
     {
         //require immutability
         if (this.stripLengths != null)
@@ -154,9 +190,98 @@ public class IndexBuffer extends Object3D
         this.stripLengths = stripLengths;
     }
 
-    boolean isStripped()
+    private void setImplicitIndex(int firstIndex, int indexCount)
+    {
+        //verify immutability
+        if (isExplicit())
+        {
+            throw new IllegalStateException("explicit indices are already set");
+        }
+        if (firstIndex < 0)
+        {
+            throw new IndexOutOfBoundsException("firstIndex < 0");
+        }
+        if (firstIndex + indexCount > 65536)
+        {
+            throw new IndexOutOfBoundsException("firstIndex + indexCount > 65536");
+        }
+
+        this.firstIndex = firstIndex;
+    }
+
+    private void setExplicitIndices(int[] indices, int indexCount)
+    {
+        //verify immutability
+        if (isImplicit())
+        {
+            throw new IllegalStateException("implicit index already set");
+        }
+        if (indices == null)
+        {
+            throw new NullPointerException("indices is null");
+        }
+        if (indices.length == 0)
+        {
+            throw new IllegalArgumentException("indices is empty");
+        }
+        if (indices.length < indexCount)
+        {
+            throw new IndexOutOfBoundsException("indices.length < indexCount");
+        }
+
+        //allocate a buffer and copy in
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(indices.length * 2);
+        //ensure native byte order
+        byteBuffer.order(ByteOrder.nativeOrder());
+        
+        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        for (int i = 0; i < indexCount; ++i)
+        {
+            final int index = indices[i];
+            if (index < 0)
+            {
+                throw new IndexOutOfBoundsException("indices[" + i + "] is negative");
+            }
+            if (index > 65535)
+            {
+                throw new IndexOutOfBoundsException("indices[" + i + "] is greater" +
+                        " than 65535");
+            }
+            shortBuffer.put((short)index);
+        }
+        shortBuffer.flip();
+
+        this.indices = shortBuffer;
+    }
+
+    final boolean isImplicit()
+    {
+        return this.firstIndex != -1;
+    }
+
+    final boolean isExplicit()
+    {
+        return this.indices != null;
+    }
+
+    final boolean isStripped()
     {
         return this.stripLengths != null;
+    }
+
+    final ShortBuffer getIndexBuffer()
+    {
+        return this.indices;
+    }
+
+    final int[] getStripLengths()
+    {
+        return this.stripLengths;
+    }
+
+    final int getPrimitiveCount()
+    {
+        return this.primitiveCount;
     }
 
     public void commit()

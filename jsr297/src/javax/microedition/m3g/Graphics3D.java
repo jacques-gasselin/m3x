@@ -311,13 +311,13 @@ public class Graphics3D
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform)
     {
-        throw new UnsupportedOperationException();
+        renderer.render(vertices, primitives, appearance, transform, -1);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
-        throw new UnsupportedOperationException();
+        renderer.render(vertices, primitives, appearance, transform, scope);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,

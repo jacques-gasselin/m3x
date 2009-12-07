@@ -45,6 +45,11 @@ public class SimpleVBDemo extends Frame
             positions.set(2, 1, new byte[]{ 1, 1, 0 });
             vertexBuffer.setPositions(positions, 1.0f, null);
 
+            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 1,
+                    new int[]{0, 1, 2});
+
+            appearance = new Appearance();
+            
             new Thread(this).start();
         }
 
@@ -61,7 +66,7 @@ public class SimpleVBDemo extends Frame
                 g3d.clear(background);
 
                 //TODO
-                //g3d.render(vertexBuffer, primitives, appearance, null);
+                g3d.render(vertexBuffer, primitives, appearance, null);
 
             }
             catch (Throwable t)
