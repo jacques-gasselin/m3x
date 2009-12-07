@@ -67,6 +67,8 @@ public class RendererOpenGL2 extends Renderer
     public void initialize(GL gl)
     {
         maxTextureUnits = glGet(gl, GL.GL_MAX_TEXTURE_UNITS);
+
+        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
     }
 
     public void bind(GL gl, int width, int height)
@@ -77,6 +79,7 @@ public class RendererOpenGL2 extends Renderer
 
         if (gl != this.lastInstanceGL)
         {
+            initialize(gl);
             this.lastInstanceGL = gl;
         }
     }
@@ -213,10 +216,10 @@ public class RendererOpenGL2 extends Renderer
         final float[] color = TEMP_FLOAT4;
         final float byteToUniform = 1.0f / 255;
         
-        color[0] = ((argb & 0x00ff0000) >> 16) * byteToUniform;
-        color[1] = ((argb & 0x0000ff00) >> 8) * byteToUniform;
-        color[2] = ((argb & 0x000000ff) >> 0) * byteToUniform;
-        color[3] = ((argb & 0xff000000) >> 24) * byteToUniform;
+        color[0] = ((argb >> 16) & 0xff) * byteToUniform;
+        color[1] = ((argb >> 8) & 0xff) * byteToUniform;
+        color[2] = ((argb >> 0) & 0xff) * byteToUniform;
+        color[3] = ((argb >> 24) & 0xff) * byteToUniform;
 
         return color;
     }
@@ -298,6 +301,11 @@ public class RendererOpenGL2 extends Renderer
             int glType = GL.GL_FLOAT;
             switch (positions.getComponentType())
             {
+                case VertexArray.FLOAT:
+                {
+                    glType = GL.GL_FLOAT;
+                    break;
+                }
                 case VertexArray.FIXED:
                 {
                     //FIXED is not supported in GL
@@ -311,18 +319,13 @@ public class RendererOpenGL2 extends Renderer
                     glType = GL.GL_SHORT;
                     break;
                 }
-                case VertexArray.BYTE:
-                {
-                    glType = GL.GL_BYTE;
-                    break;
-                }
                 default:
                 {
                     throw new IllegalStateException("unsupported component type");
                 }
             }
 
-            gl.glVertexPointer(positions.getVertexCount(), glType,
+            gl.glVertexPointer(positions.getComponentCount(), glType,
                     positions.getVertexByteStride(), positions.getBuffer());
         }
 
@@ -406,14 +409,13 @@ public class RendererOpenGL2 extends Renderer
             else
             {
                 final ShortBuffer indices = primitives.getIndexBuffer();
-                indices.mark();
                 for (int stripLength : stripLengths)
                 {
                     gl.glDrawElements(glType, stripLength, GL.GL_UNSIGNED_SHORT,
                             indices);
                     indices.position(indices.position() + stripLength);
                 }
-                indices.reset();
+                indices.rewind();
             }
         }
         else

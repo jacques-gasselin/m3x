@@ -327,7 +327,7 @@ public class VertexArray extends Object3D
 
     final Buffer getBuffer()
     {
-        return directBuffer.rewind();
+        return directBufferView.rewind();
     }
 
     public void set(int firstVertex, int numVertices, byte[] src)

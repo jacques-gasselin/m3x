@@ -230,11 +230,11 @@ public class IndexBuffer extends Object3D
         }
 
         //allocate a buffer and copy in
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(indices.length * 2);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(indexCount * 2);
         //ensure native byte order
         byteBuffer.order(ByteOrder.nativeOrder());
         
-        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        final ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
         for (int i = 0; i < indexCount; ++i)
         {
             final int index = indices[i];
@@ -276,7 +276,7 @@ public class IndexBuffer extends Object3D
 
     final ShortBuffer getIndexBuffer()
     {
-        return this.indices;
+        return (ShortBuffer) this.indices.rewind();
     }
 
     final int[] getStripLengths()

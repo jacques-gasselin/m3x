@@ -334,4 +334,10 @@ public class VertexBufferTest extends TestCase
         VertexBuffer vb = new VertexBuffer();
         assertEquals(0, vb.getVertexCount());
     }
+
+    public void testGetDefaultColor()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertEquals(0xffffffff, vb.getDefaultColor());
+    }
 }

@@ -242,10 +242,11 @@ public class VertexBuffer extends Object3D
     private static final int MAX_TEXTURE_COORDS = 8;
     private final ScaleBiasedVertexArray[] textureCoordinates =
             new ScaleBiasedVertexArray[MAX_TEXTURE_COORDS];
+
     
     public VertexBuffer()
     {
-
+        setDefaultColor(0xffffffff);
     }
 
     private final void requireMutable()

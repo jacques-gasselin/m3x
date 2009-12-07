@@ -41,14 +41,14 @@ public class SimpleVBDemo extends Frame
             background.setColor(0x1f1f1f);
 
             vertexBuffer = new VertexBuffer();
-            VertexArray positions = new VertexArray(3, 3, VertexArray.BYTE);
-            positions.set(0, 1, new byte[]{ 0, 0, 0 });
-            positions.set(1, 1, new byte[]{ 1, 0, 0 });
-            positions.set(2, 1, new byte[]{ 1, 1, 0 });
+            vertexBuffer.setDefaultColor(0xffff0000);
+            VertexArray positions = new VertexArray(3, 3, VertexArray.FLOAT);
+            positions.set(0, 1, new float[]{ 0, 0, 0 });
+            positions.set(1, 1, new float[]{ 1, 0, 0 });
+            positions.set(2, 1, new float[]{ 0, 1, 0 });
             vertexBuffer.setPositions(positions, 1.0f, null);
 
-            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 1,
-                    new int[]{0, 1, 2});
+            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 1, 0);
 
             appearance = new Appearance();
 
