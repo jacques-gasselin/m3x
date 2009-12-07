@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -62,6 +62,47 @@ public class Graphics3D
         
     }
 
+    private final void requireCurrentRenderTarget()
+    {
+        if (renderTarget == null)
+        {
+            throw new IllegalStateException(
+                    "this Graphics3D does not have a rendering target");
+        }
+    }
+
+    private final void requireCurrentCamera()
+    {
+        if (camera == null)
+        {
+            throw new IllegalStateException(
+                    "this Graphics3D does not have a current camera");
+        }
+    }
+
+    private static final void requireVerticesNotNull(VertexBuffer vertices)
+    {
+        if (vertices == null)
+        {
+            throw new NullPointerException("vertices is null");
+        }
+    }
+
+    private static final void requirePrimitivesNotNull(IndexBuffer primitives)
+    {
+        if (primitives == null)
+        {
+            throw new NullPointerException("primitives is null");
+        }
+    }
+
+    private static final void requireAppearanceNotNull(AppearanceBase appearance)
+    {
+        if (appearance == null)
+        {
+            throw new NullPointerException("appearance is null");
+        }
+    }
     /**
      * Adds a light to the end of the lights array. The index of the added light
      * is returned for later use with setLight and getLight.
@@ -300,6 +341,14 @@ public class Graphics3D
 
     public void render(Node node, Transform transform)
     {
+        if (node == null)
+        {
+            throw new NullPointerException("node is null");
+        }
+        
+        requireCurrentRenderTarget();
+        requireCurrentCamera();
+
         throw new UnsupportedOperationException();
     }
 
@@ -311,23 +360,70 @@ public class Graphics3D
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform)
     {
+        requireVerticesNotNull(vertices);
+        requirePrimitivesNotNull(primitives);
+        requireAppearanceNotNull(appearance);
+        
+        requireCurrentRenderTarget();
+        requireCurrentCamera();
+        
         renderer.render(vertices, primitives, appearance, transform, -1);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
+        requireVerticesNotNull(vertices);
+        requirePrimitivesNotNull(primitives);
+        requireAppearanceNotNull(appearance);
+
+        requireCurrentRenderTarget();
+        requireCurrentCamera();
+
         renderer.render(vertices, primitives, appearance, transform, scope);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             ShaderAppearance appearance, Transform transform)
     {
+        requireVerticesNotNull(vertices);
+        requirePrimitivesNotNull(primitives);
+        requireAppearanceNotNull(appearance);
+
+        requireCurrentRenderTarget();
+        requireCurrentCamera();
+
         throw new UnsupportedOperationException();
     }
 
     public void render(World world)
     {
+        if (world == null)
+        {
+            throw new NullPointerException("world is null");
+        }
+        requireCurrentRenderTarget();
+
+        final Camera activeCamera = world.getActiveCamera();
+        if (activeCamera == null)
+        {
+            throw new IllegalStateException("world has no active camera");
+        }
+
+
+        Transform cameraToWorld = new Transform();
+        camera.getTransformTo(world, cameraToWorld);
+        setCamera(activeCamera, cameraToWorld);
+
+        Background background = world.getBackground();
+        clear(background);
+        
+        //TODO do lights
+
+
+        //render as a node
+        render(world, null);
+        
         throw new UnsupportedOperationException();
     }
 

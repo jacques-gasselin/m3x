@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -267,6 +267,11 @@ public class IndexBuffer extends Object3D
     final boolean isStripped()
     {
         return this.stripLengths != null;
+    }
+
+    final int getFirstIndex()
+    {
+        return this.firstIndex;
     }
 
     final ShortBuffer getIndexBuffer()

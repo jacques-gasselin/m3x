@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,66 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class AppearanceBase extends Object3D
+public abstract class AppearanceBase extends Object3D
 {
+    private int layer;
+    private boolean depthSortEnabled;
+    private CompositingMode compositingMode;
+    private PolygonMode polygonMode;
 
+    public AppearanceBase()
+    {
+        
+    }
+
+    public CompositingMode getCompositingMode()
+    {
+        return this.compositingMode;
+    }
+    
+    public int getLayer()
+    {
+        return this.layer;
+    }
+
+    public PolygonMode getPolygonMode()
+    {
+        return this.polygonMode;
+    }
+
+    public boolean isDepthSortEnabled()
+    {
+        return this.depthSortEnabled;
+    }
+
+    public void setCompositingMode(CompositingMode compositingMode)
+    {
+        this.compositingMode = compositingMode;
+    }
+
+    public void setDepthSortEnabled(boolean enable)
+    {
+        this.depthSortEnabled = enable;
+    }
+
+    public void setLayer(int layer)
+    {
+        if (layer < -63)
+        {
+            throw new IndexOutOfBoundsException("layer < -63");
+        }
+        if (layer > 63)
+        {
+            throw new IndexOutOfBoundsException("layer > 63");
+        }
+        
+        this.layer = layer;
+    }
+
+    public void setPolygonMode(PolygonMode polygonMode)
+    {
+        this.polygonMode = polygonMode;
+    }
 }
+
+

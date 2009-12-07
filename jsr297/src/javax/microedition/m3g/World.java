@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,5 +32,31 @@ package javax.microedition.m3g;
  */
 public class World extends Group
 {
+    private Camera activeCamera;
+    private Background background;
+    
+    public World()
+    {
+        
+    }
 
+    public Camera getActiveCamera()
+    {
+        return this.activeCamera;
+    }
+
+    public Background getBackground()
+    {
+        return this.background;
+    }
+
+    public void setActiveCamera(Camera camera)
+    {
+        this.activeCamera = camera;
+    }
+
+    public void setBackground(Background background)
+    {
+        this.background = background;
+    }
 }

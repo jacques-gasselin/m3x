@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,31 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Node extends Transformable
+public abstract class Node extends Transformable
 {
+    private Node parent;
 
+    public Node()
+    {
+        
+    }
+
+    public Node getParent()
+    {
+        return this.parent;
+    }
+
+    public boolean getTransformTo(Node target, Transform transform)
+    {
+        if (target == null)
+        {
+            throw new NullPointerException("target is null");
+        }
+        if (transform == null)
+        {
+            throw new NullPointerException("transform is null");
+        }
+
+        throw new UnsupportedOperationException();
+    }
 }

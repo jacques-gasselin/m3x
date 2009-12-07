@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -89,7 +89,7 @@ public final class Transform
         requireMinLength(matrix, 16, "matrix");
 
         //row-major
-        float[] rowValues = new float[4];
+        final float[] rowValues = new float[4];
         for (int row = 0; row < 4; ++row)
         {
             this.matrix.getRow(row, rowValues);
@@ -97,6 +97,21 @@ public final class Transform
         }
     }
 
+    final float[] getColumnMajor()
+    {
+        final float[] matrix = new float[16];
+        
+        //column-major
+        final float[] columnValues = new float[4];
+        for (int column = 0; column < 4; ++column)
+        {
+            this.matrix.getColumn(column, columnValues);
+            System.arraycopy(columnValues, 0, matrix, column * 4, 4);
+        }
+
+        return matrix;
+    }
+    
     /**
      * Inverts the transform matrix.
      * @throws ArithmeticException if the matrix is not invertible.

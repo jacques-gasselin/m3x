@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,5 +32,71 @@ package javax.microedition.m3g;
  */
 public class Appearance extends AppearanceBase
 {
+    private Fog fog;
+    private Material material;
+    private PointSpriteMode pointSpriteMode;
+    
+    private static final int MAX_TEXTURE_COORDS = 8;
+    private final Texture2D[] textures = new Texture2D[MAX_TEXTURE_COORDS];
+    
+    public Appearance()
+    {
+        
+    }
 
+    private static final void requireValidTextureIndex(int index)
+    {
+        if (index < 0)
+        {
+            throw new IndexOutOfBoundsException("index < 0");
+        }
+        if (index >= MAX_TEXTURE_COORDS)
+        {
+            throw new IndexOutOfBoundsException("index >= MAX_TEXTURE_COORDS");
+        }
+    }
+
+    public Fog getFog()
+    {
+        return this.fog;
+    }
+
+    public Material getMaterial()
+    {
+        return this.material;
+    }
+
+    public PointSpriteMode getPointSpriteMode()
+    {
+        return this.pointSpriteMode;
+    }
+
+    public Texture2D getTexture(int index)
+    {
+        requireValidTextureIndex(index);
+
+        return this.textures[index];
+    }
+
+    public void setFog(Fog fog)
+    {
+        this.fog = fog;
+    }
+
+    public void setMaterial(Material material)
+    {
+        this.material = material;
+    }
+
+    public void setPointSpriteMode(PointSpriteMode pointSpriteMode)
+    {
+        this.pointSpriteMode = pointSpriteMode;
+    }
+
+    public void setTexture(int index, Texture2D texture)
+    {
+        requireValidTextureIndex(index);
+
+        this.textures[index] = texture;
+    }
 }

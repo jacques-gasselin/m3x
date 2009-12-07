@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g.opengl;
 
+import javax.microedition.m3g.RendererOpenGL2;
 import javax.microedition.m3g.Renderer;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -40,12 +41,12 @@ import javax.microedition.m3g.AbstractRenderTarget;
 public class GLRenderTarget extends AbstractRenderTarget
 {
     private GLAutoDrawable drawable;
-    private GLRenderer renderer;
+    private RendererOpenGL2 renderer;
     
     public GLRenderTarget(GLAutoDrawable drawable)
     {
         this.drawable = drawable;
-        renderer = new GLRenderer();
+        renderer = new RendererOpenGL2();
     }
     
     public int getWidth()
