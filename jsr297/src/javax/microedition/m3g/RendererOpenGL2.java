@@ -231,19 +231,80 @@ public class RendererOpenGL2 extends Renderer
     private final void setCompositingMode(GL gl, CompositingMode compositingMode)
     {
         {
-            gl.glEnable(GL.GL_DEPTH_TEST);
-            gl.glDisable(GL.GL_ALPHA_TEST);
-            gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-            gl.glDisable(GL.GL_BLEND);
             gl.glDepthMask(true);
             gl.glColorMask(true, true, true, true);
             gl.glDepthFunc(GL.GL_LEQUAL);
+            
+            gl.glDisable(GL.GL_ALPHA_TEST);
+            gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+            gl.glDisable(GL.GL_BLEND);
+            gl.glEnable(GL.GL_DEPTH_TEST);
         }
     }
 
     private final void setPolygonMode(GL gl, PolygonMode polygonMode)
     {
-        //TODO
+        if (polygonMode != null)
+        {
+            switch (polygonMode.getCulling())
+            {
+                case PolygonMode.CULL_BACK:
+                {
+                    gl.glCullFace(GL.GL_BACK);
+                    gl.glEnable(GL.GL_CULL_FACE);
+                    break;
+                }
+                case PolygonMode.CULL_FRONT:
+                {
+                    gl.glCullFace(GL.GL_FRONT);
+                    gl.glEnable(GL.GL_CULL_FACE);
+                    break;
+                }
+                case PolygonMode.CULL_NONE:
+                {
+                    gl.glDisable(GL.GL_CULL_FACE);
+                    break;
+                }
+            }
+
+            gl.glLineWidth(polygonMode.getLineWidth());
+
+            switch (polygonMode.getShading())
+            {
+                case PolygonMode.SHADE_FLAT:
+                {
+                    gl.glShadeModel(GL.GL_FLAT);
+                    break;
+                }
+                case PolygonMode.SHADE_SMOOTH:
+                {
+                    gl.glShadeModel(GL.GL_SMOOTH);
+                    break;
+                }
+            }
+
+            switch (polygonMode.getWinding())
+            {
+                case PolygonMode.WINDING_CCW:
+                {
+                    gl.glFrontFace(GL.GL_CCW);
+                    break;
+                }
+                case PolygonMode.WINDING_CW:
+                {
+                    gl.glFrontFace(GL.GL_CW);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            gl.glCullFace(GL.GL_BACK);
+            gl.glShadeModel(GL.GL_SMOOTH);
+            gl.glFrontFace(GL.GL_CCW);
+            
+            gl.glEnable(GL.GL_CULL_FACE);
+        }
     }
 
     private final void setFog(GL gl, Fog fog)

@@ -90,9 +90,9 @@ public class SimpleVBDemo extends Frame
 
             primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 3,
                     new int[] {
-                0, 1, 2,
+                0, 2, 1,
                 1, 2, 3,
-                2, 3, 0,
+                3, 2, 0,
             });
 
             appearance = new Appearance();

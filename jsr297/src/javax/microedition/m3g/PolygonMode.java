@@ -32,5 +32,107 @@ package javax.microedition.m3g;
  */
 public class PolygonMode extends Object3D
 {
+    public static final int CULL_BACK = 160;
+    public static final int CULL_FRONT = 161;
+    public static final int CULL_NONE = 162;
+    public static final int SHADE_FLAT = 164;
+    public static final int SHADE_SMOOTH = 165;
+    public static final int WINDING_CCW = 168;
+    public static final int WINDING_CW = 169;
 
+    private int culling = CULL_BACK;
+    private int winding = WINDING_CCW;
+    private float lineWidth = 1.0f;
+    private int shading = SHADE_SMOOTH;
+    private boolean twoSidedLightingEnabled;
+    private boolean localCameraLightingEnabled;
+    private boolean perspectiveCorrectionEnabled;
+    
+    public PolygonMode()
+    {
+        
+    }
+
+    public int getCulling()
+    {
+        return this.culling;
+    }
+
+    public float getLineWidth()
+    {
+        return this.lineWidth;
+    }
+
+    public int getShading()
+    {
+        return this.shading;
+    }
+
+    public int getWinding()
+    {
+        return this.winding;
+    }
+
+    @Deprecated
+    public boolean isLocalCameraLightingEnabled()
+    {
+        return this.isLocalCameraLightingEnabled();
+    }
+
+    @Deprecated
+    public boolean isPerspectiveCorrectionEnabled()
+    {
+        return this.perspectiveCorrectionEnabled;
+    }
+
+    @Deprecated
+    public boolean isTwoSidedLightingEnabled()
+    {
+        return this.twoSidedLightingEnabled;
+    }
+
+    public void setCulling(int mode)
+    {
+        Require.argumentInEnum(mode, "mode", CULL_BACK, CULL_NONE);
+
+        this.culling = mode;
+    }
+
+    public void setLineWidth(float width)
+    {
+
+        this.lineWidth = width;
+    }
+
+    @Deprecated
+    public void setLocalCameraLightingEnable(boolean enable)
+    {
+        this.localCameraLightingEnabled = enable;
+    }
+
+    @Deprecated
+    public void setPerspectiveCorrectionEnable(boolean enable)
+    {
+        this.perspectiveCorrectionEnabled = enable;
+    }
+
+    public void setShading(int mode)
+    {
+        Require.argumentInEnum(mode, "mode", SHADE_FLAT, SHADE_SMOOTH);
+
+        this.shading = mode;
+    }
+
+    @Deprecated
+    public void setTwoSidedLightingEnabled(boolean enable)
+    {
+        this.twoSidedLightingEnabled = enable;
+    }
+
+    public void setWinding(int mode)
+    {
+        Require.argumentInEnum(mode, "mode", WINDING_CCW, WINDING_CW);
+
+        this.winding = mode;
+    }
 }
