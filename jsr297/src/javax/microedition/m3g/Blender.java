@@ -30,40 +30,27 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class CompositingMode extends Object3D
+public class Blender extends Object3D
 {
-    public static final int ALPHA = 64;
-    public static final int ALPHA_ADD = 65;
-    public static final int MODULATE = 66;
-    public static final int MODULATE_X2 = 67;
-    public static final int REPLACE = 68;
-    public static final int ADD = 69;
-    public static final int ALPHA_DARKEN = 70;
-    public static final int ALPHA_PREMULTIPLIED = 71;
-    public static final int MODULATE_INV = 72;
+    public static final int ADD = 88;
+    public static final int SUBTRACT = 89;
+    public static final int REVERSE_SUBTRACT = 90;
 
-    public static final int NEVER = 512;
-    public static final int LESS = 513;
-    public static final int EQUAL = 514;
-    public static final int LEQUAL = 515;
-    public static final int GREATER = 516;
-    public static final int NOTEQUAL = 517;
-    public static final int GEQUAL = 518;
-    public static final int ALWAYS = 519;
+    public static final int ZERO = 112;
+    public static final int ONE = 113;
+    public static final int SRC_COLOR = 114;
+    public static final int ONE_MINUS_SRC_COLOR = 115;
+    public static final int SRC_ALPHA = 116;
+    public static final int ONE_MINUS_SRC_ALPHA = 117;
+    public static final int DST_ALPHA = 118;
+    public static final int ONE_MINUS_DST_ALPHA = 119;
+    public static final int DST_COLOR = 120;
+    public static final int ONE_MINUS_DST_COLOR = 121;
+    public static final int SRC_ALPHA_SATURATE = 122;
+    public static final int CONSTANT_COLOR = 123;
+    public static final int ONE_MINUS_CONSTANT_COLOR = 124;
+    public static final int CONSTANT_ALPHA = 125;
+    public static final int ONE_MINUS_CONSTANT_ALPHA = 126;
 
-    private int blendingMode = REPLACE;
-    private float alphaThreshold;
-    private int alphaTestFunction = GEQUAL;
-    private float depthOffsetFactor, depthOffsetUnits;
-    private boolean depthTestEnabled = true;
-    private int depthTestFunction = LEQUAL;
-    private boolean depthWriteEnabled = true;
-    private int colorWriteMask = 0xffffffff;
-    private Blender blender;
-    private Stencil stencil;
     
-    public CompositingMode()
-    {
-        
-    }
 }

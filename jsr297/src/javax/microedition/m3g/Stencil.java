@@ -30,40 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class CompositingMode extends Object3D
+public class Stencil extends Object3D
 {
-    public static final int ALPHA = 64;
-    public static final int ALPHA_ADD = 65;
-    public static final int MODULATE = 66;
-    public static final int MODULATE_X2 = 67;
-    public static final int REPLACE = 68;
-    public static final int ADD = 69;
-    public static final int ALPHA_DARKEN = 70;
-    public static final int ALPHA_PREMULTIPLIED = 71;
-    public static final int MODULATE_INV = 72;
 
-    public static final int NEVER = 512;
-    public static final int LESS = 513;
-    public static final int EQUAL = 514;
-    public static final int LEQUAL = 515;
-    public static final int GREATER = 516;
-    public static final int NOTEQUAL = 517;
-    public static final int GEQUAL = 518;
-    public static final int ALWAYS = 519;
-
-    private int blendingMode = REPLACE;
-    private float alphaThreshold;
-    private int alphaTestFunction = GEQUAL;
-    private float depthOffsetFactor, depthOffsetUnits;
-    private boolean depthTestEnabled = true;
-    private int depthTestFunction = LEQUAL;
-    private boolean depthWriteEnabled = true;
-    private int colorWriteMask = 0xffffffff;
-    private Blender blender;
-    private Stencil stencil;
-    
-    public CompositingMode()
-    {
-        
-    }
 }
