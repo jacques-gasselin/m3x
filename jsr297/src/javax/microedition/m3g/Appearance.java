@@ -44,18 +44,6 @@ public class Appearance extends AppearanceBase
         
     }
 
-    private static final void requireValidTextureIndex(int index)
-    {
-        if (index < 0)
-        {
-            throw new IndexOutOfBoundsException("index < 0");
-        }
-        if (index >= MAX_TEXTURE_COORDS)
-        {
-            throw new IndexOutOfBoundsException("index >= MAX_TEXTURE_COORDS");
-        }
-    }
-
     public Fog getFog()
     {
         return this.fog;
@@ -73,7 +61,7 @@ public class Appearance extends AppearanceBase
 
     public Texture2D getTexture(int index)
     {
-        requireValidTextureIndex(index);
+        Require.indexInRange(index, MAX_TEXTURE_COORDS);
 
         return this.textures[index];
     }
@@ -95,7 +83,7 @@ public class Appearance extends AppearanceBase
 
     public void setTexture(int index, Texture2D texture)
     {
-        requireValidTextureIndex(index);
+        Require.indexInRange(index, MAX_TEXTURE_COORDS);
 
         this.textures[index] = texture;
     }

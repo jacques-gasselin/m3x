@@ -47,7 +47,7 @@ public class BackgroundDemo extends Frame
 {
     private static final boolean FULLSCREEN = false;
     
-    private static class BackgroundCanvas extends GLCanvas implements Runnable
+    private static final class BackgroundCanvas extends GLCanvas implements Runnable
     {
         Background background;
         AbstractRenderTarget renderTarget;

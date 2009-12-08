@@ -32,5 +32,149 @@ package javax.microedition.m3g;
  */
 public class Camera extends Node
 {
+    public static final int GENERIC = 48;
+    public static final int PARALLEL = 49;
+    public static final int PERSPECTIVE = 50;
+    public static final int SCREEN = 51;
+    
+    private int projectionType;
+    private final float[] projectionParams = new float[4];
+    private boolean projectionNeedsUpdate = true;
+    private final Transform projection = new Transform();
+    
+    public Camera()
+    {
+        
+    }
 
+    private final void setProjectionType(int type)
+    {
+        Require.argumentInEnum(type, "type", GENERIC, SCREEN);
+
+        this.projectionType = type;
+    }
+
+    public int getProjection(float[] params)
+    {
+        if (params != null)
+        {
+            System.arraycopy(this.projectionParams, 0,
+                    params, 0, 4);
+        }
+        
+        return this.projectionType;
+    }
+
+    private final void updateProjection()
+    {
+        //assume all zero
+        final float[] matrix = new float[16];
+        final float[] params = this.projectionParams;
+
+        switch (projectionType)
+        {
+            case PARALLEL:
+            {
+                final float h = params[0];
+                final float w = params[1] * h;
+                final float near = params[2];
+                final float far = params[3];
+                final float d = far - near;
+
+                //row-major
+                matrix[0] = 2.0f / w;
+                matrix[5] = 2.0f / h;
+                matrix[10] = -2 / d;
+                matrix[11] = -(near + far) / d;
+                matrix[15] = 1.0f;
+
+                break;
+            }
+            case PERSPECTIVE:
+            {
+                final float h = (float) Math.tan(Math.toRadians(params[0]) * 0.5f);
+                final float w = params[1] * h;
+                final float near = params[2];
+                final float far = params[3];
+                final float d = far - near;
+
+                //row-major
+                matrix[0] = 1.0f / w;
+                matrix[5] = 1.0f / h;
+                matrix[10] = -(near + far) / d;
+                matrix[11] = -2.0f * near * far / d;
+                matrix[14] = -1.0f;
+
+                break;
+            }
+            case SCREEN:
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        projection.set(matrix);
+        projectionNeedsUpdate = false;
+    }
+    
+    public int getProjection(Transform transform)
+    {
+        if (transform != null)
+        {
+            if (projectionNeedsUpdate)
+            {
+                updateProjection();
+            }
+            
+            transform.set(this.projection);
+        }
+
+        return this.projectionType;
+    }
+
+    public void setGeneric(Transform transform)
+    {
+        Require.notNull(transform, "transform");
+        
+        projection.set(transform);
+        projectionNeedsUpdate = false;
+        setProjectionType(GENERIC);
+    }
+
+    public void setParallel(float height, float aspectRatio, float near, float far)
+    {
+        Require.argumentGreaterThanZero(height, "height");
+        Require.argumentGreaterThanZero(aspectRatio, "aspectRatio");
+
+        final float[] params = this.projectionParams;
+        params[0] = height;
+        params[1] = aspectRatio;
+        params[2] = near;
+        params[3] = far;
+        
+        this.projectionNeedsUpdate = true;
+        setProjectionType(PARALLEL);
+    }
+
+    public void setPerspective(float fovy, float aspectRatio, float near, float far)
+    {
+        Require.argumentGreaterThanZero(fovy, "fovy");
+        Require.argumentGreaterThanZero(aspectRatio, "aspectRatio");
+        Require.argumentGreaterThanZero(near, "near");
+        Require.argumentGreaterThanZero(far, "far");
+
+        if (fovy >= 180)
+        {
+            throw new IllegalArgumentException("fovy >= 180");
+        }
+
+        final float[] params = this.projectionParams;
+        params[0] = fovy;
+        params[1] = aspectRatio;
+        params[2] = near;
+        params[3] = far;
+
+        this.projectionNeedsUpdate = true;
+        setProjectionType(PERSPECTIVE);
+    }
 }

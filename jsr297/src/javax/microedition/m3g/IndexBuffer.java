@@ -121,14 +121,7 @@ public class IndexBuffer extends Object3D
             throw new IllegalStateException("type is already set");
         }
 
-        if (type < TRIANGLES)
-        {
-            throw new IllegalArgumentException("type < TRIANGLES");
-        }
-        if (type > POINT_SPRITES)
-        {
-            throw new IllegalArgumentException("type > POINT_SPRITES");
-        }
+        Require.argumentInEnum(type, "type", TRIANGLES, POINT_SPRITES);
         
         this.primitiveType = type;
     }
@@ -165,14 +158,7 @@ public class IndexBuffer extends Object3D
             throw new IllegalStateException("POINT_SPRITES can not be stripped");
         }
 
-        if (stripLengths == null)
-        {
-            throw new NullPointerException("stripLengths is null");
-        }
-        if (stripLengths.length == 0)
-        {
-            throw new IllegalArgumentException("stripLengths is empty");
-        }
+        Require.argumentNotEmpty(stripLengths, "stripLengths");
 
         //require valid strip lengths
         final int indicesPerPrimitive = getIndicesPerPrimitive(getPrimitiveType());
@@ -216,14 +202,9 @@ public class IndexBuffer extends Object3D
         {
             throw new IllegalStateException("implicit index already set");
         }
-        if (indices == null)
-        {
-            throw new NullPointerException("indices is null");
-        }
-        if (indices.length == 0)
-        {
-            throw new IllegalArgumentException("indices is empty");
-        }
+
+        Require.argumentNotEmpty(indices, "indices");
+        
         if (indices.length < indexCount)
         {
             throw new IndexOutOfBoundsException("indices.length < indexCount");

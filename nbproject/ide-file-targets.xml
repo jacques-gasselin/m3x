@@ -3,22 +3,35 @@
     <property location="test" name="test.dir"/>
     <property location="lib" name="lib.dir"/>
     <property location="dist" name="dist.dir"/>
-    <!-- TODO: edit the following target according to your needs -->
-    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <path id="demo.path">
+        <pathelement location="${dist.dir}/m3x-jsr297.jar"/>
+        <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
+        <pathelement location="${lib.dir}/jogl/jogl.jar"/>
+        <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
+        <pathelement location="jsr297/demo/build"/>
+        <pathelement location="jsr297/build"/>
+    </path>
+    
     <target name="run-selected-file-in-demo">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
-            <classpath>
-                <pathelement location="${dist.dir}/m3x-jsr297.jar"/>
-                <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
-                <pathelement location="${lib.dir}/jogl/jogl.jar"/>
-                <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
-                <pathelement location="jsr297/demo/build"/>
-                <pathelement location="jsr297/build"/>
-            </classpath>
+            <classpath refid="demo.path"/>
         </java>
     </target>
+    <target name="debug-selected-file-in-demo">
+        <fail unless="debug.class">Must set property 'debug.class'</fail>
+        <nbjpdastart addressproperty="jpda.address" name="m3x" transport="dt_socket">
+            <classpath refid="demo.path"/>
+        </nbjpdastart>
+        <java classname="${debug.class}" fork="true">
+            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <classpath refid="demo.path"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
     <target name="compile-selected-files-in-test">

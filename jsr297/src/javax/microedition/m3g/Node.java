@@ -39,6 +39,16 @@ public abstract class Node extends Transformable
         
     }
 
+    void setParent(Node parent)
+    {
+        if (parent != null && this.parent != null)
+        {
+            throw new IllegalStateException("this node already has a parent");
+        }
+        
+        this.parent = parent;
+    }
+    
     public Node getParent()
     {
         return this.parent;
@@ -46,15 +56,20 @@ public abstract class Node extends Transformable
 
     public boolean getTransformTo(Node target, Transform transform)
     {
-        if (target == null)
-        {
-            throw new NullPointerException("target is null");
-        }
-        if (transform == null)
-        {
-            throw new NullPointerException("transform is null");
-        }
+        Require.notNull(target, "target");
+        Require.notNull(transform, "transform");
 
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTransform(Transform transform)
+    {
+        if (transform != null && !transform.is4thRowUnit())
+        {
+            throw new IllegalArgumentException(
+                    "Nodes only allow 3x4 matrices as transforms");
+        }
+        super.setTransform(transform);
     }
 }

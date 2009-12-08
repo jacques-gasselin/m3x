@@ -52,6 +52,7 @@ public class Graphics3D
     private AbstractRenderTarget renderTarget;
     private Renderer renderer;
     private Camera camera;
+    private final Transform cameraProjection = new Transform();
     private final Transform cameraTransform = new Transform();
     private final Transform inverseCameraTransform = new Transform();
     private final ArrayList<Light> lights = new ArrayList<Light>(LIGHTS_LIST_CAPACITY);
@@ -80,29 +81,6 @@ public class Graphics3D
         }
     }
 
-    private static final void requireVerticesNotNull(VertexBuffer vertices)
-    {
-        if (vertices == null)
-        {
-            throw new NullPointerException("vertices is null");
-        }
-    }
-
-    private static final void requirePrimitivesNotNull(IndexBuffer primitives)
-    {
-        if (primitives == null)
-        {
-            throw new NullPointerException("primitives is null");
-        }
-    }
-
-    private static final void requireAppearanceNotNull(AppearanceBase appearance)
-    {
-        if (appearance == null)
-        {
-            throw new NullPointerException("appearance is null");
-        }
-    }
     /**
      * Adds a light to the end of the lights array. The index of the added light
      * is returned for later use with setLight and getLight.
@@ -117,10 +95,7 @@ public class Graphics3D
      */
     public int addLight(Light light, Transform transform)
     {
-        if (light == null)
-        {
-            throw new NullPointerException("light is null");
-        }
+        Require.notNull(light, "light");
 
         final Transform lightTransform;
         if (transform != null)
@@ -154,10 +129,8 @@ public class Graphics3D
 
     public void bindTarget(Object target, int flags)
     {
-        if (target == null)
-        {
-            throw new NullPointerException("target is null");
-        }
+        Require.notNull(target, "target");
+        
         if (this.target != null)
         {
             throw new IllegalStateException("Graphics3D already has a bound target");
@@ -244,14 +217,7 @@ public class Graphics3D
      */
     public Light getLight(int index, Transform transform)
     {
-        if (index < 0)
-        {
-            throw new IndexOutOfBoundsException("index < 0");
-        }
-        if (index >= getLightCount())
-        {
-            throw new IndexOutOfBoundsException("index >= getLightCount()");
-        }
+        Require.indexInRange(index, getLightCount());
 
         if (transform != null)
         {
@@ -341,10 +307,7 @@ public class Graphics3D
 
     public void render(Node node, Transform transform)
     {
-        if (node == null)
-        {
-            throw new NullPointerException("node is null");
-        }
+        Require.notNull(node, "node");
         
         requireCurrentRenderTarget();
         requireCurrentCamera();
@@ -360,9 +323,9 @@ public class Graphics3D
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform)
     {
-        requireVerticesNotNull(vertices);
-        requirePrimitivesNotNull(primitives);
-        requireAppearanceNotNull(appearance);
+        Require.notNull(vertices, "vertices");
+        Require.notNull(primitives, "primitives");
+        Require.notNull(appearance, "appearance");
         
         requireCurrentRenderTarget();
         requireCurrentCamera();
@@ -373,9 +336,9 @@ public class Graphics3D
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
-        requireVerticesNotNull(vertices);
-        requirePrimitivesNotNull(primitives);
-        requireAppearanceNotNull(appearance);
+        Require.notNull(vertices, "vertices");
+        Require.notNull(primitives, "primitives");
+        Require.notNull(appearance, "appearance");
 
         requireCurrentRenderTarget();
         requireCurrentCamera();
@@ -386,9 +349,9 @@ public class Graphics3D
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             ShaderAppearance appearance, Transform transform)
     {
-        requireVerticesNotNull(vertices);
-        requirePrimitivesNotNull(primitives);
-        requireAppearanceNotNull(appearance);
+        Require.notNull(vertices, "vertices");
+        Require.notNull(primitives, "primitives");
+        Require.notNull(appearance, "appearance");
 
         requireCurrentRenderTarget();
         requireCurrentCamera();
@@ -460,7 +423,22 @@ public class Graphics3D
             this.cameraTransform.setIdentity();
             this.inverseCameraTransform.setIdentity();
         }
+        
+        if (camera != null)
+        {
+            camera.getProjection(this.cameraProjection);
+        }
+        else
+        {
+            this.cameraProjection.setIdentity();
+        }
+
         this.camera = camera;
+
+        if (this.renderer != null)
+        {
+            this.renderer.setProjectionView(this.cameraProjection, this.inverseCameraTransform);
+        }
     }
 
     public void setDepthRange(float near, float far)

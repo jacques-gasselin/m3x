@@ -32,5 +32,180 @@ package javax.microedition.m3g;
  */
 public abstract class Transformable extends Object3D
 {
+    private float tx, ty, tz;
+    private float qx, qy, qz, qw = 1.0f;
+    private float sx = 1.0f, sy = 1.0f, sz = 1.0f;
+    private final Transform transform = new Transform();
+    private boolean compositeTransformNeedsUpdate;
+    private final Transform compositeTransform = new Transform();
+    
+    public Transformable()
+    {
+        
+    }
 
+    private final void updateCompositeTransform()
+    {
+        final Transform t = this.compositeTransform;
+        t.setIdentity();
+        t.postTranslate(tx, ty, tz);
+        t.postRotateQuat(qx, qy, qz, qw);
+        t.postScale(sx, sy, sz);
+        t.postMultiply(transform);
+        compositeTransformNeedsUpdate = false;
+    }
+
+    public void getCompositeTransform(Transform transform)
+    {
+        Require.notNull(transform, "transform");
+
+        if (compositeTransformNeedsUpdate)
+        {
+            updateCompositeTransform();
+        }
+
+        transform.set(this.compositeTransform);
+    }
+
+    public void getOrientation(float[] angleAxis)
+    {
+        Require.argumentHasCapacity(angleAxis, "angleAxis", 4);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public void getOrientationQuat(float[] quaternion)
+    {
+        Require.argumentHasCapacity(quaternion, "quaternion", 4);
+
+        quaternion[0] = qx;
+        quaternion[1] = qy;
+        quaternion[2] = qz;
+        quaternion[3] = qw;
+    }
+
+    public void getScale(float[] xyz)
+    {
+        Require.argumentHasCapacity(xyz, "xyz", 3);
+
+        xyz[0] = sx;
+        xyz[1] = sy;
+        xyz[2] = sz;
+    }
+
+    public void getTransform(Transform transform)
+    {
+        Require.notNull(transform, "transform");
+
+        transform.set(this.transform);
+    }
+
+    public void getTranslation(float[] xyz)
+    {
+        Require.argumentHasCapacity(xyz, "xyz", 3);
+
+        xyz[0] = tx;
+        xyz[1] = ty;
+        xyz[2] = tz;
+    }
+
+    public void postRotate(float angle, float ax, float ay, float az)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void postRotateQuat(float qx, float qy, float qz, float qw)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void preRotate(float angle, float ax, float ay, float az)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void preRotateQuat(float qx, float qy, float qz, float qw)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void scale(float sx, float sy, float sz)
+    {
+        this.sx *= sx;
+        this.sy *= sy;
+        this.sz *= sz;
+
+        compositeTransformNeedsUpdate = true;
+    }
+
+    public void setOrientation(float angle, float ax, float ay, float az)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void setOrientationLookAt(float targetX, float targetY, float targetZ,
+            float upX, float upY, float upZ)
+    {
+        compositeTransformNeedsUpdate = true;
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void setOrientationQuat(float qx, float qy, float qz, float qw)
+    {
+        compositeTransformNeedsUpdate = true;
+        
+        throw new UnsupportedOperationException();
+    }
+
+    public void setScale(float sx, float sy, float sz)
+    {
+        this.sx = sx;
+        this.sy = sy;
+        this.sz = sz;
+
+        compositeTransformNeedsUpdate = true;
+    }
+
+    public void setTransform(Transform transform)
+    {
+        if (transform == null)
+        {
+            this.transform.setIdentity();
+        }
+        else
+        {
+            this.transform.set(transform);
+        }
+
+        compositeTransformNeedsUpdate = true;
+    }
+
+    public void setTranslation(float tx, float ty, float tz)
+    {
+        this.tx = tx;
+        this.ty = ty;
+        this.tz = tz;
+
+        compositeTransformNeedsUpdate = true;
+    }
+
+    public void translate(float tx, float ty, float tz)
+    {
+        this.tx += tx;
+        this.ty += ty;
+        this.tz += tz;
+
+        compositeTransformNeedsUpdate = true;
+    }
 }

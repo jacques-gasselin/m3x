@@ -160,20 +160,24 @@ public class RendererOpenGL2 extends Renderer
     }
 
     @Override
+    public void setProjectionView(Transform projection, Transform view)
+    {
+        Require.notNull(projection, "projection");
+        Require.notNull(view, "view");
+
+        final GL gl = getGL();
+        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glLoadMatrixf(projection.getColumnMajor(), 0);
+
+        this.viewTransform.set(view);
+    }
+
+    @Override
     public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope)
     {
-        if (vertices == null)
-        {
-            throw new NullPointerException("vertices is null");
-        }
-        if (primitives == null)
-        {
-            throw new NullPointerException("primitives is null");
-        }
-        if (appearance == null)
-        {
-            throw new NullPointerException("appearance is null");
-        }
+        Require.notNull(vertices, "vertices");
+        Require.notNull(primitives, "primitives");
+        Require.notNull(appearance, "appearance");
 
         final GL gl = getGL();
         setModelTransform(transform);
@@ -226,7 +230,15 @@ public class RendererOpenGL2 extends Renderer
 
     private final void setCompositingMode(GL gl, CompositingMode compositingMode)
     {
-        //TODO
+        {
+            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glDisable(GL.GL_ALPHA_TEST);
+            gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+            gl.glDisable(GL.GL_BLEND);
+            gl.glDepthMask(true);
+            gl.glColorMask(true, true, true, true);
+            gl.glDepthFunc(GL.GL_LEQUAL);
+        }
     }
 
     private final void setPolygonMode(GL gl, PolygonMode polygonMode)
@@ -332,6 +344,38 @@ public class RendererOpenGL2 extends Renderer
         //TODO normals
 
         //TODO colors
+        {
+            VertexArray colors = vertices.getColors();
+            if (colors != null)
+            {
+                int glType = GL.GL_FLOAT;
+                switch (colors.getComponentType())
+                {
+                    case VertexArray.FLOAT:
+                    {
+                        glType = GL.GL_FLOAT;
+                        break;
+                    }
+                    case VertexArray.BYTE:
+                    {
+                        glType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    default:
+                    {
+                        throw new IllegalStateException("unsupported component type");
+                    }
+                }
+
+                gl.glColorPointer(colors.getComponentCount(), glType,
+                        colors.getVertexByteStride(), colors.getBuffer());
+                gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+            }
+            else
+            {
+                gl.glDisableClientState(GL.GL_COLOR_ARRAY);
+            }
+        }
 
         //TODO texcoords
     }

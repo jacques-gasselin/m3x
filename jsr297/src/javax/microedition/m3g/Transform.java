@@ -50,14 +50,6 @@ public final class Transform
         set(transform);
     }
 
-    private static final void requireNotNull(Object obj, String name)
-    {
-        if (obj == null)
-        {
-            throw new NullPointerException(name + " is null");
-        }
-    }
-
     private static final void requireMinLength(float[] arr, int length, String name)
     {
         if (arr.length < length)
@@ -68,7 +60,7 @@ public final class Transform
 
     public void add(Transform transform)
     {
-        requireNotNull(transform, "transform");
+        Require.notNull(transform, "transform");
 
         this.matrix.add(transform.matrix);
     }
@@ -85,7 +77,7 @@ public final class Transform
 
     public void get(float[] matrix)
     {
-        requireNotNull(matrix, "matrix");
+        Require.notNull(matrix, "matrix");
         requireMinLength(matrix, 16, "matrix");
 
         //row-major
@@ -135,7 +127,7 @@ public final class Transform
 
     public void postMultiply(Transform transform)
     {
-        requireNotNull(transform, "transform");
+        Require.notNull(transform, "transform");
 
         this.matrix.mul(transform.matrix);
     }
@@ -189,7 +181,7 @@ public final class Transform
     
     public void set(float[] matrix)
     {
-        requireNotNull(matrix, "matrix");
+        Require.notNull(matrix, "matrix");
         requireMinLength(matrix, 16, "matrix");
 
         this.matrix.set(matrix);
@@ -203,7 +195,7 @@ public final class Transform
      */
     public void set(Transform transform)
     {
-        requireNotNull(transform, "transform");
+        Require.notNull(transform, "transform");
 
         this.matrix.set(transform.matrix);
     }
@@ -218,7 +210,7 @@ public final class Transform
 
     public void transform(float[] vectors)
     {
-        requireNotNull(vectors, "vectors");
+        Require.notNull(vectors, "vectors");
 
         final int vecCount = vectors.length >> 2;
         if (vecCount == 0)
@@ -234,8 +226,8 @@ public final class Transform
 
     public void transform(VertexArray in, float[] out, boolean w)
     {
-        requireNotNull(in, "in");
-        requireNotNull(out, "out");
+        Require.notNull(in, "in");
+        Require.notNull(out, "out");
         
         throw new UnsupportedOperationException();
     }
@@ -243,5 +235,26 @@ public final class Transform
     public void transpose()
     {
         this.matrix.transpose();
+    }
+
+    boolean is4thRowUnit()
+    {
+        if (this.matrix.m30 != 0)
+        {
+            return false;
+        }
+        if (this.matrix.m31 != 0)
+        {
+            return false;
+        }
+        if (this.matrix.m32 != 0)
+        {
+            return false;
+        }
+        if (this.matrix.m33 != 1)
+        {
+            return false;
+        }
+        return true;
     }
 }

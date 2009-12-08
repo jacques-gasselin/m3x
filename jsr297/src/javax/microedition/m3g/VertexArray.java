@@ -125,28 +125,15 @@ public class VertexArray extends Object3D
         return ret;
     }
 
-    private static final void requireNotNull(Object obj, String name)
-    {
-        if (obj == null)
-        {
-            throw new NullPointerException(name + " is null");
-        }
-    }
-
     private final void requireValidIndexAndLength(int firstVertex, int numVertices, int length)
     {
-        if (numVertices < 0)
-        {
-            throw new IllegalArgumentException("numVertices < 0");
-        }
+        Require.argumentNotNegative(numVertices, "numVertices");
         if (length < numVertices * getComponentCount())
         {
             throw new IllegalArgumentException("length < numVertices * getComponentCount()");
         }
-        if (firstVertex < 0)
-        {
-            throw new IndexOutOfBoundsException("firstVertex < 0");
-        }
+
+        Require.indexNotNegative(firstVertex, "firstVertex");
         if (firstVertex + numVertices > getVertexCount())
         {
             throw new IndexOutOfBoundsException("firstVertex + numVertices > getVertexCount()");
@@ -215,7 +202,7 @@ public class VertexArray extends Object3D
     
     public void get(int firstVertex, int numVertices, byte[] dst)
     {
-        requireNotNull(dst, "dst");
+        Require.notNull(dst, "dst");
         requireByteType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
@@ -226,7 +213,7 @@ public class VertexArray extends Object3D
 
     public void get(int firstVertex, int numVertices, float[] dst)
     {
-        requireNotNull(dst, "dst");
+        Require.notNull(dst, "dst");
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
         if (getComponentType() == FLOAT)
@@ -263,7 +250,7 @@ public class VertexArray extends Object3D
     
     public void get(int firstVertex, int numVertices, int[] dst)
     {
-        requireNotNull(dst, "dst");
+        Require.notNull(dst, "dst");
         requireFixedType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
@@ -280,7 +267,7 @@ public class VertexArray extends Object3D
 
     public void get(int firstVertex, int numVertices, short[] dst)
     {
-        requireNotNull(dst, "dst");
+        Require.notNull(dst, "dst");
         requireShortType();
         requireValidIndexAndLength(firstVertex, numVertices, dst.length);
 
@@ -332,7 +319,7 @@ public class VertexArray extends Object3D
 
     public void set(int firstVertex, int numVertices, byte[] src)
     {
-        requireNotNull(src, "src");
+        Require.notNull(src, "src");
         requireByteType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
 
@@ -342,7 +329,7 @@ public class VertexArray extends Object3D
 
     public void set(int firstVertex, int numVertices, float[] src)
     {
-        requireNotNull(src, "src");
+        Require.notNull(src, "src");
         requireFloatType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
 
@@ -366,7 +353,7 @@ public class VertexArray extends Object3D
 
     public void set(int firstVertex, int numVertices, int[] src)
     {
-        requireNotNull(src, "src");
+        Require.notNull(src, "src");
         requireFixedType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
 
@@ -383,7 +370,7 @@ public class VertexArray extends Object3D
 
     public void set(int firstVertex, int numVertices, short[] src)
     {
-        requireNotNull(src, "src");
+        Require.notNull(src, "src");
         requireShortType();
         requireValidIndexAndLength(firstVertex, numVertices, src.length);
 
