@@ -52,5 +52,105 @@ public class Blender extends Object3D
     public static final int CONSTANT_ALPHA = 125;
     public static final int ONE_MINUS_CONSTANT_ALPHA = 126;
 
-    
+    private int blendFunctionAlpha = ADD;
+    private int blendFunctionColor = ADD;
+    private int blendFactorSrcColor = ONE;
+    private int blendFactorDstColor = ZERO;
+    private int blendFactorSrcAlpha = ONE;
+    private int blendFactorDstAlpha = ZERO;
+    private int blendColor;
+
+    public Blender()
+    {
+        
+    }
+
+    public int getBlendColor()
+    {
+        return blendColor;
+    }
+
+    public int getBlendFactor(int component)
+    {
+        switch (component)
+        {
+            case SRC_COLOR:
+            {
+                return blendFactorSrcColor;
+            }
+            case SRC_ALPHA:
+            {
+                return blendFactorSrcAlpha;
+            }
+            case DST_COLOR:
+            {
+                return blendFactorDstColor;
+            }
+            case DST_ALPHA:
+            {
+                return blendFactorDstAlpha;
+            }
+            default:
+            {
+                throw new IllegalArgumentException("component is not SRC_COLOR," +
+                        " SRC_ALPHA, DST_COLOR or DST_ALPHA");
+            }
+        }
+    }
+
+    public int getBlendFunction(int channel)
+    {
+        switch (channel)
+        {
+            case SRC_COLOR:
+            {
+                return blendFunctionColor;
+            }
+            case SRC_ALPHA:
+            {
+                return blendFunctionAlpha;
+            }
+            default:
+            {
+                throw new IllegalArgumentException("channel is not SRC_COLOR or" +
+                        " SRC_ALPHA");
+            }
+        }
+    }
+
+    public void setBlendColor(int argb)
+    {
+        this.blendColor = argb;
+    }
+
+    public void setBlendFactors(int srcColor, int srcAlpha, int dstColor, int dstAlpha)
+    {
+        Require.argumentInEnum(srcColor, "srcColor", ZERO, ONE_MINUS_CONSTANT_ALPHA);
+        Require.argumentInEnum(srcAlpha, "srcAlpha", ZERO, ONE_MINUS_CONSTANT_ALPHA);
+        Require.argumentInEnum(dstColor, "dstColor", ZERO, ONE_MINUS_CONSTANT_ALPHA);
+        Require.argumentInEnum(dstAlpha, "dstAlpha", ZERO, ONE_MINUS_CONSTANT_ALPHA);
+
+        if (dstColor == SRC_ALPHA_SATURATE)
+        {
+            throw new IllegalArgumentException("dstColor is SRC_ALPHA_SATURATE");
+        }
+        if (dstAlpha == SRC_ALPHA_SATURATE)
+        {
+            throw new IllegalArgumentException("dstAlpha is SRC_ALPHA_SATURATE");
+        }
+
+        this.blendFactorSrcColor = srcColor;
+        this.blendFactorSrcAlpha = srcAlpha;
+        this.blendFactorDstColor = dstColor;
+        this.blendFactorDstAlpha = dstAlpha;
+    }
+
+    public void setBlendFunctions(int funcColor, int funcAlpha)
+    {
+        Require.argumentInEnum(funcColor, "funcColor", ADD, REVERSE_SUBTRACT);
+        Require.argumentInEnum(funcAlpha, "funcAlpha", ADD, REVERSE_SUBTRACT);
+
+        this.blendFunctionColor = funcColor;
+        this.blendFunctionAlpha = funcAlpha;
+    }
 }
