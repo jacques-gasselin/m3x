@@ -32,5 +32,104 @@ package javax.microedition.m3g;
  */
 public class Light extends Node
 {
+    public static final int AMBIENT = 128;
+    public static final int DIRECTIONAL = 129;
+    public static final int OMNI = 130;
+    public static final int SPOT = 131;
 
+    private int mode = DIRECTIONAL;
+    private int color = 0x00FFFFFF;
+    private float intensity = 1.0f;
+    private float constantAttenuation = 1.0f;
+    private float linearAttenuation;
+    private float quadraticAttenuation;
+    private float spotAngle = 45;
+    private float spotExponent;
+    
+    public Light()
+    {
+        
+    }
+
+    public int getColor()
+    {
+        return this.color;
+    }
+
+    public float getConstantAttenuation()
+    {
+        return this.constantAttenuation;
+    }
+
+    public float getIntensity()
+    {
+        return this.intensity;
+    }
+
+    public float getLinearAttenuation()
+    {
+        return this.linearAttenuation;
+    }
+
+    public int getMode()
+    {
+        return this.mode;
+    }
+
+    public float getQuadraticAttenuation()
+    {
+        return this.quadraticAttenuation;
+    }
+
+    public float getSpotAngle()
+    {
+        return this.spotAngle;
+    }
+
+    public float getSpotExponent()
+    {
+        return this.spotExponent;
+    }
+
+    public void setAttenuation(float constant, float linear, float quadratic)
+    {
+        Require.argumentNotNegative(constant, "constant");
+        Require.argumentNotNegative(linear, "linear");
+        Require.argumentNotNegative(quadratic, "quadratic");
+        
+        this.constantAttenuation = constant;
+        this.linearAttenuation = linear;
+        this.quadraticAttenuation = quadratic;
+    }
+
+    public void setColor(int rgb)
+    {
+        this.color = rgb & 0x00FFFFFF;
+    }
+
+    public void setIntensity(float intensity)
+    {
+        this.intensity = intensity;
+    }
+
+    public void setMode(int mode)
+    {
+        Require.argumentInEnum(mode, "mode", AMBIENT, SPOT);
+
+        this.mode = mode;
+    }
+
+    public void setSpotAngle(float angle)
+    {
+        Require.argumentInRange(angle, "angle", 0, 90);
+        
+        this.spotAngle = angle;
+    }
+
+    public void setSpotExponent(float exponent)
+    {
+        Require.argumentInRange(exponent, "exponent", 0, 128);
+        
+        this.spotExponent = exponent;
+    }
 }

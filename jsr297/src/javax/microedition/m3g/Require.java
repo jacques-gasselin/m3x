@@ -40,6 +40,14 @@ final class Require
         }
     }
 
+    static final void argumentNotNegative(float value, String name)
+    {
+        if (value < 0)
+        {
+            throw new IllegalArgumentException(name + " is negative");
+        }
+    }
+
     static final void argumentNotNegative(int value, String name)
     {
         if (value < 0)
