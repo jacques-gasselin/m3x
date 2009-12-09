@@ -96,6 +96,11 @@ public class Light extends Node
         Require.argumentNotNegative(constant, "constant");
         Require.argumentNotNegative(linear, "linear");
         Require.argumentNotNegative(quadratic, "quadratic");
+
+        if (constant == 0 && linear == 0 && quadratic == 0)
+        {
+            throw new IllegalArgumentException("all of the parameter values are zero");
+        }
         
         this.constantAttenuation = constant;
         this.linearAttenuation = linear;
