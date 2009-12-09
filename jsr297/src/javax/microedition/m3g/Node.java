@@ -32,26 +32,96 @@ package javax.microedition.m3g;
  */
 public abstract class Node extends Transformable
 {
+    public static final int NONE = 144;
+    public static final int ORIGIN = 145;
+    public static final int X_AXIS = 146;
+    public static final int Y_AXIS = 147;
+    public static final int Z_AXIS = 148;
+    
     private Node parent;
+    private boolean renderingEnabled = true;
+    private boolean pickingEnabled = true;
+    private boolean collisionEnabled = true;
+    private float alphaFactor = 1.0f;
+    private int scope = -1;
+    private int alignmentTargetY = NONE;
+    private Node alignmenReferenceY;
+    private int alignmentTargetZ = NONE;
+    private Node alignmenReferenceZ;
+    private float lodResolution;
+    private float[] boundingSphere;
+    private float[] boundingBox;
+    private int collisionShapeOrientations;
 
     public Node()
     {
         
     }
 
-    void setParent(Node parent)
+    public void align(Node reference)
     {
-        if (parent != null && this.parent != null)
-        {
-            throw new IllegalStateException("this node already has a parent");
-        }
-        
-        this.parent = parent;
+        throw new UnsupportedOperationException();
+    }
+
+    public void animateLOD(int time, Camera camera, float resX, float resY)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean collide(int colliderScope, Node collidees, int collideeScope,
+            boolean fullTraversal)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void generateCollisionShape(int orientations, boolean useExisting)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Node getAlignmentReference(int axis)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getAlignmentTarget(int axis)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getAlphaFactor()
+    {
+        return this.alphaFactor;
+    }
+
+    public boolean getBoundingBox(float[] bounds)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean getBoundingSphere(float[] bounds)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getCollisionShape(float[] min, float[] max)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public float getLODResolution()
+    {
+        return this.lodResolution;
     }
     
     public Node getParent()
     {
         return this.parent;
+    }
+
+    public int getScope()
+    {
+        return this.scope;
     }
 
     public boolean getTransformTo(Node target, Transform transform)
@@ -60,6 +130,86 @@ public abstract class Node extends Transformable
         Require.notNull(transform, "transform");
 
         throw new UnsupportedOperationException();
+    }
+
+    public boolean isCollisionEnabled()
+    {
+        return this.collisionEnabled;
+    }
+
+    public boolean isPickingEnabled()
+    {
+        return this.pickingEnabled;
+    }
+
+    public boolean isRenderingEnabled()
+    {
+        return this.renderingEnabled;
+    }
+
+    public void selectLOD(Camera camera, float resX, float resY)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setAlignment(Node zRef, int zTarget, Node yRef, int yTarget)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setAlphaFactor(float alphaFactor)
+    {
+        this.alphaFactor = alphaFactor;
+    }
+
+    public void setBoundingBox(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setBoundingSphere(float centerX, float centerY, float centerZ, float radius)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setCollisionEnable(boolean enable)
+    {
+        this.collisionEnabled = enable;
+    }
+
+    public void setCollisionShape(int orientations, float[] min, float[] max)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setLODResolution(float featuresPerUnit)
+    {
+        this.lodResolution = featuresPerUnit;
+    }
+
+    public void setPickingEnable(boolean enable)
+    {
+        this.pickingEnabled = enable;
+    }
+
+    public void setRenderingEnable(boolean enable)
+    {
+        this.renderingEnabled = enable;
+    }
+
+    public void setScope(int scope)
+    {
+        this.scope = scope;
+    }
+    
+    void setParent(Node parent)
+    {
+        if (parent != null && this.parent != null)
+        {
+            throw new IllegalStateException("this node already has a parent");
+        }
+
+        this.parent = parent;
     }
 
     @Override
