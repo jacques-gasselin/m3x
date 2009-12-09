@@ -36,7 +36,14 @@ public class Material extends Object3D
     public static final int DIFFUSE = 2048;
     public static final int EMISSIVE = 4096;
     public static final int SPECULAR = 8192;
-    
+
+    private boolean vertexColorTrackingEnabled;
+    private int ambientColor = 0x00333333;
+    private int diffuseColor = 0xFFCCCCCC;
+    private int emissiveColor = 0x00000000;
+    private int specularColor = 0x00000000;
+    private float shininess;
+
     public Material()
     {
         
@@ -44,26 +51,77 @@ public class Material extends Object3D
 
     public int getColor(int target)
     {
-        throw new UnsupportedOperationException();
+        switch (target)
+        {
+            case AMBIENT:
+            {
+                return this.ambientColor;
+            }
+            case DIFFUSE:
+            {
+                return this.diffuseColor;
+            }
+            case EMISSIVE:
+            {
+                return this.emissiveColor;
+            }
+            case SPECULAR:
+            {
+                return this.specularColor;
+            }
+            default:
+            {
+                throw new IllegalArgumentException("target is not exactly one" +
+                        " of AMBIENT, DIFFUSE, EMISSIVE, and SPECULAR");
+            }
+        }
     }
 
     public float getShininess()
     {
-        throw new UnsupportedOperationException();
+        return this.shininess;
     }
 
     public boolean isVertexColorTrackingEnabled()
     {
-        throw new UnsupportedOperationException();
+        return this.vertexColorTrackingEnabled;
     }
 
     public void setColor(int target, int argb)
     {
-        throw new UnsupportedOperationException();
+        if ((target & (AMBIENT | DIFFUSE | EMISSIVE | SPECULAR)) == 0)
+        {
+            throw new IllegalArgumentException("target is not a bitmask" +
+                    " of AMBIENT, DIFFUSE, EMISSIVE, and SPECULAR");
+        }
+
+        if ((target & AMBIENT) != 0)
+        {
+            this.ambientColor = argb;
+        }
+        if ((target & DIFFUSE) != 0)
+        {
+            this.diffuseColor = argb;
+        }
+        if ((target & EMISSIVE) != 0)
+        {
+            this.emissiveColor = argb;
+        }
+        if ((target & SPECULAR) != 0)
+        {
+            this.specularColor = argb;
+        }
+    }
+
+    public void setShininess(float shininess)
+    {
+        Require.argumentInRange(shininess, "shininess", 0, 128);
+
+        this.shininess = shininess;
     }
 
     public void setVertexColorTrackingEnabled(boolean enabled)
     {
-        throw new UnsupportedOperationException();
+        this.vertexColorTrackingEnabled = enabled;
     }
 }
