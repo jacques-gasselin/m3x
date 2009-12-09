@@ -51,12 +51,12 @@ public class CompositingMode extends Object3D
     public static final int GEQUAL = 518;
     public static final int ALWAYS = 519;
 
-    private int blendingMode = REPLACE;
+    private int blending = REPLACE;
     private float alphaThreshold;
-    private int alphaTestFunction = GEQUAL;
+    private int alphaTest = GEQUAL;
     private float depthOffsetFactor, depthOffsetUnits;
     private boolean depthTestEnabled = true;
-    private int depthTestFunction = LEQUAL;
+    private int depthTest = LEQUAL;
     private boolean depthWriteEnabled = true;
     private int colorWriteMask = 0xffffffff;
     private Blender blender;
@@ -65,5 +65,145 @@ public class CompositingMode extends Object3D
     public CompositingMode()
     {
         
+    }
+
+    public int getAlphaTest()
+    {
+        return this.alphaTest;
+    }
+
+    public float getAlphaThreshold()
+    {
+        return this.alphaThreshold;
+    }
+
+    public Blender getBlender()
+    {
+        return this.blender;
+    }
+
+    public int getBlending()
+    {
+        return this.blending;
+    }
+
+    public int getColorWriteMask()
+    {
+        return this.colorWriteMask;
+    }
+
+    public float getDepthOffsetFactor()
+    {
+        return this.depthOffsetFactor;
+    }
+
+    public float getDepthOffsetUnits()
+    {
+        return this.depthOffsetUnits;
+    }
+
+    public int getDepthTest()
+    {
+        return this.depthTest;
+    }
+
+    public Stencil getStencil()
+    {
+        return this.stencil;
+    }
+
+    @Deprecated
+    public boolean isAlphaWriteEnabled()
+    {
+        return (this.colorWriteMask & 0xff000000) != 0;
+    }
+
+    @Deprecated
+    public boolean isColorWriteEnabled()
+    {
+        return (this.colorWriteMask & 0x00ffffff) != 0;
+    }
+
+    public boolean isDepthTestEnabled()
+    {
+        return this.depthTestEnabled;
+    }
+
+    public boolean isDepthWriteEnabled()
+    {
+        return this.depthWriteEnabled;
+    }
+
+    public void setAlphaTest(int func)
+    {
+        Require.argumentInEnum(func, "func", NEVER, ALWAYS);
+
+        this.alphaTest = func;
+    }
+
+    public void setAlphaThreshold(float threshold)
+    {
+        Require.argumentInRange(threshold, "threshold", 0.0f, 1.0f);
+
+        this.alphaThreshold = threshold;
+    }
+
+    @Deprecated
+    public void setAlphaWriteEnable(boolean enable)
+    {
+        this.colorWriteMask = (this.colorWriteMask & 0x00ffffff) |
+                (enable ? 0xff000000 : 0x00000000);
+    }
+
+    public void setBlender(Blender blender)
+    {
+        this.blender = blender;
+    }
+
+    public void setBlending(int mode)
+    {
+        Require.argumentInEnum(mode, "mode", ALPHA, MODULATE_INV);
+
+        this.blending = mode;
+    }
+
+    @Deprecated
+    public void setColorWriteEnable(boolean enable)
+    {
+        this.colorWriteMask = (this.colorWriteMask & 0xff000000) |
+                (enable ? 0x00ffffff : 0x00000000);
+    }
+
+    public void setColorWriteMask(int mask)
+    {
+        this.colorWriteMask = mask;
+    }
+
+    public void setDepthOffset(float factor, float units)
+    {
+        this.depthOffsetFactor = factor;
+        this.depthOffsetUnits = units;
+    }
+
+    public void setDepthTest(int func)
+    {
+        Require.argumentInEnum(func, "func", NEVER, ALWAYS);
+        
+        this.depthTest = func;
+    }
+
+    public void setDepthTestEnable(boolean enable)
+    {
+        this.depthTestEnabled = enable;
+    }
+
+    public void setDepthWriteEnable(boolean enable)
+    {
+        this.depthWriteEnabled = enable;
+    }
+
+    public void setStencil(Stencil stencil)
+    {
+        this.stencil = stencil;
     }
 }

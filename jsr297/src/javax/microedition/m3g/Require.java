@@ -68,16 +68,33 @@ final class Require
         }
     }
 
+    static final void argumentInRange(int value, String name, int minValue, int maxValue)
+    {
+        if (value < minValue)
+        {
+            throw new IllegalArgumentException(name + " < " + minValue);
+        }
+        if (value > maxValue)
+        {
+            throw new IllegalArgumentException(name + " > " + maxValue);
+        }
+    }
+
+    static final void argumentInRange(float value, String name, float minValue, float maxValue)
+    {
+        if (value < minValue)
+        {
+            throw new IllegalArgumentException(name + " < " + minValue);
+        }
+        if (value > maxValue)
+        {
+            throw new IllegalArgumentException(name + " > " + maxValue);
+        }
+    }
+
     static final void argumentInEnum(int value, String name, int enumMin, int enumMax)
     {
-        if (value < enumMin)
-        {
-            throw new IllegalArgumentException(name + " < " + enumMin);
-        }
-        if (value > enumMax)
-        {
-            throw new IllegalArgumentException(name + " > " + enumMax);
-        }
+        argumentInRange(value, name, enumMin, enumMax);
     }
 
     static final void argumentGreaterThan(float value, String name, float limit)

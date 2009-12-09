@@ -330,7 +330,7 @@ public class Graphics3D
         requireCurrentRenderTarget();
         requireCurrentCamera();
         
-        renderer.render(vertices, primitives, appearance, transform, -1);
+        renderer.render(vertices, primitives, appearance, transform, -1, 1.0f);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
@@ -343,7 +343,7 @@ public class Graphics3D
         requireCurrentRenderTarget();
         requireCurrentCamera();
 
-        renderer.render(vertices, primitives, appearance, transform, scope);
+        renderer.render(vertices, primitives, appearance, transform, scope, 1.0f);
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,

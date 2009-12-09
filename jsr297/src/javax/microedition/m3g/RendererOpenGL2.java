@@ -173,7 +173,7 @@ public class RendererOpenGL2 extends Renderer
     }
 
     @Override
-    public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope)
+    public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope, float alphaFactor)
     {
         Require.notNull(vertices, "vertices");
         Require.notNull(primitives, "primitives");
@@ -182,7 +182,7 @@ public class RendererOpenGL2 extends Renderer
         final GL gl = getGL();
         setModelTransform(transform);
         setAppearance(gl, appearance);
-        setVertexBuffer(gl, vertices);
+        setVertexBuffer(gl, vertices, alphaFactor);
         render(gl, primitives);
     }
 
@@ -209,7 +209,7 @@ public class RendererOpenGL2 extends Renderer
             case Fog.EXPONENTIAL_SQUARED:
                 return GL.GL_EXP2;
             default:
-                throw new IllegalArgumentException("mode is not valid");
+                throw new UnsupportedOperationException("mode is not valid");
         }
     }
 
@@ -228,16 +228,208 @@ public class RendererOpenGL2 extends Renderer
         return color;
     }
 
+    private static final float[] argbAsRGBAVolatile(int argb, float alphaFactor)
+    {
+        final float[] color = argbAsRGBAVolatile(argb);
+        color[3] *= alphaFactor;
+        return color;
+    }
+
+    private static final boolean isZero(float value)
+    {
+        //check for the 3 upper bits of the exponent
+        //if they are all 0 the exponent is less than 2^(-64)
+        return (Float.floatToIntBits(value) & 0x7000000) == 0;
+    }
+
+    private static final int testFuncAsGLEnum(int func)
+    {
+        switch (func)
+        {
+            case CompositingMode.NEVER:
+            {
+                return GL.GL_NEVER;
+            }
+            case CompositingMode.LESS:
+            {
+                return GL.GL_LESS;
+            }
+            case CompositingMode.EQUAL:
+            {
+                return GL.GL_EQUAL;
+            }
+            case CompositingMode.LEQUAL:
+            {
+                return GL.GL_LEQUAL;
+            }
+            case CompositingMode.GREATER:
+            {
+                return GL.GL_GREATER;
+            }
+            case CompositingMode.NOTEQUAL:
+            {
+                return GL.GL_NOTEQUAL;
+            }
+            case CompositingMode.GEQUAL:
+            {
+                return GL.GL_GEQUAL;
+            }
+            case CompositingMode.ALWAYS:
+            {
+                return GL.GL_ALWAYS;
+            }
+            default:
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
     private final void setCompositingMode(GL gl, CompositingMode compositingMode)
     {
+        if (compositingMode != null)
         {
-            gl.glDepthMask(true);
+            final float alphaThreshold = compositingMode.getAlphaThreshold();
+            if (!isZero(alphaThreshold))
+            {
+                gl.glAlphaFunc(testFuncAsGLEnum(compositingMode.getAlphaTest()),
+                        alphaThreshold);
+                gl.glEnable(GL.GL_ALPHA_TEST);
+            }
+            else
+            {
+                gl.glDisable(GL.GL_ALPHA_TEST);
+            }
+
+            if (compositingMode.isDepthTestEnabled())
+            {
+                gl.glDepthFunc(testFuncAsGLEnum(compositingMode.getDepthTest()));
+                gl.glEnable(GL.GL_DEPTH_TEST);
+            }
+            else
+            {
+                gl.glDisable(GL.GL_DEPTH_TEST);
+            }
+
+            gl.glDepthMask(compositingMode.isDepthWriteEnabled());
+
+            final float offsetFactor = compositingMode.getDepthOffsetFactor();
+            final float offsetUnits = compositingMode.getDepthOffsetUnits();
+
+            if (!isZero(offsetFactor) || !isZero(offsetUnits))
+            {
+                gl.glPolygonOffset(offsetFactor, offsetUnits);
+                gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+            }
+            else
+            {
+                gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+            }
+
+            final Stencil stencil = compositingMode.getStencil();
+            if (stencil != null)
+            {
+                throw new UnsupportedOperationException("stencil not supported yet");
+            }
+            else
+            {
+                gl.glDisable(GL.GL_STENCIL_TEST);
+            }
+
+            final int colorMask = compositingMode.getColorWriteMask();
+            gl.glColorMask(
+                    (colorMask & 0x00ff0000) != 0,
+                    (colorMask & 0x0000ff00) != 0,
+                    (colorMask & 0x000000ff) != 0,
+                    (colorMask & 0xff000000) != 0);
+
+            final Blender blender = compositingMode.getBlender();
+            if (blender != null)
+            {
+                throw new UnsupportedOperationException("blender not supported yet");
+            }
+            else
+            {
+                final int blending = compositingMode.getBlending();
+                if (blending != CompositingMode.REPLACE)
+                {
+                    int src, dst;
+                    switch (blending)
+                    {
+                        case CompositingMode.ALPHA:
+                        {
+                            src = GL.GL_SRC_ALPHA;
+                            dst = GL.GL_ONE_MINUS_SRC_ALPHA;
+                            break;
+                        }
+                        case CompositingMode.ALPHA_ADD:
+                        {
+                            src = GL.GL_SRC_ALPHA;
+                            dst = GL.GL_ONE;
+                            break;
+                        }
+                        case CompositingMode.MODULATE:
+                        {
+                            src = GL.GL_DST_COLOR;
+                            dst = GL.GL_ZERO;
+                            break;
+                        }
+                        case CompositingMode.MODULATE_X2:
+                        {
+                            src = GL.GL_DST_COLOR;
+                            dst = GL.GL_SRC_COLOR;
+                            break;
+                        }
+                        case CompositingMode.ADD:
+                        {
+                            src = GL.GL_ONE;
+                            dst = GL.GL_ONE;
+                            break;
+                        }
+                        case CompositingMode.ALPHA_DARKEN:
+                        {
+                            src = GL.GL_ZERO;
+                            dst = GL.GL_ONE_MINUS_SRC_ALPHA;
+                            break;
+                        }
+                        case CompositingMode.ALPHA_PREMULTIPLIED:
+                        {
+                            src = GL.GL_ONE;
+                            dst = GL.GL_ONE_MINUS_SRC_ALPHA;
+                            break;
+                        }
+                        case CompositingMode.MODULATE_INV:
+                        {
+                            src = GL.GL_ONE;
+                            dst = GL.GL_ONE_MINUS_SRC_COLOR;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new UnsupportedOperationException("blend mode not supported yet");
+                        }
+                    }
+                    gl.glBlendEquation(GL.GL_ADD);
+                    gl.glBlendFunc(src, dst);
+                    gl.glEnable(GL.GL_BLEND);
+                }
+                else
+                {
+                    gl.glDisable(GL.GL_BLEND);
+                }
+            }
+        }
+        else
+        {
             gl.glColorMask(true, true, true, true);
-            gl.glDepthFunc(GL.GL_LEQUAL);
             
             gl.glDisable(GL.GL_ALPHA_TEST);
             gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
             gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL.GL_STENCIL_TEST);
+            
+            gl.glDepthMask(true);
+            gl.glDepthFunc(GL.GL_LEQUAL);
             gl.glEnable(GL.GL_DEPTH_TEST);
         }
     }
@@ -330,6 +522,48 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
+    private final void setMaterial(GL gl, Material material)
+    {
+        if (material != null)
+        {
+            if (material.isVertexColorTrackingEnabled())
+            {
+                gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+                //skip ambient and diffuse if color tracking
+                gl.glEnable(GL.GL_COLOR_MATERIAL);
+            }
+            else
+            {
+                gl.glDisable(GL.GL_COLOR_MATERIAL);
+                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                        argbAsRGBAVolatile(material.getColor(Material.AMBIENT)), 0);
+                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,
+                        argbAsRGBAVolatile(material.getColor(Material.DIFFUSE)), 0);
+            }
+            
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+                    argbAsRGBAVolatile(material.getColor(Material.EMISSIVE)), 0);
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    argbAsRGBAVolatile(material.getColor(Material.SPECULAR)), 0);
+            gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS,
+                    material.getShininess());
+        }
+        else
+        {
+            gl.glDisable(GL.GL_COLOR_MATERIAL);
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                    argbAsRGBAVolatile(0x00333333), 0);
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,
+                    argbAsRGBAVolatile(0xFFCCCCCC), 0);
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+                    argbAsRGBAVolatile(0x00000000), 0);
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    argbAsRGBAVolatile(0x00000000), 0);
+            gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS,
+                    0.0f);
+        }
+    }
+
     private final void setTexture(GL gl, int index, Texture2D texture)
     {
         gl.glActiveTexture(GL.GL_TEXTURE0 + index);
@@ -347,11 +581,17 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void setAppearance(GL gl, Appearance appearance)
+    private final void setAppearanceBase(GL gl, AppearanceBase appearance)
     {
         setCompositingMode(gl, appearance.getCompositingMode());
         setPolygonMode(gl, appearance.getPolygonMode());
+    }
+
+    private final void setAppearance(GL gl, Appearance appearance)
+    {
+        setAppearanceBase(gl, appearance);
         setFog(gl, appearance.getFog());
+        setMaterial(gl, appearance.getMaterial());
 
         for (int i = 0; i < maxTextureUnits; ++i)
         {
@@ -359,9 +599,9 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void setVertexBuffer(GL gl, VertexBuffer vertices)
+    private void setVertexBuffer(GL gl, VertexBuffer vertices, float alphaFactor)
     {
-        gl.glColor4fv(argbAsRGBAVolatile(vertices.getDefaultColor()), 0);
+        gl.glColor4fv(argbAsRGBAVolatile(vertices.getDefaultColor(), alphaFactor), 0);
 
         //positions
         if (true)
@@ -402,11 +642,46 @@ public class RendererOpenGL2 extends Renderer
                     positions.getVertexByteStride(), positions.getBuffer());
         }
 
-        //TODO normals
-
-        //TODO colors
+        //normals
         {
-            VertexArray colors = vertices.getColors();
+            final VertexArray normals = vertices.getColors();
+            if (normals != null)
+            {
+                if (normals.getComponentCount() != 3)
+                {
+                    throw new UnsupportedOperationException("normals must have 3 components");
+                }
+                int glType = GL.GL_FLOAT;
+                switch (normals.getComponentType())
+                {
+                    case VertexArray.FLOAT:
+                    {
+                        glType = GL.GL_FLOAT;
+                        break;
+                    }
+                    case VertexArray.BYTE:
+                    {
+                        glType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException("unsupported component type");
+                    }
+                }
+
+                gl.glNormalPointer(glType, normals.getVertexByteStride(), normals.getBuffer());
+                gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+            }
+            else
+            {
+                gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+            }
+        }
+
+        //colors
+        {
+            final VertexArray colors = vertices.getColors();
             if (colors != null)
             {
                 int glType = GL.GL_FLOAT;
