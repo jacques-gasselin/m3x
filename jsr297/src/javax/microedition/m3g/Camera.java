@@ -58,8 +58,13 @@ public class Camera extends Node
     {
         if (params != null)
         {
-            System.arraycopy(this.projectionParams, 0,
-                    params, 0, 4);
+            Require.argumentHasCapacity(params, "params", 4);
+
+            if (this.projectionType != GENERIC)
+            {
+                System.arraycopy(this.projectionParams, 0,
+                        params, 0, 4);
+            }
         }
         
         return this.projectionType;
