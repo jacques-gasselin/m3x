@@ -69,7 +69,7 @@ public abstract class Node extends Transformable
     }
 
     public boolean collide(int colliderScope, Node collidees, int collideeScope,
-            boolean fullTraversal)
+            boolean fullTraversal, Collisions collisions)
     {
         throw new UnsupportedOperationException();
     }
