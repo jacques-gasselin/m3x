@@ -27,13 +27,7 @@
 
 package camera.opengl;
 
-import java.awt.DisplayMode;
-import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
@@ -47,15 +41,14 @@ import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class ScreenCameraDemo extends Frame
+public class ScreenCameraDemo extends DemoFrame
 {
-    private static final boolean FULLSCREEN = false;
-
-    private static final class ScreenCameraCanvas extends GLCanvas
+    private final class ScreenCameraCanvas extends GLCanvas
             implements Runnable
     {
         private Background background;
@@ -79,10 +72,10 @@ public class ScreenCameraDemo extends Frame
             vertexBuffer = new VertexBuffer();
             vertexBuffer.setDefaultColor(0xffff0000);
             VertexArray positions = new VertexArray(4, 2, VertexArray.FLOAT);
-            positions.set(0, 1, new float[]{ 10, 10 });
-            positions.set(1, 1, new float[]{ 10, 400 });
-            positions.set(2, 1, new float[]{ 400, 400 });
-            positions.set(3, 1, new float[]{ 400, 10 });
+            positions.set(0, 1, new float[]{ 100, 100 });
+            positions.set(1, 1, new float[]{ 100, 500 });
+            positions.set(2, 1, new float[]{ 500, 500 });
+            positions.set(3, 1, new float[]{ 500, 100 });
             vertexBuffer.setPositions(positions, 1.0f, null);
 
             VertexArray colors = new VertexArray(4, 3, VertexArray.BYTE);
@@ -133,10 +126,10 @@ public class ScreenCameraDemo extends Frame
 
                 transform.setIdentity();
                 //pivot rotate about the center
-                transform.postTranslate(210, 210, 0);
+                transform.postTranslate(310, 310, 0);
                 transform.postRotate(angle, 0, 0, 1);
                 angle += 0.25f;
-                transform.postTranslate(-210, -210, 0);
+                transform.postTranslate(-310, -310, 0);
                 g3d.render(vertexBuffer, primitives, appearance, transform);
 
             }
@@ -156,7 +149,7 @@ public class ScreenCameraDemo extends Frame
             {
                 try
                 {
-                    Thread.sleep(40);
+                    Thread.sleep(1000 / getRefreshRate());
                 }
                 catch (InterruptedException e)
                 {
@@ -180,44 +173,11 @@ public class ScreenCameraDemo extends Frame
     {
         super("ScreenCameraDemo");
         add(new ScreenCameraCanvas());
-        addWindowListener(new WindowAdapter());
     }
 
     public static void main(String[] args)
     {
-        Frame frame = new ScreenCameraDemo();
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        assert(ge != null);
-
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        assert(gd != null);
-
-        if (FULLSCREEN)
-        {
-            try
-            {
-                //try setting fullscreen mode
-                DisplayMode dm = gd.getDisplayMode();
-                if (gd.isFullScreenSupported())
-                {
-                    frame.setSize(dm.getWidth(), dm.getHeight());
-                    frame.setUndecorated(true);
-                    gd.setFullScreenWindow(frame);
-                }
-            }
-            catch (Throwable t)
-            {
-                //unable to set full screen
-                gd.setFullScreenWindow(null);
-                frame.setUndecorated(true);
-            }
-        }
-        else
-        {
-            frame.setSize(800, 600);
-        }
-
-        frame.setVisible(true);
+        DemoFrame frame = new ScreenCameraDemo();
+        frame.present(false);
     }
 }

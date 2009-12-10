@@ -27,12 +27,7 @@
 
 package vertexbuffer.opengl;
 
-import java.awt.DisplayMode;
-import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
@@ -44,15 +39,15 @@ import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class SimpleVBDemo extends Frame
+public class SimpleVBDemo extends DemoFrame
 {
-    private static final boolean FULLSCREEN = false;
-    
-    private static final class SimpleVBCanvas extends GLCanvas implements Runnable
+    private final class SimpleVBCanvas extends GLCanvas
+            implements Runnable
     {
         private Background background;
         private AbstractRenderTarget renderTarget;
@@ -141,7 +136,7 @@ public class SimpleVBDemo extends Frame
             {
                 try
                 {
-                    Thread.sleep(40);
+                    Thread.sleep(1000 / getRefreshRate());
                 }
                 catch (InterruptedException e)
                 {
@@ -152,58 +147,16 @@ public class SimpleVBDemo extends Frame
         }
     }
 
-    private final class WindowAdapter extends java.awt.event.WindowAdapter
-    {
-        @Override
-        public void windowClosing(WindowEvent e)
-        {
-            System.exit(0);
-        }
-    }
-
     SimpleVBDemo()
     {
         super("SimpleVBDemo");
         add(new SimpleVBCanvas());
-        addWindowListener(new WindowAdapter());
     }
 
     public static void main(String[] args)
     {
-        Frame frame = new SimpleVBDemo();
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        assert(ge != null);
-
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        assert(gd != null);
-
-        if (FULLSCREEN)
-        {
-            try
-            {
-                //try setting fullscreen mode
-                DisplayMode dm = gd.getDisplayMode();
-                if (gd.isFullScreenSupported())
-                {
-                    frame.setSize(dm.getWidth(), dm.getHeight());
-                    frame.setUndecorated(true);
-                    gd.setFullScreenWindow(frame);
-                }
-            }
-            catch (Throwable t)
-            {
-                //unable to set full screen
-                gd.setFullScreenWindow(null);
-                frame.setUndecorated(true);
-            }
-        }
-        else
-        {
-            frame.setSize(800, 600);
-        }
-
-        frame.setVisible(true);
+        DemoFrame frame = new SimpleVBDemo();
+        frame.present(false);
     }
 
 }

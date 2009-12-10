@@ -28,26 +28,21 @@
 package background.opengl;
 
 import java.awt.Color;
-import java.awt.DisplayMode;
-import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class BackgroundDemo extends Frame
+public class BackgroundDemo extends DemoFrame
 {
-    private static final boolean FULLSCREEN = false;
-    
-    private static final class BackgroundCanvas extends GLCanvas implements Runnable
+    private final class BackgroundCanvas extends GLCanvas
+            implements Runnable
     {
         Background background;
         AbstractRenderTarget renderTarget;
@@ -94,7 +89,7 @@ public class BackgroundDemo extends Frame
             {
                 try
                 {
-                    Thread.sleep(40);
+                    Thread.sleep(1000 / getRefreshRate());
                 }
                 catch (InterruptedException e)
                 {
@@ -105,58 +100,16 @@ public class BackgroundDemo extends Frame
         }
     }
 
-    private final class WindowAdapter extends java.awt.event.WindowAdapter
-    {
-        @Override
-        public void windowClosing(WindowEvent e)
-        {
-            System.exit(0);
-        }
-    }
-
     BackgroundDemo()
     {
         super("BackgroundDemo");
         add(new BackgroundCanvas());
-        addWindowListener(new WindowAdapter());
     }
 
     public static void main(String[] args)
     {
-        Frame frame = new BackgroundDemo();
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        assert(ge != null);
-
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        assert(gd != null);
-
-        if (FULLSCREEN)
-        {
-            try
-            {
-                //try setting fullscreen mode
-                DisplayMode dm = gd.getDisplayMode();
-                if (gd.isFullScreenSupported())
-                {
-                    frame.setSize(dm.getWidth(), dm.getHeight());
-                    frame.setUndecorated(true);
-                    gd.setFullScreenWindow(frame);
-                }
-            }
-            catch (Throwable t)
-            {
-                //unable to set full screen
-                gd.setFullScreenWindow(null);
-                frame.setUndecorated(true);
-            }
-        }
-        else
-        {
-            frame.setSize(800, 600);
-        }
-        
-        frame.setVisible(true);
+        DemoFrame frame = new BackgroundDemo();
+        frame.present(false);
     }
 
 }
