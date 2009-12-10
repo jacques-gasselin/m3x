@@ -109,6 +109,23 @@ public class Camera extends Node
             }
             case SCREEN:
             {
+                final float w = params[2];
+                final float h = params[3];
+                final float tx = -(2 * params[0] + w) / w;
+                final float ty = -(2 * params[1] + h) / h;
+
+                //row-major
+                matrix[0] = 2.0f / w;
+                matrix[3] = tx;
+                matrix[5] = 2.0f / h;
+                matrix[7] = ty;
+                matrix[10] = -1;
+                matrix[15] = 1.0f;
+
+                break;
+            }
+            default:
+            {
                 throw new UnsupportedOperationException();
             }
         }
@@ -176,5 +193,20 @@ public class Camera extends Node
 
         this.projectionNeedsUpdate = true;
         setProjectionType(PERSPECTIVE);
+    }
+
+    public void setScreen(float x, float y, float width, float height)
+    {
+        Require.argumentNotNegative(width, "width");
+        Require.argumentNotNegative(height, "height");
+
+        final float[] params = this.projectionParams;
+        params[0] = x;
+        params[1] = y;
+        params[2] = width;
+        params[3] = height;
+
+        this.projectionNeedsUpdate = true;
+        setProjectionType(SCREEN);
     }
 }

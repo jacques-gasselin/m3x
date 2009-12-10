@@ -11,7 +11,13 @@
         <pathelement location="jsr297/demo/build"/>
         <pathelement location="jsr297/build"/>
     </path>
-    
+    <target name="compile-selected-files-in-demo">
+        <fail unless="files">Must set property 'files'</fail>
+        <mkdir dir="jsr297/demo/build"/>
+        <javac destdir="jsr297/demo/build" includes="${files}" source="1.5" srcdir="jsr297/demo">
+            <classpath refid="demo.path"/>
+        </javac>
+    </target>
     <target name="run-selected-file-in-demo">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
@@ -31,7 +37,6 @@
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
         </java>
     </target>
-
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
     <target name="compile-selected-files-in-test">

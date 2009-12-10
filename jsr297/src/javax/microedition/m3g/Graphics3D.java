@@ -453,6 +453,9 @@ public class Graphics3D
 
     public void setViewport(int x, int y, int width, int height)
     {
-        throw new UnsupportedOperationException();
+        if (this.renderer != null)
+        {
+            this.renderer.setViewport(x, y, width, height);
+        }
     }
 }
