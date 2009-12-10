@@ -51,8 +51,10 @@ public abstract class Node extends Transformable
     private int alignmentTargetZ = NONE;
     private Node alignmentReferenceZ;
     private float lodResolution;
-    private float[] boundingSphere;
-    private float[] boundingBox;
+    private final float[] boundingSphere = new float[4];
+    private boolean boundingSphereEnabled;
+    private final float[] boundingBox = new float[6];
+    private boolean boundingBoxEnabled;
     private int collisionShapeOrientations;
 
     public Node()
@@ -126,12 +128,36 @@ public abstract class Node extends Transformable
 
     public boolean getBoundingBox(float[] bounds)
     {
-        throw new UnsupportedOperationException();
+        if (!boundingBoxEnabled)
+        {
+            return false;
+        }
+
+        if (bounds != null)
+        {
+            Require.argumentHasCapacity(bounds, "bounds", 6);
+
+            System.arraycopy(this.boundingBox, 0, bounds, 0, 6);
+        }
+
+        return true;
     }
 
     public boolean getBoundingSphere(float[] bounds)
     {
-        throw new UnsupportedOperationException();
+        if (!boundingSphereEnabled)
+        {
+            return false;
+        }
+
+        if (bounds != null)
+        {
+            Require.argumentHasCapacity(bounds, "bounds", 4);
+
+            System.arraycopy(this.boundingSphere, 0, bounds, 0, 4);
+        }
+
+        return true;
     }
 
     public int getCollisionShape(float[] min, float[] max)
@@ -239,11 +265,13 @@ public abstract class Node extends Transformable
         }
         if (zRef == this)
         {
-            throw new IllegalArgumentException("self referential alignment, zRef is this");
+            throw new IllegalArgumentException("self referential alignment," +
+                    " zRef is this");
         }
         if (yRef == this)
         {
-            throw new IllegalArgumentException("self referential alignment, yRef is this");
+            throw new IllegalArgumentException("self referential alignment," +
+                    " yRef is this");
         }
 
         this.alignmentReferenceZ = zRef;
@@ -257,14 +285,57 @@ public abstract class Node extends Transformable
         this.alphaFactor = alphaFactor;
     }
 
-    public void setBoundingBox(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+    public void setBoundingBox(float minX, float maxX, float minY, float maxY,
+            float minZ, float maxZ)
     {
-        throw new UnsupportedOperationException();
+        if (minX > maxX)
+        {
+            throw new IllegalArgumentException("minX > maxX");
+        }
+        if (minY > maxY)
+        {
+            throw new IllegalArgumentException("minY > maxY");
+        }
+        if (minZ > maxZ)
+        {
+            throw new IllegalArgumentException("minZ > maxZ");
+        }
+
+        if (minX == maxX && minY == maxY && minZ == maxZ)
+        {
+            this.boundingBoxEnabled = false;
+            return;
+        }
+        
+        final float[] box = this.boundingBox;
+        box[0] = minX;
+        box[1] = maxX;
+        box[2] = minY;
+        box[3] = maxY;
+        box[4] = minZ;
+        box[5] = maxZ;
+
+        this.boundingBoxEnabled = true;
     }
 
-    public void setBoundingSphere(float centerX, float centerY, float centerZ, float radius)
+    public void setBoundingSphere(float centerX, float centerY, float centerZ,
+            float radius)
     {
-        throw new UnsupportedOperationException();
+        Require.argumentNotNegative(radius, "radius");
+
+        if (radius == 0)
+        {
+            this.boundingSphereEnabled = false;
+            return;
+        }
+        
+        final float[] sphere = this.boundingSphere;
+        sphere[0] = centerX;
+        sphere[1] = centerY;
+        sphere[2] = centerZ;
+        sphere[3] = radius;
+
+        this.boundingSphereEnabled = true;
     }
 
     public void setCollisionEnable(boolean enable)
