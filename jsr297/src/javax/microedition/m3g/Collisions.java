@@ -30,59 +30,24 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class RayIntersection
+public class Collisions
 {
-    public RayIntersection()
+    public Collisions()
     {
-        
+
     }
 
-    public float getAttribute(String name, int index)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public float getDistance()
+    public void getActiveColliders(Node[] colliders)
     {
         throw new UnsupportedOperationException();
     }
 
-    public Node getIntersected()
+    public int getCollidees(Node collider, Node[] collidees)
     {
         throw new UnsupportedOperationException();
     }
 
-    public float getNormalX()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public float getNormalY()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public float getNormalZ()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public void getRay(float[] ray)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public int getSubmeshIndex()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public float getTextureS(int index)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public float getTextureT(int index)
+    public int getMaxCollideeCount()
     {
         throw new UnsupportedOperationException();
     }

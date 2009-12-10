@@ -45,9 +45,9 @@ public abstract class Node extends Transformable
     private float alphaFactor = 1.0f;
     private int scope = -1;
     private int alignmentTargetY = NONE;
-    private Node alignmenReferenceY;
+    private Node alignmentReferenceY;
     private int alignmentTargetZ = NONE;
-    private Node alignmenReferenceZ;
+    private Node alignmentReferenceZ;
     private float lodResolution;
     private float[] boundingSphere;
     private float[] boundingBox;
@@ -81,12 +81,40 @@ public abstract class Node extends Transformable
 
     public Node getAlignmentReference(int axis)
     {
-        throw new UnsupportedOperationException();
+        switch (axis)
+        {
+            case Y_AXIS:
+            {
+                return alignmentReferenceY;
+            }
+            case Z_AXIS:
+            {
+                return alignmentReferenceZ;
+            }
+            default:
+            {
+                throw new IllegalArgumentException("axis is not Y_AXIS or Z_AXIS");
+            }
+        }
     }
 
     public int getAlignmentTarget(int axis)
     {
-        throw new UnsupportedOperationException();
+        switch (axis)
+        {
+            case Y_AXIS:
+            {
+                return alignmentTargetY;
+            }
+            case Z_AXIS:
+            {
+                return alignmentTargetZ;
+            }
+            default:
+            {
+                throw new IllegalArgumentException("axis is not Y_AXIS or Z_AXIS");
+            }
+        }
     }
 
     public float getAlphaFactor()
@@ -154,7 +182,27 @@ public abstract class Node extends Transformable
 
     public void setAlignment(Node zRef, int zTarget, Node yRef, int yTarget)
     {
-        throw new UnsupportedOperationException();
+        Require.argumentInEnum(zTarget, "zTarget", NONE, Z_AXIS);
+        Require.argumentInEnum(yTarget, "yTarget", NONE, Z_AXIS);
+
+        if ((zRef == yRef) && (zTarget == yTarget) && (zTarget != NONE))
+        {
+            throw new IllegalArgumentException("illegal double alignment to the" +
+                    " same axis on the same reference node");
+        }
+        if (zRef == this)
+        {
+            throw new IllegalArgumentException("self referential alignment, zRef is this");
+        }
+        if (yRef == this)
+        {
+            throw new IllegalArgumentException("self referential alignment, yRef is this");
+        }
+
+        this.alignmentReferenceZ = zRef;
+        this.alignmentTargetZ = zTarget;
+        this.alignmentReferenceY = yRef;
+        this.alignmentTargetY = yTarget;
     }
 
     public void setAlphaFactor(float alphaFactor)

@@ -50,11 +50,7 @@ public class Group extends Node
     {
         Require.notNull(child, "child");
 
-        final int childId = System.identityHashCode(child);
-        final int parentId = System.identityHashCode(child.getParent());
-        final int thisId = System.identityHashCode(this);
-
-        if (childId == thisId)
+        if (child == this)
         {
             throw new IllegalArgumentException("child is this Group");
         }
@@ -62,12 +58,13 @@ public class Group extends Node
         {
             throw new IllegalArgumentException("child is a World node");
         }
-        if (parentId != 0 && parentId != thisId)
+        final Node parent = child.getParent();
+        if (parent != null && parent != this)
         {
             throw new IllegalArgumentException("child already has a parent other than this group");
         }
 
-        return parentId != thisId;
+        return parent != this;
     }
 
     public void addChild(Node child)
