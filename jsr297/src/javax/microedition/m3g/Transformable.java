@@ -55,16 +55,21 @@ public abstract class Transformable extends Object3D
         compositeTransformNeedsUpdate = false;
     }
 
-    public void getCompositeTransform(Transform transform)
+    final Transform getCompositeTransform()
     {
-        Require.notNull(transform, "transform");
-
         if (compositeTransformNeedsUpdate)
         {
             updateCompositeTransform();
         }
 
-        transform.set(this.compositeTransform);
+        return this.compositeTransform;
+    }
+
+    public void getCompositeTransform(Transform transform)
+    {
+        Require.notNull(transform, "transform");
+
+        transform.set(getCompositeTransform());
     }
 
     public void getOrientation(float[] angleAxis)

@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.ArrayList;
+
 /**
  * @author jgasseli
  */
@@ -152,12 +154,57 @@ public abstract class Node extends Transformable
         return this.scope;
     }
 
+    private static final boolean ancestorPath(Node ancestor, Node child,
+            ArrayList<Node> path)
+    {
+        Require.notNull(ancestor, "ancestor");
+        Require.notNull(child, "child");
+        Require.notNull(path, "path");
+
+        //go up the ancestor hierachy until we hit the ancestor
+        //or a parentless node.
+        for (Node it = child; it != null; it = it.getParent())
+        {
+            if (it == ancestor)
+            {
+                return true;
+            }
+            path.add(it);
+        }
+
+        return false;
+    }
+
     public boolean getTransformTo(Node target, Transform transform)
     {
         Require.notNull(target, "target");
         Require.notNull(transform, "transform");
 
-        throw new UnsupportedOperationException();
+        ArrayList<Node> path = new ArrayList<Node>();
+        final boolean isAncestor = ancestorPath(target, this, path);
+        if (!isAncestor)
+        {
+            //reverse the ancestor path search and invert the transform
+            path.clear();
+            if (!ancestorPath(this, target, path))
+            {
+                return false;
+            }
+        }
+
+        transform.setIdentity();
+        //accumulate the transforms in reverse order
+        for (int i = path.size() - 1; i >= 0; --i)
+        {
+            transform.postMultiply(path.get(i).getCompositeTransform());
+        }
+
+        if (!isAncestor)
+        {
+            transform.invert();
+        }
+
+        return true;
     }
 
     public boolean isCollisionEnabled()
@@ -268,6 +315,7 @@ public abstract class Node extends Transformable
             throw new IllegalArgumentException(
                     "Nodes only allow 3x4 matrices as transforms");
         }
+        
         super.setTransform(transform);
     }
 }
