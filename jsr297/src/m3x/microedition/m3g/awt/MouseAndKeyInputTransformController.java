@@ -46,6 +46,7 @@ public abstract class MouseAndKeyInputTransformController
         MouseMotionListener, MouseWheelListener, KeyListener
 {
     private Transform transform;
+    private Component component;
 
     public MouseAndKeyInputTransformController(Component component)
     {
@@ -53,16 +54,23 @@ public abstract class MouseAndKeyInputTransformController
         component.addMouseMotionListener(this);
         component.addMouseWheelListener(this);
         component.addKeyListener(this);
+
+        this.component = component;
     }
-    
-    public void setTransform(Transform transform)
+
+    public final Component getComponent()
     {
-        this.transform = transform;
+        return this.component;
     }
 
     public Transform getTransform()
     {
         return this.transform;
+    }
+    
+    public void setTransform(Transform transform)
+    {
+        this.transform = transform;
     }
 
     public void update(double seconds)

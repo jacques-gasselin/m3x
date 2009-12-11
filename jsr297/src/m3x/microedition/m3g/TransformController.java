@@ -37,6 +37,13 @@ import javax.microedition.m3g.Transform;
 public interface TransformController
 {
     /**
+     * Gets the transform set in setTransform(Transform).
+     * @return the currently set transform
+     * @see #setTransform(javax.microedition.m3g.Transform)
+     */
+    public Transform getTransform();
+
+    /**
      * Sets the transform object to update at each call to update(double).
      * Passing null as the parameter will unset the current transform and
      * disable updates.
@@ -45,13 +52,6 @@ public interface TransformController
      * @see #getTransform()
      */
     public void setTransform(Transform transform);
-
-    /**
-     * Gets the transform set in setTransform(Transform).
-     * @return the currently set transform
-     * @see #setTransform(javax.microedition.m3g.Transform)
-     */
-    public Transform getTransform();
 
     /**
      * Updates the currently set transform with regards to all the input data the controller

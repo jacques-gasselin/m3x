@@ -100,7 +100,7 @@ public class CameraControllerDemo extends DemoFrame
 
             camera = new Camera();
             camera.setPerspective(50, 1.0f, 0.1f, 10.0f);
-            cameraController = new BlenderTurntableCameraController(this,
+            cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 6);
 
             new Thread(this).start();

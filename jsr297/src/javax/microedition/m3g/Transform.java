@@ -211,17 +211,34 @@ public final class Transform
     public void transform(float[] vectors)
     {
         Require.notNull(vectors, "vectors");
-
-        final int vecCount = vectors.length >> 2;
-        if (vecCount == 0)
+        
+        final int length = vectors.length;
+        if ((length >> 2) == 0)
         {
             return;
         }
+        if ((length & 3) != 0)
+        {
+            throw new IllegalArgumentException(
+                    "vectors.length must be a multiple of 4");
+        }
         
-        Vector4f vec = new Vector4f();
-        
-        this.matrix.transform(vec);
-        throw new UnsupportedOperationException();
+        final Vector4f vec = new Vector4f();
+        final Matrix4f m = this.matrix;
+        for (int i = 0; i < length; i += 4)
+        {
+            vec.x = vectors[i + 0];
+            vec.y = vectors[i + 1];
+            vec.z = vectors[i + 2];
+            vec.w = vectors[i + 3];
+
+            m.transform(vec);
+            
+            vectors[i + 0] = vec.x;
+            vectors[i + 1] = vec.y;
+            vectors[i + 2] = vec.z;
+            vectors[i + 3] = vec.w;
+        }
     }
 
     public void transform(VertexArray in, float[] out, boolean w)
