@@ -13,7 +13,7 @@
     <property name="demo.build.dir" location="${demo.dir}/build"/>
     <property name="build.dir" location="${basedir}/build"/>
     <property name="dist.dir" location="${basedir}/dist"/>
-    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy.xml"/>
+    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy-5.0.xml"/>
 
     <target name="pre-build">
         <mkdir dir="${build.dir}"/>
@@ -33,9 +33,16 @@
         </delete>
     </target>
 
-    <target name="build-src" depends="pre-build">
+    <target name="uptodate-src">
+        <uptodate property="src.uptodate" targetfile="${basedir}/.uptodate-src">
+            <srcfiles dir="${src.dir}" includes="**/*.java"/>
+        </uptodate>
+        <touch file="${basedir}/.uptodate-src"/>
+    </target>
+
+    <target name="checkstyle-src" unless="src.uptodate">
         <taskdef resource="checkstyletask.properties"
-                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>
+                 classpath="${lib.dir}/checkstyle-all-5.0.jar"/>
         <checkstyle failOnViolation="false"
                     config="${checkstyle.policy}">
             <classpath>
@@ -45,7 +52,13 @@
             <fileset dir="${src.dir}" defaultexcludes="yes">
                 <exclude name="**/*.html"/>
             </fileset>
+            <property key="checkstyle.cache.file"
+                      file="${checkstyle.policy}.cachefile"/>
         </checkstyle>
+        <touch file="${checkstyle.policy}.cachefile"/>
+    </target>
+    
+    <target name="build-src" depends="pre-build, uptodate-src, checkstyle-src">
         <depend srcdir="${src.dir}"
                 destdir="${build.dir}"
                 cache="depcache"

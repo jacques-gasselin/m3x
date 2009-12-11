@@ -3,6 +3,7 @@
 "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <module name="Checker">
+    <module name="FileTabCharacter"/>
     <module name="TreeWalker">
         <property name="cacheFile" value="checkstyle.cachefile"/>
         <module name="AvoidStarImport"/>
@@ -19,7 +20,6 @@
         <module name="EmptyBlock"/>
         <module name="EmptyForInitializerPad"/>
         <module name="MethodParamPad"/>
-        <module name="TabCharacter"/>
         <module name="VisibilityModifier"/>
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
@@ -30,9 +30,6 @@
         </module>
         <module name="Indentation"/>
         <module name="UpperEll"/>
-        <!-- Enable these towards the end of the project -->
-        <!--module name="JavadocType"/-->
-        <!--module name="JavadocMethod"/-->
     </module>
     <module name="NewlineAtEndOfFile"/>
 </module>

@@ -7,7 +7,7 @@
     <!-- Adding these suggested by maxgilead to allow use of this build.xml file directly. -->
     <property name="schema.dir" location="${basedir}/../schema"/>
     <property name="lib.dir" location="${basedir}/../lib"/>
-    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy.xml"/>
+    <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy-5.0.xml"/>
 
     <property name="docs.dir" location="${basedir}/docs"/>
     <property name="res.dir" location="${basedir}/res"/>
@@ -47,43 +47,39 @@
     </target>
 
     <target name="xml-build" depends="xjc-typedef">
+        <echo>XJC on m3x schema</echo>
         <xjc package="${m3x.xml.package}"
              destdir="${build.src.dir}">
             <schema file="${schema.dir}/m3x.xsd"/>
-            <depends file="${schema.dir}/m3x.xsd"/>
-            <produces dir="${build.src.dir}/m3x/xml" includes="*.java"/>
+            <produces dir="${build.src.dir}/m3x/xml">
+                <include name="*.java"/>
+                <exclude name="Deserializer.java"/>
+                <exclude name="Serializer.java"/>
+                <exclude name="StringInterner.java"/>
+            </produces>
         </xjc>
+        <echo>XJC on collada schema</echo>
         <xjc package="${m3x.collada.package}"
              destdir="${build.src.dir}"
              extension="true">
             <schema file="${schema.dir}/collada.xsd"/>
-            <depends file="${schema.dir}/collada.xsd"/>
-            <produces dir="${build.src.dir}/m3x/collada" includes="*.java"/>
+            <produces dir="${build.src.dir}/m3x/collada">
+                <include name="*.java"/>
+                <exclude name="BaseObject.java"/>
+                <exclude name="BaseObjectDatabase.java"/>
+                <exclude name="Deserializer.java"/>
+            </produces>
         </xjc>
-        <echo>Compiling sources</echo>
-        <javac destdir="${build.dir}"
-               fork="true"
-               debug="true">
-            <!--compilerarg value="-Xlint:unchecked"/-->
-            <src>
-                <pathelement location="${build.src.dir}"/>
-                <pathelement location="${src.dir}/m3x/xml"/>
-                <pathelement location="${src.dir}/m3x/collada"/>
-            </src>
-            <classpath>
-                <fileset dir="${lib.dir}"/>
-            </classpath>
-        </javac>
-        <copy todir="${build.dir}">
+        <copy todir="${build.dir}" preservelastmodified="true">
             <fileset dir="${build.src.dir}">
               <include name="**/jaxb.properties"/>
             </fileset>
         </copy>
         <!--add the schema to the build path-->
-        <copy todir="${build.dir}/m3x/xml"
+        <copy todir="${build.dir}/m3x/xml" preservelastmodified="true"
               file="${schema.dir}/m3x.xsd"/>
         <!--add the schema to the build path-->
-        <copy todir="${build.dir}/m3x/collada"
+        <copy todir="${build.dir}/m3x/collada" preservelastmodified="true"
               file="${schema.dir}/collada.xsd"/>
     </target>
     
@@ -97,9 +93,16 @@
         </delete>
     </target>
 
-    <target name="checkstyle-src">
+    <target name="uptodate-src">
+        <uptodate property="src.uptodate" targetfile="${basedir}/.uptodate-src">
+            <srcfiles dir="${src.dir}" includes="**/*.java"/>
+        </uptodate>
+        <touch file="${basedir}/.uptodate-src"/>
+    </target>
+
+    <target name="checkstyle-src" unless="src.uptodate">
         <taskdef resource="checkstyletask.properties"
-                 classpath="${lib.dir}/checkstyle-all-4.4.jar"/>
+                 classpath="${lib.dir}/checkstyle-all-5.0.jar"/>
         <checkstyle failOnViolation="false"
                     config="${checkstyle.policy}">
             <classpath>
@@ -109,10 +112,16 @@
             <fileset dir="${src.dir}" defaultexcludes="yes">
                 <exclude name="**/*.html"/>
             </fileset>
+            <property key="checkstyle.cache.file"
+                      file="${checkstyle.policy}.cachefile"/>
         </checkstyle>
     </target>
     
-    <target name="build-src" depends="pre-build, checkstyle-src, xml-build">
+    <target name="build-src" depends="pre-build, uptodate-src, checkstyle-src, xml-build">
+        <depend srcdir="${build.src.dir}"
+                destdir="${build.dir}"
+                cache="depcache"
+                closure="yes"/>
         <depend srcdir="${src.dir}"
                 destdir="${build.dir}"
                 cache="depcache"
@@ -121,7 +130,10 @@
                fork="true"
                debug="true">
             <!--compilerarg value="-Xlint:unchecked"/-->
-            <src path="${src.dir}"/>
+            <src>
+                <pathelement location="${build.src.dir}"/>
+                <pathelement location="${src.dir}"/>
+            </src>
             <include name="**/*.java"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>

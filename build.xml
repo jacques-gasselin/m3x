@@ -5,7 +5,7 @@
     <property name="lib.dir" location="${basedir}/lib"/>
     <property name="tools.dir" location="${basedir}/tools"/>
     <property name="release.dir" location="${basedir}/release"/>
-    <property name="checkstyle.policy" location="${basedir}/checkstyle-policy.xml"/>
+    <property name="checkstyle.policy" location="${basedir}/checkstyle-policy-5.0.xml"/>
     
     <target name="build"
             description="runs the build target in all the subfolders">

@@ -40,14 +40,16 @@ import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.microedition.m3g.TransformController;
+import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
 import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class ScreenCameraDemo extends DemoFrame
+public class CameraControllerDemo extends DemoFrame
 {
-    private final class ScreenCameraCanvas extends GLCanvas
+    private final class CameraControllerCanvas extends GLCanvas
             implements Runnable
     {
         private Background background;
@@ -57,12 +59,12 @@ public class ScreenCameraDemo extends DemoFrame
         private IndexBuffer primitives;
         private Appearance appearance;
         private Camera camera;
-        private final Transform cameraTransform = new Transform();
+        private TransformController cameraController;
 
         private float angle;
         private final Transform transform = new Transform();
 
-        public ScreenCameraCanvas()
+        public CameraControllerCanvas()
         {
             renderTarget = new GLRenderTarget(this);
             background = new Background();
@@ -70,11 +72,11 @@ public class ScreenCameraDemo extends DemoFrame
 
             vertexBuffer = new VertexBuffer();
             vertexBuffer.setDefaultColor(0xffff0000);
-            VertexArray positions = new VertexArray(4, 2, VertexArray.FLOAT);
-            positions.set(0, 1, new float[]{ 100, 100 });
-            positions.set(1, 1, new float[]{ 100, 500 });
-            positions.set(2, 1, new float[]{ 500, 500 });
-            positions.set(3, 1, new float[]{ 500, 100 });
+            VertexArray positions = new VertexArray(4, 3, VertexArray.FLOAT);
+            positions.set(0, 1, new float[]{ 0, 0, 0 });
+            positions.set(1, 1, new float[]{ 1, 0, 0 });
+            positions.set(2, 1, new float[]{ 0, 1, 0 });
+            positions.set(3, 1, new float[]{ 0, 0, 1 });
             vertexBuffer.setPositions(positions, 1.0f, null);
 
             VertexArray colors = new VertexArray(4, 3, VertexArray.BYTE);
@@ -84,10 +86,11 @@ public class ScreenCameraDemo extends DemoFrame
             colors.set(3, 1, new byte[]{ 0, 0, (byte)255 });
             vertexBuffer.setColors(colors);
 
-            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 2,
+            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 3,
                     new int[] {
-                0, 1, 2,
-                2, 3, 0,
+                0, 2, 1,
+                1, 2, 3,
+                3, 2, 0,
             });
 
             appearance = new Appearance();
@@ -96,10 +99,10 @@ public class ScreenCameraDemo extends DemoFrame
             appearance.setPolygonMode(pm);
 
             camera = new Camera();
-            camera.setScreen(0, 0, 800, 600);
+            camera.setPerspective(50, 1.0f, 0.1f, 10.0f);
+            cameraController = new BlenderTurntableCameraController(this,
+                    0, 0, 6);
 
-            camera.getCompositeTransform(cameraTransform);
-            
             new Thread(this).start();
         }
 
@@ -113,22 +116,13 @@ public class ScreenCameraDemo extends DemoFrame
             try
             {
                 g3d.bindTarget(renderTarget);
-                camera.setScreen(0, 0, getWidth(), getHeight());
                 g3d.setViewport(0, 0, getWidth(), getHeight());
-                //flip y as the OpenGL screen has a bottom left origin
-                cameraTransform.setIdentity();
-                cameraTransform.postTranslate(0, getHeight(), 0);
-                cameraTransform.postScale(1, -1, 1);
-                g3d.setCamera(camera, cameraTransform);
-                
+                cameraController.update(1.0 / getRefreshRate());
+                g3d.setCamera(camera, cameraController.getTransform());
+
                 g3d.clear(background);
 
                 transform.setIdentity();
-                //pivot rotate about the center
-                transform.postTranslate(310, 310, 0);
-                transform.postRotate(angle, 0, 0, 1);
-                angle += 0.25f;
-                transform.postTranslate(-310, -310, 0);
                 g3d.render(vertexBuffer, primitives, appearance, transform);
 
             }
@@ -159,15 +153,15 @@ public class ScreenCameraDemo extends DemoFrame
         }
     }
 
-    ScreenCameraDemo()
+    CameraControllerDemo()
     {
-        super("ScreenCameraDemo");
-        add(new ScreenCameraCanvas());
+        super("CameraControllerDemo");
+        add(new CameraControllerCanvas());
     }
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new ScreenCameraDemo();
+        DemoFrame frame = new CameraControllerDemo();
         frame.present(false);
     }
 }
