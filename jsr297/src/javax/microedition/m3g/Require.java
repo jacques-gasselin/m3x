@@ -105,11 +105,27 @@ final class Require
         argumentInRange(value, name, enumMin, enumMax);
     }
 
+    static final void argumentGreaterThan(int value, String name, int limit)
+    {
+        if (value <= limit)
+        {
+            throw new IllegalArgumentException(name + " <= " + limit);
+        }
+    }
+
     static final void argumentGreaterThan(float value, String name, float limit)
     {
         if (value <= limit)
         {
             throw new IllegalArgumentException(name + " <= " + limit);
+        }
+    }
+
+    static final void argumentGreaterThanZero(int value, String name)
+    {
+        if (value <= 0)
+        {
+            throw new IllegalArgumentException(name + " <= 0");
         }
     }
 

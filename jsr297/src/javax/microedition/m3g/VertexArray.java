@@ -35,10 +35,19 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 /**
+ * An array of vertex attributes in byte, short, fixed, half, or float components.
+ *
+ * VertexArrays are used by VertexBuffer objects to supply the data for a desired
+ * semantic. The same VertexArray may be shared among many VertexBuffer objects or
+ * even the same one multiple times.
+ *
  * @author jgasseli
  */
 public class VertexArray extends Object3D
 {
+    /**
+     * Use 8bit components.
+     */
     public static final int BYTE = 1;
     public static final int SHORT = 2;
     public static final int FIXED = 3;
@@ -64,7 +73,15 @@ public class VertexArray extends Object3D
         //leave it uninitialised.
         //init later using set()
     }
-    
+
+    /**
+     * Constructs an empty VertexArray  with the given number of vertices and
+     * components of the desired type.
+     * 
+     * @param numVertices the number of vertices contained in the array.
+     * @param numComponents the number of components per vertex
+     * @param componentType the data type of each component
+     */
     public VertexArray(int numVertices, int numComponents, int componentType)
     {
         set(numVertices, numComponents, componentType);

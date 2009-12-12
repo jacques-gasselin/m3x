@@ -166,7 +166,7 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>jsr297/build</location>
+                <location>jsr297/test/build</location>
                 <build-target>build</build-target>
             </export>
             <export>
