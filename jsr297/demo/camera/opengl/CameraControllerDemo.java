@@ -66,17 +66,18 @@ public class CameraControllerDemo extends DemoFrame
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            sphere = GeomUtils.createSphere(0.5f, 5, 5);
+            sphere = GeomUtils.createSphere(0.5f, 7, 5);
 
-
-            PolygonMode pm = new PolygonMode();
-            pm.setCulling(PolygonMode.CULL_NONE);
-            sphere.getAppearance(0).setPolygonMode(pm);
+            //PolygonMode pm = new PolygonMode();
+            //pm.setCulling(PolygonMode.CULL_NONE);
+            //sphere.getAppearance(0).setPolygonMode(pm);
 
             camera = new Camera();
-            camera.setPerspective(50, 1.0f, 0.1f, 10.0f);
+            camera.setPerspective(90,
+                    getWidth() / (float)getHeight(),
+                    0.1f, 10.0f);
             cameraController = new BlenderTurntableCameraController(camera, this,
-                    0, 0, 6);
+                    0, 0, 3);
 
             new Thread(this).start();
         }
@@ -91,6 +92,9 @@ public class CameraControllerDemo extends DemoFrame
             try
             {
                 g3d.bindTarget(renderTarget);
+                camera.setPerspective(90,
+                        getWidth() / (float)getHeight(),
+                        0.1f, 10.0f);
                 g3d.setViewport(0, 0, getWidth(), getHeight());
                 cameraController.update(1.0 / getRefreshRate());
                 g3d.setCamera(camera, cameraController.getTransform());
@@ -98,6 +102,7 @@ public class CameraControllerDemo extends DemoFrame
                 g3d.clear(background);
 
                 transform.setIdentity();
+                transform.postRotate(-90, 1, 0, 0);
                 g3d.render(sphere.getVertexBuffer(),
                         sphere.getIndexBuffer(0),
                         sphere.getAppearance(0),

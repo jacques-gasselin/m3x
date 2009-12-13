@@ -120,19 +120,60 @@ public final class GeomUtils
         int index = 0;
 
         //the bottom cap
-        for (int slice = 0; slice < slices; ++slice)
+        if (true)
         {
-            indices[index + 0] = 0;
-            indices[index + 1] = 1 + slice;
-            indices[index + 2] = 1 + (slice + 1) % slices;
-            index += 3;
+            final int bottomStartVertex = 0;
+            final int topStartVertex = 1;
+            for (int slice = 0; slice < slices ; ++slice)
+            {
+                //CCW
+                indices[index + 0] = topStartVertex + slice;
+                indices[index + 1] = bottomStartVertex;
+                indices[index + 2] = topStartVertex + (slice + 1) % slices;
+                index += 3;
+            }
+        }
+        
+        //each slice
+        if (true)
+        {
+            for (int stack = 0; stack < (stacks - 1); ++stack)
+            {
+                //bottom to top
+                final int bottomStartVertex = 1 + stack * slices;
+                final int topStartVertex = 1 + (stack + 1) * slices;
+                //one quad at a time
+                for (int slice = 0; slice < slices; ++slice)
+                {
+                    final int nextSlice = (slice + 1) % slices;
+                    //upper-left triangle CCW
+                    indices[index + 0] = topStartVertex + slice;
+                    indices[index + 1] = bottomStartVertex + slice;
+                    indices[index + 2] = topStartVertex + nextSlice;
+                    index += 3;
+                    //lower-right triangle CCW
+                    indices[index + 0] = topStartVertex + nextSlice;
+                    indices[index + 1] = bottomStartVertex + slice;
+                    indices[index + 2] = bottomStartVertex + nextSlice;
+                    index += 3;
+                }
+            }
         }
 
-        //each slice
-        //TODO
-
         //the top cap
-        //TODO
+        if (true)
+        {
+            final int bottomStartVertex = 1 + (stacks - 1) * slices;
+            final int topStartVertex = vertexCount - 1;
+            for (int slice = 0; slice < slices; ++slice)
+            {
+                //CCW
+                indices[index + 0] = topStartVertex;
+                indices[index + 1] = bottomStartVertex + slice;
+                indices[index + 2] = bottomStartVertex + (slice + 1) % slices;
+                index += 3;
+            }
+        }
 
         IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, triangleCount, indices);
         Appearance a = new Appearance();
