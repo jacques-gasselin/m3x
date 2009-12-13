@@ -30,16 +30,14 @@ package camera.opengl;
 import java.awt.Graphics;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
-import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
-import javax.microedition.m3g.IndexBuffer;
+import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.PolygonMode;
 import javax.microedition.m3g.Transform;
-import javax.microedition.m3g.VertexArray;
-import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.microedition.m3g.GeomUtils;
 import m3x.microedition.m3g.TransformController;
 import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
 import util.DemoFrame;
@@ -55,9 +53,7 @@ public class CameraControllerDemo extends DemoFrame
         private Background background;
         private AbstractRenderTarget renderTarget;
 
-        private VertexBuffer vertexBuffer;
-        private IndexBuffer primitives;
-        private Appearance appearance;
+        private Mesh sphere;
         private Camera camera;
         private TransformController cameraController;
 
@@ -70,33 +66,12 @@ public class CameraControllerDemo extends DemoFrame
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            vertexBuffer = new VertexBuffer();
-            vertexBuffer.setDefaultColor(0xffff0000);
-            VertexArray positions = new VertexArray(4, 3, VertexArray.FLOAT);
-            positions.set(0, 1, new float[]{ 0, 0, 0 });
-            positions.set(1, 1, new float[]{ 1, 0, 0 });
-            positions.set(2, 1, new float[]{ 0, 1, 0 });
-            positions.set(3, 1, new float[]{ 0, 0, 1 });
-            vertexBuffer.setPositions(positions, 1.0f, null);
+            sphere = GeomUtils.createSphere(0.5f, 5, 5);
 
-            VertexArray colors = new VertexArray(4, 3, VertexArray.BYTE);
-            colors.set(0, 1, new byte[]{ 0, 0, 0 });
-            colors.set(1, 1, new byte[]{ (byte)255, 0, 0 });
-            colors.set(2, 1, new byte[]{ 0, (byte)255, 0 });
-            colors.set(3, 1, new byte[]{ 0, 0, (byte)255 });
-            vertexBuffer.setColors(colors);
 
-            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 3,
-                    new int[] {
-                0, 2, 1,
-                1, 2, 3,
-                3, 2, 0,
-            });
-
-            appearance = new Appearance();
             PolygonMode pm = new PolygonMode();
             pm.setCulling(PolygonMode.CULL_NONE);
-            appearance.setPolygonMode(pm);
+            sphere.getAppearance(0).setPolygonMode(pm);
 
             camera = new Camera();
             camera.setPerspective(50, 1.0f, 0.1f, 10.0f);
@@ -123,7 +98,10 @@ public class CameraControllerDemo extends DemoFrame
                 g3d.clear(background);
 
                 transform.setIdentity();
-                g3d.render(vertexBuffer, primitives, appearance, transform);
+                g3d.render(sphere.getVertexBuffer(),
+                        sphere.getIndexBuffer(0),
+                        sphere.getAppearance(0),
+                        transform);
 
             }
             catch (Throwable t)

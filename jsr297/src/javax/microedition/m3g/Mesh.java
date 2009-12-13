@@ -32,7 +32,7 @@ package javax.microedition.m3g;
  */
 public class Mesh extends Node
 {
-    private Appearance[] appearances;
+    private AppearanceBase[] appearances;
     private IndexBuffer[] indexBuffers;
     private int submeshCount;
     private VertexBuffer vertexBuffer;
@@ -90,12 +90,26 @@ public class Mesh extends Node
 
     public Appearance getAppearance(int index)
     {
-        throw new UnsupportedOperationException();
+        final AppearanceBase a = getAppearanceBase(index);
+        if (a instanceof Appearance)
+        {
+            return (Appearance) a;
+        }
+        return null;
+    }
+
+    AppearanceBase getAppearanceBase(int index)
+    {
+        Require.indexInRange(index, getSubmeshCount());
+
+        return this.appearances[index];
     }
 
     public IndexBuffer getIndexBuffer(int index)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, getSubmeshCount());
+        
+        return this.indexBuffers[index];
     }
 
     public int getMorphSubset(int[] morphIndices)
@@ -105,17 +119,24 @@ public class Mesh extends Node
 
     public VertexBuffer getMorphTarget(int index)
     {
+        Require.indexInRange(index, getMorphTargetCount());
+        
         throw new UnsupportedOperationException();
     }
 
     public int getMorphTargetCount()
     {
-        throw new UnsupportedOperationException();
+        return this.morphTargetCount;
     }
 
     public ShaderAppearance getShaderAppearance(int index)
     {
-        throw new UnsupportedOperationException();
+        final AppearanceBase a = getAppearanceBase(index);
+        if (a instanceof ShaderAppearance)
+        {
+            return (ShaderAppearance) a;
+        }
+        return null;
     }
 
     public int getSubmeshCount()
@@ -130,17 +151,23 @@ public class Mesh extends Node
 
     public void getWeights(float[] weights)
     {
+        Require.argumentHasCapacity(weights, "weights", getMorphTargetCount());
+        
         throw new UnsupportedOperationException();
     }
 
     public void setAppearance(int index, Appearance appearance)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, getSubmeshCount());
+
+        this.appearances[index] = appearance;
     }
 
     public void setIndexBuffer(int index, IndexBuffer submesh)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, getSubmeshCount());
+
+        this.indexBuffers[index] = submesh;
     }
 
     public void setMorpSubset(int morphSubsetSize, int[] morphIndices)
@@ -150,6 +177,8 @@ public class Mesh extends Node
 
     public void setMorphTarget(int index, VertexBuffer target)
     {
+        Require.indexInRange(index, getMorphTargetCount());
+
         throw new UnsupportedOperationException();
     }
 
@@ -162,7 +191,9 @@ public class Mesh extends Node
 
     public void setShaderAppearance(int index, ShaderAppearance appearance)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, getSubmeshCount());
+
+        this.appearances[index] = appearance;
     }
     
     final void setSubmeshCount(int numSubmeshes)

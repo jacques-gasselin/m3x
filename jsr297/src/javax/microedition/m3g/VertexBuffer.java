@@ -94,13 +94,14 @@ public class VertexBuffer extends Object3D
                 return;
             }
 
+            final int vaCount = va.getVertexCount();
             //is this vertex array in the buffer?
-            if (this.arrays.containsKey(va))
+            if (this.arrays.containsKey(va) && vaCount != this.count)
             {
-                throw new IllegalStateException("va already belongs to the counter."
+                throw new IllegalStateException("va already belongs to the counter" +
+                        " yet the vertex count does not match up."
                         + this.arrays);
             }
-            final int vaCount = va.getVertexCount();
             //is it the first vertex array?
             if (this.count == 0)
             {

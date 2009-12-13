@@ -27,6 +27,8 @@
 
 package m3x.microedition.m3g;
 
+import javax.microedition.m3g.Appearance;
+import javax.microedition.m3g.IndexBuffer;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.Mesh;
@@ -59,19 +61,87 @@ public final class GeomUtils
             throw new IllegalArgumentException("negative or 0 stacks not allowed");
         }
 
-        /*VertexBuffer vb = new VertexBuffer();
-        //VertexArray positions = new VertexArray();
+        VertexBuffer vb = new VertexBuffer();
+        final int vertexCount = 2 + stacks * slices;
+        
+        VertexArray normals = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
 
-        final double stepZ = 2.0 * radius / stacks;
-        final double stepAngle = 2.0 * Math.PI / slices;
+        final double stepAngleZ = Math.PI / (stacks + 1);
+        final double startAngleZ = stepAngleZ;
+        final double startAngle = 0;
+        final double stepAngle = 2.0 * Math.PI / (slices);
+
+        //create the bottom pole vertex
+        {
+            final float[] startNormal = new float[]{0, 0, -1};
+            normals.set(0, 1, startNormal);
+        }
+        
+        //create the top pole vertex
+        {
+            final float[] endNormal = new float[]{0, 0, 1};
+            normals.set(vertexCount - 1, 1, endNormal);
+        }
+
+        //create the stacks and slices
+        final float[] stackNormals = new float[3 * slices];
         for (int stack = 0; stack < stacks; ++stack)
         {
+            final double angleZ = startAngleZ + stepAngleZ * stack;
+            //bottom to top
+            final double normalZ = -Math.cos(angleZ);
+            final double radiusXY = Math.sin(angleZ);
             for (int slice = 0; slice < slices; ++slice)
             {
-                
-            }
-        }*/
+                final double angle = startAngle + stepAngle * slice;
+                final double normalX = Math.cos(angle) * radiusXY;
+                final double normalY = Math.sin(angle) * radiusXY;
 
-        throw new UnsupportedOperationException();
+                stackNormals[slice * 3 + 0] = (float) normalX;
+                stackNormals[slice * 3 + 1] = (float) normalY;
+                stackNormals[slice * 3 + 2] = (float) normalZ;
+            }
+
+            normals.set(1 + stack * slices, slices, stackNormals);
+        }
+
+        vb.setPositions(normals, radius, null);
+        vb.setNormals(normals);
+
+        //tie up the indices
+        final int triangleCount = 
+                //bottom and top fan caps
+                slices * 2
+                //between each stack there is a quad strip
+                + (stacks - 1) * slices * 2; 
+
+        //discrete triangles
+        final int[] indices = new int[triangleCount * 3];
+        int index = 0;
+
+        //the bottom cap
+        for (int slice = 0; slice < slices; ++slice)
+        {
+            indices[index + 0] = 0;
+            indices[index + 1] = 1 + slice;
+            indices[index + 2] = 1 + (slice + 1) % slices;
+            index += 3;
+        }
+
+        //each slice
+        //TODO
+
+        //the top cap
+        //TODO
+
+        IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, triangleCount, indices);
+        Appearance a = new Appearance();
+
+        Mesh m = new Mesh(1, 0);
+        m.setVertexBuffer(vb);
+        m.setAppearance(0, a);
+        m.setIndexBuffer(0, ib);
+
+        return m;
     }
 }
