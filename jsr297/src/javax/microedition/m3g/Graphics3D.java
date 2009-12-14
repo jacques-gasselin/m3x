@@ -340,6 +340,7 @@ public class Graphics3D
         renderer.render(vertices, primitives, appearance, transform, -1, 1.0f);
     }
 
+    @Deprecated
     public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
@@ -350,7 +351,11 @@ public class Graphics3D
         requireCurrentRenderTarget();
         requireCurrentCamera();
 
-        renderer.render(vertices, primitives, appearance, transform, scope, 1.0f);
+        if ((scope & this.camera.getScope()) != 0)
+        {
+            renderer.render(vertices, primitives, appearance, transform,
+                    scope, 1.0f);
+        }
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,

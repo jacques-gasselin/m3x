@@ -46,23 +46,31 @@ public final class GeomUtils
         
     }
 
-    public static final Mesh createSphere(float radius, int slices, int stacks)
+    public static final Mesh createSphere(float radius, int slices, int stacksPlus1)
     {
         if (radius <= 0)
         {
             throw new IllegalArgumentException("negative or 0 radius not allowed");
         }
-        if (slices <= 0)
+        if (slices <= 1)
         {
-            throw new IllegalArgumentException("negative or 0 slices not allowed");
+            throw new IllegalArgumentException("less than 1 slice not allowed");
         }
-        if (stacks <= 0)
+        if (stacksPlus1 <= 0)
         {
-            throw new IllegalArgumentException("negative or 0 stacks not allowed");
+            throw new IllegalArgumentException("less than 1 stack not allowed");
+        }
+        
+        final int stacks = stacksPlus1 - 1;
+        final int vertexCount = 2 + stacks * slices;
+
+        if (vertexCount > 65535)
+        {
+            throw new IllegalArgumentException("total vertex count, 2 + " +
+                    "(stacks - 1) + slices, will be greater than 65535");
         }
 
         VertexBuffer vb = new VertexBuffer();
-        final int vertexCount = 2 + stacks * slices;
         
         VertexArray normals = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
 

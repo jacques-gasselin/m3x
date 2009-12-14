@@ -33,6 +33,7 @@ import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
+import javax.microedition.m3g.CompositingMode;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Material;
@@ -53,10 +54,14 @@ public class CameraControllerDemo extends DemoFrame
     private final class CameraControllerCanvas extends GLCanvas
             implements Runnable
     {
+        private static final int NO_LIGHT_SCOPE = 1;
+        private static final int LIGHT0_SCOPE = 2;
+
         private Background background;
         private AbstractRenderTarget renderTarget;
 
         private Light light;
+        private Mesh lightSphere;
         private final Transform lightTransform = new Transform();
         private Mesh sphere;
         private Camera camera;
@@ -71,29 +76,37 @@ public class CameraControllerDemo extends DemoFrame
             background = new Background();
             background.setColor(0x1f1f1f);
 
+            final int lightColor = 0xffefcfcf;
             light = new Light();
+            light.setScope(LIGHT0_SCOPE);
             light.setMode(Light.OMNI);
-            light.setColor(0x8f9f5f);
-            light.setAttenuation(1.0f, 0.25f, 0.0f);
+            light.setColor(lightColor);
+            light.setAttenuation(1.0f, 0.125f, 0.0f);
             lightTransform.setIdentity();
-            lightTransform.postTranslate(0, 2, 0);
+            lightTransform.postTranslate(0, 1, 1);
 
-            sphere = GeomUtils.createSphere(0.5f, 17, 15);
-            sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
+            {
+                lightSphere = GeomUtils.createSphere(0.02f, 12, 12);
+                lightSphere.setScope(NO_LIGHT_SCOPE);
+                lightSphere.getVertexBuffer().setDefaultColor(lightColor);
+            }
 
-            Appearance a = sphere.getAppearance(0);
-            Material m = new Material();
-            m.setColor(Material.DIFFUSE, 0xff5f6f5f);
-            m.setColor(Material.SPECULAR, 0xff8f6f4f);
-            m.setShininess(20);
-            
-            a.setMaterial(m);
-
-            PolygonMode pm = new PolygonMode();
-            pm.setLocalCameraLightingEnable(true);
-            a.setPolygonMode(pm);
+            {
+                sphere = GeomUtils.createSphere(0.5f, 48, 48);
+                sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
+                final Appearance a = sphere.getAppearance(0);
+                final Material m = new Material();
+                m.setColor(Material.DIFFUSE, 0xff7f6f7f);
+                m.setColor(Material.SPECULAR, 0xff8f6f4f);
+                m.setShininess(20);
+                a.setMaterial(m);
+                final PolygonMode pm = new PolygonMode();
+                pm.setLocalCameraLightingEnable(true);
+                a.setPolygonMode(pm);
+            }
 
             camera = new Camera();
+            camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
             camera.setPerspective(50,
                     getWidth() / (float)getHeight(),
                     0.1f, 10.0f);
@@ -130,8 +143,14 @@ public class CameraControllerDemo extends DemoFrame
                 g3d.render(sphere.getVertexBuffer(),
                         sphere.getIndexBuffer(0),
                         sphere.getAppearance(0),
-                        transform);
+                        transform,
+                        sphere.getScope());
 
+                g3d.render(lightSphere.getVertexBuffer(),
+                        lightSphere.getIndexBuffer(0),
+                        lightSphere.getAppearance(0),
+                        lightTransform,
+                        lightSphere.getScope());
             }
             catch (Throwable t)
             {
