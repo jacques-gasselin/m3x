@@ -107,10 +107,17 @@ public class Graphics3D
             lightTransform = new Transform();
         }
 
+        final int index = lights.size();
+
         lights.add(light);
         lightTransforms.add(transform);
 
-        return lights.size();
+        if (this.renderer != null)
+        {
+            this.renderer.setLight(index, light, lightTransform);
+        }
+
+        return index;
     }
 
     public void bindTarget(Object target)
@@ -399,6 +406,11 @@ public class Graphics3D
         //TODO: cache the unused transform objects here to avoid
         //allocations for addLight
         this.lightTransforms.clear();
+
+        if (this.renderer != null)
+        {
+            this.renderer.resetLights();
+        }
     }
 
     /**

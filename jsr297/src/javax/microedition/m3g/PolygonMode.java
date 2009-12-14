@@ -76,7 +76,7 @@ public class PolygonMode extends Object3D
     @Deprecated
     public boolean isLocalCameraLightingEnabled()
     {
-        return this.isLocalCameraLightingEnabled();
+        return this.localCameraLightingEnabled;
     }
 
     @Deprecated

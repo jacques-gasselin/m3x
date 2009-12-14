@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import javax.media.opengl.GL;
 
 /**
@@ -41,11 +42,13 @@ public class RendererOpenGL2 extends Renderer
     private int height;
     
     private int maxTextureUnits;
+    private int maxLights;
     private float positionScale;
     private final float[] positionBias = new float[3];
     private final Transform viewTransform = new Transform();
     private final Transform modelTransform = new Transform();
     private final Transform modelViewTransform = new Transform();
+    private Light[] lights;
     
     public RendererOpenGL2()
     {
@@ -67,8 +70,8 @@ public class RendererOpenGL2 extends Renderer
     public void initialize(GL gl)
     {
         maxTextureUnits = glGet(gl, GL.GL_MAX_TEXTURE_UNITS);
-
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+        maxLights = glGet(gl, GL.GL_MAX_LIGHTS);
+        lights = new Light[maxLights];
     }
 
     public void bind(GL gl, int width, int height)
@@ -82,6 +85,9 @@ public class RendererOpenGL2 extends Renderer
             initialize(gl);
             this.lastInstanceGL = gl;
         }
+
+        gl.glDisable(GL.GL_DITHER);
+        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
     }
 
     public void release()
@@ -172,6 +178,115 @@ public class RendererOpenGL2 extends Renderer
         this.viewTransform.set(view);
     }
 
+    private static final float[] LIGHT_POSITIONAL = new float[]{ 0, 0, 0, 1 };
+    private static final float[] LIGHT_DIRECTIONAL = new float[]{ 0, 0, 1, 0 };
+    private static final float[] COLOR_BLACK_RGB = new float[]{ 0, 0, 0 };
+    private static final Transform IDENTITY = new Transform();
+
+
+    @Override
+    public void resetLights()
+    {
+        final Light[] array = lights;
+        final int count = array.length;
+        for (int i = 0; i < count; ++i)
+        {
+            array[i] = null;
+        }
+    }
+    
+    @Override
+    public void setLight(int index, Light light, Transform transform)
+    {
+        Require.indexInRange(index, maxLights);
+
+        if (light != null)
+        {
+            final int mode = light.getMode();
+
+            final GL gl = getGL();
+
+            final int glLight = GL.GL_LIGHT0 + index;
+            if (transform != null)
+            {
+                commitModelView(gl, transform);
+            }
+            else
+            {
+                commitModelView(gl, IDENTITY);
+            }
+            
+            final float[] pos = (mode == Light.DIRECTIONAL) ?
+                LIGHT_DIRECTIONAL : LIGHT_POSITIONAL;
+            gl.glLightfv(glLight, GL.GL_POSITION, pos, 0);
+
+            final float[] color = argbAsRGBVolatile(light.getColor(),
+                    light.getIntensity());
+            final float[] black = COLOR_BLACK_RGB;
+
+            final float[] ambientColor = (mode == Light.AMBIENT) ?
+                color : black;
+            final float[] diffuseColor = (mode == Light.AMBIENT) ?
+                black : color;
+            final float[] specularColor = (mode == Light.AMBIENT) ?
+                black : color;
+
+            gl.glLightfv(glLight, GL.GL_AMBIENT, ambientColor, 0);
+            gl.glLightfv(glLight, GL.GL_DIFFUSE, diffuseColor, 0);
+            gl.glLightfv(glLight, GL.GL_SPECULAR, specularColor, 0);
+
+            final float spotExponent = (mode == Light.SPOT) ?
+                light.getSpotExponent() : 0;
+            final float spotCutoff = (mode == Light.SPOT) ?
+                light.getSpotAngle() : 180;
+
+            gl.glLightf(glLight, GL.GL_SPOT_EXPONENT, spotExponent);
+            gl.glLightf(glLight, GL.GL_SPOT_CUTOFF, spotCutoff);
+
+            gl.glLightf(glLight, GL.GL_CONSTANT_ATTENUATION,
+                    light.getConstantAttenuation());
+            gl.glLightf(glLight, GL.GL_LINEAR_ATTENUATION,
+                    light.getLinearAttenuation());
+            gl.glLightf(glLight, GL.GL_QUADRATIC_ATTENUATION,
+                    light.getQuadraticAttenuation());
+        }
+
+        lights[index] = light;
+    }
+
+    private final void selectLights(GL gl, int scope)
+    {
+        int numEnabled = 0;
+        
+        final Light[] array = lights;
+        final int count = array.length;
+        for (int i = 0; i < count; ++i)
+        {
+            final Light light = array[i];
+            final boolean enable = (light != null) && light.isRenderingEnabled()
+                    && (light.getScope() & scope) != 0;
+
+            if (!enable)
+            {
+                gl.glDisable(GL.GL_LIGHT0 + i);
+            }
+            else
+            {
+                gl.glEnable(GL.GL_LIGHT0 + i);
+                ++numEnabled;
+            }
+        }
+        
+        if (numEnabled == 0)
+        {
+            gl.glDisable(GL.GL_LIGHTING);
+        }
+        else
+        {
+            gl.glEnable(GL.GL_LIGHTING);
+        }
+    }
+
     @Override
     public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope, float alphaFactor)
     {
@@ -180,6 +295,7 @@ public class RendererOpenGL2 extends Renderer
         Require.notNull(appearance, "appearance");
 
         final GL gl = getGL();
+        selectLights(gl, scope);
         setModelTransform(transform);
         setAppearance(gl, appearance);
         setVertexBuffer(gl, vertices, alphaFactor);
@@ -225,6 +341,16 @@ public class RendererOpenGL2 extends Renderer
         color[2] = ((argb >> 0) & 0xff) * byteToUniform;
         color[3] = ((argb >> 24) & 0xff) * byteToUniform;
 
+        return color;
+    }
+
+    private static final float[] argbAsRGBVolatile(int argb, float factor)
+    {
+        final float[] color = argbAsRGBAVolatile(argb);
+        color[0] *= factor;
+        color[1] *= factor;
+        color[2] *= factor;
+        color[3] = 1.0f;
         return color;
     }
 
@@ -488,6 +614,24 @@ public class RendererOpenGL2 extends Renderer
                     break;
                 }
             }
+
+            if (polygonMode.isLocalCameraLightingEnabled())
+            {
+                gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+            }
+            else
+            {
+                gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_FALSE);
+            }
+
+            if (polygonMode.isTwoSidedLightingEnabled())
+            {
+                gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
+            }
+            else
+            {
+                gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
+            }
         }
         else
         {
@@ -496,6 +640,9 @@ public class RendererOpenGL2 extends Renderer
             gl.glFrontFace(GL.GL_CCW);
             
             gl.glEnable(GL.GL_CULL_FACE);
+            
+            gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_FALSE);
+            gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
         }
     }
 
@@ -644,7 +791,7 @@ public class RendererOpenGL2 extends Renderer
 
         //normals
         {
-            final VertexArray normals = vertices.getColors();
+            final VertexArray normals = vertices.getNormals();
             if (normals != null)
             {
                 if (normals.getComponentCount() != 3)
@@ -661,7 +808,7 @@ public class RendererOpenGL2 extends Renderer
                     }
                     case VertexArray.BYTE:
                     {
-                        glType = GL.GL_UNSIGNED_BYTE;
+                        glType = GL.GL_BYTE;
                         break;
                     }
                     default:
@@ -670,8 +817,10 @@ public class RendererOpenGL2 extends Renderer
                     }
                 }
 
-                gl.glNormalPointer(glType, normals.getVertexByteStride(), normals.getBuffer());
+                gl.glNormalPointer(glType, normals.getVertexByteStride(),
+                        normals.getBuffer());
                 gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+                gl.glEnable(GL.GL_RESCALE_NORMAL);
             }
             else
             {
@@ -751,6 +900,15 @@ public class RendererOpenGL2 extends Renderer
                 throw new IllegalArgumentException("unknown primitive type");
             }
         }
+    }
+
+    private void commitModelView(GL gl, Transform modelTransform)
+    {
+        final Transform transform = modelViewTransform;
+        transform.set(viewTransform);
+        transform.postMultiply(modelTransform);
+        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
 
     private void commitModelView(GL gl)

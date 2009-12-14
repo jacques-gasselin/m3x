@@ -30,9 +30,12 @@ package camera.opengl;
 import java.awt.Graphics;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
+import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
+import javax.microedition.m3g.Light;
+import javax.microedition.m3g.Material;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.PolygonMode;
 import javax.microedition.m3g.Transform;
@@ -53,6 +56,8 @@ public class CameraControllerDemo extends DemoFrame
         private Background background;
         private AbstractRenderTarget renderTarget;
 
+        private Light light;
+        private final Transform lightTransform = new Transform();
         private Mesh sphere;
         private Camera camera;
         private TransformController cameraController;
@@ -66,14 +71,30 @@ public class CameraControllerDemo extends DemoFrame
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            sphere = GeomUtils.createSphere(0.5f, 7, 5);
+            light = new Light();
+            light.setMode(Light.OMNI);
+            light.setColor(0x8f9f5f);
+            light.setAttenuation(1.0f, 0.25f, 0.0f);
+            lightTransform.setIdentity();
+            lightTransform.postTranslate(0, 2, 0);
 
-            //PolygonMode pm = new PolygonMode();
-            //pm.setCulling(PolygonMode.CULL_NONE);
-            //sphere.getAppearance(0).setPolygonMode(pm);
+            sphere = GeomUtils.createSphere(0.5f, 17, 15);
+            sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
+
+            Appearance a = sphere.getAppearance(0);
+            Material m = new Material();
+            m.setColor(Material.DIFFUSE, 0xff5f6f5f);
+            m.setColor(Material.SPECULAR, 0xff8f6f4f);
+            m.setShininess(20);
+            
+            a.setMaterial(m);
+
+            PolygonMode pm = new PolygonMode();
+            pm.setLocalCameraLightingEnable(true);
+            a.setPolygonMode(pm);
 
             camera = new Camera();
-            camera.setPerspective(90,
+            camera.setPerspective(50,
                     getWidth() / (float)getHeight(),
                     0.1f, 10.0f);
             cameraController = new BlenderTurntableCameraController(camera, this,
@@ -92,7 +113,7 @@ public class CameraControllerDemo extends DemoFrame
             try
             {
                 g3d.bindTarget(renderTarget);
-                camera.setPerspective(90,
+                camera.setPerspective(50,
                         getWidth() / (float)getHeight(),
                         0.1f, 10.0f);
                 g3d.setViewport(0, 0, getWidth(), getHeight());
@@ -101,6 +122,9 @@ public class CameraControllerDemo extends DemoFrame
 
                 g3d.clear(background);
 
+                g3d.resetLights();
+                g3d.addLight(light, lightTransform);
+                
                 transform.setIdentity();
                 transform.postRotate(-90, 1, 0, 0);
                 g3d.render(sphere.getVertexBuffer(),
