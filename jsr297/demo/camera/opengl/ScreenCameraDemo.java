@@ -50,6 +50,7 @@ public class ScreenCameraDemo extends DemoFrame
     private final class ScreenCameraCanvas extends GLCanvas
             implements Runnable
     {
+        private boolean cleared;
         private Background background;
         private AbstractRenderTarget renderTarget;
 
@@ -71,10 +72,10 @@ public class ScreenCameraDemo extends DemoFrame
             vertexBuffer = new VertexBuffer();
             vertexBuffer.setDefaultColor(0xffff0000);
             VertexArray positions = new VertexArray(4, 2, VertexArray.FLOAT);
-            positions.set(0, 1, new float[]{ 100, 100 });
-            positions.set(1, 1, new float[]{ 100, 500 });
-            positions.set(2, 1, new float[]{ 500, 500 });
-            positions.set(3, 1, new float[]{ 500, 100 });
+            positions.set(0, 1, new float[]{ 0, 0 });
+            positions.set(1, 1, new float[]{ 0, 400 });
+            positions.set(2, 1, new float[]{ 600, 400 });
+            positions.set(3, 1, new float[]{ 600, 0 });
             vertexBuffer.setPositions(positions, 1.0f, null);
 
             VertexArray colors = new VertexArray(4, 3, VertexArray.BYTE);
@@ -120,15 +121,21 @@ public class ScreenCameraDemo extends DemoFrame
                 cameraTransform.postTranslate(0, getHeight(), 0);
                 cameraTransform.postScale(1, -1, 1);
                 g3d.setCamera(camera, cameraTransform);
-                
-                g3d.clear(background);
+
+                if (!cleared)
+                {
+                    cleared = true;
+                    g3d.clear(background);
+                }
 
                 transform.setIdentity();
-                //pivot rotate about the center
-                transform.postTranslate(310, 310, 0);
+                transform.postTranslate(100, (getHeight() - 400) / 2, 0);
                 transform.postRotate(angle, 0, 0, 1);
+                transform.postTranslate(50, 50, 0);
+                transform.postRotate(-angle, 0, 0, 1);
                 angle += 0.25f;
-                transform.postTranslate(-310, -310, 0);
+
+                //transform.postTranslate(-310, -310, 0);
                 g3d.render(vertexBuffer, primitives, appearance, transform);
 
             }
