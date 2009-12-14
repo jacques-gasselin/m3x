@@ -33,7 +33,6 @@ import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
-import javax.microedition.m3g.CompositingMode;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Material;
@@ -107,9 +106,6 @@ public class CameraControllerDemo extends DemoFrame
 
             camera = new Camera();
             camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
-            camera.setPerspective(50,
-                    getWidth() / (float)getHeight(),
-                    0.1f, 10.0f);
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
 
