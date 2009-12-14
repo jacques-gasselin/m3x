@@ -88,6 +88,9 @@ public class RendererOpenGL2 extends Renderer
 
         gl.glDisable(GL.GL_DITHER);
         gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+        gl.glEnable(GL.GL_RESCALE_NORMAL);
+        gl.glDisable(GL.GL_NORMALIZE);
+        gl.glDisable(GL.GL_LINE_STIPPLE);
     }
 
     public void release()
@@ -820,7 +823,6 @@ public class RendererOpenGL2 extends Renderer
                 gl.glNormalPointer(glType, normals.getVertexByteStride(),
                         normals.getBuffer());
                 gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-                gl.glEnable(GL.GL_RESCALE_NORMAL);
             }
             else
             {
