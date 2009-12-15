@@ -28,16 +28,23 @@
 package camera.opengl;
 
 import java.awt.Graphics;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
+import javax.microedition.m3g.Image2D;
+import javax.microedition.m3g.ImageBase;
 import javax.microedition.m3g.Light;
+import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Material;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.PolygonMode;
+import javax.microedition.m3g.Texture;
+import javax.microedition.m3g.Texture2D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 import m3x.microedition.m3g.GeomUtils;
@@ -68,6 +75,9 @@ public class CameraControllerDemo extends DemoFrame
 
         private float angle;
         private final Transform transform = new Transform();
+
+        private ImageBase image;
+        private Texture texture;
 
         public CameraControllerCanvas()
         {
@@ -108,6 +118,18 @@ public class CameraControllerDemo extends DemoFrame
             camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
+
+            InputStream imageStream = getClass().getResourceAsStream("earth.png");
+            try
+            {
+                image = Loader.loadImage(ImageBase.RGB | ImageBase.NO_MIPMAPS, imageStream);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            texture = new Texture2D((Image2D)image);
 
             new Thread(this).start();
         }

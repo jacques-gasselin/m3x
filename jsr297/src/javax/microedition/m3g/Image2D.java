@@ -27,13 +27,84 @@
 
 package javax.microedition.m3g;
 
+import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 /**
  * @author jgasseli
  */
 public class Image2D extends ImageBase
 {
+    Image2D()
+    {
+        
+    }
+    
     public Image2D(int format, int width, int height)
     {
-        super(format, width, height, true);
+        set(format, width, height, 1, true);
+    }
+
+    Image2D(int format, BufferedImage image)
+    {
+        set(format, image);
+    }
+
+    final void set(int format, BufferedImage image)
+    {
+        Require.notNull(image, "image");
+
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        
+        set(format, width, height, 1, true);
+
+        //read in the data line by line
+        final int[] argbScanline = new int[width];
+        final ByteBuffer dest = getLevelBuffer(0, 0);
+        final int destStride = getLevelRowByteStride(0);
+        final int formatMask = (1 << 10) - 1;
+        for (int j = 0; j < height; ++j)
+        {
+            //read in a line of ARGB packed ints
+            image.getRGB(0, j, width, 1, argbScanline, 0, width);
+            //write them out to the destination
+            dest.position(j * destStride);
+            switch (format & formatMask)
+            {
+                case RGB:
+                {
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int argb = argbScanline[i];
+                        dest.put((byte)((argb >> 16) & 0xff));
+                        dest.put((byte)((argb >> 8) & 0xff));
+                        dest.put((byte)((argb >> 0) & 0xff));
+                    }
+                    break;
+                }
+                case RGBA:
+                {
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int argb = argbScanline[i];
+                        dest.put((byte)((argb >> 16) & 0xff));
+                        dest.put((byte)((argb >> 8) & 0xff));
+                        dest.put((byte)((argb >> 0) & 0xff));
+                        dest.put((byte)((argb >> 24) & 0xff));
+                    }
+                    break;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+
+        createMipmapLevels();
+
+        commit();
     }
 }

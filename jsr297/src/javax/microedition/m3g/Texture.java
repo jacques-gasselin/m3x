@@ -30,12 +30,50 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class ImageCube extends ImageBase
+public abstract class Texture extends Transformable
 {
-    public ImageCube(int format, int size)
-    {
-        super();
+    public static final int FILTER_BASE_LEVEL = 208;
+    public static final int FILTER_LINEAR = 209;
+    public static final int FILTER_NEAREST = 210;
+    public static final int FILTER_ANISOTROPIC = 211;
 
-        set(format, size, size, 6, true);
+    private ImageBase imageBase;
+    private int levelFilter = FILTER_BASE_LEVEL;
+    private int imageFilter = FILTER_NEAREST;
+    
+    protected Texture()
+    {
+        
+    }
+
+    void setImageBase(ImageBase imageBase)
+    {
+        this.imageBase = imageBase;
+    }
+
+    public final ImageBase getImageBase()
+    {
+        return this.imageBase;
+    }
+
+    public final int getImageFilter()
+    {
+        return this.imageFilter;
+    }
+
+    public final int getLevelFilter()
+    {
+        return this.levelFilter;
+    }
+
+    public final void setFiltering(int levelFilter, int imageFilter)
+    {
+        Require.argumentInEnum(levelFilter, "levelFilter",
+                FILTER_BASE_LEVEL, FILTER_LINEAR);
+        Require.argumentInEnum(imageFilter, "imageFilter",
+                FILTER_NEAREST, FILTER_ANISOTROPIC);
+        
+        this.levelFilter = levelFilter;
+        this.imageFilter = imageFilter;
     }
 }

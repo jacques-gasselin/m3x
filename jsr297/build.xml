@@ -74,6 +74,11 @@
                 <fileset dir="${lib.dir}"/>
             </classpath>
         </javac>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.png"/>
+            </fileset>
+        </copy>
         <!--build the distributable jar-->
         <mkdir dir="${dist.dir}"/>
         <jar destfile="${dist.dir}/m3x-jsr297.jar"
@@ -114,6 +119,11 @@
                 <fileset dir="${dist.dir}"/>
             </classpath>
         </javac>
+        <copy todir="${demo.build.dir}">
+            <fileset dir="${demo.dir}">
+                <include name="**/*.png"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="javadoc" depends="build">

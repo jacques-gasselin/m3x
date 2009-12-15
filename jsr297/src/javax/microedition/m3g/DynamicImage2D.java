@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
@@ -30,12 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class ImageCube extends ImageBase
+public class DynamicImage2D extends ImageBase
 {
-    public ImageCube(int format, int size)
-    {
-        super();
 
-        set(format, size, size, 6, true);
-    }
 }

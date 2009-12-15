@@ -30,15 +30,106 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Texture2D extends Transformable
+public class Texture2D extends Texture
 {
+    public static final int FUNC_ADD = 224;
+    public static final int FUNC_BLEND = 225;
+    public static final int FUNC_DECAL = 226;
+    public static final int FUNC_MODULATE = 227;
+    public static final int FUNC_REPLACE = 228;
+
+    public static final int WRAP_CLAMP = 240;
+    public static final int WRAP_REPEAT = 241;
+    public static final int WRAP_MIRROR = 242;
+
+    private int blendColor = 0x00000000;
+    private int blending = FUNC_MODULATE;
+    private TextureCombiner combiner;
+    private int wrappingS = WRAP_REPEAT;
+    private int wrappingT = WRAP_REPEAT;
+    
+    public Texture2D(DynamicImage2D image)
+    {
+        setImage(image);
+    }
+
     public Texture2D(Image2D image)
     {
         setImage(image);
     }
 
-    void setImage(Image2D image)
+    public int getBlendColor()
     {
-        throw new UnsupportedOperationException();
+        return this.blendColor;
+    }
+
+    public int getBlending()
+    {
+        return this.blending;
+    }
+
+    public TextureCombiner getCombiner()
+    {
+        return this.combiner;
+    }
+
+    public DynamicImage2D getDynamicImage2D()
+    {
+        final ImageBase image = getImageBase();
+        return (image instanceof DynamicImage2D) ?
+            (DynamicImage2D) image : null;
+    }
+
+    public Image2D getImage2D()
+    {
+        final ImageBase image = getImageBase();
+        return (image instanceof Image2D) ?
+            (Image2D) image : null;
+    }
+
+    public int getWrappingS()
+    {
+        return this.wrappingS;
+    }
+
+    public int getWrappingT()
+    {
+        return this.wrappingT;
+    }
+
+    public void setBlendColor(int argb)
+    {
+        this.blendColor = argb;
+    }
+
+    public void setBlending(int func)
+    {
+        Require.argumentInEnum(func, "func", FUNC_ADD, FUNC_REPLACE);
+
+        this.blending = func;
+    }
+
+    public void setCombiner(TextureCombiner textureCombiner)
+    {
+        this.combiner = textureCombiner;
+    }
+
+    public void setImage(DynamicImage2D image)
+    {
+        setImageBase(image);
+    }
+
+    public void setImage(Image2D image)
+    {
+        setImageBase(image);
+    }
+
+    public void setWrapping(int wrapS, int wrapT)
+    {
+        Require.argumentInEnum(wrapS, "wrapS", WRAP_CLAMP, WRAP_MIRROR);
+        Require.argumentInEnum(wrapT, "wrapT", WRAP_CLAMP, WRAP_MIRROR);
+
+        this.wrappingS = wrapS;
+        this.wrappingT = wrapT;
     }
 }
