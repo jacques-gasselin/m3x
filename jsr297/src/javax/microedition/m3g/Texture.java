@@ -76,9 +76,9 @@ public abstract class Texture extends Transformable
     public final void setFiltering(int levelFilter, int imageFilter)
     {
         Require.argumentInEnum(levelFilter, "levelFilter",
-                FILTER_BASE_LEVEL, FILTER_LINEAR);
+                FILTER_BASE_LEVEL, FILTER_NEAREST);
         Require.argumentInEnum(imageFilter, "imageFilter",
-                FILTER_NEAREST, FILTER_ANISOTROPIC);
+                FILTER_LINEAR, FILTER_ANISOTROPIC);
         
         this.levelFilter = levelFilter;
         this.imageFilter = imageFilter;

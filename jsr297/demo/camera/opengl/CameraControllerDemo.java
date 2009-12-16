@@ -43,6 +43,7 @@ import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Material;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.PolygonMode;
+import javax.microedition.m3g.Texture;
 import javax.microedition.m3g.Texture2D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
@@ -103,7 +104,8 @@ public class CameraControllerDemo extends DemoFrame
             try
             {
                 image = (Image2D) Loader.loadImage(
-                        ImageBase.RGB | ImageBase.NO_MIPMAPS, imageStream);
+                        ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                        imageStream);
             }
             catch (IOException e)
             {
@@ -111,9 +113,11 @@ public class CameraControllerDemo extends DemoFrame
             }
 
             texture = new Texture2D(image);
+            texture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_LINEAR);
+            texture.setBlending(Texture2D.FUNC_ADD);
 
             {
-                sphere = GeomUtils.createSphere(0.5f, 48, 48);
+                sphere = GeomUtils.createSphere(0.5f, 25, 25);
                 sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
                 final Appearance a = sphere.getAppearance(0);
                 final Material m = new Material();

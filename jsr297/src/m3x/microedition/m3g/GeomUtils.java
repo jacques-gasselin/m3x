@@ -73,7 +73,12 @@ public final class GeomUtils
         VertexBuffer vb = new VertexBuffer();
         
         VertexArray normals = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
+        VertexArray texcoords = new VertexArray(vertexCount, 2, VertexArray.FLOAT);
 
+        final double stepU = 1.0 / (slices);
+        final double startU = 0;
+        final double stepV = 1.0 / (stacks + 1);
+        final double startV = stepV;
         final double stepAngleZ = Math.PI / (stacks + 1);
         final double startAngleZ = stepAngleZ;
         final double startAngle = 0;
@@ -82,20 +87,26 @@ public final class GeomUtils
         //create the bottom pole vertex
         {
             final float[] startNormal = new float[]{0, 0, -1};
+            final float[] startUV = new float[]{0, 0};
             normals.set(0, 1, startNormal);
+            texcoords.set(0, 1, startUV);
         }
         
         //create the top pole vertex
         {
             final float[] endNormal = new float[]{0, 0, 1};
+            final float[] endUV = new float[]{0, 1};
             normals.set(vertexCount - 1, 1, endNormal);
+            texcoords.set(vertexCount - 1, 1, endUV);
         }
 
         //create the stacks and slices
         final float[] stackNormals = new float[3 * slices];
+        final float[] stackUVs = new float[2 * slices];
         for (int stack = 0; stack < stacks; ++stack)
         {
             final double angleZ = startAngleZ + stepAngleZ * stack;
+            final double texcoordV = startV + stepV * stack;
             //bottom to top
             final double normalZ = -Math.cos(angleZ);
             final double radiusXY = Math.sin(angleZ);
@@ -104,17 +115,23 @@ public final class GeomUtils
                 final double angle = startAngle + stepAngle * slice;
                 final double normalX = Math.cos(angle) * radiusXY;
                 final double normalY = Math.sin(angle) * radiusXY;
+                final double texcoordU = startU + stepU * slice;
 
                 stackNormals[slice * 3 + 0] = (float) normalX;
                 stackNormals[slice * 3 + 1] = (float) normalY;
                 stackNormals[slice * 3 + 2] = (float) normalZ;
+
+                stackUVs[slice * 2 + 0] = (float) texcoordU;
+                stackUVs[slice * 2 + 1] = (float) texcoordV;
             }
 
             normals.set(1 + stack * slices, slices, stackNormals);
+            texcoords.set(1 + stack * slices, slices, stackUVs);
         }
 
         vb.setPositions(normals, radius, null);
         vb.setNormals(normals);
+        vb.setTexCoords(0, texcoords, 1.0f, null);
 
         //tie up the indices
         final int triangleCount = 

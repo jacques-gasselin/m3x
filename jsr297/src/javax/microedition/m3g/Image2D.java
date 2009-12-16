@@ -68,7 +68,9 @@ public class Image2D extends ImageBase
         for (int j = 0; j < height; ++j)
         {
             //read in a line of ARGB packed ints
-            image.getRGB(0, j, width, 1, argbScanline, 0, width);
+            //image.getRGB(0, j, width, 1, argbScanline, 0, width);
+            //y-flipped
+            image.getRGB(0, height - 1 - j, width, 1, argbScanline, 0, width);
             //write them out to the destination
             dest.position(j * destStride);
             switch (format & formatMask)
