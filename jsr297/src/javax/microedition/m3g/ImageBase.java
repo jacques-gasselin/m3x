@@ -35,6 +35,11 @@ import java.nio.ByteOrder;
  */
 public abstract class ImageBase extends Object3D
 {
+    static abstract class RendererData
+    {
+        abstract void sourceDataChanged();
+    }
+    
     public static final int ALPHA = 96;
     public static final int LUMINANCE = 97;
     public static final int LUMINANCE_ALPHA = 98;
@@ -64,6 +69,8 @@ public abstract class ImageBase extends Object3D
      * An array of mipmap level buffer data per face.
      */
     private ByteBuffer[][] faceLevelBuffers;
+
+    private RendererData rendererData;
 
     ImageBase()
     {
@@ -104,6 +111,11 @@ public abstract class ImageBase extends Object3D
         mutable = false;
     }
 
+    final int getColorFormat()
+    {
+        return getFormat() & FORMAT_COLOR_MASK;
+    }
+
     public final int getFormat()
     {
         return format;
@@ -117,6 +129,16 @@ public abstract class ImageBase extends Object3D
     public final int getWidth()
     {
         return width;
+    }
+
+    final RendererData getRendererData()
+    {
+        return rendererData;
+    }
+
+    final boolean isLossless()
+    {
+        return (getFormat() & LOSSLESS) != 0;
     }
 
     public boolean isMipmapGenerateEnabled()
@@ -139,6 +161,11 @@ public abstract class ImageBase extends Object3D
         throw new UnsupportedOperationException();
     }
 
+    void setRendererData(RendererData rendererData)
+    {
+        this.rendererData = rendererData;
+    }
+    
     private final int getBitsPerPixel()
     {
         final int formatMask = (1 << 10) - 1;

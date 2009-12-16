@@ -27,8 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 import javax.media.opengl.GL;
 
 /**
@@ -40,14 +40,22 @@ public class RendererOpenGL2 extends Renderer
     private GL instanceGL;
     private int width;
     private int height;
-    
+
+    private boolean supportsAnisotropy;
+    private float maxAnisotropy;
+    private int maxTextureSize;
     private int maxTextureUnits;
     private int maxLights;
+
     private float positionScale;
     private final float[] positionBias = new float[3];
+    private float[] texcoordScale;
+    private float[][] texcoordBias;
+    private Transform[] texcoordTransform;
     private final Transform viewTransform = new Transform();
     private final Transform modelTransform = new Transform();
     private final Transform modelViewTransform = new Transform();
+    private final Transform textureTransform = new Transform();
     private Light[] lights;
     
     public RendererOpenGL2()
@@ -59,19 +67,53 @@ public class RendererOpenGL2 extends Renderer
         return instanceGL;
     }
 
+    private static final float[] GLGETFLOAT1 = new float[1];
     private static final int[] GLGETINTEGER1 = new int[1];
+    private static final byte[] GLGETBOOLEAN1 = new byte[1];
+
+    private static final float glGetFloat(GL gl, int glenum)
+    {
+        gl.glGetFloatv(glenum, GLGETFLOAT1, 0);
+        return GLGETFLOAT1[0];
+    }
     
-    private static final int glGet(GL gl, int glenum)
+    private static final int glGetInteger(GL gl, int glenum)
     {
         gl.glGetIntegerv(glenum, GLGETINTEGER1, 0);
         return GLGETINTEGER1[0];
     }
 
+    private static final boolean glGetBoolean(GL gl, int glenum)
+    {
+        gl.glGetBooleanv(glenum, GLGETBOOLEAN1, 0);
+        return GLGETBOOLEAN1[0] != 0;
+    }
+
     public void initialize(GL gl)
     {
-        maxTextureUnits = glGet(gl, GL.GL_MAX_TEXTURE_UNITS);
-        maxLights = glGet(gl, GL.GL_MAX_LIGHTS);
+        supportsAnisotropy = gl.isExtensionAvailable(
+                "GL_EXT_texture_filter_anisotropic");
+        if (supportsAnisotropy)
+        {
+            maxAnisotropy = glGetFloat(gl, GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        }
+        else
+        {
+            maxAnisotropy = 1.0f;
+        }
+        maxTextureSize = glGetInteger(gl, GL.GL_MAX_TEXTURE_SIZE);
+        maxTextureUnits = glGetInteger(gl, GL.GL_MAX_TEXTURE_UNITS);
+        texcoordScale = new float[maxTextureUnits];
+        texcoordBias = new float[maxTextureUnits][3];
+        texcoordTransform = new Transform[maxTextureUnits];
+        for (int texunit = 0; texunit < maxTextureUnits; ++texunit)
+        {
+            texcoordTransform[texunit] = new Transform();
+        }
+
+        maxLights = glGetInteger(gl, GL.GL_MAX_LIGHTS);
         lights = new Light[maxLights];
+
     }
 
     public void bind(GL gl, int width, int height)
@@ -212,11 +254,11 @@ public class RendererOpenGL2 extends Renderer
             final int glLight = GL.GL_LIGHT0 + index;
             if (transform != null)
             {
-                commitModelView(gl, transform);
+                commitModelViewMatrix(gl, transform);
             }
             else
             {
-                commitModelView(gl, IDENTITY);
+                commitModelViewMatrix(gl, IDENTITY);
             }
             
             final float[] pos = (mode == Light.DIRECTIONAL) ?
@@ -332,19 +374,23 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private static final float[] TEMP_FLOAT4 = new float[4];
-
-    private static final float[] argbAsRGBAVolatile(int argb)
+    private static final float[] argbAsRGBA(int argb, float[] color)
     {
-        final float[] color = TEMP_FLOAT4;
         final float byteToUniform = 1.0f / 255;
-        
+
         color[0] = ((argb >> 16) & 0xff) * byteToUniform;
         color[1] = ((argb >> 8) & 0xff) * byteToUniform;
         color[2] = ((argb >> 0) & 0xff) * byteToUniform;
         color[3] = ((argb >> 24) & 0xff) * byteToUniform;
 
         return color;
+    }
+
+    private static final float[] TEMP_FLOAT4 = new float[4];
+
+    private static final float[] argbAsRGBAVolatile(int argb)
+    {
+        return argbAsRGBA(argb, TEMP_FLOAT4);
     }
 
     private static final float[] argbAsRGBVolatile(int argb, float factor)
@@ -714,20 +760,473 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setTexture(GL gl, int index, Texture2D texture)
+    private static abstract class ImageBaseRendererData extends ImageBase.RendererData
     {
-        gl.glActiveTexture(GL.GL_TEXTURE0 + index);
+        abstract void upload(RendererOpenGL2 renderer, GL gl);
+    }
+
+    private static final class Image2DRendererData extends ImageBaseRendererData
+    {
+        private final Image2D image;
+        private boolean needsUpdate = true;
+        private int glTextureName;
+
+        public Image2DRendererData(Image2D image)
+        {
+            this.image = image;
+        }
+
+        void upload(RendererOpenGL2 renderer, GL gl)
+        {
+            boolean firstUpload = false;
+            if (glTextureName == 0)
+            {
+                final int[] names = new int[1];
+                gl.glGenTextures(1, names, 0);
+                glTextureName = names[0];
+                firstUpload = true;
+            }
+
+            gl.glBindTexture(GL.GL_TEXTURE_2D, glTextureName);
+
+            if (needsUpdate)
+            {
+                //don't use a palette during the decode
+                gl.glPixelTransferi(GL.GL_MAP_COLOR, GL.GL_FALSE);
+                //always use 4 byte aligned data
+                gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 4);
+
+                int glInternalFormat;
+                int glFormat;
+                int glDataType;
+
+                final boolean lossless = image.isLossless();
+
+                switch (image.getColorFormat())
+                {
+                    case ImageBase.ALPHA:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_ALPHA : GL.GL_COMPRESSED_ALPHA;
+                        glFormat = GL.GL_ALPHA;
+                        glDataType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    case ImageBase.LUMINANCE:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_LUMINANCE : GL.GL_COMPRESSED_LUMINANCE;
+                        glFormat = GL.GL_LUMINANCE;
+                        glDataType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    case ImageBase.LUMINANCE_ALPHA:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_LUMINANCE_ALPHA :
+                            GL.GL_COMPRESSED_LUMINANCE_ALPHA;
+                        glFormat = GL.GL_LUMINANCE_ALPHA;
+                        glDataType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    case ImageBase.RGB:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_RGB : GL.GL_COMPRESSED_RGB;
+                        glFormat = GL.GL_RGB;
+                        glDataType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    case ImageBase.RGBA:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_RGBA : GL.GL_COMPRESSED_RGBA;
+                        glFormat = GL.GL_RGBA;
+                        glDataType = GL.GL_UNSIGNED_BYTE;
+                        break;
+                    }
+                    case ImageBase.RGB565:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_RGB : GL.GL_COMPRESSED_RGB;
+                        glFormat = GL.GL_RGB;
+                        glDataType = GL.GL_UNSIGNED_SHORT_5_6_5;
+                        break;
+                    }
+                    case ImageBase.RGBA5551:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_RGB5_A1 : GL.GL_COMPRESSED_RGBA;
+                        glFormat = GL.GL_RGBA;
+                        glDataType = GL.GL_UNSIGNED_SHORT_5_5_5_1;
+                        break;
+                    }
+                    case ImageBase.RGBA4444:
+                    {
+                        glInternalFormat = lossless ?
+                            GL.GL_RGBA4 : GL.GL_COMPRESSED_RGBA;
+                        glFormat = GL.GL_RGBA;
+                        glDataType = GL.GL_UNSIGNED_SHORT_4_4_4_4;
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+                }
+
+                final int numLevels = image.getLevelCount();
+                final int width = image.getWidth();
+                final int height = image.getHeight();
+
+                //prep the texture objects
+                if (firstUpload)
+                {
+                    for (int level = 0; level < numLevels; ++level)
+                    {
+                        gl.glTexImage2D(GL.GL_TEXTURE_2D,
+                                level, glInternalFormat,
+                                Math.max(1, width >> level),
+                                Math.max(1, height >> level),
+                                0, glFormat, glDataType, null);
+                    }
+                }
+
+                //upload the data
+                for (int level = 0; level < numLevels; ++level)
+                {
+                    final ByteBuffer buffer = image.getLevelBuffer(0, level);
+                    gl.glTexSubImage2D(GL.GL_TEXTURE_2D,
+                            level, 0, 0,
+                            Math.max(1, width >> level),
+                            Math.max(1, height >> level),
+                            glFormat, glDataType, buffer.rewind());
+                }
+            }
+        }
+
+        @Override
+        void sourceDataChanged()
+        {
+            //TODO support caching
+        }
+    }
+
+    private static abstract class TextureRendererData extends Texture.RendererData
+    {
+        abstract void upload(RendererOpenGL2 renderer, GL gl);
+    }
+
+    private static final class Texture2DRendererData extends TextureRendererData
+    {
+        private final Texture2D texture;
+        private boolean needsUpdate = true;
+        private int glMinFilter, glMagFilter;
+        private float glMaxAnisotropy;
+        private int glWrapS, glWrapT;
+        private final float[] glTexEnvColor = new float[4];
+        private int glTexEnvMode;
+        private int glCombineRGB, glCombineAlpha;
+        private int glRGBScale, glAlphaScale;
+        private final int[] operandRGB = new int[3];
+        private final int[] srcRGB = new int[3];
+        private final int[] operandAlpha = new int[3];
+        private final int[] srcAlpha = new int[3];
+        
+        
+        Texture2DRendererData(Texture2D texture)
+        {
+            this.texture = texture;
+        }
+
+        private void updateFiltering(RendererOpenGL2 renderer,
+                int levelFilter, int imageFilter)
+        {
+            int mag, min;
+            float anisotropy = 1.0f;
+            switch (imageFilter)
+            {
+                case Texture.FILTER_LINEAR:
+                {
+                    mag = GL.GL_LINEAR;
+                    switch (levelFilter)
+                    {
+                        case Texture.FILTER_BASE_LEVEL:
+                        {
+                            min = GL.GL_LINEAR;
+                            break;
+                        }
+                        case Texture.FILTER_LINEAR:
+                        {
+                            min = GL.GL_LINEAR_MIPMAP_LINEAR;
+                            break;
+                        }
+                        case Texture.FILTER_NEAREST:
+                        {
+                            min = GL.GL_LINEAR_MIPMAP_NEAREST;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new UnsupportedOperationException();
+                        }
+                    }
+                    break;
+                }
+                case Texture.FILTER_NEAREST:
+                {
+                    mag = GL.GL_NEAREST;
+                    switch (levelFilter)
+                    {
+                        case Texture.FILTER_BASE_LEVEL:
+                        {
+                            min = GL.GL_NEAREST;
+                            break;
+                        }
+                        case Texture.FILTER_LINEAR:
+                        {
+                            min = GL.GL_NEAREST_MIPMAP_LINEAR;
+                            break;
+                        }
+                        case Texture.FILTER_NEAREST:
+                        {
+                            min = GL.GL_NEAREST_MIPMAP_NEAREST;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new UnsupportedOperationException();
+                        }
+                    }
+                    break;
+                }
+                case Texture.FILTER_ANISOTROPIC:
+                {
+                    anisotropy = renderer.maxAnisotropy;
+                    mag = GL.GL_LINEAR;
+                    switch (levelFilter)
+                    {
+                        case Texture.FILTER_BASE_LEVEL:
+                        {
+                            min = GL.GL_LINEAR;
+                            break;
+                        }
+                        case Texture.FILTER_LINEAR:
+                        {
+                            min = GL.GL_LINEAR_MIPMAP_LINEAR;
+                            break;
+                        }
+                        case Texture.FILTER_NEAREST:
+                        {
+                            min = GL.GL_LINEAR_MIPMAP_NEAREST;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new UnsupportedOperationException();
+                        }
+                    }
+                    break;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+
+            this.glMagFilter = mag;
+            this.glMinFilter = min;
+            this.glMaxAnisotropy = anisotropy;
+        }
+
+        private static final int wrappingAsGLenum(int wrapping)
+        {
+            switch (wrapping)
+            {
+                case Texture2D.WRAP_CLAMP:
+                {
+                    return GL.GL_CLAMP_TO_EDGE;
+                }
+                case Texture2D.WRAP_REPEAT:
+                {
+                    return GL.GL_CLAMP_TO_EDGE;
+                }
+                case Texture2D.WRAP_MIRROR:
+                {
+                    return GL.GL_MIRRORED_REPEAT;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+        private void updateWrapping(int wrappingS, int wrappingT)
+        {
+            glWrapS = wrappingAsGLenum(wrappingS);
+            glWrapT = wrappingAsGLenum(wrappingT);
+        }
+
+        private void updateCombiner(TextureCombiner combiner)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        private void updateBlending(int blending)
+        {
+            int envMode;
+            switch (blending)
+            {
+                case Texture2D.FUNC_ADD:
+                {
+                    envMode = GL.GL_ADD;
+                    break;
+                }
+                case Texture2D.FUNC_BLEND:
+                {
+                    envMode = GL.GL_BLEND;
+                    break;
+                }
+                case Texture2D.FUNC_DECAL:
+                {
+                    envMode = GL.GL_DECAL;
+                    break;
+                }
+                case Texture2D.FUNC_MODULATE:
+                {
+                    envMode = GL.GL_MODULATE;
+                    break;
+                }
+                default:
+                {
+                    envMode = GL.GL_REPLACE;
+                }
+            }
+            this.glTexEnvMode = envMode;
+        }
+
+        private static final void glTexEnv(GL gl, int pname, int param)
+        {
+            gl.glTexEnvi(GL.GL_TEXTURE_ENV, pname, param);
+        }
+
+        private static final void glTexEnv(GL gl, int pname, float[] param)
+        {
+            gl.glTexEnvfv(GL.GL_TEXTURE_ENV, pname, param, 0);
+        }
+
+        private static final void glTexParameter(GL gl, int pname, float param)
+        {
+            gl.glTexParameterf(GL.GL_TEXTURE_2D, pname, param);
+        }
+
+        private static final void glTexParameter(GL gl, int pname, int param)
+        {
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, pname, param);
+        }
+
+        @Override
+        void upload(RendererOpenGL2 renderer, GL gl)
+        {
+            if (needsUpdate)
+            {
+                updateFiltering(renderer,
+                        texture.getLevelFilter(), texture.getImageFilter());
+
+                updateWrapping(texture.getWrappingS(), texture.getWrappingT());
+
+                argbAsRGBA(texture.getBlendColor(), this.glTexEnvColor);
+                
+                final TextureCombiner combiner = texture.getCombiner();
+                if (combiner != null)
+                {
+                    updateCombiner(combiner);
+                }
+                else
+                {
+                    updateBlending(texture.getBlending());
+                }
+
+                //TODO support caching
+                //needsUpdate = false;
+            }
+
+            Image2D image = texture.getImage2D();
+            Image2DRendererData rendererData = (Image2DRendererData)
+                    image.getRendererData();
+            if (rendererData == null)
+            {
+                //allocate one
+                rendererData = new Image2DRendererData(image);
+                image.setRendererData(rendererData);
+            }
+            rendererData.upload(renderer, gl);
+
+            glTexParameter(gl, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
+            glTexParameter(gl, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+            if (renderer.supportsAnisotropy)
+            {
+                glTexParameter(gl, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                        glMaxAnisotropy);
+            }
+            glTexParameter(gl, GL.GL_TEXTURE_WRAP_S, glWrapS);
+            glTexParameter(gl, GL.GL_TEXTURE_WRAP_T, glWrapT);
+
+            glTexEnv(gl, GL.GL_TEXTURE_ENV_COLOR, glTexEnvColor);
+            glTexEnv(gl, GL.GL_TEXTURE_ENV_MODE, glTexEnvMode);
+            if (glTexEnvMode == GL.GL_COMBINE)
+            {
+                glTexEnv(gl, GL.GL_COMBINE_RGB, glCombineRGB);
+                glTexEnv(gl, GL.GL_COMBINE_ALPHA, glCombineAlpha);
+                glTexEnv(gl, GL.GL_RGB_SCALE, glRGBScale);
+                glTexEnv(gl, GL.GL_ALPHA_SCALE, glAlphaScale);
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    glTexEnv(gl, GL.GL_OPERAND0_RGB + i, operandRGB[i]);
+                    glTexEnv(gl, GL.GL_SRC0_RGB + i, srcRGB[i]);
+                    glTexEnv(gl, GL.GL_OPERAND0_ALPHA + i, operandAlpha[i]);
+                    glTexEnv(gl, GL.GL_SRC0_ALPHA + i, srcAlpha[i]);
+                }
+            }
+
+            gl.glEnable(GL.GL_TEXTURE_2D);
+        }
+
+        @Override
+        void sourceDataChanged()
+        {
+            //TODO support caching
+        }
+    }
+
+    private final void setTexture(GL gl, int texunit, Texture texture)
+    {
+        gl.glActiveTexture(GL.GL_TEXTURE0 + texunit);
         if (texture != null)
         {
-            /*if (true)
+            texture.getCompositeTransform(texcoordTransform[texunit]);
+            TextureRendererData rendererData = (TextureRendererData) texture.getRendererData();
+            if (rendererData == null)
             {
-                //TODO
-            }*/
-            gl.glEnable(GL.GL_TEXTURE_2D);
+                //create the renderer data and set
+                if (texture instanceof Texture2D)
+                {
+                    rendererData = new Texture2DRendererData((Texture2D) texture);
+                }
+                else
+                {
+                    throw new UnsupportedOperationException();
+                }
+
+                texture.setRendererData(rendererData);
+            }
+            rendererData.upload(this, gl);
         }
         else
         {
             gl.glDisable(GL.GL_TEXTURE_2D);
+            gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
         }
     }
 
@@ -793,6 +1292,7 @@ public class RendererOpenGL2 extends Renderer
         }
 
         //normals
+        if (true)
         {
             final VertexArray normals = vertices.getNormals();
             if (normals != null)
@@ -831,6 +1331,7 @@ public class RendererOpenGL2 extends Renderer
         }
 
         //colors
+        if (true)
         {
             final VertexArray colors = vertices.getColors();
             if (colors != null)
@@ -864,7 +1365,61 @@ public class RendererOpenGL2 extends Renderer
             }
         }
 
-        //TODO texcoords
+        //texcoords
+        if (true)
+        {
+            float[] scaleBias = TEMP_FLOAT4;
+            final int maxUnits = maxTextureUnits;
+            for (int texunit = 0; texunit < maxUnits; ++texunit)
+            {
+                VertexArray texcoords = vertices.getTexCoords(texunit, scaleBias);
+                gl.glClientActiveTexture(GL.GL_TEXTURE0 + texunit);
+                if (texcoords != null)
+                {
+                    texcoordScale[texunit] = scaleBias[0];
+                    System.arraycopy(scaleBias, 1, texcoordBias[texunit], 0, 3);
+                    int glType = GL.GL_FLOAT;
+                    switch (texcoords.getComponentType())
+                    {
+                        case VertexArray.FLOAT:
+                        {
+                            glType = GL.GL_FLOAT;
+                            break;
+                        }
+                        case VertexArray.FIXED:
+                        {
+                            //FIXED is not supported in GL
+                            //rescale and treat like INT
+                            texcoordScale[texunit] *= 1.0f / 65556;
+                            glType = GL.GL_INT;
+                            break;
+                        }
+                        case VertexArray.SHORT:
+                        {
+                            glType = GL.GL_SHORT;
+                            break;
+                        }
+                        case VertexArray.BYTE:
+                        {
+                            glType = GL.GL_BYTE;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new IllegalStateException("unsupported component type");
+                        }
+                    }
+
+                    gl.glTexCoordPointer(texcoords.getComponentCount(), glType,
+                            texcoords.getVertexByteStride(), texcoords.getBuffer());
+                    gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+                }
+                else
+                {
+                    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+                }
+            }
+        }
     }
 
     private static final int primitiveTypeAsGLEnum(int type, boolean isStripped)
@@ -904,7 +1459,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void commitModelView(GL gl, Transform modelTransform)
+    private void commitModelViewMatrix(GL gl, Transform modelTransform)
     {
         final Transform transform = modelViewTransform;
         transform.set(viewTransform);
@@ -913,7 +1468,7 @@ public class RendererOpenGL2 extends Renderer
         gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
 
-    private void commitModelView(GL gl)
+    private void commitModelViewMatrix(GL gl)
     {
         final Transform transform = modelViewTransform;
         transform.set(viewTransform);
@@ -925,11 +1480,31 @@ public class RendererOpenGL2 extends Renderer
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
+
+    private void commitTextureMatrices(GL gl)
+    {
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        final int maxUnits = maxTextureUnits;
+        final Transform transform = textureTransform;
+        for (int texunit = 0; texunit < maxUnits; ++texunit)
+        {
+            gl.glActiveTexture(GL.GL_TEXTURE0 + texunit);
+            transform.set(texcoordTransform[texunit]);
+            final float[] bias = texcoordBias[texunit];
+            transform.postTranslate(bias[0], bias[1], bias[2]);
+            final float scale = texcoordScale[texunit];
+            transform.postScale(scale, scale, scale);
+            gl.glLoadMatrixf(transform.getColumnMajor(), 0);
+        }
+    }
     
     private void render(GL gl, IndexBuffer primitives)
     {
+        //commit the texture unit matrices
+        commitTextureMatrices(gl);
+        
         //commit the modelview matrix
-        commitModelView(gl);
+        commitModelViewMatrix(gl);
 
         final boolean isStripped = primitives.isStripped();
         final int glType = primitiveTypeAsGLEnum(primitives.getPrimitiveType(), isStripped);

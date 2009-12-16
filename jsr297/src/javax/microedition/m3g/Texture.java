@@ -32,6 +32,11 @@ package javax.microedition.m3g;
  */
 public abstract class Texture extends Transformable
 {
+    static abstract class RendererData
+    {
+        abstract void sourceDataChanged();
+    }
+
     public static final int FILTER_BASE_LEVEL = 208;
     public static final int FILTER_LINEAR = 209;
     public static final int FILTER_NEAREST = 210;
@@ -41,14 +46,11 @@ public abstract class Texture extends Transformable
     private int levelFilter = FILTER_BASE_LEVEL;
     private int imageFilter = FILTER_NEAREST;
     
+    private RendererData rendererData;
+
     protected Texture()
     {
         
-    }
-
-    void setImageBase(ImageBase imageBase)
-    {
-        this.imageBase = imageBase;
     }
 
     public final ImageBase getImageBase()
@@ -66,6 +68,11 @@ public abstract class Texture extends Transformable
         return this.levelFilter;
     }
 
+    final RendererData getRendererData()
+    {
+        return this.rendererData;
+    }
+
     public final void setFiltering(int levelFilter, int imageFilter)
     {
         Require.argumentInEnum(levelFilter, "levelFilter",
@@ -75,5 +82,15 @@ public abstract class Texture extends Transformable
         
         this.levelFilter = levelFilter;
         this.imageFilter = imageFilter;
+    }
+    
+    final void setImageBase(ImageBase imageBase)
+    {
+        this.imageBase = imageBase;
+    }
+
+    final void setRendererData(RendererData rendererData)
+    {
+        this.rendererData = rendererData;
     }
 }

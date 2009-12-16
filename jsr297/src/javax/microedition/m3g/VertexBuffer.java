@@ -123,7 +123,6 @@ public class VertexBuffer extends Object3D
 
     private static final class ScaleBiasedVertexArray
     {
-
         private VertexArray array;
         private float scale;
         private final float[] bias = new float[3];
@@ -244,10 +243,14 @@ public class VertexBuffer extends Object3D
     private final ScaleBiasedVertexArray[] textureCoordinates =
             new ScaleBiasedVertexArray[MAX_TEXTURE_COORDS];
 
-    
     public VertexBuffer()
     {
         setDefaultColor(0xffffffff);
+
+        for (int i = 0; i < MAX_TEXTURE_COORDS; ++i)
+        {
+            textureCoordinates[i] = new ScaleBiasedVertexArray();
+        }
     }
 
     private final void requireMutable()

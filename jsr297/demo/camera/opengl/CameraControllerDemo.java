@@ -43,7 +43,6 @@ import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Material;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.PolygonMode;
-import javax.microedition.m3g.Texture;
 import javax.microedition.m3g.Texture2D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
@@ -76,8 +75,8 @@ public class CameraControllerDemo extends DemoFrame
         private float angle;
         private final Transform transform = new Transform();
 
-        private ImageBase image;
-        private Texture texture;
+        private Image2D image;
+        private Texture2D texture;
 
         public CameraControllerCanvas()
         {
@@ -100,6 +99,19 @@ public class CameraControllerDemo extends DemoFrame
                 lightSphere.getVertexBuffer().setDefaultColor(lightColor);
             }
 
+            InputStream imageStream = getClass().getResourceAsStream("earth.png");
+            try
+            {
+                image = (Image2D) Loader.loadImage(
+                        ImageBase.RGB | ImageBase.NO_MIPMAPS, imageStream);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            texture = new Texture2D(image);
+
             {
                 sphere = GeomUtils.createSphere(0.5f, 48, 48);
                 sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
@@ -112,24 +124,13 @@ public class CameraControllerDemo extends DemoFrame
                 final PolygonMode pm = new PolygonMode();
                 pm.setLocalCameraLightingEnable(true);
                 a.setPolygonMode(pm);
+                a.setTexture(0, texture);
             }
 
             camera = new Camera();
             camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
-
-            InputStream imageStream = getClass().getResourceAsStream("earth.png");
-            try
-            {
-                image = Loader.loadImage(ImageBase.RGB | ImageBase.NO_MIPMAPS, imageStream);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
-            texture = new Texture2D((Image2D)image);
 
             new Thread(this).start();
         }
