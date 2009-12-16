@@ -95,7 +95,7 @@ public class CameraControllerDemo extends DemoFrame
             lightTransform.postTranslate(0, 1, 1);
 
             {
-                lightSphere = GeomUtils.createSphere(0.02f, 12, 12);
+                lightSphere = GeomUtils.createSphere(0.02f, 9, 9);
                 lightSphere.setScope(NO_LIGHT_SCOPE);
                 lightSphere.getVertexBuffer().setDefaultColor(lightColor);
             }

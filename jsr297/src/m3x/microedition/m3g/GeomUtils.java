@@ -46,7 +46,157 @@ public final class GeomUtils
         
     }
 
-    public static final Mesh createSphere(float radius, int slices, int stacksPlus1)
+    public static interface MeshEvaluator
+    {
+        /**
+         * Evaluate a mesh over the 2D interpolants s and t.
+         *
+         * @param s the interpolant in the s-axis in texture space, in the range
+         * [0, 1]
+         * @param t the interpolant in the t-axis in texture space, in the range
+         * [0, 1]
+         * @param position
+         * @param poffset
+         * @param normal
+         * @param noffset
+         */
+        public void evaluate(double s, double t, float[] position, int poffset,
+                float[] normal, int noffset);
+    }
+
+    private static final class SphereMeshEvaluator implements MeshEvaluator
+    {
+        private final float radius;
+
+        private SphereMeshEvaluator(float radius)
+        {
+            this.radius = radius;
+        }
+
+        public void evaluate(double s, double t, float[] position, int poffset,
+                float[] normal, int noffset)
+        {
+            final double angleZ = Math.PI * t;
+            //bottom to top
+            final double normalZ = -Math.cos(angleZ);
+            final double radiusXY = Math.sin(angleZ);
+            final double angle = 2.0 * Math.PI * s;
+            final double normalX = Math.cos(angle) * radiusXY;
+            final double normalY = Math.sin(angle) * radiusXY;
+
+            position[poffset + 0] = (float) normalX * radius;
+            position[poffset + 1] = (float) normalY * radius;
+            position[poffset + 2] = (float) normalZ * radius;
+
+            normal[noffset + 0] = (float) normalX;
+            normal[noffset + 1] = (float) normalY;
+            normal[noffset + 2] = (float) normalZ;
+        }
+    }
+
+    public static final Mesh createMesh(MeshEvaluator evaluator,
+            int rows, int columns)
+    {
+        if (evaluator == null)
+        {
+            throw new NullPointerException("evaluator is null");
+        }
+        
+        if (rows < 2)
+        {
+            throw new IllegalArgumentException("less than 2 rows not allowed");
+        }
+        if (columns < 2)
+        {
+            throw new IllegalArgumentException("less than 2 columns not allowed");
+        }
+
+        final int vertexCount = rows * columns;
+        if (vertexCount > 65535)
+        {
+            throw new IllegalArgumentException("total vertex count will be" +
+                    " greater than 65535");
+        }
+
+        VertexBuffer vb = new VertexBuffer();
+
+        VertexArray positionArray = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
+        VertexArray normalArray = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
+        VertexArray texcoordArray = new VertexArray(vertexCount, 2, VertexArray.FLOAT);
+
+        final double stepS = 1.0 / (columns - 1);
+        final double stepT = 1.0 / (rows - 1);
+
+        final float[] positions = new float[columns * 3];
+        final float[] normals = new float[columns * 3];
+        final float[] texcoords = new float[columns * 2];
+        for (int row = 0; row < rows; ++row)
+        {
+            final double t = stepT * row;
+            for (int column = 0; column < columns; ++column)
+            {
+                final double s = stepS * column;
+                final int offset = column * 3;
+                evaluator.evaluate(s, t, positions, offset, normals, offset);
+                texcoords[column * 2 + 0] = (float) s;
+                texcoords[column * 2 + 1] = (float) t;
+            }
+
+            final int firstVertex = row * columns;
+            positionArray.set(firstVertex, columns, positions);
+            normalArray.set(firstVertex, columns, normals);
+            texcoordArray.set(firstVertex, columns, texcoords);
+        }
+
+        vb.setPositions(positionArray, 1.0f, null);
+        vb.setNormals(normalArray);
+        vb.setTexCoords(0, texcoordArray, 1.0f, null);
+
+        //tie up the indices
+        final int triangleCount =
+                //between each row there is a quad strip
+                (rows - 1) * (columns - 1) * 2;
+
+        //discrete triangles
+        final int[] indices = new int[triangleCount * 3];
+        int index = 0;
+
+        //each slice
+        for (int row = 0; row < (rows - 1); ++row)
+        {
+            //bottom to top
+            final int bottomStartVertex = row * columns;
+            final int topStartVertex = (row + 1) * columns;
+            //one quad at a time
+            for (int column = 0; column < (columns - 1); ++column)
+            {
+                final int nextColumn = column + 1;
+                //upper-left triangle CCW
+                indices[index + 0] = topStartVertex + column;
+                indices[index + 1] = bottomStartVertex + column;
+                indices[index + 2] = topStartVertex + nextColumn;
+                index += 3;
+                //lower-right triangle CCW
+                indices[index + 0] = topStartVertex + nextColumn;
+                indices[index + 1] = bottomStartVertex + column;
+                indices[index + 2] = bottomStartVertex + nextColumn;
+                index += 3;
+            }
+        }
+
+        IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES,
+                triangleCount, indices);
+        Appearance a = new Appearance();
+
+        Mesh m = new Mesh(1, 0);
+        m.setVertexBuffer(vb);
+        m.setAppearance(0, a);
+        m.setIndexBuffer(0, ib);
+
+        return m;
+    }
+
+    public static final Mesh createSphere(float radius, int slices, int stacks)
     {
         if (radius <= 0)
         {
@@ -56,158 +206,12 @@ public final class GeomUtils
         {
             throw new IllegalArgumentException("less than 1 slice not allowed");
         }
-        if (stacksPlus1 <= 0)
+        if (stacks <= 1)
         {
             throw new IllegalArgumentException("less than 1 stack not allowed");
         }
-        
-        final int stacks = stacksPlus1 - 1;
-        final int vertexCount = 2 + stacks * slices;
 
-        if (vertexCount > 65535)
-        {
-            throw new IllegalArgumentException("total vertex count, 2 + " +
-                    "(stacks - 1) + slices, will be greater than 65535");
-        }
-
-        VertexBuffer vb = new VertexBuffer();
-        
-        VertexArray normals = new VertexArray(vertexCount, 3, VertexArray.FLOAT);
-        VertexArray texcoords = new VertexArray(vertexCount, 2, VertexArray.FLOAT);
-
-        final double stepU = 1.0 / (slices);
-        final double startU = 0;
-        final double stepV = 1.0 / (stacks + 1);
-        final double startV = stepV;
-        final double stepAngleZ = Math.PI / (stacks + 1);
-        final double startAngleZ = stepAngleZ;
-        final double startAngle = 0;
-        final double stepAngle = 2.0 * Math.PI / (slices);
-
-        //create the bottom pole vertex
-        {
-            final float[] startNormal = new float[]{0, 0, -1};
-            final float[] startUV = new float[]{0, 0};
-            normals.set(0, 1, startNormal);
-            texcoords.set(0, 1, startUV);
-        }
-        
-        //create the top pole vertex
-        {
-            final float[] endNormal = new float[]{0, 0, 1};
-            final float[] endUV = new float[]{0, 1};
-            normals.set(vertexCount - 1, 1, endNormal);
-            texcoords.set(vertexCount - 1, 1, endUV);
-        }
-
-        //create the stacks and slices
-        final float[] stackNormals = new float[3 * slices];
-        final float[] stackUVs = new float[2 * slices];
-        for (int stack = 0; stack < stacks; ++stack)
-        {
-            final double angleZ = startAngleZ + stepAngleZ * stack;
-            final double texcoordV = startV + stepV * stack;
-            //bottom to top
-            final double normalZ = -Math.cos(angleZ);
-            final double radiusXY = Math.sin(angleZ);
-            for (int slice = 0; slice < slices; ++slice)
-            {
-                final double angle = startAngle + stepAngle * slice;
-                final double normalX = Math.cos(angle) * radiusXY;
-                final double normalY = Math.sin(angle) * radiusXY;
-                final double texcoordU = startU + stepU * slice;
-
-                stackNormals[slice * 3 + 0] = (float) normalX;
-                stackNormals[slice * 3 + 1] = (float) normalY;
-                stackNormals[slice * 3 + 2] = (float) normalZ;
-
-                stackUVs[slice * 2 + 0] = (float) texcoordU;
-                stackUVs[slice * 2 + 1] = (float) texcoordV;
-            }
-
-            normals.set(1 + stack * slices, slices, stackNormals);
-            texcoords.set(1 + stack * slices, slices, stackUVs);
-        }
-
-        vb.setPositions(normals, radius, null);
-        vb.setNormals(normals);
-        vb.setTexCoords(0, texcoords, 1.0f, null);
-
-        //tie up the indices
-        final int triangleCount = 
-                //bottom and top fan caps
-                slices * 2
-                //between each stack there is a quad strip
-                + (stacks - 1) * slices * 2; 
-
-        //discrete triangles
-        final int[] indices = new int[triangleCount * 3];
-        int index = 0;
-
-        //the bottom cap
-        if (true)
-        {
-            final int bottomStartVertex = 0;
-            final int topStartVertex = 1;
-            for (int slice = 0; slice < slices ; ++slice)
-            {
-                //CCW
-                indices[index + 0] = topStartVertex + slice;
-                indices[index + 1] = bottomStartVertex;
-                indices[index + 2] = topStartVertex + (slice + 1) % slices;
-                index += 3;
-            }
-        }
-        
-        //each slice
-        if (true)
-        {
-            for (int stack = 0; stack < (stacks - 1); ++stack)
-            {
-                //bottom to top
-                final int bottomStartVertex = 1 + stack * slices;
-                final int topStartVertex = 1 + (stack + 1) * slices;
-                //one quad at a time
-                for (int slice = 0; slice < slices; ++slice)
-                {
-                    final int nextSlice = (slice + 1) % slices;
-                    //upper-left triangle CCW
-                    indices[index + 0] = topStartVertex + slice;
-                    indices[index + 1] = bottomStartVertex + slice;
-                    indices[index + 2] = topStartVertex + nextSlice;
-                    index += 3;
-                    //lower-right triangle CCW
-                    indices[index + 0] = topStartVertex + nextSlice;
-                    indices[index + 1] = bottomStartVertex + slice;
-                    indices[index + 2] = bottomStartVertex + nextSlice;
-                    index += 3;
-                }
-            }
-        }
-
-        //the top cap
-        if (true)
-        {
-            final int bottomStartVertex = 1 + (stacks - 1) * slices;
-            final int topStartVertex = vertexCount - 1;
-            for (int slice = 0; slice < slices; ++slice)
-            {
-                //CCW
-                indices[index + 0] = topStartVertex;
-                indices[index + 1] = bottomStartVertex + slice;
-                indices[index + 2] = bottomStartVertex + (slice + 1) % slices;
-                index += 3;
-            }
-        }
-
-        IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, triangleCount, indices);
-        Appearance a = new Appearance();
-
-        Mesh m = new Mesh(1, 0);
-        m.setVertexBuffer(vb);
-        m.setAppearance(0, a);
-        m.setIndexBuffer(0, ib);
-
-        return m;
+        final MeshEvaluator eval = new SphereMeshEvaluator(radius);
+        return createMesh(eval, stacks + 1, slices + 1);
     }
 }
