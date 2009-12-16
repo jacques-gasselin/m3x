@@ -117,7 +117,7 @@ public class CameraControllerDemo extends DemoFrame
             texture.setBlending(Texture2D.FUNC_ADD);
 
             {
-                sphere = GeomUtils.createSphere(0.5f, 25, 25);
+                sphere = GeomUtils.createSphere(0.5f, 50, 50);
                 sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
                 final Appearance a = sphere.getAppearance(0);
                 final Material m = new Material();
