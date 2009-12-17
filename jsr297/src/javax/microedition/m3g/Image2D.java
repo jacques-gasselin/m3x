@@ -29,7 +29,6 @@ package javax.microedition.m3g;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * @author jgasseli
@@ -75,6 +74,19 @@ public class Image2D extends ImageBase
             dest.position(j * destStride);
             switch (format & formatMask)
             {
+                case LUMINANCE:
+                {
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int argb = argbScanline[i];
+                        final int red = (argb >> 16) & 0xff;
+                        final int green = (argb >> 8) & 0xff;
+                        final int blue = (argb >> 0) & 0xff;
+                        final int avg = (red + green + blue) / 3;
+                        dest.put((byte)avg);
+                    }
+                    break;
+                }
                 case RGB:
                 {
                     for (int i = 0; i < width; ++i)

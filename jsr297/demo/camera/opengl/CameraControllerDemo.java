@@ -46,6 +46,7 @@ import javax.microedition.m3g.PolygonMode;
 import javax.microedition.m3g.Texture;
 import javax.microedition.m3g.Texture2D;
 import javax.microedition.m3g.Transform;
+import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 import m3x.microedition.m3g.GeomUtils;
 import m3x.microedition.m3g.TransformController;
@@ -76,8 +77,11 @@ public class CameraControllerDemo extends DemoFrame
         private float angle;
         private final Transform transform = new Transform();
 
-        private Image2D image;
-        private Texture2D texture;
+        private Image2D specularImage;
+        private Texture2D specularTexture;
+
+        private Image2D baseImage;
+        private Texture2D baseTexture;
 
         public CameraControllerCanvas()
         {
@@ -85,50 +89,72 @@ public class CameraControllerDemo extends DemoFrame
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            final int lightColor = 0xffefcfcf;
+            final int lightColor = 0xffffefef;
             light = new Light();
             light.setScope(LIGHT0_SCOPE);
             light.setMode(Light.OMNI);
             light.setColor(lightColor);
             light.setAttenuation(1.0f, 0.125f, 0.0f);
             lightTransform.setIdentity();
-            lightTransform.postTranslate(0, 1, 1);
+            lightTransform.postTranslate(0, 0.5f, 4);
 
             {
-                lightSphere = GeomUtils.createSphere(0.02f, 9, 9);
+                lightSphere = GeomUtils.createSphere(0.05f, 9, 9);
                 lightSphere.setScope(NO_LIGHT_SCOPE);
                 lightSphere.getVertexBuffer().setDefaultColor(lightColor);
             }
 
-            InputStream imageStream = getClass().getResourceAsStream("earth.png");
             try
             {
-                image = (Image2D) Loader.loadImage(
-                        ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                InputStream imageStream = getClass().getResourceAsStream("specular.png");
+                specularImage = (Image2D) Loader.loadImage(
+                        ImageBase.LUMINANCE | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
                         imageStream);
+                imageStream.close();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
 
-            texture = new Texture2D(image);
-            texture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_LINEAR);
-            texture.setBlending(Texture2D.FUNC_ADD);
+            specularTexture = new Texture2D(specularImage);
+            specularTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
+            specularTexture.setBlending(Texture2D.FUNC_MODULATE);
+
+            try
+            {
+                InputStream imageStream = getClass().getResourceAsStream("earth.png");
+                baseImage = (Image2D) Loader.loadImage(
+                        ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                        imageStream);
+                imageStream.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            baseTexture = new Texture2D(baseImage);
+            baseTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
+            baseTexture.setBlending(Texture2D.FUNC_ADD);
 
             {
                 sphere = GeomUtils.createSphere(0.5f, 50, 50);
-                sphere.getVertexBuffer().setDefaultColor(0xff3f3f3f);
+                final VertexBuffer vb = sphere.getVertexBuffer();
+                vb.setDefaultColor(0xff3f3f3f);
+                //reuse the texcoords from unit 0 for unit 1
+                vb.setTexCoords(1, vb.getTexCoords(0, null), 1.0f, null);
                 final Appearance a = sphere.getAppearance(0);
                 final Material m = new Material();
-                m.setColor(Material.DIFFUSE, 0xff7f6f7f);
-                m.setColor(Material.SPECULAR, 0xff8f6f4f);
+                m.setColor(Material.DIFFUSE, 0xff7f7f8f);
+                m.setColor(Material.SPECULAR, 0xffafbfbf);
                 m.setShininess(20);
                 a.setMaterial(m);
                 final PolygonMode pm = new PolygonMode();
                 pm.setLocalCameraLightingEnable(true);
                 a.setPolygonMode(pm);
-                a.setTexture(0, texture);
+                a.setTexture(0, specularTexture);
+                a.setTexture(1, baseTexture);
             }
 
             camera = new Camera();
