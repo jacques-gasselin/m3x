@@ -37,7 +37,7 @@ public class Appearance extends AppearanceBase
     private PointSpriteMode pointSpriteMode;
     
     private static final int MAX_TEXTURE_COORDS = 8;
-    private final Texture2D[] textures = new Texture2D[MAX_TEXTURE_COORDS];
+    private final Texture[] textures = new Texture[MAX_TEXTURE_COORDS];
     
     public Appearance()
     {
@@ -59,11 +59,31 @@ public class Appearance extends AppearanceBase
         return this.pointSpriteMode;
     }
 
-    public Texture2D getTexture(int index)
+    public Texture getTextureBase(int index)
     {
         Require.indexInRange(index, MAX_TEXTURE_COORDS);
 
         return this.textures[index];
+    }
+
+    public Texture2D getTexture(int index)
+    {
+        final Texture texture = getTextureBase(index);
+        if (texture instanceof Texture2D)
+        {
+            return (Texture2D) texture;
+        }
+        return null;
+    }
+
+    public TextureCube getTextureCube(int index)
+    {
+        final Texture texture = getTextureBase(index);
+        if (texture instanceof TextureCube)
+        {
+            return (TextureCube) texture;
+        }
+        return null;
     }
 
     public void setFog(Fog fog)
@@ -82,6 +102,13 @@ public class Appearance extends AppearanceBase
     }
 
     public void setTexture(int index, Texture2D texture)
+    {
+        Require.indexInRange(index, MAX_TEXTURE_COORDS);
+
+        this.textures[index] = texture;
+    }
+
+    public void setTextureCube(int index, TextureCube texture)
     {
         Require.indexInRange(index, MAX_TEXTURE_COORDS);
 

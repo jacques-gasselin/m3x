@@ -64,36 +64,6 @@ public final class GeomUtils
                 float[] normal, int noffset);
     }
 
-    private static final class SphereMeshEvaluator implements MeshEvaluator
-    {
-        private final float radius;
-
-        private SphereMeshEvaluator(float radius)
-        {
-            this.radius = radius;
-        }
-
-        public void evaluate(double s, double t, float[] position, int poffset,
-                float[] normal, int noffset)
-        {
-            final double angleZ = Math.PI * t;
-            //bottom to top
-            final double normalZ = -Math.cos(angleZ);
-            final double radiusXY = Math.sin(angleZ);
-            final double angle = 2.0 * Math.PI * s;
-            final double normalX = Math.cos(angle) * radiusXY;
-            final double normalY = Math.sin(angle) * radiusXY;
-
-            position[poffset + 0] = (float) normalX * radius;
-            position[poffset + 1] = (float) normalY * radius;
-            position[poffset + 2] = (float) normalZ * radius;
-
-            normal[noffset + 0] = (float) normalX;
-            normal[noffset + 1] = (float) normalY;
-            normal[noffset + 2] = (float) normalZ;
-        }
-    }
-
     public static final Mesh createMesh(MeshEvaluator evaluator,
             int rows, int columns)
     {
@@ -194,6 +164,67 @@ public final class GeomUtils
         m.setIndexBuffer(0, ib);
 
         return m;
+    }
+
+    private static final class PlaneMeshEvaluator implements MeshEvaluator
+    {
+        private final float xScale;
+        private final float yScale;
+
+        private PlaneMeshEvaluator(float xScale, float yScale)
+        {
+            this.xScale = xScale;
+            this.yScale = yScale;
+        }
+
+        public void evaluate(double s, double t, float[] position, int poffset,
+                float[] normal, int noffset)
+        {
+            //bottom to top
+            position[poffset + 0] = (float) (xScale * (s - 0.5));
+            position[poffset + 1] = (float) (yScale * (t - 0.5));
+            position[poffset + 2] = 0;
+
+            normal[noffset + 0] = 0;
+            normal[noffset + 1] = 0;
+            normal[noffset + 2] = 1;
+        }
+    }
+
+    public static final Mesh createPlane(float xScale, float yScale, int rows, int colums)
+    {
+        final MeshEvaluator eval = new PlaneMeshEvaluator(xScale, yScale);
+        return createMesh(eval, rows, colums);
+    }
+
+    private static final class SphereMeshEvaluator implements MeshEvaluator
+    {
+        private final float radius;
+
+        private SphereMeshEvaluator(float radius)
+        {
+            this.radius = radius;
+        }
+
+        public void evaluate(double s, double t, float[] position, int poffset,
+                float[] normal, int noffset)
+        {
+            final double angleZ = Math.PI * t;
+            //bottom to top
+            final double normalZ = -Math.cos(angleZ);
+            final double radiusXY = Math.sin(angleZ);
+            final double angle = 2.0 * Math.PI * s;
+            final double normalX = Math.cos(angle) * radiusXY;
+            final double normalY = Math.sin(angle) * radiusXY;
+
+            position[poffset + 0] = (float) normalX * radius;
+            position[poffset + 1] = (float) normalY * radius;
+            position[poffset + 2] = (float) normalZ * radius;
+
+            normal[noffset + 0] = (float) normalX;
+            normal[noffset + 1] = (float) normalY;
+            normal[noffset + 2] = (float) normalZ;
+        }
     }
 
     public static final Mesh createSphere(float radius, int slices, int stacks)

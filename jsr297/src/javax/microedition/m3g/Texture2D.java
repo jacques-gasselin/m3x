@@ -47,6 +47,11 @@ public class Texture2D extends Texture
     private TextureCombiner combiner;
     private int wrappingS = WRAP_REPEAT;
     private int wrappingT = WRAP_REPEAT;
+
+    Texture2D()
+    {
+
+    }
     
     public Texture2D(DynamicImage2D image)
     {
@@ -116,11 +121,15 @@ public class Texture2D extends Texture
 
     public void setImage(DynamicImage2D image)
     {
+        Require.notNull(image, "image");
+        
         setImageBase(image);
     }
 
     public void setImage(Image2D image)
     {
+        Require.notNull(image, "image");
+        
         setImageBase(image);
     }
 

@@ -25,7 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package camera.opengl;
+package texture.opengl;
 
 import java.awt.Graphics;
 import java.io.IOException;
@@ -38,13 +38,11 @@ import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Image2D;
 import javax.microedition.m3g.ImageBase;
-import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Loader;
-import javax.microedition.m3g.Material;
 import javax.microedition.m3g.Mesh;
-import javax.microedition.m3g.PolygonMode;
 import javax.microedition.m3g.Texture;
 import javax.microedition.m3g.Texture2D;
+import javax.microedition.m3g.TextureCombiner;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
@@ -56,74 +54,37 @@ import util.DemoFrame;
 /**
  * @author jgasseli
  */
-public class CameraControllerDemo extends DemoFrame
+public class Dot3Demo extends DemoFrame
 {
-    private final class CameraControllerCanvas extends GLCanvas
+    private final class Dot3Canvas extends GLCanvas
             implements Runnable
     {
-        private static final int NO_LIGHT_SCOPE = 1;
-        private static final int LIGHT0_SCOPE = 2;
-
         private Background background;
         private AbstractRenderTarget renderTarget;
 
-        private Light light;
-        private Mesh lightSphere;
-        private final Transform lightTransform = new Transform();
-        private Mesh sphere;
+        private Mesh plane;
         private Camera camera;
         private TransformController cameraController;
 
         private final Transform transform = new Transform();
 
-        private Image2D specularImage;
-        private Texture2D specularTexture;
+        private Image2D dot3Image;
+        private Texture2D dot3Texture;
 
-        private Image2D baseImage;
-        private Texture2D baseTexture;
+        private Image2D diffuseImage;
+        private Texture2D diffuseTexture;
 
-        public CameraControllerCanvas()
+        public Dot3Canvas()
         {
             renderTarget = new GLRenderTarget(this);
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            final int lightColor = 0xffffefef;
-            light = new Light();
-            light.setScope(LIGHT0_SCOPE);
-            light.setMode(Light.OMNI);
-            light.setColor(lightColor);
-            light.setAttenuation(1.0f, 0.125f, 0.0f);
-            lightTransform.setIdentity();
-            lightTransform.postTranslate(0, 0.5f, 4);
-
-            {
-                lightSphere = GeomUtils.createSphere(0.05f, 9, 9);
-                lightSphere.setScope(NO_LIGHT_SCOPE);
-                lightSphere.getVertexBuffer().setDefaultColor(lightColor);
-            }
-
             try
             {
-                InputStream imageStream = getClass().getResourceAsStream("specular.png");
-                specularImage = (Image2D) Loader.loadImage(
-                        ImageBase.LUMINANCE | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
-                        imageStream);
-                imageStream.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
-            specularTexture = new Texture2D(specularImage);
-            specularTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
-            specularTexture.setBlending(Texture2D.FUNC_MODULATE);
-
-            try
-            {
-                InputStream imageStream = getClass().getResourceAsStream("earth.png");
-                baseImage = (Image2D) Loader.loadImage(
+                InputStream imageStream = getClass().getResourceAsStream(
+                        "brickround_normal.png");
+                dot3Image = (Image2D) Loader.loadImage(
                         ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
                         imageStream);
                 imageStream.close();
@@ -133,31 +94,47 @@ public class CameraControllerDemo extends DemoFrame
                 e.printStackTrace();
             }
 
-            baseTexture = new Texture2D(baseImage);
-            baseTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
-            baseTexture.setBlending(Texture2D.FUNC_ADD);
+            dot3Texture = new Texture2D(dot3Image);
+            dot3Texture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
+            TextureCombiner dot3Combiner = new TextureCombiner();
+            dot3Combiner.setFunctions(TextureCombiner.DOT3_RGB, TextureCombiner.MODULATE);
+            dot3Combiner.setColorSource(0, TextureCombiner.PREVIOUS);
+            dot3Combiner.setColorSource(1, TextureCombiner.TEXTURE);
+            dot3Combiner.setAlphaSource(0, TextureCombiner.PREVIOUS);
+            dot3Combiner.setAlphaSource(1, TextureCombiner.TEXTURE);
+            dot3Texture.setCombiner(dot3Combiner);
+
+            try
+            {
+                InputStream imageStream = getClass().getResourceAsStream(
+                        "brickround_diffuse.png");
+                diffuseImage = (Image2D) Loader.loadImage(
+                        ImageBase.LUMINANCE | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                        imageStream);
+                imageStream.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            diffuseTexture = new Texture2D(diffuseImage);
+            diffuseTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
+            diffuseTexture.setBlending(Texture2D.FUNC_ADD);
 
             {
-                sphere = GeomUtils.createSphere(0.5f, 50, 50);
-                final VertexBuffer vb = sphere.getVertexBuffer();
-                vb.setDefaultColor(0xff3f3f3f);
+                plane = GeomUtils.createPlane(1, 1, 2, 2);
+                final VertexBuffer vb = plane.getVertexBuffer();
+                //color in this case is the light vector
+                vb.setDefaultColor(0x80808000); //0, 0, -1, 0
                 //reuse the texcoords from unit 0 for unit 1
                 vb.setTexCoords(1, vb.getTexCoords(0, null), 1.0f, null);
-                final Appearance a = sphere.getAppearance(0);
-                final Material m = new Material();
-                m.setColor(Material.DIFFUSE, 0xff7f7f8f);
-                m.setColor(Material.SPECULAR, 0xffafbfbf);
-                m.setShininess(20);
-                a.setMaterial(m);
-                final PolygonMode pm = new PolygonMode();
-                pm.setLocalCameraLightingEnable(true);
-                a.setPolygonMode(pm);
-                a.setTexture(0, specularTexture);
-                a.setTexture(1, baseTexture);
+                final Appearance a = plane.getAppearance(0);
+                a.setTexture(0, dot3Texture);
+                a.setTexture(1, diffuseTexture);
             }
 
             camera = new Camera();
-            camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
 
@@ -183,22 +160,13 @@ public class CameraControllerDemo extends DemoFrame
 
                 g3d.clear(background);
 
-                g3d.resetLights();
-                g3d.addLight(light, lightTransform);
-                
                 transform.setIdentity();
-                transform.postRotate(-90, 1, 0, 0);
-                g3d.render(sphere.getVertexBuffer(),
-                        sphere.getIndexBuffer(0),
-                        sphere.getAppearance(0),
+                //transform.postRotate(-90, 1, 0, 0);
+                g3d.render(plane.getVertexBuffer(),
+                        plane.getIndexBuffer(0),
+                        plane.getAppearance(0),
                         transform,
-                        sphere.getScope());
-
-                g3d.render(lightSphere.getVertexBuffer(),
-                        lightSphere.getIndexBuffer(0),
-                        lightSphere.getAppearance(0),
-                        lightTransform,
-                        lightSphere.getScope());
+                        plane.getScope());
             }
             catch (Throwable t)
             {
@@ -227,15 +195,15 @@ public class CameraControllerDemo extends DemoFrame
         }
     }
 
-    CameraControllerDemo()
+    Dot3Demo()
     {
-        super("CameraControllerDemo");
-        add(new CameraControllerCanvas());
+        super("Dot3Demo");
+        add(new Dot3Canvas());
     }
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new CameraControllerDemo();
+        DemoFrame frame = new Dot3Demo();
         frame.present(false);
     }
 }
