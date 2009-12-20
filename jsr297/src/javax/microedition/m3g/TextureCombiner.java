@@ -30,7 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class TextureCombiner
+public class TextureCombiner extends Object3D
 {
     public static final int ADD = 16;
     public static final int ADD_SIGNED = 17;
@@ -49,53 +49,99 @@ public class TextureCombiner
     public static final int INVERT = 256;
     public static final int ALPHA = 512;
     
+    private int alphaFunction = MODULATE;
+    private int[] alphaSource = { TEXTURE, PREVIOUS, CONSTANT | ALPHA };
+    private int alphaScale = 1;
+    private int colorFunction = MODULATE;
+    private int[] colorSource = { TEXTURE, PREVIOUS, CONSTANT };
+    private int colorScale = 1;
+    
     public TextureCombiner()
     {
-        
+        super();
     }
 
     public int getAlphaFunction()
     {
-        throw new UnsupportedOperationException();
+        return this.alphaFunction;
+    }
+
+    final int getAlphaScale()
+    {
+        return this.alphaScale;
     }
 
     public int getAlphaSource(int index)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, 3);
+
+        return this.alphaSource[index];
     }
 
     public int getColorFunction()
     {
-        throw new UnsupportedOperationException();
+        return this.colorFunction;
+    }
+
+    final int getColorScale()
+    {
+        return this.colorScale;
     }
 
     public int getColorSource(int index)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, 3);
+
+        return this.colorSource[index];
     }
 
     public int getScaling()
     {
-        throw new UnsupportedOperationException();
+        return (getColorScale() * 0x00010101) | (getAlphaScale() << 24);
     }
 
     public void setAlphaSource(int index, int source)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, 3);
+        Require.argumentInEnum(source & (~INVERT),
+                "source", CONSTANT, TEXTURE);
+
+        this.alphaSource[index] = source;
     }
 
     public void setColorSource(int index, int source)
     {
-        throw new UnsupportedOperationException();
+        Require.indexInRange(index, 3);
+        Require.argumentInEnum(source & (~(ALPHA | INVERT)),
+                "source", CONSTANT, TEXTURE);
+        
+        this.colorSource[index] = source;
     }
 
     public void setFunctions(int colorFunction, int alphaFunction)
     {
-        throw new UnsupportedOperationException();
+        Require.argumentInEnum(colorFunction, "colorFunction", ADD, SUBTRACT);
+        Require.argumentInEnum(alphaFunction, "alphaFunction", ADD, SUBTRACT);
+
+        //special for alpha, DOT3 is not supported
+        if (alphaFunction == DOT3_RGB || alphaFunction == DOT3_RGBA)
+        {
+            throw new IllegalArgumentException("DOT3 is not supported as the" +
+                    "alpha function");
+        }
+
+        this.alphaFunction = alphaFunction;
+        this.colorFunction = colorFunction;
     }
 
+    private static final int[] VALID_SCALES = { 1, 2, 4 };
+    
     public void setScaling(int colorScale, int alphaScale)
     {
-        throw new UnsupportedOperationException();
+        Require.argumentIn(colorScale, "colorScale", VALID_SCALES);
+        Require.argumentIn(alphaScale, "alphaScale", VALID_SCALES);
+
+        this.alphaScale = alphaScale;
+        this.colorScale = colorScale;
     }
 }

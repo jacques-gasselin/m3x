@@ -56,6 +56,18 @@ import util.DemoFrame;
  */
 public class Dot3Demo extends DemoFrame
 {
+    private static final int xyzAsRGB(float x, float y, float z)
+    {
+        final double lengthInv = 1.0 / Math.sqrt(x* x + y * y + z * z);
+        x *= lengthInv;
+        y *= lengthInv;
+        z *= lengthInv;
+        final int r = (int) ((x * 0.5) * 255 + 128);
+        final int g = (int) ((y * 0.5) * 255 + 128);
+        final int b = (int) ((z * 0.5) * 255 + 128);
+        return (0x80 << 24) | (r << 16) | (g << 8) | (b << 0);
+    }
+
     private final class Dot3Canvas extends GLCanvas
             implements Runnable
     {
@@ -73,6 +85,9 @@ public class Dot3Demo extends DemoFrame
 
         private Image2D diffuseImage;
         private Texture2D diffuseTexture;
+
+        private Mesh light;
+        private float lightYaw;
 
         public Dot3Canvas()
         {
@@ -95,13 +110,15 @@ public class Dot3Demo extends DemoFrame
             }
 
             dot3Texture = new Texture2D(dot3Image);
-            dot3Texture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
+            dot3Texture.setFiltering(Texture.FILTER_BASE_LEVEL,
+                    Texture.FILTER_ANISOTROPIC);
             TextureCombiner dot3Combiner = new TextureCombiner();
             dot3Combiner.setFunctions(TextureCombiner.DOT3_RGB, TextureCombiner.MODULATE);
             dot3Combiner.setColorSource(0, TextureCombiner.PREVIOUS);
             dot3Combiner.setColorSource(1, TextureCombiner.TEXTURE);
             dot3Combiner.setAlphaSource(0, TextureCombiner.PREVIOUS);
             dot3Combiner.setAlphaSource(1, TextureCombiner.TEXTURE);
+            dot3Combiner.setScaling(1, 1);
             dot3Texture.setCombiner(dot3Combiner);
 
             try
@@ -119,14 +136,13 @@ public class Dot3Demo extends DemoFrame
             }
 
             diffuseTexture = new Texture2D(diffuseImage);
-            diffuseTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
-            diffuseTexture.setBlending(Texture2D.FUNC_ADD);
+            diffuseTexture.setFiltering(Texture.FILTER_BASE_LEVEL,
+                    Texture.FILTER_ANISOTROPIC);
+            diffuseTexture.setBlending(Texture2D.FUNC_MODULATE);
 
             {
                 plane = GeomUtils.createPlane(1, 1, 2, 2);
                 final VertexBuffer vb = plane.getVertexBuffer();
-                //color in this case is the light vector
-                vb.setDefaultColor(0x80808000); //0, 0, -1, 0
                 //reuse the texcoords from unit 0 for unit 1
                 vb.setTexCoords(1, vb.getTexCoords(0, null), 1.0f, null);
                 final Appearance a = plane.getAppearance(0);
@@ -134,6 +150,8 @@ public class Dot3Demo extends DemoFrame
                 a.setTexture(1, diffuseTexture);
             }
 
+            light = GeomUtils.createSphere(0.0125f, 7, 7);
+            
             camera = new Camera();
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
@@ -160,13 +178,33 @@ public class Dot3Demo extends DemoFrame
 
                 g3d.clear(background);
 
+                final float lightX = (float)(0.85 * Math.cos(lightYaw));
+                final float lightY = (float)(0.85 * Math.sin(lightYaw));
+                final float lightZ = 0.45f;
+                lightYaw += 0.0125f;
+
+                {
+                    final VertexBuffer vb = plane.getVertexBuffer();
+                    //color in this case is the light vector
+                    vb.setDefaultColor(xyzAsRGB(
+                            lightX,
+                            lightY,
+                            lightZ));
+                }
                 transform.setIdentity();
-                //transform.postRotate(-90, 1, 0, 0);
                 g3d.render(plane.getVertexBuffer(),
                         plane.getIndexBuffer(0),
                         plane.getAppearance(0),
                         transform,
                         plane.getScope());
+
+                transform.setIdentity();
+                transform.postTranslate(lightX, lightY, lightZ);
+                g3d.render(light.getVertexBuffer(),
+                        light.getIndexBuffer(0),
+                        light.getAppearance(0),
+                        transform,
+                        light.getScope());
             }
             catch (Throwable t)
             {

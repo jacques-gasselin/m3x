@@ -1067,9 +1067,113 @@ public class RendererOpenGL2 extends Renderer
             glWrapT = wrappingAsGLenum(wrappingT);
         }
 
+        private static final int combinerFuncAsGLEnum(int func)
+        {
+            switch (func)
+            {
+                case TextureCombiner.ADD:
+                {
+                    return GL.GL_ADD;
+                }
+                case TextureCombiner.ADD_SIGNED:
+                {
+                    return GL.GL_ADD_SIGNED;
+                }
+                case TextureCombiner.DOT3_RGB:
+                {
+                    return GL.GL_DOT3_RGB;
+                }
+                case TextureCombiner.DOT3_RGBA:
+                {
+                    return GL.GL_DOT3_RGBA;
+                }
+                case TextureCombiner.INTERPOLATE:
+                {
+                    return GL.GL_INTERPOLATE;
+                }
+                case TextureCombiner.MODULATE:
+                {
+                    return GL.GL_MODULATE;
+                }
+                case TextureCombiner.REPLACE:
+                {
+                    return GL.GL_REPLACE;
+                }
+                case TextureCombiner.SUBTRACT:
+                {
+                    return GL.GL_SUBTRACT;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+
+        private static final int combinerSourceAsGLenum(int source)
+        {
+            switch (source & (~(TextureCombiner.ALPHA | TextureCombiner.INVERT)))
+            {
+                case TextureCombiner.CONSTANT:
+                {
+                    return GL.GL_CONSTANT;
+                }
+                case TextureCombiner.PRIMARY:
+                {
+                    return GL.GL_PRIMARY_COLOR;
+                }
+                case TextureCombiner.PREVIOUS:
+                {
+                    return GL.GL_PREVIOUS;
+                }
+                case TextureCombiner.TEXTURE:
+                {
+                    return GL.GL_TEXTURE;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+        private static final int combinerOpAsGLenum(boolean alpha, boolean invert)
+        {
+            if (!invert)
+            {
+                return alpha ?
+                    GL.GL_SRC_ALPHA :
+                    GL.GL_SRC_COLOR;
+            }
+            else
+            {
+                return alpha ?
+                    GL.GL_ONE_MINUS_SRC_ALPHA :
+                    GL.GL_ONE_MINUS_SRC_COLOR;
+            }
+        }
+        
         private void updateCombiner(TextureCombiner combiner)
         {
-            throw new UnsupportedOperationException();
+            glCombineRGB = combinerFuncAsGLEnum(combiner.getColorFunction());
+            glCombineAlpha = combinerFuncAsGLEnum(combiner.getAlphaFunction());
+            glRGBScale = combiner.getColorScale();
+            glAlphaScale = combiner.getAlphaScale();
+
+            for (int i = 0; i < 3; ++i)
+            {
+                final int colorSrc = combiner.getColorSource(i);
+                operandRGB[i] = combinerOpAsGLenum(
+                        (colorSrc & TextureCombiner.ALPHA) != 0,
+                        (colorSrc & TextureCombiner.INVERT) != 0);
+                srcRGB[i] = combinerSourceAsGLenum(colorSrc);
+                
+                final int alphaSrc = combiner.getAlphaSource(i);
+                operandAlpha[i] = combinerOpAsGLenum(true,
+                        (alphaSrc & TextureCombiner.INVERT) != 0);
+                srcAlpha[i] = combinerSourceAsGLenum(alphaSrc);
+            }
+            
+            glTexEnvMode = GL.GL_COMBINE;
         }
 
         private void updateBlending(int blending)

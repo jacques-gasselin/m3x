@@ -1,5 +1,7 @@
 package javax.microedition.m3g;
 
+import java.util.Arrays;
+
 /**
  * @author jgasseli
  */
@@ -98,6 +100,20 @@ final class Require
         {
             throw new IllegalArgumentException(name + " > " + maxValue);
         }
+    }
+
+    static final void argumentIn(int value, String name, int[] list)
+    {
+        for (int l : list)
+        {
+            if (value == l)
+            {
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException(name + " is not in " +
+                Arrays.toString(list));
     }
 
     static final void argumentInEnum(int value, String name, int enumMin, int enumMax)
