@@ -126,7 +126,7 @@ public class Dot3Demo extends DemoFrame
                 InputStream imageStream = getClass().getResourceAsStream(
                         "brickround_diffuse.png");
                 diffuseImage = (Image2D) Loader.loadImage(
-                        ImageBase.LUMINANCE | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                        ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
                         imageStream);
                 imageStream.close();
             }
@@ -178,9 +178,9 @@ public class Dot3Demo extends DemoFrame
 
                 g3d.clear(background);
 
-                final float lightX = (float)(0.85 * Math.cos(lightYaw));
-                final float lightY = (float)(0.85 * Math.sin(lightYaw));
-                final float lightZ = 0.45f;
+                final float lightX = (float)(0.75 * Math.cos(lightYaw));
+                final float lightY = (float)(0.75 * Math.sin(lightYaw));
+                final float lightZ = 0.55f;
                 lightYaw += 0.0125f;
 
                 {
@@ -192,19 +192,11 @@ public class Dot3Demo extends DemoFrame
                             lightZ));
                 }
                 transform.setIdentity();
-                g3d.render(plane.getVertexBuffer(),
-                        plane.getIndexBuffer(0),
-                        plane.getAppearance(0),
-                        transform,
-                        plane.getScope());
+                g3d.render(plane, transform);
 
                 transform.setIdentity();
                 transform.postTranslate(lightX, lightY, lightZ);
-                g3d.render(light.getVertexBuffer(),
-                        light.getIndexBuffer(0),
-                        light.getAppearance(0),
-                        transform,
-                        light.getScope());
+                g3d.render(light, transform);
             }
             catch (Throwable t)
             {

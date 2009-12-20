@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 
 /**
@@ -312,22 +313,200 @@ public class Graphics3D
         target = null;
     }
 
-    public void render(Node node, Transform transform)
+    private static abstract class RenderGraphNode
+            implements Comparable<RenderGraphNode>
+    {
+        public static final int BLEND_REPLACE = 0;
+        public static final int BLEND_ALPHA_THRESHOLD = 1;
+        public static final int BLEND_OTHER = 2;
+        
+        private int compareKey;
+        
+        abstract void render(Renderer renderer);
+
+        final void setCompareKey(int layer, int blend)
+        {
+            //layer is -63 to 63
+            compareKey = ((layer + 63) << 24) | blend;
+        }
+        
+        public int compareTo(RenderGraphNode o)
+        {
+            return Integer.signum(compareKey - o.compareKey);
+        }
+    }
+
+    private static final class Submesh extends RenderGraphNode
+    {
+        private VertexBuffer vertices;
+        private IndexBuffer primitives;
+        private Appearance appearance;
+        private Transform transform;
+        private int scope;
+        private float alphaFactor;
+
+        static final Submesh create(VertexBuffer vertices, IndexBuffer primitives,
+                Appearance appearance, Transform transform, int scope,
+                float alphaFactor)
+        {
+            //TODO cache already created nodes
+            Submesh ret = new Submesh();
+            ret.vertices = vertices;
+            ret.primitives = primitives;
+            ret.appearance = appearance;
+            ret.transform = transform;
+            ret.scope = scope;
+            ret.alphaFactor = alphaFactor;
+            
+            //TODO depth sort
+
+            int blendType = BLEND_REPLACE;
+            CompositingMode cm = appearance.getCompositingMode();
+            if (cm != null)
+            {
+                Blender blender = cm.getBlender();
+                if (blender != null)
+                {
+                    //TODO determine the proper blend type
+                    blendType = BLEND_OTHER;
+                }
+                else
+                {
+                    switch (cm.getBlending())
+                    {
+                        case CompositingMode.REPLACE:
+                        {
+                            blendType = BLEND_REPLACE;
+                            break;
+                        }
+                        case CompositingMode.ALPHA:
+                        case CompositingMode.ALPHA_ADD:
+                        case CompositingMode.ALPHA_DARKEN:
+                        case CompositingMode.ALPHA_PREMULTIPLIED:
+                        {
+                            //TODO do a more in depth test of what constitutes
+                            //alpha threshold
+                            if (cm.getAlphaThreshold() != 0.0f)
+                            {
+                                blendType = BLEND_ALPHA_THRESHOLD;
+                            }
+                            else
+                            {
+                                blendType = BLEND_OTHER;
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                            blendType = BLEND_OTHER;
+                        }
+                    }
+                }
+            }
+
+            ret.setCompareKey(appearance.getLayer(), blendType);
+
+            return ret;
+        }
+
+        final void render(Renderer renderer)
+        {
+            renderer.render(vertices, primitives, appearance,
+                    transform, scope, alphaFactor);
+        }
+    }
+
+    private final ArrayList<RenderGraphNode> renderGraph =
+            new ArrayList<RenderGraphNode>();
+
+    private final void updateRenderGraph(Node node, Transform transform,
+            int cameraScope, float alphaFactor)
+    {
+        if (node instanceof SkinnedMesh)
+        {
+            throw new UnsupportedOperationException();
+        }
+        if (node instanceof Mesh)
+        {
+            final Mesh mesh = (Mesh) node;
+            final int scope = mesh.getScope();
+            if ((cameraScope & scope) != 0)
+            {
+                final VertexBuffer vertices = mesh.getVertexBuffer();
+                final float alpha = alphaFactor * mesh.getAlphaFactor();
+                //add graph nodes for each submesh
+                final int submeshCount = mesh.getSubmeshCount();
+                for (int i = 0; i < submeshCount; ++i)
+                {
+                    final IndexBuffer ib = mesh.getIndexBuffer(i);
+                    //TODO support shader appearances
+                    final Appearance a = mesh.getAppearance(i);
+                    
+                    renderGraph.add(Submesh.create(vertices, ib, a,
+                            transform, scope, alpha));
+                }
+            }
+        }
+        else if (node instanceof Group)
+        {
+            final Group group = (Group) node;
+            final int childCount = group.getChildCount();
+            if (childCount > 0)
+            {
+                final float alpha = alphaFactor * group.getAlphaFactor();
+                for (int i = 0; i < childCount; ++i)
+                {
+                    final Node child = group.getChild(i);
+                    if (child.isRenderingEnabled())
+                    {
+                        //prepare the transform to use for the child
+                        //TODO grab the transform off a cached list
+                        final Transform childTransform = new Transform();
+                        if (transform != null)
+                        {
+                            childTransform.set(transform);
+                        }
+                        childTransform.postMultiply(child.getCompositeTransform());
+                        //recurse and update
+                        updateRenderGraph(child, childTransform,
+                                cameraScope, alpha);
+                    }
+                }
+            }
+        }
+    }
+    
+    public synchronized final void render(Node node, Transform transform)
     {
         Require.notNull(node, "node");
         
         requireCurrentRenderTarget();
         requireCurrentCamera();
 
-        throw new UnsupportedOperationException();
+        if (!node.isRenderingEnabled())
+        {
+            return;
+        }
+
+        updateRenderGraph(node, transform, camera.getScope(),
+                1.0f);
+
+        Collections.sort(renderGraph);
+
+        for (RenderGraphNode r : renderGraph)
+        {
+            r.render(renderer);
+        }
+
+        renderGraph.clear();
     }
 
-    public void render(RenderPass renderPass)
+    public final void render(RenderPass renderPass)
     {
         throw new UnsupportedOperationException();
     }
 
-    public void render(VertexBuffer vertices, IndexBuffer primitives,
+    public final void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform)
     {
         Require.notNull(vertices, "vertices");
@@ -341,7 +520,7 @@ public class Graphics3D
     }
 
     @Deprecated
-    public void render(VertexBuffer vertices, IndexBuffer primitives,
+    public final void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
         Require.notNull(vertices, "vertices");
@@ -358,7 +537,7 @@ public class Graphics3D
         }
     }
 
-    public void render(VertexBuffer vertices, IndexBuffer primitives,
+    public final void render(VertexBuffer vertices, IndexBuffer primitives,
             ShaderAppearance appearance, Transform transform)
     {
         Require.notNull(vertices, "vertices");
@@ -371,7 +550,7 @@ public class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    public void render(World world)
+    public final void render(World world)
     {
         if (world == null)
         {
@@ -385,7 +564,6 @@ public class Graphics3D
             throw new IllegalStateException("world has no active camera");
         }
 
-
         Transform cameraToWorld = new Transform();
         camera.getTransformTo(world, cameraToWorld);
         setCamera(activeCamera, cameraToWorld);
@@ -394,7 +572,6 @@ public class Graphics3D
         clear(background);
         
         //TODO do lights
-
 
         //render as a node
         render(world, null);
@@ -405,7 +582,7 @@ public class Graphics3D
     /**
      * Resets the lights array.
      */
-    public void resetLights()
+    public final void resetLights()
     {
         this.lights.clear();
         //TODO: cache the unused transform objects here to avoid
@@ -427,7 +604,7 @@ public class Graphics3D
      * @throws ArithmeticException if transform is not null and not invertible.
      * @see #getCamera(javax.microedition.m3g.Transform)
      */
-    public void setCamera(Camera camera, Transform transform)
+    public final void setCamera(Camera camera, Transform transform)
     {
         if (transform != null)
         {
@@ -458,17 +635,17 @@ public class Graphics3D
         }
     }
 
-    public void setDepthRange(float near, float far)
+    public final void setDepthRange(float near, float far)
     {
         throw new UnsupportedOperationException();
     }
 
-    public void setLight(int index, Light light, Transform transform)
+    public final void setLight(int index, Light light, Transform transform)
     {
         throw new UnsupportedOperationException();
     }
 
-    public void setViewport(int x, int y, int width, int height)
+    public final void setViewport(int x, int y, int width, int height)
     {
         if (this.renderer != null)
         {
