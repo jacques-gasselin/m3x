@@ -34,7 +34,7 @@ import java.util.Hashtable;
 /**
  * @author jgasseli
  */
-public class Graphics3D
+public final class Graphics3D
 {
     public static final int ANTIALIAS = 2;
     public static final int DITHER = 4;
@@ -58,6 +58,12 @@ public class Graphics3D
     private final Transform inverseCameraTransform = new Transform();
     private final ArrayList<Light> lights = new ArrayList<Light>(LIGHTS_LIST_CAPACITY);
     private final ArrayList<Transform> lightTransforms = new ArrayList<Transform>(LIGHTS_LIST_CAPACITY);
+    private float depthRangeNear;
+    private float depthRangeFar;
+    private int viewportX;
+    private int viewportY;
+    private int viewportWidth;
+    private int viewportHeight;
 
     protected Graphics3D()
     {
@@ -126,6 +132,7 @@ public class Graphics3D
         bindTarget(target, DEPTH);
     }
 
+    @Deprecated
     public void bindTarget(Object target, boolean depthBuffer, int flags)
     {
         if (depthBuffer)
@@ -194,20 +201,21 @@ public class Graphics3D
 
     public float getDepthRangeFar()
     {
-        throw new UnsupportedOperationException();
+        return this.depthRangeFar;
     }
 
     public float getDepthRangeNear()
     {
-        throw new UnsupportedOperationException();
+        return this.depthRangeNear;
     }
 
+    @Deprecated
     public int getHints()
     {
-        throw new UnsupportedOperationException();
+        return getRenderingFlags();
     }
 
-    public static Graphics3D getInstance()
+    public static final Graphics3D getInstance()
     {
         return INSTANCE;
     }
@@ -252,6 +260,8 @@ public class Graphics3D
 
     public static Hashtable getProperties(Object target)
     {
+        Require.notNull(target, "target");
+        
         throw new UnsupportedOperationException();
     }
 
@@ -274,27 +284,28 @@ public class Graphics3D
 
     public int getViewportHeight()
     {
-        throw new UnsupportedOperationException();
+        return this.viewportHeight;
     }
 
     public int getViewportWidth()
     {
-        throw new UnsupportedOperationException();
+        return this.viewportWidth;
     }
 
     public int getViewportX()
     {
-        throw new UnsupportedOperationException();
+        return this.viewportX;
     }
 
     public int getViewportY()
     {
-        throw new UnsupportedOperationException();
+        return this.viewportY;
     }
 
+    @Deprecated
     public boolean isDepthBufferEnabled()
     {
-        throw new UnsupportedOperationException();
+        return (getRenderingFlags() & DEPTH) != 0;
     }
 
     /**
@@ -316,9 +327,8 @@ public class Graphics3D
     private static abstract class RenderGraphNode
             implements Comparable<RenderGraphNode>
     {
-        public static final int BLEND_REPLACE = 0;
-        public static final int BLEND_ALPHA_THRESHOLD = 1;
-        public static final int BLEND_OTHER = 2;
+        public static final int NOT_BLENDED = 0;
+        public static final int BLENDED = 1;
         
         private int compareKey;
         
@@ -327,7 +337,8 @@ public class Graphics3D
         final void setCompareKey(int layer, int blend)
         {
             //layer is -63 to 63
-            compareKey = ((layer + 63) << 24) | blend;
+            //top 9 bits is the major sort key
+            compareKey = (((layer + 63) << 1) | blend) << 23;
         }
         
         public int compareTo(RenderGraphNode o)
@@ -360,7 +371,7 @@ public class Graphics3D
             
             //TODO depth sort
 
-            int blendType = BLEND_REPLACE;
+            int blendType = NOT_BLENDED;
             CompositingMode cm = appearance.getCompositingMode();
             if (cm != null)
             {
@@ -368,38 +379,13 @@ public class Graphics3D
                 if (blender != null)
                 {
                     //TODO determine the proper blend type
-                    blendType = BLEND_OTHER;
+                    blendType = BLENDED;
                 }
                 else
                 {
-                    switch (cm.getBlending())
+                    if (cm.getBlending() != CompositingMode.REPLACE)
                     {
-                        case CompositingMode.REPLACE:
-                        {
-                            blendType = BLEND_REPLACE;
-                            break;
-                        }
-                        case CompositingMode.ALPHA:
-                        case CompositingMode.ALPHA_ADD:
-                        case CompositingMode.ALPHA_DARKEN:
-                        case CompositingMode.ALPHA_PREMULTIPLIED:
-                        {
-                            //TODO do a more in depth test of what constitutes
-                            //alpha threshold
-                            if (cm.getAlphaThreshold() != 0.0f)
-                            {
-                                blendType = BLEND_ALPHA_THRESHOLD;
-                            }
-                            else
-                            {
-                                blendType = BLEND_OTHER;
-                            }
-                            break;
-                        }
-                        default:
-                        {
-                            blendType = BLEND_OTHER;
-                        }
+                        blendType = BLENDED;
                     }
                 }
             }
@@ -476,7 +462,7 @@ public class Graphics3D
         }
     }
     
-    public synchronized final void render(Node node, Transform transform)
+    public synchronized void render(Node node, Transform transform)
     {
         Require.notNull(node, "node");
         
@@ -503,6 +489,8 @@ public class Graphics3D
 
     public final void render(RenderPass renderPass)
     {
+        Require.notNull(renderPass, "renderPass");
+        
         throw new UnsupportedOperationException();
     }
 
@@ -637,6 +625,12 @@ public class Graphics3D
 
     public final void setDepthRange(float near, float far)
     {
+        Require.argumentInRange(near, "near", 0, 1);
+        Require.argumentInRange(far, "far", 0, 1);
+
+        this.depthRangeNear = near;
+        this.depthRangeFar = far;
+
         throw new UnsupportedOperationException();
     }
 
@@ -647,6 +641,11 @@ public class Graphics3D
 
     public final void setViewport(int x, int y, int width, int height)
     {
+        this.viewportX = x;
+        this.viewportY = y;
+        this.viewportWidth = width;
+        this.viewportHeight = height;
+        
         if (this.renderer != null)
         {
             this.renderer.setViewport(x, y, width, height);
