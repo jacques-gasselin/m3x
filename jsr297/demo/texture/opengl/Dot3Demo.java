@@ -180,7 +180,7 @@ public class Dot3Demo extends DemoFrame
 
                 final float lightX = (float)(0.75 * Math.cos(lightYaw));
                 final float lightY = (float)(0.75 * Math.sin(lightYaw));
-                final float lightZ = 0.55f;
+                final float lightZ = 0.65f;
                 lightYaw += 0.0125f;
 
                 {
@@ -191,6 +191,7 @@ public class Dot3Demo extends DemoFrame
                             lightY,
                             lightZ));
                 }
+
                 transform.setIdentity();
                 g3d.render(plane, transform);
 

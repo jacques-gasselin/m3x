@@ -64,6 +64,7 @@ public final class Graphics3D
     private int viewportY;
     private int viewportWidth;
     private int viewportHeight;
+    private int renderingFlags;
 
     protected Graphics3D()
     {
@@ -167,6 +168,7 @@ public final class Graphics3D
         }
 
         this.target = target;
+        this.renderingFlags = flags;
         renderer = renderTarget.bindTarget();
         renderer.setViewport(0, 0, renderTarget.getWidth(), renderTarget.getHeight());
     }
@@ -267,7 +269,7 @@ public final class Graphics3D
 
     public int getRenderingFlags()
     {
-        throw new UnsupportedOperationException();
+        return this.renderingFlags;
     }
 
     /**
@@ -487,14 +489,14 @@ public final class Graphics3D
         renderGraph.clear();
     }
 
-    public final void render(RenderPass renderPass)
+    public void render(RenderPass renderPass)
     {
         Require.notNull(renderPass, "renderPass");
         
         throw new UnsupportedOperationException();
     }
 
-    public final void render(VertexBuffer vertices, IndexBuffer primitives,
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform)
     {
         Require.notNull(vertices, "vertices");
@@ -508,7 +510,7 @@ public final class Graphics3D
     }
 
     @Deprecated
-    public final void render(VertexBuffer vertices, IndexBuffer primitives,
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
             Appearance appearance, Transform transform, int scope)
     {
         Require.notNull(vertices, "vertices");
@@ -525,7 +527,7 @@ public final class Graphics3D
         }
     }
 
-    public final void render(VertexBuffer vertices, IndexBuffer primitives,
+    public void render(VertexBuffer vertices, IndexBuffer primitives,
             ShaderAppearance appearance, Transform transform)
     {
         Require.notNull(vertices, "vertices");
@@ -538,7 +540,7 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    public final void render(World world)
+    public void render(World world)
     {
         if (world == null)
         {
@@ -592,7 +594,7 @@ public final class Graphics3D
      * @throws ArithmeticException if transform is not null and not invertible.
      * @see #getCamera(javax.microedition.m3g.Transform)
      */
-    public final void setCamera(Camera camera, Transform transform)
+    public void setCamera(Camera camera, Transform transform)
     {
         if (transform != null)
         {
@@ -623,7 +625,7 @@ public final class Graphics3D
         }
     }
 
-    public final void setDepthRange(float near, float far)
+    public void setDepthRange(float near, float far)
     {
         Require.argumentInRange(near, "near", 0, 1);
         Require.argumentInRange(far, "far", 0, 1);
@@ -634,12 +636,12 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    public final void setLight(int index, Light light, Transform transform)
+    public void setLight(int index, Light light, Transform transform)
     {
         throw new UnsupportedOperationException();
     }
 
-    public final void setViewport(int x, int y, int width, int height)
+    public void setViewport(int x, int y, int width, int height)
     {
         this.viewportX = x;
         this.viewportY = y;

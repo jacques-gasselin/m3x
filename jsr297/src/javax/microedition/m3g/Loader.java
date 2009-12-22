@@ -29,8 +29,10 @@ package javax.microedition.m3g;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 /**
@@ -38,6 +40,292 @@ import javax.imageio.ImageIO;
  */
 public final class Loader
 {
+    private static final class M3GDeserializer
+    {
+        private final ArrayList<Object3D> references = new ArrayList<Object3D>();
+        private final ArrayList<InputStream> streamStack = new ArrayList<InputStream>();
+        private InputStream currentStream;
+
+        M3GDeserializer(InputStream stream)
+        {
+            streamStack.add(stream);
+            currentStream = stream;
+        }
+
+        void addReference(Object3D obj)
+        {
+            Require.notNull(obj, "obj");
+
+            if (references.contains(obj))
+            {
+                throw new IllegalStateException("reference to " + obj +
+                        " already exists");
+            }
+            
+            references.add(obj);
+        }
+
+        /**
+         * Reads an unsigned byte value.
+         * @return the value, or -1 if EOF was reached
+         * @throws IOException if the stream hits any error
+         */
+        int read() throws IOException
+        {
+            return currentStream.read();
+        }
+
+        /**
+         * Reads an unsigned byte value.
+         * @return the value.
+         * @throws IOException if the stream hits any error
+         * @throws EOFExcpetion if the stream is at EOF before the read.
+         */
+        private int readChecked() throws IOException
+        {
+            final int b = currentStream.read();
+            if (b == -1)
+            {
+                throw new EOFException();
+            }
+            return b;
+        }
+
+        /**
+         * Reads a little-endian boolean value. This is equavalent to
+         * {@code readByte() != 0}
+         * @return the boolean value of the next byte in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        boolean readBoolean() throws IOException
+        {
+            return readByte() != 0;
+        }
+
+        /**
+         * Reads a little-endian signed byte value.
+         * @return the byte value of the next byte in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        byte readByte() throws IOException
+        {
+            return (byte) readChecked();
+        }
+
+        /**
+         * Reads a little-endian signed float value.
+         * @return the float value of the next 4 bytes in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        float readFloat() throws IOException
+        {
+            return Float.intBitsToFloat(readInt());
+        }
+
+        void readFully(byte[] b, int off, int len) throws IOException
+        {
+            for (int i = 0; i < len; ++i)
+            {
+                b[off + i] = (byte) readChecked();
+            }
+        }
+
+        /**
+         * Reads a little-endian signed integer value.
+         * @return the int value of the next 4 bytes in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        int readInt() throws IOException
+        {
+            final int byte0 = readChecked();
+            final int byte1 = readChecked();
+            final int byte2 = readChecked();
+            final int byte3 = readChecked();
+
+            return (byte0) | (byte1 << 8) | (byte2 << 16) | (byte3 << 24);
+        }
+
+        /**
+         * Reads and decodes a reference to an already deserialized object.
+         * @return the reference at the read index, or null if 0
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        Object3D readReference() throws IOException
+        {
+            final int index = readInt();
+            return references.get(index - 2);
+        }
+
+        /**
+         * Reads a little-endian signed short value.
+         * @return the short value of the next 2 bytes in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        short readShort() throws IOException
+        {
+            return (short) readUnsignedShort();
+        }
+
+        /**
+         * Reads a little-endian unsigned byte value.
+         * @return the byte value of the next byte in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        int readUnsignedByte() throws IOException
+        {
+            return readChecked() & 0xff;
+        }
+
+        /**
+         * Reads a little-endian unsigned short value.
+         * @return the short value of the next 2 bytes in the stream.
+         * @throws IOException if the stream hits EOF or any other error
+         */
+        int readUnsignedShort() throws IOException
+        {
+            final int byte0 = readChecked();
+            final int byte1 = readChecked();
+
+            return (byte0) | (byte1 << 8);
+        }
+
+        /**
+         * Checks the stream for the prescence of the M3G file identifier.
+         * @throws IOException if the identifier is missing.
+         */
+        private void checkIdentifier() throws IOException
+        {
+            final byte[] expected = { 
+                (byte)0xAB, 'J', 'S', 'R', '1', '8', '4', (byte)0xBB,
+                '\r', '\n', 0x1A, '\n'
+            };
+
+            final int length = expected.length;
+            final byte[] actual = new byte[length];
+
+            readFully(actual, 0, length);
+            
+            int i;
+            for (i = 0; i < length; ++i)
+            {
+                if (actual[i] != expected[i])
+                {
+                    break;
+                }
+            }
+
+            if (i == length)
+            {
+                return;
+            }
+
+            //assume the identifier was not correct here
+            String message;
+            switch (i)
+            {
+                case 0:
+                {
+                    if (actual[i] != 0x2B)
+                    {
+                        message = "Byte " + i + " is not " + (char)expected[i] +
+                                " as expected. Perhaps this is not an M3G file.";
+                    }
+                    else
+                    {
+                        message = "Byte " + i + " is not " + (char)expected[i] +
+                                " as expected." +
+                                "However it is 0x2B as one would expect if the " +
+                                "file had been subjected to 7bit conversion.";
+                    }
+                    break;
+                }
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                {
+                    final char uppercase = (char)expected[i];
+                    final char lowercase = Character.toLowerCase(uppercase);
+                    if (actual[i] != lowercase)
+                    {
+                        message = "Byte " + i + " is not " + uppercase +
+                                " as expected. Perhaps this is not an M3G file.";
+                    }
+                    else
+                    {
+                        message = "Byte " + i + " is not " + uppercase +
+                                " as expected." +
+                                "However it is " + lowercase + " as one would" +
+                                " expect if the file had been subjected to" +
+                                "upper to lower case conversion.";
+                    }
+                    break;
+                }
+                case 8:
+                {
+                    if (actual[i] != '\n')
+                    {
+                        message = "Byte " + i + " is not '\\r'" +
+                                " as expected. Perhaps this is not an M3G file.";
+                    }
+                    else
+                    {
+                        message = "Byte " + i + " is not '\\r' as expected." +
+                                "However it is '\\n' as one would" +
+                                " expect if the file had been subjected to" +
+                                "CR-LF to LF conversion. This can often occur" +
+                                " if the file has been treated as a text file" +
+                                " and transfered to a UNIX-like OS.";
+                    }
+                    break;
+                }
+                case 11:
+                {
+                    if (actual[i] != '\r')
+                    {
+                        message = "Byte " + i + " is not '\\n'" +
+                                " as expected. Perhaps this is not an M3G file.";
+                    }
+                    else
+                    {
+                        message = "Byte " + i + " is not '\\n' as expected." +
+                                "However it is '\\r' as one would" +
+                                " expect if the file had been subjected to" +
+                                "LF to CR-LF conversion. This can often occur" +
+                                " if the file has been treated as a text file" +
+                                " and transfered to a Windows-like OS.";
+                    }
+                    break;
+                }
+                default:
+                {
+                    message = "Actual byte read " + "(" + actual[i] + ")" +
+                            "at index " + i + " does not equal the expected" +
+                            " value " + expected[i];
+                }
+            }
+
+            throw new IOException("Invalid file identifier: " + message);
+        }
+
+        private void setReferenceObject(Object3D[] referenceObjects)
+        {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+
+        private void load()
+        {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+
+        private Object3D[] getRootObjects()
+        {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
+    
     /**
      * Static utility class
      */
@@ -50,6 +338,9 @@ public final class Loader
     public static final Object3D[] load(byte[] data, int offset)
         throws IOException
     {
+        Require.notNull(data, "stream");
+        Require.indexInRange(offset, data.length);
+
         final InputStream stream = new ByteArrayInputStream(data);
         stream.skip(offset);
         return load(stream);
@@ -65,7 +356,20 @@ public final class Loader
             Object3D[] referenceObjects)
         throws IOException
     {
-        throw new UnsupportedOperationException();
+        Require.notNull(stream, "stream");
+
+        M3GDeserializer deserializer = new M3GDeserializer(stream);
+
+        deserializer.checkIdentifier();
+        
+        if (referenceObjects != null)
+        {
+            deserializer.setReferenceObject(referenceObjects);
+        }
+        
+        deserializer.load();
+
+        return deserializer.getRootObjects();
     }
 
     public static final Object3D[] load(String name)
@@ -77,7 +381,20 @@ public final class Loader
     public static final Object3D[] load(String name, Object3D[] referenceObjects)
         throws IOException
     {
-        throw new UnsupportedOperationException();
+        Require.notNull(name, "name");
+        
+        //TODO verify that this is the correct class loader
+        final ClassLoader cl = Loader.class.getClassLoader();
+        final InputStream is = cl.getResourceAsStream(name);
+
+        try
+        {
+            return load(is, referenceObjects);
+        }
+        finally
+        {
+            is.close();
+        }
     }
 
     public static final ImageBase loadImage(int format, InputStream stream)
@@ -101,6 +418,19 @@ public final class Loader
     public static final ImageBase loadImage(int format, String name)
         throws IOException
     {
-        throw new UnsupportedOperationException();
+        Require.notNull(name, "name");
+
+        //TODO verify that this is the correct class loader
+        final ClassLoader cl = Loader.class.getClassLoader();
+        final InputStream is = cl.getResourceAsStream(name);
+
+        try
+        {
+            return loadImage(format, is);
+        }
+        finally
+        {
+            is.close();
+        }
     }
 }

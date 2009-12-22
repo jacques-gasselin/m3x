@@ -188,17 +188,9 @@ public class CameraControllerDemo extends DemoFrame
                 
                 transform.setIdentity();
                 transform.postRotate(-90, 1, 0, 0);
-                g3d.render(sphere.getVertexBuffer(),
-                        sphere.getIndexBuffer(0),
-                        sphere.getAppearance(0),
-                        transform,
-                        sphere.getScope());
+                g3d.render(sphere, transform);
 
-                g3d.render(lightSphere.getVertexBuffer(),
-                        lightSphere.getIndexBuffer(0),
-                        lightSphere.getAppearance(0),
-                        lightTransform,
-                        lightSphere.getScope());
+                g3d.render(lightSphere, lightTransform);
             }
             catch (Throwable t)
             {
