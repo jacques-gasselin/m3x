@@ -2,11 +2,13 @@
 <project name="jsr297.demo" default="run-bgdemo" basedir=".">
     <property name="lib.dir" location="${basedir}/../../lib"/>
     <property name="dist.dir" location="${basedir}/../dist"/>
+    <property name="tools.dist.dir" location="${basedir}/../../tools/dist"/>
     <property name="build.dir" location="${basedir}/build"/>
     
     <path id="run.classpath">
         <pathelement location="${build.dir}"/>
         <pathelement location="${dist.dir}/m3x-jsr297.jar"/>
+        <pathelement location="${tools.dist.dir}/m3x.jar"/>
         <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
         <pathelement location="${lib.dir}/jogl/jogl.jar"/>
         <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>

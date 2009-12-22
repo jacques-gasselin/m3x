@@ -25,83 +25,66 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package camera.opengl;
+package loader.opengl;
 
 import java.awt.Graphics;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
-import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
-import javax.microedition.m3g.IndexBuffer;
-import javax.microedition.m3g.PolygonMode;
+import javax.microedition.m3g.Loader;
+import javax.microedition.m3g.Node;
+import javax.microedition.m3g.Object3D;
 import javax.microedition.m3g.Transform;
-import javax.microedition.m3g.VertexArray;
-import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.microedition.m3g.TransformController;
+import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
 import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class ScreenCameraDemo extends DemoFrame
+public abstract class AbstractLoaderDemo extends DemoFrame
 {
-    private final class ScreenCameraCanvas extends GLCanvas
+    protected final class LoaderCanvas extends GLCanvas
             implements Runnable
     {
-        private boolean cleared;
         private Background background;
         private AbstractRenderTarget renderTarget;
 
-        private VertexBuffer vertexBuffer;
-        private IndexBuffer primitives;
-        private Appearance appearance;
         private Camera camera;
-        private final Transform cameraTransform = new Transform();
+        private TransformController cameraController;
 
-        private float angle;
         private final Transform transform = new Transform();
 
-        public ScreenCameraCanvas()
+        private Object3D[] roots;
+
+        public LoaderCanvas()
         {
             renderTarget = new GLRenderTarget(this);
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            vertexBuffer = new VertexBuffer();
-            vertexBuffer.setDefaultColor(0xffff0000);
-            VertexArray positions = new VertexArray(4, 2, VertexArray.FLOAT);
-            positions.set(0, 1, new float[]{ 0, 0 });
-            positions.set(1, 1, new float[]{ 0, 400 });
-            positions.set(2, 1, new float[]{ 600, 400 });
-            positions.set(3, 1, new float[]{ 600, 0 });
-            vertexBuffer.setPositions(positions, 1.0f, null);
-
-            VertexArray colors = new VertexArray(4, 3, VertexArray.BYTE);
-            colors.set(0, 1, new byte[]{ 0, 0, 0 });
-            colors.set(1, 1, new byte[]{ (byte)255, 0, 0 });
-            colors.set(2, 1, new byte[]{ 0, (byte)255, 0 });
-            colors.set(3, 1, new byte[]{ 0, 0, (byte)255 });
-            vertexBuffer.setColors(colors);
-
-            primitives = new IndexBuffer(IndexBuffer.TRIANGLES, 2,
-                    new int[] {
-                0, 1, 2,
-                2, 3, 0,
-            });
-
-            appearance = new Appearance();
-            PolygonMode pm = new PolygonMode();
-            pm.setCulling(PolygonMode.CULL_NONE);
-            appearance.setPolygonMode(pm);
-
             camera = new Camera();
-            camera.setScreen(0, 0, 800, 600);
+            cameraController = new BlenderTurntableCameraController(camera, this,
+                    0, 0, 3);
 
-            camera.getCompositeTransform(cameraTransform);
-            
             new Thread(this).start();
+        }
+
+        protected void load(InputStream stream)
+        {
+            try
+            {
+                roots = Loader.load(stream);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -114,30 +97,26 @@ public class ScreenCameraDemo extends DemoFrame
             try
             {
                 g3d.bindTarget(renderTarget);
-                camera.setScreen(0, 0, getWidth(), getHeight());
+                camera.setPerspective(50,
+                        getWidth() / (float)getHeight(),
+                        0.1f, 10.0f);
                 g3d.setViewport(0, 0, getWidth(), getHeight());
-                //flip y as the OpenGL screen has a bottom left origin
-                cameraTransform.setIdentity();
-                cameraTransform.postTranslate(0, getHeight(), 0);
-                cameraTransform.postScale(1, -1, 1);
-                g3d.setCamera(camera, cameraTransform);
+                cameraController.update(1.0 / getRefreshRate());
+                g3d.setCamera(camera, cameraController.getTransform());
 
-                if (!cleared)
-                {
-                    cleared = true;
-                    g3d.clear(background);
-                }
+                g3d.clear(background);
 
                 transform.setIdentity();
-                transform.postTranslate(100, (getHeight() - 400) / 2, 0);
-                transform.postRotate(angle, 0, 0, 1);
-                transform.postTranslate(50, 50, 0);
-                transform.postRotate(-angle, 0, 0, 1);
-                angle += 0.25f;
-
-                //transform.postTranslate(-310, -310, 0);
-                g3d.render(vertexBuffer, primitives, appearance, transform);
-
+                if (roots != null)
+                {
+                    for (Object3D root : roots)
+                    {
+                        if (root instanceof Node)
+                        {
+                            g3d.render((Node) root,transform);
+                        }
+                    }
+                }
             }
             catch (Throwable t)
             {
@@ -166,15 +145,12 @@ public class ScreenCameraDemo extends DemoFrame
         }
     }
 
-    ScreenCameraDemo()
+    protected LoaderCanvas canvas;
+
+    AbstractLoaderDemo()
     {
         super();
-        add(new ScreenCameraCanvas());
-    }
-
-    public static void main(String[] args)
-    {
-        DemoFrame frame = new ScreenCameraDemo();
-        frame.present(false);
+        canvas = new LoaderCanvas();
+        add(canvas);
     }
 }

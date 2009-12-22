@@ -22,6 +22,13 @@ public abstract class DemoFrame extends Frame
         }
     }
 
+    public DemoFrame()
+    {
+        super();
+        setTitle(getClass().getSimpleName());
+        addWindowListener(new WindowAdapter());
+    }
+
     public DemoFrame(String title)
     {
         super(title);

@@ -13,6 +13,7 @@
     <property name="demo.build.dir" location="${demo.dir}/build"/>
     <property name="build.dir" location="${basedir}/build"/>
     <property name="dist.dir" location="${basedir}/dist"/>
+    <property name="tools.dist.dir" location="${basedir}/../tools/dist"/>
     <property name="checkstyle.policy" location="${basedir}/../checkstyle-policy-5.0.xml"/>
 
     <target name="pre-build">
@@ -117,6 +118,7 @@
             <classpath>
                 <fileset dir="${lib.dir}"/>
                 <fileset dir="${dist.dir}"/>
+                <fileset dir="${tools.dist.dir}"/>
             </classpath>
         </javac>
         <copy todir="${demo.build.dir}">

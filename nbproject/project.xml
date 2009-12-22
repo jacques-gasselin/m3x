@@ -259,7 +259,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/demo</package-root>
-                <classpath mode="compile">jsr297/dist/m3x-jsr297.jar:lib/jogl/jogl.jar</classpath>
+                <classpath mode="compile">jsr297/dist/m3x-jsr297.jar:lib/jogl/jogl.jar:tools/dist/m3x.jar</classpath>
                 <built-to>jsr297/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

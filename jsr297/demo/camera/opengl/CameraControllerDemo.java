@@ -27,10 +27,13 @@
 
 package camera.opengl;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
@@ -58,7 +61,7 @@ import util.DemoFrame;
  */
 public class CameraControllerDemo extends DemoFrame
 {
-    private final class CameraControllerCanvas extends GLCanvas
+    private final class CameraControllerCanvas extends GLJPanel
             implements Runnable
     {
         private static final int NO_LIGHT_SCOPE = 1;
@@ -200,6 +203,15 @@ public class CameraControllerDemo extends DemoFrame
             {
                 g3d.releaseTarget();
             }
+
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("MMB rotates view", 15, 15);
+            g2d.drawString("- hold Shift to pan.", 15, 30);
+            g2d.drawString("- hold Ctrl to dolly.", 15, 45);
+            g2d.drawString("- Alt+LMB emulates MMB", 15, 60);
         }
 
         public void run()
@@ -221,7 +233,7 @@ public class CameraControllerDemo extends DemoFrame
 
     CameraControllerDemo()
     {
-        super("CameraControllerDemo");
+        super();
         add(new CameraControllerCanvas());
     }
 
