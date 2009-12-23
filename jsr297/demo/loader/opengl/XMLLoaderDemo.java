@@ -1,6 +1,7 @@
 package loader.opengl;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -39,23 +40,46 @@ public class XMLLoaderDemo extends AbstractLoaderDemo
         }
     }
     
-    public void loadXML(Reader reader) throws IOException
+    public void loadXML(Reader reader)
     {
-        //deserialise XML stream
-        final m3x.xml.Deserializer xmlDeserializer = new m3x.xml.Deserializer();
-        final m3x.xml.M3G xmlRoot = xmlDeserializer.deserialize(reader);
-        //convert to binary
-        final m3x.m3g.Object3D[] binRoots = XmlToBinaryTranslator.convertRoot(
-                xmlRoot);
-        PipedInputStream instream = new PipedInputStream();
-        PipedOutputStream outstream = new PipedOutputStream(instream);
-        //save to pipe
-        Saver saver = new Saver(outstream, binRoots);
-        saver.start();
-        //load from the pipe
-        canvas.load(instream);
+        try
+        {
+            //deserialise XML stream
+            final m3x.xml.Deserializer xmlDeserializer = new m3x.xml.Deserializer();
+            final m3x.xml.M3G xmlRoot = xmlDeserializer.deserialize(reader);
+            //convert to binary
+            final m3x.m3g.Object3D[] binRoots = XmlToBinaryTranslator.convertRoot(
+                    xmlRoot);
+            final PipedOutputStream outstream = new PipedOutputStream();
+            final PipedInputStream instream = new PipedInputStream(outstream);
+            //save to pipe
+            Saver saver = new Saver(outstream, binRoots);
+            saver.start();
+            //allow the conversion to get a head start
+            try
+            {
+                Thread.sleep(5);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            //load from the pipe
+            canvas.load(instream);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
-    
+
+    public XMLLoaderDemo()
+    {
+        super();
+        loadXML(new InputStreamReader(
+                getClass().getResourceAsStream("model1.m3x")));
+    }
+
     public static void main(String[] args)
     {
         DemoFrame frame = new XMLLoaderDemo();

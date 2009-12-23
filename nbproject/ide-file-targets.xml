@@ -4,12 +4,12 @@
     <property location="lib" name="lib.dir"/>
     <property location="dist" name="dist.dir"/>
     <path id="demo.path">
-        <pathelement location="${dist.dir}/m3x-jsr297.jar"/>
+        <pathelement location="tools/dist/m3x.jar"/>
+        <pathelement location="jsr297/dist/m3x-jsr297.jar"/>
         <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
         <pathelement location="${lib.dir}/jogl/jogl.jar"/>
         <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
         <pathelement location="jsr297/demo/build"/>
-        <pathelement location="jsr297/build"/>
     </path>
     <target name="compile-selected-files-in-demo">
         <fail unless="files">Must set property 'files'</fail>

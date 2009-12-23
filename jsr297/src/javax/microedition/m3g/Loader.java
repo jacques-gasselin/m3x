@@ -33,6 +33,11 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.Checksum;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 import javax.imageio.ImageIO;
 
 /**
@@ -43,13 +48,32 @@ public final class Loader
     private static final class M3GDeserializer
     {
         private final ArrayList<Object3D> references = new ArrayList<Object3D>();
+        private final ArrayList<Object3D> rootObjects = new ArrayList<Object3D>();
         private final ArrayList<InputStream> streamStack = new ArrayList<InputStream>();
         private InputStream currentStream;
+        private Object3D[] internalReferenceObjects;
 
         M3GDeserializer(InputStream stream)
         {
+            push(stream);
+        }
+
+        void push(Checksum checksum)
+        {
+            CheckedInputStream cstream = new CheckedInputStream(currentStream, checksum);
+            push(cstream);
+        }
+
+        void push(InputStream stream)
+        {
             streamStack.add(stream);
             currentStream = stream;
+        }
+
+        void pop()
+        {
+            streamStack.remove(streamStack.size() - 1);
+            currentStream = streamStack.get(streamStack.size() - 1);
         }
 
         void addReference(Object3D obj)
@@ -63,6 +87,7 @@ public final class Loader
             }
             
             references.add(obj);
+            rootObjects.add(obj);
         }
 
         /**
@@ -153,7 +178,9 @@ public final class Loader
         Object3D readReference() throws IOException
         {
             final int index = readInt();
-            return references.get(index - 2);
+            Object3D ret = references.get(index - 2);
+            rootObjects.remove(ret);
+            return ret;
         }
 
         /**
@@ -310,19 +337,73 @@ public final class Loader
             throw new IOException("Invalid file identifier: " + message);
         }
 
-        private void setReferenceObject(Object3D[] referenceObjects)
+        private void setInternalReferenceObjects(Object3D[] referenceObjects)
         {
-            throw new UnsupportedOperationException("Not yet implemented");
+            this.internalReferenceObjects = referenceObjects;
         }
 
-        private void load()
+        private void load() throws IOException
         {
-            throw new UnsupportedOperationException("Not yet implemented");
+            Adler32 adler32 = new Adler32();
+            Inflater inflater = new Inflater();
+            //read sections
+            for (int section = 0; true; ++section)
+            {
+                adler32.reset();
+                push(adler32);
+                final int compressionScheme = read();
+                //EOF?
+                if (compressionScheme == -1)
+                {
+                    break;
+                }
+
+                final int totalSectionLength = readInt();
+                final int uncompressedLength = readInt();
+                final byte[] objects = new byte[totalSectionLength - 13];
+                readFully(objects, 0, objects.length);
+                pop();
+                final long checksum = readInt() & 0x00000000ffffffffL;
+                //check that the checksum is correct
+                if (adler32.getValue() != checksum)
+                {
+                    throw new IOException("checksum in section " + section +
+                            " does not match the data." +
+                            " Expected " + checksum + " but calculated " +
+                            adler32.getValue() + ".");
+                }
+
+
+                ByteArrayInputStream uncompressedStream =
+                        new ByteArrayInputStream(objects);
+                if (compressionScheme == 1)
+                {
+                    //zlib compressed, 32k buffer
+                    final int bufferSize = 32 * 1024;
+                    push(new InflaterInputStream(uncompressedStream, inflater,
+                            bufferSize));
+                }
+                else
+                {
+                    push(uncompressedStream);
+                }
+
+                loadSection(section);
+
+                pop();
+            }
+        }
+
+        void loadSection(int sectionNumber)
+        {
+            throw new UnsupportedOperationException();
         }
 
         private Object3D[] getRootObjects()
         {
-            throw new UnsupportedOperationException("Not yet implemented");
+            final int rootObjectCount = rootObjects.size();
+            Object3D[] ret = new Object3D[rootObjectCount];
+            return rootObjects.toArray(ret);
         }
     }
     
@@ -362,10 +443,7 @@ public final class Loader
 
         deserializer.checkIdentifier();
         
-        if (referenceObjects != null)
-        {
-            deserializer.setReferenceObject(referenceObjects);
-        }
+        deserializer.setInternalReferenceObjects(referenceObjects);
         
         deserializer.load();
 
