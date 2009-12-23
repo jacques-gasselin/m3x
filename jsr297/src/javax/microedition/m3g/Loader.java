@@ -29,6 +29,7 @@ package javax.microedition.m3g;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -388,15 +389,57 @@ public final class Loader
                     push(uncompressedStream);
                 }
 
-                loadSection(section);
+                loadSection(section, uncompressedLength);
 
                 pop();
             }
         }
 
-        void loadSection(int sectionNumber)
+        void loadSection(int sectionNumber, int sectionLength) throws IOException
         {
-            throw new UnsupportedOperationException();
+            int offset = 0;
+            while (offset < sectionLength)
+            {
+                final int objectType = readUnsignedByte();
+                final int objectLength = readInt();
+                offset += objectLength + 5;
+
+                //decode the object
+                switch (objectType)
+                {
+                    case 0:
+                    {
+                        if (sectionNumber != 0)
+                        {
+                            throw new IOException("Header Object is not in section 0");
+                        }
+                        final int versionMajor = readUnsignedByte();
+                        final int versionMinor = readUnsignedByte();
+                        //TODO support the external reference sections
+                        final boolean hasExternalReferences = readBoolean();
+                        final int totalFileSize = readInt();
+                        final int approximateContentSize = readInt();
+                        final int utf8Length = objectLength - 11;
+                        final byte[] utf8 = new byte[utf8Length];
+                        readFully(utf8, 0, utf8Length);
+                        //TODO may need to scan for the first 0 byte and truncate
+                        final String authoringField;
+                        if (utf8Length > 1)
+                        {
+                            authoringField = new String(utf8, 0, utf8Length - 1, "UTF-8");
+                        }
+                        else
+                        {
+                            authoringField = "";
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        throw new IOException("Unsupported object type " + objectType);
+                    }
+                }
+            }
         }
 
         private Object3D[] getRootObjects()
