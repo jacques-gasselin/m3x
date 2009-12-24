@@ -30,30 +30,7 @@ package javax.microedition.m3g;
 /**
  * @author jgasseli
  */
-public class Object3D
+public class AnimationTrack extends Object3D
 {
-    public void addAnimationTrack(AnimationTrack animationTrack)
-    {
-        addAnimationTrack(animationTrack, 0);
-    }
 
-    public void addAnimationTrack(AnimationTrack animationTrack, int channel)
-    {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public void setAnimationEnable(boolean enable)
-    {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public void setUserID(int userID)
-    {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public void setUserObject(Object userObject)
-    {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 }

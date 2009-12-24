@@ -29,7 +29,6 @@ package javax.microedition.m3g;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,15 +47,70 @@ public final class Loader
 {
     private static final class M3GDeserializer
     {
+        private static final int TYPE_HEADEROBJECT = 0;
+        private static final int TYPE_ANIMATIONCONTROLLER = 1;
+        private static final int TYPE_ANIMATIONTRACK = 2;
+        private static final int TYPE_APPEARANCE = 3;
+        private static final int TYPE_BACKGROUND = 4;
+        private static final int TYPE_CAMERA = 5;
+        private static final int TYPE_COMPOSITINGMODE = 6;
+        private static final int TYPE_FOG = 7;
+        private static final int TYPE_POLYGONMODE = 8;
+        private static final int TYPE_GROUP = 9;
+        private static final int TYPE_IMAGE2D = 10;
+        private static final int TYPE_TRIANGLESTRIPARRAY = 11;
+        private static final int TYPE_LIGHT = 12;
+        private static final int TYPE_MATERIAL = 13;
+        private static final int TYPE_MESH = 14;
+        private static final int TYPE_MORPHINGMESH = 15;
+        private static final int TYPE_SKINNEDMESH = 16;
+        private static final int TYPE_TEXTURE2D = 17;
+        private static final int TYPE_SPRITE3D = 18;
+        private static final int TYPE_KEYFRAMESEQUENCE = 19;
+        private static final int TYPE_VERTEXARRAY = 20;
+        private static final int TYPE_VERTEXBUFFER = 21;
+        private static final int TYPE_WORLD = 22;
+        private static final int TYPE_BLENDER = 23;
+        private static final int TYPE_DYNAMICIMAGE2D = 24;
+        private static final int TYPE_FRAGMENTSHADER = 25;
+        private static final int TYPE_IMAGECUBE = 26;
+        private static final int TYPE_INDEXBUFFER = 27;
+        private static final int TYPE_POINTSPRITEMODE = 28;
+        private static final int TYPE_RENDERPASS = 29;
+        private static final int TYPE_RENDERTARGET = 30;
+        private static final int TYPE_SHADERAPPEARANCE = 31;
+        private static final int TYPE_SHADERPROGRAM = 32;
+        private static final int TYPE_SHADERUNIFORMS = 33;
+        private static final int TYPE_STENCIL = 34;
+        private static final int TYPE_TEXTURECOMBINER = 35;
+        private static final int TYPE_TEXTURECUBE = 36;
+        private static final int TYPE_VERTEXSHADER = 37;
+
+        private static final int TYPE_EXTERNALOBJECT = 253;
+        private static final int TYPE_EXTERNALIMAGE = 254;
+        private static final int TYPE_EXTERNAL = 255;
+        
         private final ArrayList<Object3D> references = new ArrayList<Object3D>();
         private final ArrayList<Object3D> rootObjects = new ArrayList<Object3D>();
         private final ArrayList<InputStream> streamStack = new ArrayList<InputStream>();
         private InputStream currentStream;
         private Object3D[] internalReferenceObjects;
+        private int versionMajor, versionMinor;
 
         M3GDeserializer(InputStream stream)
         {
             push(stream);
+        }
+
+        final boolean isFileFormat2()
+        {
+            return versionMajor == 2;
+        }
+
+        final void setVersion(int major, int minor)
+        {
+            this.versionMajor = major;
+            this.versionMinor = minor;
         }
 
         void push(Checksum checksum)
@@ -407,14 +461,15 @@ public final class Loader
                 //decode the object
                 switch (objectType)
                 {
-                    case 0:
+                    case TYPE_HEADEROBJECT:
                     {
                         if (sectionNumber != 0)
                         {
                             throw new IOException("Header Object is not in section 0");
                         }
-                        final int versionMajor = readUnsignedByte();
-                        final int versionMinor = readUnsignedByte();
+                        final int major = readUnsignedByte();
+                        final int minor = readUnsignedByte();
+                        setVersion(major, minor);
                         //TODO support the external reference sections
                         final boolean hasExternalReferences = readBoolean();
                         final int totalFileSize = readInt();
@@ -434,6 +489,15 @@ public final class Loader
                         }
                         break;
                     }
+                    case TYPE_ANIMATIONCONTROLLER:
+                    {
+                        AnimationController obj = new AnimationController();
+
+                        loadAnimationController(obj);
+                        
+                        addReference(obj);
+                        break;
+                    }
                     default:
                     {
                         throw new IOException("Unsupported object type " + objectType);
@@ -441,6 +505,56 @@ public final class Loader
                 }
             }
         }
+
+        private final void loadAnimationController(AnimationController obj)
+                throws IOException
+        {
+            loadObject3D(obj);
+
+            final float speed = readFloat();
+            final float weight = readFloat();
+            final int activeIntervalStart = readInt();
+            final int activeIntervalEnd = readInt();
+            final float referenceSequenceTime = readFloat();
+            final int referenceWorldTime = readInt();
+            
+            //TODO set the values
+
+        }
+
+        private final void loadObject3D(Object3D obj)
+                throws IOException
+        {
+            obj.setUserID(readInt());
+
+            final int animationTrackCount = readInt();
+            for (int i = 0; i < animationTrackCount; ++i)
+            {
+                Object3D animationTrack = readReference();
+                int channel = 0;
+                if (isFileFormat2())
+                {
+                    channel = readInt();
+                }
+                obj.addAnimationTrack((AnimationTrack) animationTrack, channel);
+            }
+
+            final int userParameterCount = readInt();
+            for (int i = 0; i < userParameterCount; ++i)
+            {
+                final int parameterID = readInt();
+                final int parameterValueLength = readInt();
+                final byte[] parameterValue = new byte[parameterValueLength];
+                readFully(parameterValue, 0, parameterValueLength);
+                //TODO construct the hashtable
+            }
+
+            if (isFileFormat2())
+            {
+                obj.setAnimationEnable(readBoolean());
+            }
+        }
+
 
         private Object3D[] getRootObjects()
         {
