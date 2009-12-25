@@ -32,6 +32,10 @@ package javax.microedition.m3g;
  */
 public class Object3D
 {
+    private boolean animationEnabled;
+    private int userID;
+    private Object userObject;
+    
     public void addAnimationTrack(AnimationTrack animationTrack)
     {
         addAnimationTrack(animationTrack, 0);
@@ -44,16 +48,16 @@ public class Object3D
 
     public void setAnimationEnable(boolean enable)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.animationEnabled = enable;
     }
 
     public void setUserID(int userID)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.userID = userID;
     }
 
     public void setUserObject(Object userObject)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.userObject = userObject;
     }
 }

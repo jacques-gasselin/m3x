@@ -32,6 +32,16 @@ package javax.microedition.m3g;
  */
 public class TriangleStripArray extends IndexBuffer
 {
+    /**
+     * Package protected constructor to allow uninitialised construction
+     * in Loader.
+     */
+    TriangleStripArray()
+    {
+        super();
+        setPrimitiveType(TRIANGLES);
+    }
+    
     public TriangleStripArray(int[] indices, int[] stripLengths)
     {
         super(TRIANGLES, stripLengths, indices);

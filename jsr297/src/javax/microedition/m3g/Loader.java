@@ -102,6 +102,11 @@ public final class Loader
             push(stream);
         }
 
+        final boolean isFileFormat1()
+        {
+            return versionMajor == 1;
+        }
+
         final boolean isFileFormat2()
         {
             return versionMajor == 2;
@@ -225,6 +230,25 @@ public final class Loader
             return (byte0) | (byte1 << 8) | (byte2 << 16) | (byte3 << 24);
         }
 
+        int readRGBasARGB() throws IOException
+        {
+            final int red = readChecked();
+            final int green = readChecked();
+            final int blue = readChecked();
+
+            return (0xff << 24) | (red << 16) | (green << 8) | (blue << 0);
+        }
+
+        int readRGBAasARGB() throws IOException
+        {
+            final int red = readChecked();
+            final int green = readChecked();
+            final int blue = readChecked();
+            final int alpha = readChecked();
+
+            return (alpha << 24) | (red << 16) | (green << 8) | (blue << 0);
+        }
+
         /**
          * Reads and decodes a reference to an already deserialized object.
          * @return the reference at the read index, or null if 0
@@ -233,6 +257,10 @@ public final class Loader
         Object3D readReference() throws IOException
         {
             final int index = readInt();
+            if (index == 0)
+            {
+                return null;
+            }
             Object3D ret = references.get(index - 2);
             rootObjects.remove(ret);
             return ret;
@@ -255,7 +283,7 @@ public final class Loader
          */
         int readUnsignedByte() throws IOException
         {
-            return readChecked() & 0xff;
+            return readChecked();
         }
 
         /**
@@ -498,6 +526,33 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_TRIANGLESTRIPARRAY:
+                    {
+                        TriangleStripArray obj = new TriangleStripArray();
+
+                        loadTriangleStripArray(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_VERTEXARRAY:
+                    {
+                        VertexArray obj = new VertexArray();
+
+                        loadVertexArray(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_VERTEXBUFFER:
+                    {
+                        VertexBuffer obj = new VertexBuffer();
+
+                        loadVertexBuffer(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     default:
                     {
                         throw new IOException("Unsupported object type " + objectType);
@@ -507,7 +562,7 @@ public final class Loader
         }
 
         private final void loadAnimationController(AnimationController obj)
-                throws IOException
+            throws IOException
         {
             loadObject3D(obj);
 
@@ -519,11 +574,26 @@ public final class Loader
             final int referenceWorldTime = readInt();
             
             //TODO set the values
+            throw new UnsupportedOperationException();
+        }
 
+        private final void loadIndexBuffer(IndexBuffer obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            final int encoding = readUnsignedByte();
+
+            if (isFileFormat2())
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            throw new UnsupportedOperationException();
         }
 
         private final void loadObject3D(Object3D obj)
-                throws IOException
+            throws IOException
         {
             obj.setUserID(readInt());
 
@@ -555,6 +625,167 @@ public final class Loader
             }
         }
 
+        private final void loadTriangleStripArray(TriangleStripArray obj)
+            throws IOException
+        {
+            loadIndexBuffer(obj);
+
+            if (isFileFormat1())
+            {
+                final int stripLengthsCount = readInt();
+                final int[] stripLengths = new int[stripLengthsCount];
+                for (int i = 0; i < stripLengthsCount; ++i)
+                {
+                    stripLengths[i] = readInt();
+                }
+
+                obj.setStripLengths(stripLengths);
+            }
+        }
+
+        private final void loadVertexArray(VertexArray obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            final int componentType = readUnsignedByte();
+            final int componentCount = readUnsignedByte();
+            final int encoding = readUnsignedByte();
+
+            final int vertexCount = readUnsignedShort();
+
+            obj.set(vertexCount, componentCount, componentType);
+
+            //read the data
+
+            switch (componentType)
+            {
+                case VertexArray.BYTE:
+                {
+                    final byte[] components = new byte[componentCount];
+                    for (int i = 0; i < vertexCount; ++i)
+                    {
+                        for (int c = 0; c < componentCount; ++c)
+                        {
+                            components[c] = readByte();
+                        }
+                        obj.set(i, 1, components);
+                    }
+                    break;
+                }
+                case VertexArray.SHORT:
+                {
+                    final short[] components = new short[componentCount];
+                    for (int i = 0; i < vertexCount; ++i)
+                    {
+                        for (int c = 0; c < componentCount; ++c)
+                        {
+                            components[c] = readShort();
+                        }
+                        obj.set(i, 1, components);
+                    }
+                    break;
+                }
+                case VertexArray.FIXED:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("FIXED type requires version >= 2.0");
+                    }
+                    
+                    final int[] components = new int[componentCount];
+                    for (int i = 0; i < vertexCount; ++i)
+                    {
+                        for (int c = 0; c < componentCount; ++c)
+                        {
+                            components[c] = readInt();
+                        }
+                        obj.set(i, 1, components);
+                    }
+                    break;
+                }
+                case VertexArray.HALF:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("HALF type requires version >= 2.0");
+                    }
+
+                    throw new UnsupportedOperationException();
+                }
+                case VertexArray.FLOAT:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("FLOAT type requires version >= 2.0");
+                    }
+
+                    final float[] components = new float[componentCount];
+                    for (int i = 0; i < vertexCount; ++i)
+                    {
+                        for (int c = 0; c < componentCount; ++c)
+                        {
+                            components[c] = readFloat();
+                        }
+                        obj.set(i, 1, components);
+                    }
+                    break;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
+
+        private final void loadVertexBuffer(VertexBuffer obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+            
+            final float[] bias = new float[3];
+
+            obj.setDefaultColor(readRGBAasARGB());
+
+            {
+                VertexArray positions = (VertexArray) readReference();
+                final float[] positionBias = bias;
+                for (int i = 0; i < 3; ++i)
+                {
+                    positionBias[i] = readFloat();
+                }
+                final float positionScale = readFloat();
+                obj.setPositions(positions, positionScale, positionBias);
+            }
+
+            {
+                final VertexArray normals = (VertexArray) readReference();
+                obj.setNormals(normals);
+            }
+
+            {
+                final VertexArray colors = (VertexArray) readReference();
+                obj.setColors(colors);
+            }
+
+            final int texcoordArrayCount = readInt();
+            for (int unit = 0; unit < texcoordArrayCount; ++unit)
+            {
+                VertexArray texCoords = (VertexArray) readReference();
+                final float[] texCoordBias = bias;
+                for (int i = 0; i < 3; ++i)
+                {
+                    texCoordBias[i] = readFloat();
+                }
+                final float texCoordScale = readFloat();
+                obj.setTexCoords(unit, texCoords, texCoordScale, texCoordBias);
+            }
+
+            if (isFileFormat2())
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
 
         private Object3D[] getRootObjects()
         {

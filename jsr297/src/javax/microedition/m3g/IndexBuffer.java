@@ -113,7 +113,7 @@ public class IndexBuffer extends Object3D
         }
     }
 
-    private final void setPrimitiveType(int type)
+    final void setPrimitiveType(int type)
     {
         //require immutability
         if (getPrimitiveType() != 0)
@@ -126,7 +126,7 @@ public class IndexBuffer extends Object3D
         this.primitiveType = type;
     }
 
-    private final void setPrimitiveCount(int primitiveCount)
+    final void setPrimitiveCount(int primitiveCount)
     {
         //require immutability
         if (isStripped())
@@ -141,7 +141,7 @@ public class IndexBuffer extends Object3D
         this.primitiveCount = primitiveCount;
     }
 
-    private final void setStripLengths(int[] stripLengths)
+    final void setStripLengths(int[] stripLengths)
     {
         //require immutability
         if (this.stripLengths != null)
