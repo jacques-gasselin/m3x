@@ -32,6 +32,8 @@ public class XMLLoaderDemo extends AbstractLoaderDemo
             try
             {
                 m3x.m3g.Saver.save(stream, binRoots, "1.0", null);
+                stream.flush();
+                stream.close();
             }
             catch (IOException e)
             {

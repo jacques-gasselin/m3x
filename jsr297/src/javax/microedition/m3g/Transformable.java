@@ -153,9 +153,26 @@ public abstract class Transformable extends Object3D
 
     public void setOrientation(float angle, float ax, float ay, float az)
     {
-        compositeTransformNeedsUpdate = true;
+        if (angle == 0)
+        {
+            setOrientationQuat(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        else
+        {
+            final float length = (float) Math.sqrt(ax * ax + ay * ay + az * az);
 
-        throw new UnsupportedOperationException();
+            if (length == 0)
+            {
+                throw new IllegalArgumentException("rotation axis is zero and" +
+                        " angle is nonzero");
+            }
+
+            final double radHalf = Math.toRadians(angle * 0.5f);
+            final float c = (float) Math.cos(radHalf);
+            final float s = (float) Math.sin(radHalf) / length;
+
+            setOrientationQuat(ax * s, ay * s, az * s, c);
+        }
     }
 
     public void setOrientationLookAt(float targetX, float targetY, float targetZ,
@@ -168,9 +185,12 @@ public abstract class Transformable extends Object3D
 
     public void setOrientationQuat(float qx, float qy, float qz, float qw)
     {
+        this.qx = qx;
+        this.qy = qy;
+        this.qz = qz;
+        this.qw = qw;
+
         compositeTransformNeedsUpdate = true;
-        
-        throw new UnsupportedOperationException();
     }
 
     public void setScale(float sx, float sy, float sz)

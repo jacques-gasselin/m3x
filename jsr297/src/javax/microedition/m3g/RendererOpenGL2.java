@@ -27,7 +27,9 @@
 
 package javax.microedition.m3g;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import javax.media.opengl.GL;
 
@@ -57,6 +59,7 @@ public class RendererOpenGL2 extends Renderer
     private final Transform modelViewTransform = new Transform();
     private final Transform textureTransform = new Transform();
     private Light[] lights;
+    private ShortBuffer shortBuffer;
     
     public RendererOpenGL2()
     {
@@ -760,6 +763,18 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
+    private ShortBuffer getShortBuffer(int limit)
+    {
+        if (this.shortBuffer == null || this.shortBuffer.capacity() < limit)
+        {
+            ByteBuffer buffer = ByteBuffer.allocateDirect(limit);
+            buffer.order(ByteOrder.nativeOrder());
+            this.shortBuffer = buffer.asShortBuffer();
+        }
+
+        return (ShortBuffer) this.shortBuffer.rewind();
+    }
+
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData
     {
         abstract void upload(RendererOpenGL2 renderer, GL gl);
@@ -1364,6 +1379,8 @@ public class RendererOpenGL2 extends Renderer
             positionScale = scaleBias[0];
             System.arraycopy(scaleBias, 1, positionBias, 0, 3);
 
+            int stride = positions.getVertexByteStride();
+            Buffer buffer = positions.getBuffer();
             int glType = GL.GL_FLOAT;
             switch (positions.getComponentType())
             {
@@ -1385,6 +1402,20 @@ public class RendererOpenGL2 extends Renderer
                     glType = GL.GL_SHORT;
                     break;
                 }
+                case VertexArray.BYTE:
+                {
+                    final ByteBuffer bytes = (ByteBuffer) buffer;
+                    final int limit = bytes.limit();
+                    final ShortBuffer shorts = getShortBuffer(limit * 2);
+                    for (int i = 0; i < limit; ++i)
+                    {
+                        shorts.put(bytes.get());
+                    }
+                    glType = GL.GL_SHORT;
+                    stride = 0;
+                    buffer = shorts.flip();
+                    break;
+                }
                 default:
                 {
                     throw new IllegalStateException("unsupported component type");
@@ -1392,7 +1423,7 @@ public class RendererOpenGL2 extends Renderer
             }
 
             gl.glVertexPointer(positions.getComponentCount(), glType,
-                    positions.getVertexByteStride(), positions.getBuffer());
+                    stride, buffer);
         }
 
         //normals

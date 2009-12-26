@@ -176,7 +176,7 @@ public class IndexBuffer extends Object3D
         this.stripLengths = stripLengths;
     }
 
-    private void setImplicitIndex(int firstIndex, int indexCount)
+    void setImplicitIndex(int firstIndex, int indexCount)
     {
         //verify immutability
         if (isExplicit())
@@ -195,7 +195,7 @@ public class IndexBuffer extends Object3D
         this.firstIndex = firstIndex;
     }
 
-    private void setExplicitIndices(int[] indices, int indexCount)
+    void setExplicitIndices(int[] indices, int indexCount)
     {
         //verify immutability
         if (isImplicit())

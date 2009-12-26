@@ -3,16 +3,27 @@
     <section>
         <VertexArray id="posArray" componentCount="3">
             <byteComponents>
-               -128 -128 0
-                127 -128 0
-               -128  127 0
-                127  127 0
+               -1 -1 0
+                1 -1 0
+               -1  1 0
+                1  1 0
+            </byteComponents>
+        </VertexArray>
+        <VertexArray id="colorArray" componentCount="3">
+            <byteComponents>
+               -128 0 0
+                0 -128 0
+                0  0 -128
+                0  0 0
             </byteComponents>
         </VertexArray>
         <VertexBuffer id="vertexBuffer" defaultColor="127 65 255 255">
             <positions>
                 <VertexArrayInstance ref="posArray"/>
             </positions>
+            <colors>
+                <VertexArrayInstance ref="colorArray"/>
+            </colors>
         </VertexBuffer>
         <Mesh>
             <VertexBufferInstance ref="vertexBuffer"/>

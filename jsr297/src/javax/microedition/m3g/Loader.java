@@ -33,6 +33,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Checksum;
@@ -434,7 +435,16 @@ public final class Loader
             {
                 adler32.reset();
                 push(adler32);
-                final int compressionScheme = read();
+                final int compressionScheme;
+                try
+                {
+                    compressionScheme = read();
+                }
+                catch (EOFException e)
+                {
+                    break;
+                }
+
                 //EOF?
                 if (compressionScheme == -1)
                 {
@@ -493,7 +503,8 @@ public final class Loader
                     {
                         if (sectionNumber != 0)
                         {
-                            throw new IOException("Header Object is not in section 0");
+                            throw new IOException(
+                                    "Header Object is not in section 0");
                         }
                         final int major = readUnsignedByte();
                         final int minor = readUnsignedByte();
@@ -509,7 +520,8 @@ public final class Loader
                         final String authoringField;
                         if (utf8Length > 1)
                         {
-                            authoringField = new String(utf8, 0, utf8Length - 1, "UTF-8");
+                            authoringField = new String(utf8, 0, utf8Length - 1,
+                                    "UTF-8");
                         }
                         else
                         {
@@ -523,6 +535,33 @@ public final class Loader
 
                         loadAnimationController(obj);
                         
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_APPEARANCE:
+                    {
+                        Appearance obj = new Appearance();
+
+                        loadAppearance(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_MESH:
+                    {
+                        Mesh obj = new Mesh();
+
+                        loadMesh(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_POLYGONMODE:
+                    {
+                        PolygonMode obj = new PolygonMode();
+
+                        loadPolygonMode(obj);
+
                         addReference(obj);
                         break;
                     }
@@ -577,19 +616,236 @@ public final class Loader
             throw new UnsupportedOperationException();
         }
 
+        private final void loadAppearanceBase(AppearanceBase obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            if (isFileFormat1())
+            {
+                obj.setLayer(readUnsignedByte());
+            }
+            else
+            {
+                obj.setLayer(readByte());
+            }
+
+            obj.setCompositingMode((CompositingMode) readReference());
+
+            if (isFileFormat2())
+            {
+                obj.setPolygonMode((PolygonMode) readReference());
+                obj.setDepthSortEnabled(readBoolean());
+            }
+        }
+
+        private final void loadAppearance(Appearance obj)
+            throws IOException
+        {
+            loadAppearanceBase(obj);
+
+            obj.setFog((Fog) readReference());
+            if (isFileFormat1())
+            {
+                obj.setPolygonMode((PolygonMode) readReference());
+            }
+            else
+            {
+                obj.setPointSpriteMode((PointSpriteMode) readReference());
+            }
+            obj.setMaterial((Material) readReference());
+            final int textureCount = readInt();
+            for (int i = 0; i < textureCount; ++i)
+            {
+                obj.setTexture(i, (Texture2D) readReference());
+            }
+        }
+
         private final void loadIndexBuffer(IndexBuffer obj)
             throws IOException
         {
             loadObject3D(obj);
 
             final int encoding = readUnsignedByte();
+            final int indexType = encoding & 0x7f;
+            final boolean explicit = (encoding & 0x80) != 0;
+
+            int indexCount = 0;
 
             if (isFileFormat2())
             {
                 throw new UnsupportedOperationException();
             }
+            else
+            {
+                if (!(obj instanceof TriangleStripArray))
+                {
+                    throw new IOException("File format 1.0 only allows triangle strips");
+                }
+                //Bue to an oversight in the format, stripped index buffers
+                //don't already know their index count though the sum of the
+                //strip lengths would be that value.
+                //Because the stripLengths are read after the indices in
+                //format 1.0 we just have to set this to 0 and read it in
+                //later.
+                indexCount = 0;
+            }
 
-            throw new UnsupportedOperationException();
+            int firstIndex = 0;
+            final int[] explicitIndices;
+            if (explicit)
+            {
+                //redundant deserialization of indexCount here is an
+                //oversight in the format and not a bug in this deserializer.
+                indexCount = readInt();
+                explicitIndices = new int[indexCount];
+            }
+            else
+            {
+                explicitIndices = null;
+            }
+
+            switch (encoding)
+            {
+                case 0:
+                {
+                    firstIndex = readInt();
+                    break;
+                }
+                case 1:
+                {
+                    firstIndex = readUnsignedByte();
+                    break;
+                }
+                case 2:
+                {
+                    firstIndex = readUnsignedShort();
+                    break;
+                }
+                case 128:
+                {
+                    for (int i = 0; i < indexCount; ++i)
+                    {
+                        explicitIndices[i] = readInt();
+                    }
+                    break;
+                }
+                case 129:
+                {
+                    for (int i = 0; i < indexCount; ++i)
+                    {
+                        explicitIndices[i] = readUnsignedByte();
+                    }
+                    break;
+                }
+                case 130:
+                {
+                    for (int i = 0; i < indexCount; ++i)
+                    {
+                        explicitIndices[i] = readUnsignedShort();
+                    }
+                    break;
+                }
+                case 192:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("Unsupported index encoding");
+                    }
+                    throw new UnsupportedOperationException();
+                }
+                case 193:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("Unsupported index encoding");
+                    }
+                    throw new UnsupportedOperationException();
+                }
+                case 194:
+                {
+                    if (!isFileFormat2())
+                    {
+                        throw new IOException("Unsupported index encoding");
+                    }
+                    throw new UnsupportedOperationException();
+                }
+                default:
+                {
+                    throw new IOException("Unsupported index encoding");
+                }
+            }
+
+            if (explicit)
+            {
+                obj.setExplicitIndices(explicitIndices, indexCount);
+            }
+            else
+            {
+                obj.setImplicitIndex(firstIndex, indexCount);
+            }
+        }
+
+        private final void loadMesh(Mesh obj)
+            throws IOException
+        {
+            loadNode(obj);
+
+            obj.setVertexBuffer((VertexBuffer) readReference());
+
+            final int submeshCount = readInt();
+
+            obj.setSubmeshCount(submeshCount);
+
+            for (int i = 0; i < submeshCount; ++i)
+            {
+                obj.setIndexBuffer(i, (IndexBuffer) readReference());
+                AppearanceBase appearance = (AppearanceBase) readReference();
+                if (appearance instanceof Appearance)
+                {
+                    obj.setAppearance(i, (Appearance) appearance);
+                }
+                else
+                {
+                    obj.setShaderAppearance(i, (ShaderAppearance) appearance);
+                }
+            }
+
+            if (isFileFormat2())
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        private final void loadNode(Node obj)
+            throws IOException
+        {
+            loadTransformable(obj);
+
+            obj.setRenderingEnable(readBoolean());
+            obj.setPickingEnable(readBoolean());
+            obj.setAlphaFactor(readUnsignedByte() / 255.0f);
+            obj.setScope(readInt());
+
+            final boolean hasAlignment = readBoolean();
+
+            if (hasAlignment)
+            {
+                final int zTarget = readUnsignedByte();
+                final int yTarget = readUnsignedByte();
+
+                final int zReferenceIndex = readInt();
+                final int yReferenceIndex = readInt();
+
+                //TODO link up the references
+                throw new UnsupportedOperationException();
+            }
+
+            if (isFileFormat2())
+            {
+                //TODO bounding volumes etc
+                throw new UnsupportedOperationException();
+            }
         }
 
         private final void loadObject3D(Object3D obj)
@@ -610,18 +866,92 @@ public final class Loader
             }
 
             final int userParameterCount = readInt();
-            for (int i = 0; i < userParameterCount; ++i)
+            if (userParameterCount > 0)
             {
-                final int parameterID = readInt();
-                final int parameterValueLength = readInt();
-                final byte[] parameterValue = new byte[parameterValueLength];
-                readFully(parameterValue, 0, parameterValueLength);
-                //TODO construct the hashtable
+                Hashtable<Integer, byte[]> userObject =
+                        new Hashtable<Integer, byte[]>();
+                for (int i = 0; i < userParameterCount; ++i)
+                {
+                    final int parameterID = readInt();
+                    final int parameterValueLength = readInt();
+                    final byte[] parameterValue = new byte[parameterValueLength];
+                    readFully(parameterValue, 0, parameterValueLength);
+                    userObject.put(Integer.valueOf(parameterID),
+                            parameterValue);
+                }
+                obj.setUserObject(userObject);
+            }
+            else
+            {
+                obj.setUserObject(null);
             }
 
             if (isFileFormat2())
             {
                 obj.setAnimationEnable(readBoolean());
+            }
+        }
+
+        private final void loadPolygonMode(PolygonMode obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            obj.setCulling(readUnsignedByte());
+            obj.setShading(readUnsignedByte());
+            obj.setWinding(readUnsignedByte());
+            obj.setTwoSidedLightingEnabled(readBoolean());
+            obj.setLocalCameraLightingEnable(readBoolean());
+            obj.setPerspectiveCorrectionEnable(readBoolean());
+
+            if (isFileFormat2())
+            {
+                obj.setLineWidth(readFloat());
+            }
+        }
+
+        private final void loadTransformable(Transformable obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            final boolean hasComponentTransform = readBoolean();
+
+            if (hasComponentTransform)
+            {
+                final float tx = readFloat();
+                final float ty = readFloat();
+                final float tz = readFloat();
+
+                obj.setTranslation(tx, ty, tz);
+
+                final float sx = readFloat();
+                final float sy = readFloat();
+                final float sz = readFloat();
+
+                obj.setScale(sx, sy, sz);
+
+                final float angle = readFloat();
+                final float ax = readFloat();
+                final float ay = readFloat();
+                final float az = readFloat();
+
+                obj.setOrientation(angle, ax, ay, az);
+            }
+
+            final boolean hasGeneralTransform = readBoolean();
+
+            if (hasGeneralTransform)
+            {
+                final float[] matrix = new float[16];
+                for (int i = 0; i < 16; ++i)
+                {
+                    matrix[i] = readFloat();
+                }
+                final Transform transform = new Transform();
+                transform.set(matrix);
+
+                obj.setTransform(transform);
             }
         }
 
@@ -662,27 +992,41 @@ public final class Loader
             {
                 case VertexArray.BYTE:
                 {
-                    final byte[] components = new byte[componentCount];
-                    for (int i = 0; i < vertexCount; ++i)
+                    if (encoding == 0)
                     {
-                        for (int c = 0; c < componentCount; ++c)
+                        final byte[] components = new byte[componentCount];
+                        for (int i = 0; i < vertexCount; ++i)
                         {
-                            components[c] = readByte();
+                            for (int c = 0; c < componentCount; ++c)
+                            {
+                                components[c] = readByte();
+                            }
+                            obj.set(i, 1, components);
                         }
-                        obj.set(i, 1, components);
+                    }
+                    else
+                    {
+                        throw new UnsupportedOperationException();
                     }
                     break;
                 }
                 case VertexArray.SHORT:
                 {
-                    final short[] components = new short[componentCount];
-                    for (int i = 0; i < vertexCount; ++i)
+                    if (encoding == 0)
                     {
-                        for (int c = 0; c < componentCount; ++c)
+                        final short[] components = new short[componentCount];
+                        for (int i = 0; i < vertexCount; ++i)
                         {
-                            components[c] = readShort();
+                            for (int c = 0; c < componentCount; ++c)
+                            {
+                                components[c] = readShort();
+                            }
+                            obj.set(i, 1, components);
                         }
-                        obj.set(i, 1, components);
+                    }
+                    else
+                    {
+                        throw new UnsupportedOperationException();
                     }
                     break;
                 }
@@ -692,15 +1036,22 @@ public final class Loader
                     {
                         throw new IOException("FIXED type requires version >= 2.0");
                     }
-                    
-                    final int[] components = new int[componentCount];
-                    for (int i = 0; i < vertexCount; ++i)
+
+                    if (encoding == 0)
                     {
-                        for (int c = 0; c < componentCount; ++c)
+                        final int[] components = new int[componentCount];
+                        for (int i = 0; i < vertexCount; ++i)
                         {
-                            components[c] = readInt();
+                            for (int c = 0; c < componentCount; ++c)
+                            {
+                                components[c] = readInt();
+                            }
+                            obj.set(i, 1, components);
                         }
-                        obj.set(i, 1, components);
+                    }
+                    else
+                    {
+                        throw new UnsupportedOperationException();
                     }
                     break;
                 }
@@ -720,14 +1071,21 @@ public final class Loader
                         throw new IOException("FLOAT type requires version >= 2.0");
                     }
 
-                    final float[] components = new float[componentCount];
-                    for (int i = 0; i < vertexCount; ++i)
+                    if (encoding == 0)
                     {
-                        for (int c = 0; c < componentCount; ++c)
+                        final float[] components = new float[componentCount];
+                        for (int i = 0; i < vertexCount; ++i)
                         {
-                            components[c] = readFloat();
+                            for (int c = 0; c < componentCount; ++c)
+                            {
+                                components[c] = readFloat();
+                            }
+                            obj.set(i, 1, components);
                         }
-                        obj.set(i, 1, components);
+                    }
+                    else
+                    {
+                        throw new UnsupportedOperationException();
                     }
                     break;
                 }
