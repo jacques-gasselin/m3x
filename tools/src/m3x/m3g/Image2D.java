@@ -48,7 +48,7 @@ import java.util.List;
  * @author jsaarinen
  * @author jgasseli
  */
-public class Image2D extends Object3D
+public final class Image2D extends Object3D
 {
     public static final int ALPHA = 96;
     public static final int LUMINANCE = 97;
@@ -282,7 +282,16 @@ public class Image2D extends Object3D
             throw new NullPointerException("pixels is null");
         }
         //level 0 only
-        final int size = getByteCount(0);
+        final int size;
+        if (getPalette() != null)
+        {
+            size = getWidth() * getHeight();
+        }
+        else
+        {
+            size = getByteCount(0);
+        }
+
         if (pixels.size() < size)
         {
             throw new IllegalArgumentException("pixels is not large enough to fill" +

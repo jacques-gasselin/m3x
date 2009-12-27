@@ -113,7 +113,7 @@ public abstract class AbstractLoaderDemo extends DemoFrame
                     {
                         if (root instanceof Node)
                         {
-                            g3d.render((Node) root,transform);
+                            g3d.render((Node) root, transform);
                         }
                     }
                 }

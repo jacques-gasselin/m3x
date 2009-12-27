@@ -907,15 +907,19 @@ public class RendererOpenGL2 extends Renderer
                     }
                 }
 
-                //upload the data
+                //upload the data, if there is any
+                final int face = 0;
                 for (int level = 0; level < numLevels; ++level)
                 {
-                    final ByteBuffer buffer = image.getLevelBuffer(0, level);
-                    gl.glTexSubImage2D(GL.GL_TEXTURE_2D,
-                            level, 0, 0,
-                            Math.max(1, width >> level),
-                            Math.max(1, height >> level),
-                            glFormat, glDataType, buffer.rewind());
+                    if (image.hasLevelBuffer(face, level))
+                    {
+                        final ByteBuffer buffer = image.getLevelBuffer(face, level);
+                        gl.glTexSubImage2D(GL.GL_TEXTURE_2D,
+                                level, 0, 0,
+                                Math.max(1, width >> level),
+                                Math.max(1, height >> level),
+                                glFormat, glDataType, buffer.rewind());
+                    }
                 }
             }
         }

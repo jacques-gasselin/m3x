@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m3g version="1.0">
+    <section>
+        <VertexArray id="posArray" componentCount="3">
+            <byteComponents>
+               -1 -1 0
+                1 -1 0
+               -1  1 0
+                1  1 0
+            </byteComponents>
+        </VertexArray>
+        <VertexArray id="texcoordArray" componentCount="2">
+            <byteComponents>
+               0 0
+               0 1
+               1 0
+               1 1
+            </byteComponents>
+        </VertexArray>
+        <Appearance id="ap">
+            <PolygonMode culling="CULL_NONE"/>
+            <Texture2D>
+                <Image2D format="RGB" width="4" height="4">
+                    <palette>
+                        0 0 0
+                        0 0 255
+                        0 255 0
+                        0 255 255
+                        255 0 0
+                        255 0 255
+                        255 255 255
+                    </palette>
+                    <pixels>
+                        0 1 2 3
+                        4 5 6 0
+                        1 2 3 4
+                        5 6 0 1
+                    </pixels>
+                </Image2D>
+            </Texture2D>
+        </Appearance>
+        <VertexBuffer id="vertexBuffer" defaultColor="127 65 255 255">
+            <positions>
+                <VertexArrayInstance ref="posArray"/>
+            </positions>
+            <texcoords>
+                <VertexArrayInstance ref="texcoordArray"/>
+            </texcoords>
+        </VertexBuffer>
+        <Mesh>
+            <VertexBufferInstance ref="vertexBuffer"/>
+            <submesh>
+                <TriangleStripArray>
+                    <indices>0 1 2 3</indices>
+                    <stripLengths>4</stripLengths>
+                </TriangleStripArray>
+                <AppearanceInstance ref="ap"/>
+            </submesh>
+        </Mesh>
+    </section>
+</m3g>

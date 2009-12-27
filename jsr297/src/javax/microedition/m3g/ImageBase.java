@@ -95,15 +95,6 @@ public abstract class ImageBase extends Object3D
             1 : Integer.numberOfTrailingZeros(maxDimension) + 1;
 
         this.faceLevelBuffers = new ByteBuffer[numFaces][mipmapLevels];
-        for (int face = 0; face < numFaces; ++face)
-        {
-            for (int i = 0; i < mipmapLevels; ++i)
-            {
-                final int size = getLevelByteSize(i);
-                this.faceLevelBuffers[face][i] = ByteBuffer.allocateDirect(size).
-                        order(ByteOrder.nativeOrder());
-            }
-        }
     }
 
     public void commit()
@@ -202,6 +193,11 @@ public abstract class ImageBase extends Object3D
         }
     }
 
+    final int getFaceCount()
+    {
+        return this.faceLevelBuffers.length;
+    }
+
     final int getLevelCount()
     {
         return this.faceLevelBuffers[0].length;
@@ -217,17 +213,64 @@ public abstract class ImageBase extends Object3D
         return (bytes + 3) & (~3);
     }
 
-    final ByteBuffer getLevelBuffer(int face, int level)
+    private final void requireValidFaceAndLevel(int face, int level)
     {
+        Require.argumentNotNegative(face, "face");
         Require.argumentNotNegative(level, "level");
 
-        final int levelCount = getLevelCount();
-        if (level >= levelCount)
+        if (face >= getFaceCount())
         {
-            throw new IllegalArgumentException("level >= levelCount");
+            throw new IllegalArgumentException(
+                    "face >= getFaceCount()");
         }
 
-        return this.faceLevelBuffers[face][level];
+        if (level >= getLevelCount())
+        {
+            throw new IllegalArgumentException(
+                    "level >= getLevelCount()");
+        }
+    }
+    
+    /**
+     * Checks if there is a buffer for the given face and mipmap level.
+     * This should be used in any instance where the lazy instantiation
+     * if the level buffer is not desired and a call to getLevelBuffer
+     * can be avoided.
+     * @param face
+     * @param level
+     * @return true if the given face and level has a buffer.
+     */
+    final boolean hasLevelBuffer(int face, int level)
+    {
+        requireValidFaceAndLevel(face, level);
+
+        return this.faceLevelBuffers[face][level] != null;
+    }
+
+    /**
+     * Returns the buffer for the given face and mipmap level.
+     * Buffers may be lazy instantiated to avoid wasting memory.
+     * 
+     * @param face the texture face to get from
+     * @param level the mipmap level to get from
+     * @return the existing buffer, or a new one if there was none
+     * previously.
+     * @throws IllegalArgumentException if level is >= getLevelCount()
+     * @throws
+     */
+    final ByteBuffer getLevelBuffer(int face, int level)
+    {
+        requireValidFaceAndLevel(face, level);
+
+        ByteBuffer ret = this.faceLevelBuffers[face][level];
+        if (ret == null)
+        {
+            //allocate one
+            final int size = getLevelByteSize(level);
+            ret = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+            this.faceLevelBuffers[face][level] = ret;
+        }
+        return ret;
     }
 
     final int getLevelRowByteStride(int level)
@@ -266,7 +309,11 @@ public abstract class ImageBase extends Object3D
 
     final void createMipmapLevels()
     {
-        //TODO
-        return;
+        if ((getFormat() & NO_MIPMAPS) != 0)
+        {
+            return;
+        }
+        
+        throw new UnsupportedOperationException();
     }
 }

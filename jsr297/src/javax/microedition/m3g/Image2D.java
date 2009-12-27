@@ -63,7 +63,6 @@ public class Image2D extends ImageBase
         final int[] argbScanline = new int[width];
         final ByteBuffer dest = getLevelBuffer(0, 0);
         final int destStride = getLevelRowByteStride(0);
-        final int formatMask = (1 << 10) - 1;
         for (int j = 0; j < height; ++j)
         {
             //read in a line of ARGB packed ints
@@ -72,7 +71,7 @@ public class Image2D extends ImageBase
             image.getRGB(0, height - 1 - j, width, 1, argbScanline, 0, width);
             //write them out to the destination
             dest.position(j * destStride);
-            switch (format & formatMask)
+            switch (getColorFormat())
             {
                 case LUMINANCE:
                 {
@@ -120,5 +119,59 @@ public class Image2D extends ImageBase
         createMipmapLevels();
 
         commit();
+    }
+
+    void set(int miplevel, int x, int y, int width, int height,
+            byte[] palette, byte[] indices)
+    {
+        Require.notNull(palette, "palette");
+        Require.notNull(indices, "indices");
+        Require.argumentInRange(miplevel, "miplevel", 0, getLevelCount());
+
+        if ((getFormat() & NO_MIPMAPS) != 0 && miplevel > 0)
+        {
+            throw new IllegalArgumentException("miplevel > 0, yet NO_MIPMAPS" +
+                    " implies all levels beyond 0 are invalid");
+        }
+
+        if (!isMutable())
+        {
+            throw new IllegalStateException("image is not mutable");
+        }
+        
+        final ByteBuffer dest = getLevelBuffer(0, miplevel);
+        final int destStride = getLevelRowByteStride(miplevel);
+
+        switch (getColorFormat())
+        {
+            case RGB:
+            {
+                for (int j = 0; j < height; ++j)
+                {
+                    dest.position(destStride * j);
+                    final int offset = width * j;
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int index = 3 * (indices[offset + i] & 0xff);
+                        dest.put(palette[index + 0]);
+                        dest.put(palette[index + 1]);
+                        dest.put(palette[index + 2]);
+                    }
+                }
+                break;
+            }
+            default:
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        dest.rewind();
+    }
+
+    public void set(int miplevel, int x, int y, int width, int height,
+            byte[] image)
+    {
+        throw new UnsupportedOperationException();
     }
 }

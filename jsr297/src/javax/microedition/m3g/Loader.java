@@ -547,6 +547,15 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_IMAGE2D:
+                    {
+                        Image2D obj = new Image2D();
+
+                        loadImage2D(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     case TYPE_MESH:
                     {
                         Mesh obj = new Mesh();
@@ -561,6 +570,15 @@ public final class Loader
                         PolygonMode obj = new PolygonMode();
 
                         loadPolygonMode(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_TEXTURE2D:
+                    {
+                        Texture2D obj = new Texture2D();
+
+                        loadTexture2D(obj);
 
                         addReference(obj);
                         break;
@@ -786,6 +804,77 @@ public final class Loader
             }
         }
 
+        private final void loadImage2D(Image2D obj)
+            throws IOException
+        {
+            final boolean isMutable = loadImageBase(obj);
+
+            if (!isMutable)
+            {
+                final int paletteLength = readInt();
+                byte[] palette = null;
+                if (paletteLength > 0)
+                {
+                    palette = new byte[paletteLength];
+                    readFully(palette, 0, paletteLength);
+                }
+                final int basePixelsLength = readInt();
+                final byte[] basePixels = new byte[basePixelsLength];
+                readFully(basePixels, 0, basePixelsLength);
+
+                if (palette != null)
+                {
+                    obj.set(0,
+                            0, 0,
+                            obj.getWidth(), obj.getHeight(),
+                            palette, basePixels);
+                }
+                else
+                {
+                    obj.set(0,
+                            0, 0,
+                            obj.getWidth(), obj.getHeight(),
+                            basePixels);
+                }
+                
+                if (isFileFormat1())
+                {
+                    obj.createMipmapLevels();
+                }
+                else
+                {
+                    throw new UnsupportedOperationException();
+                }
+
+                obj.commit();
+            }
+        }
+
+        private final boolean loadImageBase(ImageBase obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            final int format;
+            if (isFileFormat1())
+            {
+                format = readUnsignedByte();
+            }
+            else
+            {
+                format = readInt();
+            }
+
+            final boolean isMutable = readBoolean();
+
+            final int width = readInt();
+            final int height = readInt();
+
+            obj.set(format, width, height, 1, true);
+
+            return isMutable;
+        }
+
         private final void loadMesh(Mesh obj)
             throws IOException
         {
@@ -904,9 +993,56 @@ public final class Loader
             obj.setLocalCameraLightingEnable(readBoolean());
             obj.setPerspectiveCorrectionEnable(readBoolean());
 
-            if (isFileFormat2())
+            if (!isFileFormat1())
             {
                 obj.setLineWidth(readFloat());
+            }
+        }
+
+        private final void loadTexture(Texture obj)
+            throws IOException
+        {
+            loadTransformable(obj);
+
+            obj.setImageBase((ImageBase) readReference());
+
+            if (!isFileFormat1())
+            {
+                final int levelFilter = readUnsignedByte();
+                final int imageFilter = readUnsignedByte();
+                obj.setFiltering(levelFilter, imageFilter);
+            }
+        }
+
+        private final void loadTexture2D(Texture2D obj)
+            throws IOException
+        {
+            loadTexture(obj);
+
+            final int blendColor;
+            if (isFileFormat1())
+            {
+                blendColor = readRGBasARGB();
+            }
+            else
+            {
+                blendColor = readRGBAasARGB();
+            }
+            obj.setBlendColor(blendColor);
+            obj.setBlending(readUnsignedByte());
+            final int wrappingS = readUnsignedByte();
+            final int wrappingT = readUnsignedByte();
+            obj.setWrapping(wrappingS, wrappingT);
+
+            if (isFileFormat1())
+            {
+                final int levelFilter = readUnsignedByte();
+                final int imageFilter = readUnsignedByte();
+                obj.setFiltering(levelFilter, imageFilter);
+            }
+            else
+            {
+                obj.setCombiner((TextureCombiner) readReference());
             }
         }
 

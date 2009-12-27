@@ -71,16 +71,16 @@ public class Image2DConverter extends Object3DConverter
         to.setMutable(mutable);
         if (!mutable)
         {
-            List<Short> pixels = from.getPalette();
+            to.setPalette(from.getPalette());
+            final List<Short> pixels = from.getPixels();
             if (pixels == null || pixels.size() == 0)
             {
                 to.clearPixels();
             }
             else
             {
-                to.setPixels(from.getPixels());
+                to.setPixels(pixels);
             }
-            to.setPalette(from.getPalette());
         }
     }
 }
