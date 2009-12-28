@@ -126,7 +126,7 @@ public class Dot3Demo extends DemoFrame
                 InputStream imageStream = getClass().getResourceAsStream(
                         "brickround_diffuse.png");
                 diffuseImage = (Image2D) Loader.loadImage(
-                        ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
+                        ImageBase.RGB | ImageBase.LOSSLESS,
                         imageStream);
                 imageStream.close();
             }
@@ -136,7 +136,7 @@ public class Dot3Demo extends DemoFrame
             }
 
             diffuseTexture = new Texture2D(diffuseImage);
-            diffuseTexture.setFiltering(Texture.FILTER_BASE_LEVEL,
+            diffuseTexture.setFiltering(Texture.FILTER_LINEAR,
                     Texture.FILTER_ANISOTROPIC);
             diffuseTexture.setBlending(Texture2D.FUNC_MODULATE);
 

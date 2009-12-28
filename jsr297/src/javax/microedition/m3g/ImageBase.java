@@ -309,11 +309,76 @@ public abstract class ImageBase extends Object3D
 
     final void createMipmapLevels()
     {
-        if ((getFormat() & NO_MIPMAPS) != 0)
+        //filter down all levels
+        final int faceCount = getFaceCount();
+        final int levelCount = getLevelCount();
+        final int colorFormat = getColorFormat();
+        for (int face = 0; face < faceCount; ++face)
         {
-            return;
+            for (int dstLevel = 1; dstLevel < levelCount; ++dstLevel)
+            {
+                final int srcLevel = dstLevel - 1;
+                
+                final ByteBuffer src = getLevelBuffer(face, srcLevel);
+                final int srcStride = getLevelRowByteStride(srcLevel);
+                final int srcWidth = Math.max(1, getWidth() >> srcLevel);
+                final int srcHeight = Math.max(1, getHeight() >> srcLevel);
+                
+                final ByteBuffer dst = getLevelBuffer(face, dstLevel);
+                final int dstStride = getLevelRowByteStride(dstLevel);
+                final int dstWidth = Math.max(1, getWidth() >> dstLevel);
+                final int dstHeight = Math.max(1, getHeight() >> dstLevel);
+
+                final int filterWidth = srcWidth / dstWidth;
+                final int filterHeight = srcHeight / dstHeight;
+                final float convolutionToByte = 255.0f / (filterWidth * filterHeight);
+                final float byteToUniform = 1.0f / 255;
+                
+                switch (colorFormat)
+                {
+                    case RGB:
+                    {
+                        final int bpp = 3;
+                        //convolve with a 2D box filter
+                        for (int dstY = 0; dstY < dstHeight; ++dstY)
+                        {
+                            for (int dstX = 0; dstX < dstWidth; ++dstX)
+                            {
+                                float r = 0;
+                                float g = 0;
+                                float b = 0;
+
+                                final int srcX = dstX * filterWidth;
+                                final int srcY = dstY * filterHeight;
+                                for (int j = 0; j < filterHeight; ++j)
+                                {
+                                    for (int i = 0; i < filterWidth; ++i)
+                                    {
+                                        //accumulate
+                                        src.position((srcY + j) * srcStride
+                                                + (srcX + i) * bpp);
+                                        r += (src.get() & 0xff) * byteToUniform;
+                                        g += (src.get() & 0xff) * byteToUniform;
+                                        b += (src.get() & 0xff) * byteToUniform;
+                                    }
+                                }
+
+                                dst.position(dstY * dstStride + dstX * bpp);
+                                dst.put((byte) Math.round(r * convolutionToByte));
+                                dst.put((byte) Math.round(g * convolutionToByte));
+                                dst.put((byte) Math.round(b * convolutionToByte));
+                            }
+                        }
+                        src.rewind();
+                        dst.rewind();
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+                }
+            }
         }
-        
-        throw new UnsupportedOperationException();
     }
 }

@@ -843,7 +843,16 @@ public final class Loader
                 }
                 else
                 {
-                    throw new UnsupportedOperationException();
+                    final int mipmapCount = readUnsignedByte();
+                    if (mipmapCount == 0)
+                    {
+                        obj.createMipmapLevels();
+                    }
+                    else
+                    {
+                        //read in explicit mipmap levels
+                        throw new UnsupportedOperationException();
+                    }
                 }
 
                 obj.commit();
