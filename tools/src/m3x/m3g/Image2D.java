@@ -114,7 +114,14 @@ public final class Image2D extends Object3D
             h = 1;
         }
 
-        return w * h * getBytesPerPixel();
+        if (getPalette() == null)
+        {
+            return w * h * getBytesPerPixel();
+        }
+        else
+        {
+            return w * h;
+        }
     }
 
     public Image2D()
@@ -141,8 +148,8 @@ public final class Image2D extends Object3D
         setSize(w, h);
         if (!isMutable())
         {
-            byte[] palette = deserialiser.readByteArray();
-            byte[] pixels = deserialiser.readByteArray();
+            final byte[] palette = deserialiser.readByteArray();
+            final byte[] pixels = deserialiser.readByteArray();
             setPalette(palette);
             setPixels(pixels);
         }
@@ -161,8 +168,8 @@ public final class Image2D extends Object3D
         serialiser.writeInt(getHeight());
         if (!isMutable())
         {
-            byte[] palette = getPalette();
-            byte[] pixels = getPixels();
+            final byte[] palette = getPalette();
+            final byte[] pixels = getPixels();
             serialiser.writeByteArray(palette);
             serialiser.writeByteArray(pixels);
         }
@@ -249,10 +256,6 @@ public final class Image2D extends Object3D
         {
             throw new IllegalArgumentException("value (" + uint + ") > 255");
         }
-        if (uint > 127)
-        {
-            return (byte)(uint - 256);
-        }
         return (byte)uint;
     }
 
@@ -261,8 +264,9 @@ public final class Image2D extends Object3D
         byte[] signedPalette = null;
         if ((palette != null) && (palette.size() > 0))
         {
-            signedPalette = new byte[palette.size()];
-            for (int i = 0; i < palette.size(); ++i)
+            final int count = palette.size();
+            signedPalette = new byte[count];
+            for (int i = 0; i < count; ++i)
             {
                 signedPalette[i] = uintToByte(palette.get(i));
             }
@@ -282,15 +286,7 @@ public final class Image2D extends Object3D
             throw new NullPointerException("pixels is null");
         }
         //level 0 only
-        final int size;
-        if (getPalette() != null)
-        {
-            size = getWidth() * getHeight();
-        }
-        else
-        {
-            size = getByteCount(0);
-        }
+        final int size = getByteCount(0);
 
         if (pixels.size() < size)
         {
@@ -312,9 +308,36 @@ public final class Image2D extends Object3D
         if (pixels != null)
         {
             //single level only
+            final int count = getByteCount(0);
+            if (pixels.length < count)
+            {
+                throw new IllegalArgumentException("pixels is not large enough to fill" +
+                        " mipmap level 0. Size needed is " + count + "B but pixels.length" +
+                        " is only " + pixels.length + "B");
+            }
+            if (getPalette() != null)
+            {
+                //check that all indices are valid
+                final int maxIndex = getPalette().length;
+                final int bpp = getBytesPerPixel();
+                for (int i = 0; i < count; ++i)
+                {
+                    final int index = (pixels[i] & 0xff) * bpp;
+                    if (index < 0)
+                    {
+                        throw new IndexOutOfBoundsException("palette index at" +
+                                " pixel " + i + " is < 0");
+                    }
+                    if (index >= maxIndex)
+                    {
+                        throw new IndexOutOfBoundsException("palette index at" +
+                                " pixel " + i + " is >= palette.length");
+                    }
+                }
+            }
             this.mipmapData = new byte[1][];
-            this.mipmapData[0] = new byte[pixels.length];
-            System.arraycopy(pixels, 0, this.mipmapData[0], 0, pixels.length);
+            this.mipmapData[0] = new byte[count];
+            System.arraycopy(pixels, 0, this.mipmapData[0], 0, count);
         }
         else
         {

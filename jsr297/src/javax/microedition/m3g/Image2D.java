@@ -148,16 +148,16 @@ public class Image2D extends ImageBase
             {
                 for (int j = 0; j < height; ++j)
                 {
-                    dest.position(destStride * j);
+                    final int destY = y + j;
+                    dest.position(destStride * destY + x * 3);
                     final int offset = width * j;
                     for (int i = 0; i < width; ++i)
                     {
                         final int index = 3 * (indices[offset + i] & 0xff);
-                        dest.put(palette[index + 0]);
-                        dest.put(palette[index + 1]);
-                        dest.put(palette[index + 2]);
+                        dest.put(palette, index, 3);
                     }
                 }
+                dest.rewind();
                 break;
             }
             default:

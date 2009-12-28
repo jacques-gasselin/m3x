@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g.opengl;
 
+import javax.media.opengl.DebugGL;
 import javax.microedition.m3g.RendererOpenGL2;
 import javax.microedition.m3g.Renderer;
 import javax.media.opengl.GLAutoDrawable;
@@ -42,10 +43,20 @@ public class GLRenderTarget extends AbstractRenderTarget
 {
     private GLAutoDrawable drawable;
     private RendererOpenGL2 renderer;
-    
+    private final boolean debug;
+    private DebugGL debugGL;
+    private GL lastGL;
+
     public GLRenderTarget(GLAutoDrawable drawable)
     {
+        this(drawable, false);
+    }
+
+    public GLRenderTarget(GLAutoDrawable drawable, boolean debug)
+    {
         this.drawable = drawable;
+        this.debug = debug;
+
         renderer = new RendererOpenGL2();
     }
     
@@ -85,7 +96,16 @@ public class GLRenderTarget extends AbstractRenderTarget
         requireValidContext(context);
         
         context.makeCurrent();
-        final GL gl = context.getGL();
+        GL gl = context.getGL();
+        if (lastGL != gl)
+        {
+            debugGL = new DebugGL(gl);
+            lastGL = gl;
+            if (debug)
+            {
+                gl = debugGL;
+            }
+        }
         //enable vertical sync
         gl.setSwapInterval(1);
         renderer.bind(gl, getWidth(), getHeight());

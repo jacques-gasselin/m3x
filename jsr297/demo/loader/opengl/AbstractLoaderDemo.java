@@ -64,7 +64,7 @@ public abstract class AbstractLoaderDemo extends DemoFrame
 
         public LoaderCanvas()
         {
-            renderTarget = new GLRenderTarget(this);
+            renderTarget = new GLRenderTarget(this, true);
             background = new Background();
             background.setColor(0x1f1f1f);
 

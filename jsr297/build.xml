@@ -123,6 +123,7 @@
         </javac>
         <copy todir="${demo.build.dir}">
             <fileset dir="${demo.dir}">
+                <exclude name="build/**/*"/>
                 <include name="**/*.jpg"/>
                 <include name="**/*.png"/>
                 <include name="**/*.m3x"/>

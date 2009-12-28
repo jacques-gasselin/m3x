@@ -19,7 +19,7 @@
         </VertexArray>
         <Appearance id="ap">
             <PolygonMode culling="CULL_NONE"/>
-            <Texture2D>
+            <Texture2D blending="FUNC_REPLACE" levelFilter="FILTER_BASE_LEVEL" imageFilter="FILTER_NEAREST">
                 <Image2D format="RGB" width="4" height="4">
                     <palette>
                         0 0 0
@@ -31,15 +31,15 @@
                         255 255 255
                     </palette>
                     <pixels>
-                        0 1 2 3
-                        4 5 6 0
-                        1 2 3 4
-                        5 6 0 1
+                        1 0 0 0
+                        0 6 4 0
+                        0 4 6 0
+                        0 0 0 1
                     </pixels>
                 </Image2D>
             </Texture2D>
         </Appearance>
-        <VertexBuffer id="vertexBuffer" defaultColor="127 65 255 255">
+        <VertexBuffer id="vertexBuffer" defaultColor="255 255 255 255">
             <positions>
                 <VertexArrayInstance ref="posArray"/>
             </positions>

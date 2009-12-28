@@ -59,7 +59,8 @@ public class RendererOpenGL2 extends Renderer
     private final Transform modelViewTransform = new Transform();
     private final Transform textureTransform = new Transform();
     private Light[] lights;
-    private ShortBuffer shortBuffer;
+    private ShortBuffer positionShortBuffer;
+    private ShortBuffer[] texcoordShortBuffer;
     
     public RendererOpenGL2()
     {
@@ -113,10 +114,10 @@ public class RendererOpenGL2 extends Renderer
         {
             texcoordTransform[texunit] = new Transform();
         }
-
+        texcoordShortBuffer = new ShortBuffer[maxTextureUnits];
+        
         maxLights = glGetInteger(gl, GL.GL_MAX_LIGHTS);
         lights = new Light[maxLights];
-
     }
 
     public void bind(GL gl, int width, int height)
@@ -763,16 +764,28 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private ShortBuffer getShortBuffer(int limit)
+    private ShortBuffer getPositionShortBuffer(int limit)
     {
-        if (this.shortBuffer == null || this.shortBuffer.capacity() < limit)
+        if (this.positionShortBuffer == null ||
+            this.positionShortBuffer.capacity() < limit)
         {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(limit);
-            buffer.order(ByteOrder.nativeOrder());
-            this.shortBuffer = buffer.asShortBuffer();
+            this.positionShortBuffer = ByteBuffer.allocateDirect(
+                    limit).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return (ShortBuffer) this.shortBuffer.rewind();
+        return (ShortBuffer) this.positionShortBuffer.rewind();
+    }
+
+    private ShortBuffer getTexcoordShortBuffer(int unit, int limit)
+    {
+        if (this.texcoordShortBuffer[unit] == null ||
+            this.texcoordShortBuffer[unit].capacity() < limit)
+        {
+            this.texcoordShortBuffer[unit] = ByteBuffer.allocateDirect(
+                    limit).order(ByteOrder.nativeOrder()).asShortBuffer();
+        }
+
+        return (ShortBuffer) this.texcoordShortBuffer[unit].rewind();
     }
 
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData
@@ -1410,7 +1423,7 @@ public class RendererOpenGL2 extends Renderer
                 {
                     final ByteBuffer bytes = (ByteBuffer) buffer;
                     final int limit = bytes.limit();
-                    final ShortBuffer shorts = getShortBuffer(limit * 2);
+                    final ShortBuffer shorts = getPositionShortBuffer(limit * 2);
                     for (int i = 0; i < limit; ++i)
                     {
                         shorts.put(bytes.get());
@@ -1517,6 +1530,8 @@ public class RendererOpenGL2 extends Renderer
                 {
                     texcoordScale[texunit] = scaleBias[0];
                     System.arraycopy(scaleBias, 1, texcoordBias[texunit], 0, 3);
+                    int stride = texcoords.getVertexByteStride();
+                    Buffer buffer = texcoords.getBuffer();
                     int glType = GL.GL_FLOAT;
                     switch (texcoords.getComponentType())
                     {
@@ -1540,7 +1555,17 @@ public class RendererOpenGL2 extends Renderer
                         }
                         case VertexArray.BYTE:
                         {
-                            glType = GL.GL_BYTE;
+                            final ByteBuffer bytes = (ByteBuffer) buffer;
+                            final int limit = bytes.limit();
+                            final ShortBuffer shorts =
+                                    getTexcoordShortBuffer(texunit, limit * 2);
+                            for (int i = 0; i < limit; ++i)
+                            {
+                                shorts.put(bytes.get());
+                            }
+                            glType = GL.GL_SHORT;
+                            stride = 0;
+                            buffer = shorts.flip();
                             break;
                         }
                         default:
@@ -1550,7 +1575,7 @@ public class RendererOpenGL2 extends Renderer
                     }
 
                     gl.glTexCoordPointer(texcoords.getComponentCount(), glType,
-                            texcoords.getVertexByteStride(), texcoords.getBuffer());
+                            stride, buffer);
                     gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
                 }
                 else
