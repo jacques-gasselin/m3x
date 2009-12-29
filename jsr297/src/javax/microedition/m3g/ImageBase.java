@@ -157,7 +157,7 @@ public abstract class ImageBase extends Object3D
         this.rendererData = rendererData;
     }
     
-    private final int getBitsPerPixel()
+    final int getBitsPerPixel()
     {
         final int formatMask = (1 << 10) - 1;
         switch (getFormat() & formatMask)

@@ -138,34 +138,30 @@ public class Image2D extends ImageBase
         {
             throw new IllegalStateException("image is not mutable");
         }
+
+        final int bitsPerPixel = getBitsPerPixel();
+        if ((bitsPerPixel & 0x7) != 0)
+        {
+            throw new IllegalStateException("image bits per pixel" +
+                    " is not a multiple of 8, palette is not supported for non" +
+                    " byte aligned formats");
+        }
         
         final ByteBuffer dest = getLevelBuffer(0, miplevel);
         final int destStride = getLevelRowByteStride(miplevel);
-
-        switch (getColorFormat())
+        final int bpp = bitsPerPixel >> 3;
+        //All allowed formats that map 1:1 are copied in.
+        for (int j = 0; j < height; ++j)
         {
-            case RGB:
+            final int destY = y + j;
+            dest.position(destStride * destY + x * bpp);
+            final int offset = width * j;
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; ++j)
-                {
-                    final int destY = y + j;
-                    dest.position(destStride * destY + x * 3);
-                    final int offset = width * j;
-                    for (int i = 0; i < width; ++i)
-                    {
-                        final int index = 3 * (indices[offset + i] & 0xff);
-                        dest.put(palette, index, 3);
-                    }
-                }
-                dest.rewind();
-                break;
-            }
-            default:
-            {
-                throw new UnsupportedOperationException();
+                final int index = bpp * (indices[offset + i] & 0xff);
+                dest.put(palette, index, bpp);
             }
         }
-
         dest.rewind();
     }
 
@@ -188,26 +184,16 @@ public class Image2D extends ImageBase
 
         final ByteBuffer dest = getLevelBuffer(0, miplevel);
         final int destStride = getLevelRowByteStride(miplevel);
+        final int bitsPerPixel = getBitsPerPixel();
+        final int srcStride = (width * bitsPerPixel + 7) >> 3;
 
-        switch (getColorFormat())
+        //All allowed formats that map 1:1 are copied in
+        for (int j = 0; j < height; ++j)
         {
-            case RGB:
-            {
-                final int bpp = 3;
-                for (int j = 0; j < height; ++j)
-                {
-                    final int destY = y + j;
-                    dest.position(destStride * destY + x * bpp);
-                    dest.put(image, width * j * bpp, width * bpp);
-                }
-                break;
-            }
-            default:
-            {
-                throw new UnsupportedOperationException();
-            }
+            final int destY = y + j;
+            dest.position(destStride * destY + ((x * bitsPerPixel) >> 3));
+            dest.put(image, srcStride * j, (width * bitsPerPixel) >> 3);
         }
-
         dest.rewind();
     }
 }
