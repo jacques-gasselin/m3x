@@ -172,6 +172,42 @@ public class Image2D extends ImageBase
     public void set(int miplevel, int x, int y, int width, int height,
             byte[] image)
     {
-        throw new UnsupportedOperationException();
+        Require.notNull(image, "image");
+        Require.argumentInRange(miplevel, "miplevel", 0, getLevelCount());
+
+        if ((getFormat() & NO_MIPMAPS) != 0 && miplevel > 0)
+        {
+            throw new IllegalArgumentException("miplevel > 0, yet NO_MIPMAPS" +
+                    " implies all levels beyond 0 are invalid");
+        }
+
+        if (!isMutable())
+        {
+            throw new IllegalStateException("image is not mutable");
+        }
+
+        final ByteBuffer dest = getLevelBuffer(0, miplevel);
+        final int destStride = getLevelRowByteStride(miplevel);
+
+        switch (getColorFormat())
+        {
+            case RGB:
+            {
+                final int bpp = 3;
+                for (int j = 0; j < height; ++j)
+                {
+                    final int destY = y + j;
+                    dest.position(destStride * destY + x * bpp);
+                    dest.put(image, width * j * bpp, width * bpp);
+                }
+                break;
+            }
+            default:
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        dest.rewind();
     }
 }

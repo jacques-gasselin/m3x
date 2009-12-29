@@ -828,7 +828,11 @@ public class RendererOpenGL2 extends Renderer
                 int glFormat;
                 int glDataType;
 
-                final boolean lossless = image.isLossless();
+                final boolean undersized = (image.getWidth() <= 64) ||
+                        (image.getHeight() <= 64);
+
+                //avoid auto-compression on undersized image
+                final boolean lossless = image.isLossless() || undersized;
 
                 switch (image.getColorFormat())
                 {
