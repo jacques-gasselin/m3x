@@ -159,8 +159,7 @@ public abstract class ImageBase extends Object3D
     
     final int getBitsPerPixel()
     {
-        final int formatMask = (1 << 10) - 1;
-        switch (getFormat() & formatMask)
+        switch (getColorFormat())
         {
             case ALPHA:
             case LUMINANCE:

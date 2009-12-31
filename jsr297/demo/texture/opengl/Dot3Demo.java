@@ -27,10 +27,16 @@
 
 package texture.opengl;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
@@ -68,8 +74,8 @@ public class Dot3Demo extends DemoFrame
         return (0x80 << 24) | (r << 16) | (g << 8) | (b << 0);
     }
 
-    private final class Dot3Canvas extends GLCanvas
-            implements Runnable
+    private final class Dot3Canvas extends GLJPanel
+            implements Runnable, KeyListener
     {
         private Background background;
         private AbstractRenderTarget renderTarget;
@@ -88,6 +94,7 @@ public class Dot3Demo extends DemoFrame
 
         private Mesh light;
         private float lightYaw;
+        private boolean dot3Enabled = true;
 
         public Dot3Canvas()
         {
@@ -145,9 +152,6 @@ public class Dot3Demo extends DemoFrame
                 final VertexBuffer vb = plane.getVertexBuffer();
                 //reuse the texcoords from unit 0 for unit 1
                 vb.setTexCoords(1, vb.getTexCoords(0, null), 1.0f, null);
-                final Appearance a = plane.getAppearance(0);
-                a.setTexture(0, dot3Texture);
-                a.setTexture(1, diffuseTexture);
             }
 
             light = GeomUtils.createSphere(0.0125f, 7, 7);
@@ -156,6 +160,8 @@ public class Dot3Demo extends DemoFrame
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
 
+            addKeyListener(this);
+            
             new Thread(this).start();
         }
 
@@ -192,8 +198,21 @@ public class Dot3Demo extends DemoFrame
                             lightZ));
                 }
 
-                transform.setIdentity();
-                g3d.render(plane, transform);
+                {
+                    final Appearance a = plane.getAppearance(0);
+                    if (dot3Enabled)
+                    {
+                        a.setTexture(0, dot3Texture);
+                    }
+                    else
+                    {
+                        a.setTexture(0, null);
+                    }
+                    a.setTexture(1, diffuseTexture);
+                    transform.setIdentity();
+                    g3d.render(plane, transform);
+                }
+
 
                 transform.setIdentity();
                 transform.postTranslate(lightX, lightY, lightZ);
@@ -207,6 +226,16 @@ public class Dot3Demo extends DemoFrame
             {
                 g3d.releaseTarget();
             }
+
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("MMB rotates view", 15, 15);
+            g2d.drawString("- hold Shift to pan.", 15, 30);
+            g2d.drawString("- hold Ctrl to dolly.", 15, 45);
+            g2d.drawString("- Alt+LMB emulates MMB", 15, 60);
+            g2d.drawString("'t' toggles DOT3 normal map", 15, 75);
         }
 
         public void run()
@@ -223,6 +252,25 @@ public class Dot3Demo extends DemoFrame
                 }
                 repaint();
             }
+        }
+
+        public void keyTyped(KeyEvent e)
+        {
+            
+        }
+
+        public void keyPressed(KeyEvent e)
+        {
+            System.out.println("keyPressed: " + e);
+            if (e.getKeyChar() == 't')
+            {
+                dot3Enabled = !dot3Enabled;
+            }
+        }
+
+        public void keyReleased(KeyEvent e)
+        {
+            
         }
     }
 

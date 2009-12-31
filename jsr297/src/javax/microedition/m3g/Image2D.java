@@ -61,6 +61,8 @@ public class Image2D extends ImageBase
 
         //read in the data line by line
         final int[] argbScanline = new int[width];
+        //TODO simplify reading of alpha and color depending on ColorModel
+        //and AlphaRaster.
         final ByteBuffer dest = getLevelBuffer(0, 0);
         final int destStride = getLevelRowByteStride(0);
         for (int j = 0; j < height; ++j)
@@ -73,6 +75,15 @@ public class Image2D extends ImageBase
             dest.position(j * destStride);
             switch (getColorFormat())
             {
+                case ALPHA:
+                {
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int argb = argbScanline[i];
+                        dest.put((byte)((argb >> 24) & 0xff));
+                    }
+                    break;
+                }
                 case LUMINANCE:
                 {
                     for (int i = 0; i < width; ++i)
@@ -81,8 +92,22 @@ public class Image2D extends ImageBase
                         final int red = (argb >> 16) & 0xff;
                         final int green = (argb >> 8) & 0xff;
                         final int blue = (argb >> 0) & 0xff;
-                        final int avg = (red + green + blue) / 3;
-                        dest.put((byte)avg);
+                        final int luminance = (red + green + blue) / 3;
+                        dest.put((byte)luminance);
+                    }
+                    break;
+                }
+                case LUMINANCE_ALPHA:
+                {
+                    for (int i = 0; i < width; ++i)
+                    {
+                        final int argb = argbScanline[i];
+                        final int red = (argb >> 16) & 0xff;
+                        final int green = (argb >> 8) & 0xff;
+                        final int blue = (argb >> 0) & 0xff;
+                        final int luminance = (red + green + blue) / 3;
+                        dest.put((byte)luminance);
+                        dest.put((byte)((argb >> 24) & 0xff));
                     }
                     break;
                 }
@@ -115,6 +140,7 @@ public class Image2D extends ImageBase
                 }
             }
         }
+        dest.rewind();
 
         createMipmapLevels();
 
