@@ -205,4 +205,27 @@
             depends="build-src">
 
     </target>
+
+    <target name="check-os">
+        <condition property="os.macosx" value="true">
+            <os family="mac"/>
+        </condition>
+    </target>
+    
+    <target name="install-blender-plugins"
+            description="Installs import and export plugins for Blender"
+            depends="check-os, install-blender-plugins-macosx">
+    </target>
+
+    <target name="install-blender-plugins-macosx"
+            description="Installs import and export plugins for Blender on MacOSX"
+            if="os.macosx">
+        <copy todir="${user.home}/.blender/scripts"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender">
+                <include name="*.py"/>
+            </fileset>
+        </copy>
+    </target>
+
 </project>
