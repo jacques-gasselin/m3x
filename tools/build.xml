@@ -202,7 +202,7 @@
 
     <target name="build"
             description="builds the tools"
-            depends="build-src">
+            depends="build-src, install-blender-plugins">
 
     </target>
 

@@ -34,41 +34,76 @@ __author__="jgasseli"
 __date__ ="$Dec 31, 2009 11:39:06 AM$"
 
 import Blender
+import Blender.Camera
+import Blender.Lamp
+import Blender.Mesh
+import Blender.Types
 import Blender.BGL as GL
+
+
+class VertexArray(object):
+    def __init__(self):
+        object.__init__(self)
+        self.components = []
+
+    def setVertexCount(self, vertexCount):
+        self.vertexCount = vertexCount
+        self.componentCount = len(self.components) / vertexCount
+
+    def extend(self, iterable):
+        self.components.extend(iterable)
+
+    def __repr__(self):
+        return str(self.__dict__)
 
 class M3XConverter:
 
-    def __init__(self, objectsToConvert):
+    def __init__(self):
+        pass
+
+    def convertMesh(self, mesh):
+        hasPerVertexColor = mesh.vertexColors
+        #otherwise they are per face UVs
+        hasPerVertexUV = mesh.vertexUV
+        hasPerFaceUV = mesh.faceUV
+
+        #create lists representing the normal and position vertex arrays
+        positionArray = VertexArray()
+        normalArray = VertexArray()
+        if hasPerVertexUV:
+            uvArray = VertexArray()
+        verts = mesh.verts
+        vertexCount = len(verts)
+        for v in verts:
+            positionArray.extend(v.co)
+            normalArray.extend(v.no)
+            if hasPerVertexUV:
+                uvArray.extend(v.uvco)
+        positionArray.setVertexCount(vertexCount)
+        normalArray.setVertexCount(vertexCount)
+        if hasPerVertexUV:
+            uvArray.setVertexCount(vertexCount)
+
+        print positionArray
+        print normalArray
+        if hasPerVertexUV:
+            print uvArray
+
+    def convert(self, objectsToConvert):
         for object in objectsToConvert:
-            data = object.getData()
-            try:
-                vertices = data.verts
-                faces = data.faces
-            except:
+            print "objectName:", object.getName()
+            data = object.getData(mesh=True)
+            print "objectData:", data, data.__class__
+
+            #is it a mesh?
+            if type(data) == Blender.Types.MeshType:
+                self.convertMesh(data)
+            else:
                 continue
-
-            objectName = object.getName()
-
-            #create lists representing the normal and position vertex arrays
-            positionVertexArray = []
-            normalVertexArray = []
-            uvVertexArray = []
-            for vertex in vertices:
-                for x in vertex.co:
-                    positionVertexArray.append(x)
-
-                for x in vertex.no:
-                    normalVertexArray.append(x)
-
-                for x in vertex.uvco:
-                    uvVertexArray.append(x)
-
-            print 'pos', positionVertexArray
-            print 'n  ', normalVertexArray
-            print 'uv ', uvVertexArray
-
+    
     def toXML(self):
-        print "<XML here>"
+        #TODO implement
+        return """<?xml version="1.0" encoding="utf-8"?>"""
 
 class GUI:
     COL_WIDTH = 100
@@ -84,51 +119,54 @@ class GUI:
     def __init__(self):
         self.__exportToWorld = 0
         self.__exportSelectionOnly = 0
-        self.__converter = None
+        self.__converter = M3XConverter()
 
     #
-    def gridCoords(self, row, col):
+    def gridCoords(self, col, row):
         return [GUI.LEFT_MARGIN + col * GUI.COL_WIDTH,
                 GUI.BOTTOM_MARIGIN + row * GUI.ROW_HEIGHT]
 
     #
     def draw(self):
         width, height = (GUI.COL_WIDTH, GUI.ROW_HEIGHT)
-        x, y = self.gridCoords(2, 0)
-        self.__exportToWorld = Blender.Draw.Toggle("export to world",
+        x, y = self.gridCoords(0, 2)
+        Blender.Draw.Toggle("export to world",
                             GUI.EVENT_EXPORT_WORLD_TOGGLE,
                             x, y, width, height,
-                            0,
+                            self.__exportToWorld,
                             "Tooltip")
-        x, y = self.gridCoords(2, 1)
-        self.__exportSelectionOnly = Blender.Draw.Toggle("export selection only",
+        x, y = self.gridCoords(1, 2)
+        Blender.Draw.Toggle("export selection only",
                             GUI.EVENT_EXPORT_SELECTION_TOGGLE,
                             x, y, width, height,
-                            0,
+                            self.__exportSelectionOnly,
                             "Tooltip")
         x, y = self.gridCoords(0, 0)
         Blender.Draw.PushButton("export",
                             GUI.EVENT_EXPORT,
                             x, y, width, height,
                             "Tooltip")
-        GL.glRasterPos2i(*self.gridCoords(4, 0))
-        Blender.Draw.Text("M3X Export", 'large')
+        GL.glRasterPos2i(*self.gridCoords(0, 4))
+        Blender.Draw.Text("m3x Export", 'large')
 
     def event(self, evt, val):
         if evt == Blender.Draw.ESCKEY: # Example if esc key pressed
             Blender.Draw.Exit()    # then exit script
             return                 # return from the function
 
-
     def button(self, evt):
         if evt == GUI.EVENT_EXPORT_WORLD_TOGGLE:
-            print "EVENT_EXPORT_WORLD_TOGGLE"
+            self.__exportToWorld = 1 - self.__exportToWorld
         elif evt == GUI.EVENT_EXPORT_SELECTION_TOGGLE:
-            print "EVENT_EXPORT_SELECTION_TOGGLE"
+            self.__exportSelectionOnly = 1 - self.__exportSelectionOnly
         elif evt == GUI.EVENT_EXPORT:
-            self.__converter = M3XConverter(Blender.Object.GetSelected())
+            if self.__exportSelectionOnly:
+                print "converting selection only"
+                self.__converter.convert(Blender.Object.GetSelected())
+            else:
+                print "converting all objects from the current scene"
+                self.__converter.convert(Blender.Scene.GetCurrent().objects)
             print self.__converter.toXML()
-
 
 #
 gui = GUI()
