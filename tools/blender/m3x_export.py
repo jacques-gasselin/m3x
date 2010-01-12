@@ -42,6 +42,169 @@ import Blender.BGL as GL
 import sys
 
 
+class BlenderMesh(object):
+    """A collection of m3x objects that a Blender Mesh object converts to.
+    As the data in each BlenderMesh will need to be duplicated for m3x Mesh
+    objects it is good to keep it origanized in a container class such as
+    this.
+    """
+    def __init__(self):
+        object.__init__(self)
+
+    def setVertexBuffer(self, vertexBuffer):
+        self.vertexBuffer = vertexBuffer
+
+    def setIndexBuffers(self, indexBuffers):
+        self.indexbuffers = indexBuffers[:]
+
+    def setAppearanceComponents(self, appearanceComponents):
+        self.appearanceComponents = appearanceComponents[:]
+
+class CompositingMode(object):
+    ADD = "ADD"
+    ALPHA = "ALPHA"
+    ALPHA_ADD = "ALPHA_ADD"
+    ALPHA_DARKEN = "ALPHA_DARKEN"
+    ALPHA_PREMULTIPLIED = "ALPHA_PREMULTIPLIED"
+    ALWAYS = "ALWAYS"
+    EQUAL = "EQUAL"
+    GEQUAL = "GEQUAL"
+    GREATER = "GREATER"
+    LEQUAL = "LEQUAL"
+    LESS = "LESS"
+    MODULATE = "MODULATE"
+    MODULATE_INV = "MODULATE_INV"
+    MODULATE_X2 = "MODULATE_X2"
+    NEVER = "NEVER"
+    NOTEQUAL = "NOTEQUAL"
+    REPLACE = "REPLACE"
+    
+    def __init__(self, idValue, version):
+        object.__init__(self)
+        self.id = idValue
+        self.version = version
+        self.blending = CompositingMode.REPLACE
+        self.alphaThreshold = 0.0
+        self.alphaFunc = CompositingMode.GEQUAL
+        self.depthOffsetUnits = 0.0
+        self.depthOffsetFactor = 0.0
+        self.depthFunc = CompositingMode.LEQUAL
+        self.depthWrite = True
+        self.depthTest = True
+        self.colorWriteMask = 0xffffffff
+        self.blender = None
+        self.stencil = None
+
+    SHARED_MODES = {}
+    
+    def getSharedCompositingMode(blending, alphaThreshold, version):
+        modes = CompositingMode.SHARED_MODES
+        key = (blending, alphaThreshold)
+        if key not in modes:
+            name = "cm-shared-" + blending
+            if alphaThreshold > 0.0:
+                name = name + "-t%f" % alphaThreshold
+            mode = CompositingMode(name, version)
+            mode.setBlending(blending)
+            mode.setAlphaThreshold(alphaThreshold)
+            modes[key] = mode
+        return modes[key]
+    
+    getSharedCompositingMode = staticmethod(getSharedCompositingMode)
+
+    def setBlending(self, blending):
+        self.blending = blending
+
+    def setAlphaThreshold(self, alphaThreshold):
+        self.alphaThreshold = alphaThreshold
+        
+    def write(self, writer):
+        writer.write("  <CompositingMode")
+        if self.id:
+            writer.write(" id=\"%s\"" % self.id)
+        writer.write(" blending=\"%s\"" % self.blending)
+        if self.version == 2:
+            #TODO add some more bits
+            writer.write(">\n")
+            #TODO add blender and stencil
+            writer.write("  </ComposisingMode>\n")
+        else:
+            writer.write(" />\n")
+
+
+class IndexBuffer(object):
+    TRIANGLES = "TRIANGLES"
+    def __init__(self, idValue, type):
+        object.__init__(self)
+        self.id = idValue
+        self.type = type
+        self.indices = None
+
+    def setIndices(self, indices):
+        self.indices = indices[:]
+
+    
+class PolygonMode(object):
+    CULL_BACK = "CULL_BACK"
+    CULL_FRONT = "CULL_FRONT"
+    CULL_NONE = "CULL_NONE"
+
+    def __init__(self, idValue, version):
+        object.__init__(self)
+        self.id = idValue
+        self.version = version
+        self.culling  = PolygonMode.CULL_BACK
+
+    def setCulling(self, culling):
+        self.culling = culling
+
+    SHARED_MODES = {}
+
+    def getSharedPolygonMode(culling, version):
+        modes = PolygonMode.SHARED_MODES
+        key = (culling)
+        if key not in modes:
+            name = "pm-shared-" + culling
+            mode = PolygonMode(name, version)
+            mode.setCulling(culling)
+            modes[key] = mode
+        return modes[key]
+
+    getSharedPolygonMode = staticmethod(getSharedPolygonMode)
+
+    def write(self, writer):
+        writer.write("  <PolygonMode")
+        if self.id:
+            writer.write(" id=\"%s\"" % self.id)
+        writer.write(" culling=\"%s\"" % self.culling)
+        if self.version == 2:
+            #TODO add some more bits
+            pass
+        writer.write(" />\n")
+
+
+class TriangleStripArray(IndexBuffer):
+    def __init__(self, idValue):
+        IndexBuffer.__init__(self, idValue, IndexBuffer.TRIANGLES)
+        self.lengths = None
+
+    def setLengths(self, lengths):
+        self.lengths = lengths[:]
+
+    def write(self, writer):
+        writer.write("    <TriangleStripArray")
+        if self.id:
+            writer.write(" id=\"%s\"" % self.id)
+        writer.write(">\n")
+        writer.write("       <indices>")
+        writer.write(" ".join(map(str, self.indices)))
+        writer.write("</indices>\n")
+        writer.write("       <stripLengths>")
+        writer.write(" ".join(map(str, self.lengths)))
+        writer.write("</stripLengths>\n")
+        writer.write("    </TriangleStripArray>\n")
+
+
 class VertexArray(object):
     BYTE = "BYTE"
     SHORT = "SHORT"
@@ -76,20 +239,46 @@ class VertexArray(object):
         This invalidates vertexCount and componentCount."""
         self.components.extend(iterable)
 
+    def __calcScaleBias(self, qMin, qMax):
+        componentCount = self.componentCount
+        components = self.components
+        minValues = list(components[0:componentCount])
+        maxValues = list(components[0:componentCount])
+        vertex = [0.0] * componentCount
+        for v in xrange(1, self.vertexCount):
+            start = componentCount * v
+            vertex[:] = components[start:start + componentCount]
+            for c in xrange(componentCount):
+                value = vertex[c]
+                minValues[c] = min(minValues[c], value)
+                maxValues[c] = max(maxValues[c], value)
+        maxDist = 0
+        bias = [0.0] * componentCount
+        for c in xrange(componentCount):
+            dist = maxValues[c] - minValues[c]
+            maxDist = max(maxDist, dist)
+            median = (maxValues[c] + minValues[c]) / 2.0
+            bias[c] = median
+        scale = maxDist / (qMax - qMin)
+        return scale, bias
+
     def __compress(self, qMin, qMax, scale, bias):
+        componentCount = self.componentCount
+        components = self.components
         if scale is None:
             scale = 1.0
         if bias is None:
-            bias = [0.0] * self.componentCount
-        componentCount = self.componentCount
+            bias = [0.0] * componentCount
+        vertex = [0.0] * componentCount
         for v in xrange(self.vertexCount):
             start = componentCount * v
-            vertex = self.components[start:start + componentCount]
+            vertex[:] = components[start:start + componentCount]
             for c in xrange(componentCount):
                 #quantize
                 q = round((vertex[c] - bias[c]) / scale)
                 #clamp and write back
                 vertex[c] = max(qMin, min(q, qMax))
+            components[start:start + componentCount] = vertex
         self.scale = scale
         self.bias = bias
 
@@ -98,10 +287,9 @@ class VertexArray(object):
         Compresses the vertex array to fit in a set of scaled and
         biased shorts"""
         qMin = -32768
-        qMax = 32768
+        qMax = 32767
         if scale is None:
-            #TODO
-            pass
+            scale, bias = self.__calcScaleBias(qMin, qMax)
         self.__compress(qMin, qMax, scale, bias)
         self.componentType = VertexArray.SHORT
 
@@ -112,8 +300,7 @@ class VertexArray(object):
         qMin = -128
         qMax = 127
         if scale is None:
-            #TODO
-            pass
+            scale, bias = self.__calcScaleBias(qMin, qMax)
         self.__compress(qMin, qMax, scale, bias)
         self.componentType = VertexArray.BYTE
 
@@ -124,8 +311,7 @@ class VertexArray(object):
         qMin = 0
         qMax = 255
         if scale is None:
-            #TODO
-            pass
+            scale, bias = self.__calcScaleBias(qMin, qMax)
         self.__compress(qMin, qMax, scale, bias)
         self.componentType = VertexArray.BYTE
 
@@ -182,8 +368,17 @@ class VertexBuffer(object):
             writer.write("        <bias>%s</bias>\n" % " ".join(map(str, self.positions.bias)))
             writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % self.positions.id)
             writer.write("      </positions>\n")
+        if self.normals:
+            writer.write("      <normals>\n")
+            writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % self.normals.id)
+            writer.write("      </normals>\n")
+        for texcoords in self.texcoords:
+            writer.write("      <texcoords scale=\"%f\">\n" % texcoords.scale)
+            writer.write("        <bias>%s</bias>\n" % " ".join(map(str, texcoords.bias)))
+            writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % texcoords.id)
+            writer.write("      </positions>\n")
         writer.write("  </VertexBuffer>\n")
-        
+
 class Section(object):
     def __init__(self):
         object.__init__(self)
@@ -201,15 +396,92 @@ class Section(object):
             object.write(writer)
         writer.write("""  </section>\n""")
 
+
+class VertexSeq(object):
+    def __init__(self, hasColors, hasUV):
+        object.__init__(self)
+        self.positions = []
+        self.normals = []
+        if hasColors:
+            self.colors = []
+        else:
+            self.colors = None
+        if hasUV:
+            self.uvs = []
+        else:
+            self.uvs = None
+        self.indexByComponents = {}
+        self.vertexCount = 0
+
+    def getIndex(self, pos, norm, col, uv):
+        key = (pos, norm, col, uv)
+        if key not in self.indexByComponents:
+            self.positions.extend(pos)
+            self.normals.extend(norm)
+            if self.colors is not None:
+                self.colors.extend(col)
+            if self.uvs is not None:
+                self.uvs.extend(uv)
+            self.indexByComponents[key] = self.vertexCount
+            self.vertexCount += 1
+        return self.indexByComponents[key]
+
+
 class M3XConverter(object):
 
     def __init__(self):
         object.__init__(self)
-        self.convertedObjects = {}
+        self.convertedDataObjects = {}
         self.sections = []
 
     def setVersion(self, version):
         self.version = version
+
+    def getFaceCompositingMode(self, face, hasPerFaceUV):
+        modes = Blender.Mesh.FaceTranspModes
+        if hasPerFaceUV:
+            bmode = face.transp
+        else:
+            bmode = modes["SOLID"]
+        alphaThreshold = 0.0
+        if bmode == modes["SOLID"]:
+            blending = CompositingMode.REPLACE
+        elif bmode == modes["ADD"]:
+            blending = CompositingMode.ADD
+        elif bmode == modes["ALPHA"]:
+            blending = CompositingMode.ALPHA
+        elif blending == modes["SUB"]:
+            if self.version == 1:
+                blending = CompositingMode.MODULATE
+            elif self.version == 2:
+                #TODO make a blender with subtract blending
+                pass
+        elif blending == modes["CLIP"]:
+            blending = CompositingMode.ALPHA
+            alphaThreshold = 0.75
+        return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version)
+
+    def getFacePolygonMode(self, face, hasPerFaceUV):
+        modes = Blender.Mesh.FaceModes
+        if not hasPerFaceUV:
+            culling = PolygonMode.CULL_BACK
+        elif face.mode & modes["TWOSIDE"]:
+            culling = PolygonMode.CULL_NONE
+        else:
+            culling = PolygonMode.CULL_BACK
+        return PolygonMode.getSharedPolygonMode(culling, self.version)
+
+    def getFaceAppearanceComponents(self, face, mesh):
+        hasPerFaceUV = mesh.faceUV
+        #get CompositingMode
+        cm = self.getFaceCompositingMode(face, hasPerFaceUV)
+        #get PolygonMode
+        pm = self.getFacePolygonMode(face, hasPerFaceUV)
+        #TODO get Fog
+        #TODO get PointSpriteMode
+        #actual appearance has to be linked up later with the
+        #per instance materials
+        return cm, pm
 
     def convertMesh(self, mesh, section):
         version = self.version
@@ -218,51 +490,122 @@ class M3XConverter(object):
         hasPerVertexUV = mesh.vertexUV
         hasPerFaceUV = mesh.faceUV
 
+        #sort faces by material
+        facesByAppearanceComponents = {}
+        for face in mesh.faces:
+            key = self.getFaceAppearanceComponents(face, mesh)
+            #print "key:", key
+            lst = facesByAppearanceComponents.setdefault(key, [])
+            lst.append(face)
+        appearanceComponents = facesByAppearanceComponents.keys()
+        #print "appearanceComponents:", appearanceComponents
+        #TODO sort appearances on texture and blend mode
+        #extract submesh data
+        vseq = VertexSeq(hasPerVertexColor, hasPerVertexUV or hasPerFaceUV)
+        indexBuffers = []
+        for submeshIndex, components in enumerate(appearanceComponents):
+            faces = facesByAppearanceComponents[components]
+            submeshTris = []
+            for face in faces:
+                #get the indices
+                faceIndices = []
+                for i, v in enumerate(face.verts):
+                    pos = tuple(v.co)
+                    norm = tuple(v.no)
+                    if hasPerVertexColor:
+                        col = tuple(face.col[i])
+                    else:
+                        col = None
+                    if hasPerVertexUV:
+                        uv = tuple(v.uvco)
+                    elif hasPerFaceUV:
+                        uv = tuple(face.uv[i])
+                    else:
+                        uv = None
+                    faceIndices.append(vseq.getIndex(pos, norm, col, uv))
+                #triangulate and add
+                for i in xrange(len(faceIndices) - 2):
+                    submeshTris.extend(faceIndices[i:i+3])
+            if version == 1:
+                #Make TriangleStripArrays
+                #TODO clean this up, it is a naive solution
+                #triangles could be merged
+                lengths = [3] * (len(submeshTris) / 3)
+                indexBuffer = TriangleStripArray(mesh.name + "-submesh%d" % submeshIndex)
+                indexBuffer.setIndices(submeshTris)
+                indexBuffer.setLengths(lengths)
+            else:
+                #Make plain IndexBuffers in TRIANGLES mode
+                indexBuffer = IndexBuffer(mesh.name + "-submesh%d" % submeshIndex, IndexBuffer.TRIANGLES)
+                indexBuffer.setIndices(submeshTris)
+            indexBuffers.append(indexBuffer)
+
+        objects = []
+        vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")
+
         #create lists representing the normal and position vertex arrays
         positionArray = VertexArray(mesh.name + "-positions")
-        normalArray = VertexArray(mesh.name + "-normal")
-        #TODO colors
-        #TODO face UVs
-        if hasPerVertexUV:
-            uvArray = VertexArray(mesh.name + "-texcoords0")
-        verts = mesh.verts
-        vertexCount = len(verts)
-        for v in verts:
-            positionArray.extend(v.co)
-            normalArray.extend(v.no)
-            if hasPerVertexUV:
-                uvArray.extend(v.uvco)
-        positionArray.setVertexCount(vertexCount)
-        normalArray.setVertexCount(vertexCount)
-        if hasPerVertexUV:
-            uvArray.setVertexCount(vertexCount)
-
+        positionArray.extend(vseq.positions)
+        positionArray.setVertexCount(vseq.vertexCount)
         if version == 1:
             #version 1 has SHORT as the highest fidelity type
             #therefore FLOAT data must be compressed
             positionArray.compressShort()
+        objects.append(positionArray)
+        vertexBuffer.setPositions(positionArray)
+        del positionArray
+        
+        normalArray = VertexArray(mesh.name + "-normals")
+        normalArray.extend(vseq.normals)
+        normalArray.setVertexCount(vseq.vertexCount)
+        if version == 1:
             #ensure it fits in a byte and normals are always in
             #the range [-1, 1]
             normalArray.compressByte(2 / 255.0, [1 / 255.0] * 3)
-            if hasPerVertexUV:
+        objects.append(normalArray)
+        vertexBuffer.setNormals(normalArray)
+        del normalArray
+
+        if vseq.colors is not None:
+            colorArray = VertexArray(mesh.name + "-colors")
+            colorArray.extend(vseq.colors)
+            colorArray.setVertexCount(vseq.vertexCount)
+            if version == 1:
+                #version 1 has UNSIGNED_BYTE as the highest fidelity type
+                #therefore FLOAT data must be compressed.
+                #ensure data fits in [0, 255]
+                colorArray.compressUnsignedByte(1 / 255.0)
+            objects.append(colorArray)
+            vertexBuffer.setColors(colorArray)
+            del colorArray
+
+        if vseq.uvs is not None:
+            uvArray = VertexArray(mesh.name + "-texcoords0")
+            uvArray.extend(vseq.uvs)
+            uvArray.setVertexCount(vseq.vertexCount)
+            if version == 1:
                 #version 1 has SHORT as the highest fidelity type
                 #therefore FLOAT data must be compressed
                 uvArray.compressShort()
-                
-        vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")
-
-        objects = []
-        objects.append(positionArray)
-        objects.append(normalArray)
-        vertexBuffer.setPositions(positionArray)
-        vertexBuffer.setNormals(normalArray)
-        if hasPerVertexUV:
             objects.append(uvArray)
             vertexBuffer.addTexcoords(uvArray)
-        objects.append(vertexBuffer)
+            del uvArray
 
+        objects.append(vertexBuffer)
+        #print "appearanceComponents:", appearanceComponents
+        for components in appearanceComponents:
+            objects.extend(components)
+        objects.extend(indexBuffers)
         section.extend(objects)
-        self.convertedObjects[mesh] = objects
+
+        #store the BlenderMesh for later conversions
+        bmesh = BlenderMesh()
+        bmesh.setVertexBuffer(vertexBuffer)
+        bmesh.setAppearanceComponents(appearanceComponents)
+        bmesh.setIndexBuffers(indexBuffers)
+
+        self.convertedDataObjects[mesh] = bmesh
+        return bmesh
 
     def convert(self, objectsToConvert):
         section = Section()
@@ -273,8 +616,11 @@ class M3XConverter(object):
 
             #is it a mesh?
             if type(data) == Blender.Types.MeshType:
-                if data not in self.convertedObjects:
-                    self.convertMesh(data, section)
+                if data not in self.convertedDataObjects:
+                    bmesh = self.convertMesh(data, section)
+                else:
+                    bmesh = self.convertedDataObjects[data]
+                #TODO add a mesh object
             else:
                 continue
         self.sections.append(section)
