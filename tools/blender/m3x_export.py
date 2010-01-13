@@ -40,11 +40,40 @@ import Blender.Mesh
 import Blender.Types
 import Blender.BGL as GL
 import sys
+import re
 
-class AppearanceBase(object):
+class Object3D(object):
     def __init__(self, idValue):
         object.__init__(self)
         self.id = idValue
+        self.userID = 0
+        if self.id:
+            regex = r'#(?P<userID>\d+)'
+            match = re.search(regex, self.id)
+            if match and match.group('userID'):
+                self.userID = int(match.group('userID'))
+
+    def fillAttributes(self, attrs):
+        if self.id:
+            attrs["id"] = self.id
+        if self.userID > 0:
+            attrs["userID"] = self.userID
+        return
+
+
+class Transformable(Object3D):
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+
+
+class Node(Transformable):
+    def __init__(self, idValue):
+        Transformable.__init__(self, idValue)
+
+
+class AppearanceBase(Object3D):
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
         self.compositingMode = None
         self.polygonMode = None
 
@@ -88,9 +117,8 @@ class Appearance(AppearanceBase):
         serializer.closedTag("AppearanceInstance", {"ref" : self.id})
 
     def serialize(self, serializer):
-        attr = {
-            "id": self.id
-            }
+        attr = {}
+        self.fillAttributes(attr)
         serializer.startTag("Appearance", attr)
         serializer.writeReference(self.compositingMode)
         serializer.writeReference(self.polygonMode)
@@ -118,7 +146,7 @@ class BlenderMesh(object):
     def setAppearanceComponents(self, appearanceComponents):
         self.appearanceComponents = appearanceComponents[:]
 
-class CompositingMode(object):
+class CompositingMode(Object3D):
     ADD = "ADD"
     ALPHA = "ALPHA"
     ALPHA_ADD = "ALPHA_ADD"
@@ -138,8 +166,7 @@ class CompositingMode(object):
     REPLACE = "REPLACE"
     
     def __init__(self, idValue, version):
-        object.__init__(self)
-        self.id = idValue
+        Object3D.__init__(self, idValue)
         self.version = version
         self.blending = CompositingMode.REPLACE
         self.alphaThreshold = 0.0
@@ -181,9 +208,9 @@ class CompositingMode(object):
 
     def serialize(self, serializer):
         attr = {
-            "id": self.id,
             "blending": self.blending
             }
+        self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits to attr
             serializer.startTag("CompositingMode", attr)
@@ -193,19 +220,17 @@ class CompositingMode(object):
             serializer.closedTag("CompositingMode", attr)
 
 
-class Group(object):
+class Group(Node):
     def __init__(self, idValue):
-        object.__init__(self)
-        self.id = idValue
+        Node.__init__(self, idValue)
         self.children = []
 
     def addChild(self, child):
         self.children.append(child)
 
     def serialize(self, serializer):
-        attr = {
-            "id": self.id,
-            }
+        attr = {}
+        self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits to attr
             pass
@@ -218,11 +243,10 @@ class Group(object):
             serializer.closedTag("Group", attr)
 
 
-class IndexBuffer(object):
+class IndexBuffer(Object3D):
     TRIANGLES = "TRIANGLES"
     def __init__(self, idValue, type):
-        object.__init__(self)
-        self.id = idValue
+        Object3D.__init__(self, idValue)
         self.type = type
         self.indices = None
 
@@ -230,10 +254,9 @@ class IndexBuffer(object):
         self.indices = indices[:]
 
 
-class Mesh(object):
+class Mesh(Node):
     def __init__(self, idValue, version):
-        object.__init__(self)
-        self.id = idValue
+        Node.__init__(self, idValue)
         self.version = version
         self.vertexBuffer = None
         self.submeshCount = 0
@@ -249,7 +272,8 @@ class Mesh(object):
         self.submeshCount += 1
 
     def serialize(self, serializer):
-        attr = {"id": self.id}
+        attr = {}
+        self.fillAttributes(attr)
         serializer.startTag("Mesh", attr)
         serializer.writeReference(self.vertexBuffer)
         for i in xrange(self.submeshCount):
@@ -262,14 +286,13 @@ class Mesh(object):
         serializer.endTag()
     
 
-class PolygonMode(object):
+class PolygonMode(Object3D):
     CULL_BACK = "CULL_BACK"
     CULL_FRONT = "CULL_FRONT"
     CULL_NONE = "CULL_NONE"
 
     def __init__(self, idValue, version):
-        object.__init__(self)
-        self.id = idValue
+        Object3D.__init__(self, idValue)
         self.version = version
         self.culling  = PolygonMode.CULL_BACK
 
@@ -295,9 +318,9 @@ class PolygonMode(object):
 
     def serialize(self, serializer):
         attr = {
-            "id": self.id,
             "culling": self.culling
             }
+        self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits
             pass
@@ -323,7 +346,7 @@ class TriangleStripArray(IndexBuffer):
         serializer.endTag()
 
 
-class VertexArray(object):
+class VertexArray(Object3D):
     BYTE = "BYTE"
     SHORT = "SHORT"
     FIXED = "FIXED"
@@ -331,8 +354,7 @@ class VertexArray(object):
     FLOAT = "FLOAT"
     
     def __init__(self, idValue):
-        object.__init__(self)
-        self.id = idValue
+        Object3D.__init__(self, idValue)
         self.components = []
         self.componentType = VertexArray.FLOAT
         self.scale = None
@@ -438,9 +460,9 @@ class VertexArray(object):
 
     def serialize(self, serializer):
         attr = {
-            "id": self.id,
             "componentCount" : self.componentCount
             }
+        self.fillAttributes(attr)
         serializer.startTag("VertexArray", attr)
         if self.componentType == VertexArray.BYTE:
             serializer.writeDataTag("byteComponents", self.components)
@@ -449,10 +471,9 @@ class VertexArray(object):
         serializer.endTag()
 
 
-class VertexBuffer(object):
+class VertexBuffer(Object3D):
     def __init__(self, idValue):
-        object.__init__(self)
-        self.id = idValue
+        Object3D.__init__(self, idValue)
         self.positions = None
         self.normals = None
         self.texcoords = []
@@ -470,7 +491,8 @@ class VertexBuffer(object):
         serializer.closedTag("VertexBufferInstance", {"ref" : self.id})
         
     def serialize(self, serializer):
-        attr = {"id" : self.id}
+        attr = {}
+        self.fillAttributes(attr)
         serializer.startTag("VertexBuffer", attr)
         pos = self.positions
         if pos:
