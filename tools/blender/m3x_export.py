@@ -41,6 +41,60 @@ import Blender.Types
 import Blender.BGL as GL
 import sys
 
+class AppearanceBase(object):
+    def __init__(self, idValue):
+        object.__init__(self)
+        self.id = idValue
+        self.compositingMode = None
+        self.polygonMode = None
+
+    def setCompositingMode(self, cm):
+        self.compositingMode = cm
+
+    def setPolygonMode(self, pm):
+        self.polygonMode = pm
+
+    SHARED_BY_MATERIAL = {}
+    def getSharedAppearanceBase(cm, pm, material, version, section):
+        shared = AppearanceBase.SHARED_BY_MATERIAL
+        if material not in shared:
+            shared[material] = {}
+        appearances = shared[material]
+        key = (cm, pm)
+        if key not in appearances:
+            if version == 2:
+                #TODO support Shaders
+                pass
+            else:
+                a = Appearance("Appearance-" + material.name + "-%d" % len(appearances.keys()))
+                a.setCompositingMode(cm)
+                a.setPolygonMode(pm)
+                #TODO get lighting material
+                #get the texture 2D elements from the material
+                textures = []
+                for mtex in material.textures:
+                    #TODO convert from Blender textures
+                    pass
+                section.append(a)
+            appearances[key] = a
+        return appearances[key]
+
+    getSharedAppearanceBase = staticmethod(getSharedAppearanceBase)
+
+class Appearance(AppearanceBase):
+    def __init__(self, idValue):
+        AppearanceBase.__init__(self, idValue)
+
+    def write(self, writer):
+        writer.write("    <Appearance")
+        if self.id:
+            writer.write(" id=\"%s\"" % self.id)
+        writer.write(">\n")
+        if self.compositingMode:
+            writer.write("""      <CompositingModeInstance ref="%s" />\n""" % self.compositingMode.id)
+        if self.polygonMode:
+            writer.write("""      <PolygonModeInstance ref="%s" />\n""" % self.polygonMode.id)
+        writer.write("    </Appearance>\n")
 
 class BlenderMesh(object):
     """A collection of m3x objects that a Blender Mesh object converts to.
@@ -54,8 +108,11 @@ class BlenderMesh(object):
     def setVertexBuffer(self, vertexBuffer):
         self.vertexBuffer = vertexBuffer
 
+    def getSubmeshCount(self):
+        return len(self.indexBuffers)
+
     def setIndexBuffers(self, indexBuffers):
-        self.indexbuffers = indexBuffers[:]
+        self.indexBuffers = indexBuffers[:]
 
     def setAppearanceComponents(self, appearanceComponents):
         self.appearanceComponents = appearanceComponents[:]
@@ -97,17 +154,18 @@ class CompositingMode(object):
 
     SHARED_MODES = {}
     
-    def getSharedCompositingMode(blending, alphaThreshold, version):
+    def getSharedCompositingMode(blending, alphaThreshold, version, section):
         modes = CompositingMode.SHARED_MODES
         key = (blending, alphaThreshold)
         if key not in modes:
-            name = "cm-shared-" + blending
+            name = "CompositingMode-" + blending
             if alphaThreshold > 0.0:
                 name = name + "-t%f" % alphaThreshold
             mode = CompositingMode(name, version)
             mode.setBlending(blending)
             mode.setAlphaThreshold(alphaThreshold)
             modes[key] = mode
+            section.append(mode)
         return modes[key]
     
     getSharedCompositingMode = staticmethod(getSharedCompositingMode)
@@ -119,7 +177,7 @@ class CompositingMode(object):
         self.alphaThreshold = alphaThreshold
         
     def write(self, writer):
-        writer.write("  <CompositingMode")
+        writer.write("    <CompositingMode")
         if self.id:
             writer.write(" id=\"%s\"" % self.id)
         writer.write(" blending=\"%s\"" % self.blending)
@@ -127,7 +185,7 @@ class CompositingMode(object):
             #TODO add some more bits
             writer.write(">\n")
             #TODO add blender and stencil
-            writer.write("  </ComposisingMode>\n")
+            writer.write("    </CompositingMode>\n")
         else:
             writer.write(" />\n")
 
@@ -143,7 +201,49 @@ class IndexBuffer(object):
     def setIndices(self, indices):
         self.indices = indices[:]
 
-    
+
+class Mesh(object):
+    def __init__(self, idValue, version):
+        object.__init__(self)
+        self.id = idValue
+        self.version = version
+        self.vertexBuffer = None
+        self.submeshCount = 0
+        self.indexBuffers = []
+        self.appearances = []
+
+    def setVertexBuffer(self, vertexBuffer):
+        self.vertexBuffer = vertexBuffer
+
+    def addSubmesh(self, indexBuffer, appearance):
+        self.indexBuffers.append(indexBuffer)
+        self.appearances.append(appearance)
+        self.submeshCount += 1
+
+    def write(self, writer):
+        version = self.version
+        writer.write("    <Mesh")
+        if self.id:
+            writer.write(" id=\"%s\"" % self.id)
+        writer.write(">\n")
+        writer.write("""        <VertexBufferInstance ref="%s" />\n""" % self.vertexBuffer.id)
+        for i in xrange(self.submeshCount):
+            ib = self.indexBuffers[i]
+            ap = self.appearances[i]
+            writer.write("        <submesh>\n")
+            if version == 1:
+                writer.write("           <TriangleStripArrayInstance ref=\"%s\" />\n" % ib.id)
+            else:
+                writer.write("           <IndexBufferInstance ref=\"%s\" />\n" % ib.id)
+            if ap:
+                if version == 1:
+                    writer.write("           <AppearanceInstance ref=\"%s\" />\n" % ap.id)
+                else:
+                    writer.write("           <AppearanceBaseInstance ref=\"%s\" />\n" % ap.id)
+            writer.write("        </submesh>\n")
+        writer.write("    </Mesh>\n")
+
+
 class PolygonMode(object):
     CULL_BACK = "CULL_BACK"
     CULL_FRONT = "CULL_FRONT"
@@ -160,20 +260,21 @@ class PolygonMode(object):
 
     SHARED_MODES = {}
 
-    def getSharedPolygonMode(culling, version):
+    def getSharedPolygonMode(culling, version, section):
         modes = PolygonMode.SHARED_MODES
         key = (culling)
         if key not in modes:
-            name = "pm-shared-" + culling
+            name = "PolygonMode-" + culling
             mode = PolygonMode(name, version)
             mode.setCulling(culling)
             modes[key] = mode
+            section.append(mode)
         return modes[key]
 
     getSharedPolygonMode = staticmethod(getSharedPolygonMode)
 
     def write(self, writer):
-        writer.write("  <PolygonMode")
+        writer.write("    <PolygonMode")
         if self.id:
             writer.write(" id=\"%s\"" % self.id)
         writer.write(" culling=\"%s\"" % self.culling)
@@ -319,26 +420,26 @@ class VertexArray(object):
         return str(self.__dict__)
 
     def write(self, writer):
-        writer.write("  <VertexArray")
+        writer.write("    <VertexArray")
         if self.id:
             writer.write(" id=\"%s\"" % self.id)
         writer.write(" componentCount=\"%d\"" % self.componentCount)
         writer.write(">\n")
         if self.componentType == VertexArray.BYTE:
-            writer.write("    <byteComponents>")
+            writer.write("      <byteComponents>")
             writer.write("\n    ")
             for c in self.components:
                 writer.write("%i " % c)
             writer.write("\n")
-            writer.write("    </byteComponents>\n")
+            writer.write("      </byteComponents>\n")
         elif self.componentType == VertexArray.SHORT:
-            writer.write("    <shortComponents>")
+            writer.write("      <shortComponents>")
             writer.write("\n    ")
             for c in self.components:
                 writer.write("%i " % c)
             writer.write("\n")
-            writer.write("    </shortComponents>\n")
-        writer.write("  </VertexArray>\n")
+            writer.write("      </shortComponents>\n")
+        writer.write("    </VertexArray>\n")
 
 
 class VertexBuffer(object):
@@ -359,25 +460,25 @@ class VertexBuffer(object):
         self.texcoords.append(texcoords)
 
     def write(self, writer):
-        writer.write("  <VertexBuffer")
+        writer.write("    <VertexBuffer")
         if self.id:
             writer.write(" id=\"%s\"" % self.id)
         writer.write(">\n")
         if self.positions:
-            writer.write("      <positions scale=\"%f\">\n" % self.positions.scale)
-            writer.write("        <bias>%s</bias>\n" % " ".join(map(str, self.positions.bias)))
-            writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % self.positions.id)
-            writer.write("      </positions>\n")
+            writer.write("        <positions scale=\"%f\">\n" % self.positions.scale)
+            writer.write("          <bias>%s</bias>\n" % " ".join(map(str, self.positions.bias)))
+            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % self.positions.id)
+            writer.write("        </positions>\n")
         if self.normals:
-            writer.write("      <normals>\n")
-            writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % self.normals.id)
-            writer.write("      </normals>\n")
+            writer.write("        <normals>\n")
+            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % self.normals.id)
+            writer.write("        </normals>\n")
         for texcoords in self.texcoords:
-            writer.write("      <texcoords scale=\"%f\">\n" % texcoords.scale)
-            writer.write("        <bias>%s</bias>\n" % " ".join(map(str, texcoords.bias)))
-            writer.write("        <VertexArrayInstance ref=\"%s\" />\n" % texcoords.id)
-            writer.write("      </positions>\n")
-        writer.write("  </VertexBuffer>\n")
+            writer.write("        <texcoords scale=\"%f\">\n" % texcoords.scale)
+            writer.write("          <bias>%s</bias>\n" % " ".join(map(str, texcoords.bias)))
+            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % texcoords.id)
+            writer.write("        </texcoords>\n")
+        writer.write("    </VertexBuffer>\n")
 
 class Section(object):
     def __init__(self):
@@ -437,7 +538,7 @@ class M3XConverter(object):
     def setVersion(self, version):
         self.version = version
 
-    def getFaceCompositingMode(self, face, hasPerFaceUV):
+    def getFaceCompositingMode(self, face, hasPerFaceUV, section):
         modes = Blender.Mesh.FaceTranspModes
         if hasPerFaceUV:
             bmode = face.transp
@@ -459,9 +560,9 @@ class M3XConverter(object):
         elif blending == modes["CLIP"]:
             blending = CompositingMode.ALPHA
             alphaThreshold = 0.75
-        return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version)
+        return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version, section)
 
-    def getFacePolygonMode(self, face, hasPerFaceUV):
+    def getFacePolygonMode(self, face, hasPerFaceUV, section):
         modes = Blender.Mesh.FaceModes
         if not hasPerFaceUV:
             culling = PolygonMode.CULL_BACK
@@ -469,19 +570,22 @@ class M3XConverter(object):
             culling = PolygonMode.CULL_NONE
         else:
             culling = PolygonMode.CULL_BACK
-        return PolygonMode.getSharedPolygonMode(culling, self.version)
+        return PolygonMode.getSharedPolygonMode(culling, self.version, section)
 
-    def getFaceAppearanceComponents(self, face, mesh):
+    def getFaceAppearanceComponents(self, face, mesh, section):
         hasPerFaceUV = mesh.faceUV
         #get CompositingMode
-        cm = self.getFaceCompositingMode(face, hasPerFaceUV)
+        cm = self.getFaceCompositingMode(face, hasPerFaceUV, section)
         #get PolygonMode
-        pm = self.getFacePolygonMode(face, hasPerFaceUV)
+        pm = self.getFacePolygonMode(face, hasPerFaceUV, section)
         #TODO get Fog
         #TODO get PointSpriteMode
         #actual appearance has to be linked up later with the
         #per instance materials
-        return cm, pm
+        return cm, pm, face.mat
+
+    def getAppearance(self, cm, pm, material, section):
+        return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version, section)
 
     def convertMesh(self, mesh, section):
         version = self.version
@@ -493,7 +597,7 @@ class M3XConverter(object):
         #sort faces by material
         facesByAppearanceComponents = {}
         for face in mesh.faces:
-            key = self.getFaceAppearanceComponents(face, mesh)
+            key = self.getFaceAppearanceComponents(face, mesh, section)
             #print "key:", key
             lst = facesByAppearanceComponents.setdefault(key, [])
             lst.append(face)
@@ -592,9 +696,6 @@ class M3XConverter(object):
             del uvArray
 
         objects.append(vertexBuffer)
-        #print "appearanceComponents:", appearanceComponents
-        for components in appearanceComponents:
-            objects.extend(components)
         objects.extend(indexBuffers)
         section.extend(objects)
 
@@ -604,7 +705,6 @@ class M3XConverter(object):
         bmesh.setAppearanceComponents(appearanceComponents)
         bmesh.setIndexBuffers(indexBuffers)
 
-        self.convertedDataObjects[mesh] = bmesh
         return bmesh
 
     def convert(self, objectsToConvert):
@@ -617,10 +717,31 @@ class M3XConverter(object):
             #is it a mesh?
             if type(data) == Blender.Types.MeshType:
                 if data not in self.convertedDataObjects:
-                    bmesh = self.convertMesh(data, section)
-                else:
-                    bmesh = self.convertedDataObjects[data]
-                #TODO add a mesh object
+                    self.convertedDataObjects[data] = self.convertMesh(data, section)
+                bmesh = self.convertedDataObjects[data]
+                #get the materials, supporting the per object override
+                objectMaterials = object.getMaterials(1)
+                meshMaterials = data.materials
+                materials = []
+                for i in xrange(16):
+                    if object.colbits & (1 << i):
+                        materials.append(objectMaterials[i])
+                    elif meshMaterials and i < len(meshMaterials):
+                        materials.append(meshMaterials[i])
+                    else:
+                        materials.append(None)
+                del objectMaterials
+                del meshMaterials
+                #add a mesh object
+                mesh = Mesh(object.name + "-mesh", self.version)
+                mesh.setVertexBuffer(bmesh.vertexBuffer)
+                for i in xrange(bmesh.getSubmeshCount()):
+                    ib = bmesh.indexBuffers[i]
+                    cm, pm, materialIndex = bmesh.appearanceComponents[i]
+                    material = materials[materialIndex]
+                    appearance = self.getAppearance(cm, pm, material, section)
+                    mesh.addSubmesh(ib, appearance)
+                section.append(mesh)
             else:
                 continue
         self.sections.append(section)
