@@ -55,7 +55,7 @@ class AppearanceBase(object):
         self.polygonMode = pm
 
     SHARED_BY_MATERIAL = {}
-    def getSharedAppearanceBase(cm, pm, material, version, section):
+    def getSharedAppearanceBase(cm, pm, material, version):
         shared = AppearanceBase.SHARED_BY_MATERIAL
         if material not in shared:
             shared[material] = {}
@@ -75,7 +75,6 @@ class AppearanceBase(object):
                 for mtex in material.textures:
                     #TODO convert from Blender textures
                     pass
-                section.append(a)
             appearances[key] = a
         return appearances[key]
 
@@ -85,16 +84,15 @@ class Appearance(AppearanceBase):
     def __init__(self, idValue):
         AppearanceBase.__init__(self, idValue)
 
-    def write(self, writer):
-        writer.write("    <Appearance")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(">\n")
-        if self.compositingMode:
-            writer.write("""      <CompositingModeInstance ref="%s" />\n""" % self.compositingMode.id)
-        if self.polygonMode:
-            writer.write("""      <PolygonModeInstance ref="%s" />\n""" % self.polygonMode.id)
-        writer.write("    </Appearance>\n")
+    def serialize(self, serializer):
+        attr = {
+            "id": self.id
+            }
+        serializer.startTag("Appearance", attr)
+        serializer.writeReference(self.compositingMode)
+        serializer.writeReference(self.polygonMode)
+        serializer.endTag()
+
 
 class BlenderMesh(object):
     """A collection of m3x objects that a Blender Mesh object converts to.
@@ -154,7 +152,7 @@ class CompositingMode(object):
 
     SHARED_MODES = {}
     
-    def getSharedCompositingMode(blending, alphaThreshold, version, section):
+    def getSharedCompositingMode(blending, alphaThreshold, version):
         modes = CompositingMode.SHARED_MODES
         key = (blending, alphaThreshold)
         if key not in modes:
@@ -165,7 +163,6 @@ class CompositingMode(object):
             mode.setBlending(blending)
             mode.setAlphaThreshold(alphaThreshold)
             modes[key] = mode
-            section.append(mode)
         return modes[key]
     
     getSharedCompositingMode = staticmethod(getSharedCompositingMode)
@@ -175,19 +172,19 @@ class CompositingMode(object):
 
     def setAlphaThreshold(self, alphaThreshold):
         self.alphaThreshold = alphaThreshold
-        
-    def write(self, writer):
-        writer.write("    <CompositingMode")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(" blending=\"%s\"" % self.blending)
-        if self.version == 2:
-            #TODO add some more bits
-            writer.write(">\n")
+
+    def serialize(self, serializer):
+        attr = {
+            "id": self.id,
+            "blending": self.blending
+            }
+        if serializer.version == 2:
+            #TODO add some more bits to attr
+            serializer.startTag("CompositingMode", attr)
             #TODO add blender and stencil
-            writer.write("    </CompositingMode>\n")
+            serializer.endTag()
         else:
-            writer.write(" />\n")
+            serializer.closedTag("CompositingMode", attr)
 
 
 class IndexBuffer(object):
@@ -220,29 +217,19 @@ class Mesh(object):
         self.appearances.append(appearance)
         self.submeshCount += 1
 
-    def write(self, writer):
-        version = self.version
-        writer.write("    <Mesh")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(">\n")
-        writer.write("""        <VertexBufferInstance ref="%s" />\n""" % self.vertexBuffer.id)
+    def serialize(self, serializer):
+        attr = {"id": self.id}
+        serializer.startTag("Mesh", attr)
+        serializer.writeReference(self.vertexBuffer)
         for i in xrange(self.submeshCount):
             ib = self.indexBuffers[i]
             ap = self.appearances[i]
-            writer.write("        <submesh>\n")
-            if version == 1:
-                writer.write("           <TriangleStripArrayInstance ref=\"%s\" />\n" % ib.id)
-            else:
-                writer.write("           <IndexBufferInstance ref=\"%s\" />\n" % ib.id)
-            if ap:
-                if version == 1:
-                    writer.write("           <AppearanceInstance ref=\"%s\" />\n" % ap.id)
-                else:
-                    writer.write("           <AppearanceBaseInstance ref=\"%s\" />\n" % ap.id)
-            writer.write("        </submesh>\n")
-        writer.write("    </Mesh>\n")
-
+            serializer.startTag("submesh")
+            serializer.writeReference(ib)
+            serializer.writeReference(ap)
+            serializer.endTag()
+        serializer.endTag()
+    
 
 class PolygonMode(object):
     CULL_BACK = "CULL_BACK"
@@ -260,7 +247,7 @@ class PolygonMode(object):
 
     SHARED_MODES = {}
 
-    def getSharedPolygonMode(culling, version, section):
+    def getSharedPolygonMode(culling, version):
         modes = PolygonMode.SHARED_MODES
         key = (culling)
         if key not in modes:
@@ -268,42 +255,35 @@ class PolygonMode(object):
             mode = PolygonMode(name, version)
             mode.setCulling(culling)
             modes[key] = mode
-            section.append(mode)
         return modes[key]
 
     getSharedPolygonMode = staticmethod(getSharedPolygonMode)
 
-    def write(self, writer):
-        writer.write("    <PolygonMode")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(" culling=\"%s\"" % self.culling)
-        if self.version == 2:
+    def serialize(self, serializer):
+        attr = {
+            "id": self.id,
+            "culling": self.culling
+            }
+        if serializer.version == 2:
             #TODO add some more bits
             pass
-        writer.write(" />\n")
+        serializer.closedTag("PolygonMode", attr)
 
 
 class TriangleStripArray(IndexBuffer):
     def __init__(self, idValue):
         IndexBuffer.__init__(self, idValue, IndexBuffer.TRIANGLES)
-        self.lengths = None
+        self.stripLengths = None
 
     def setLengths(self, lengths):
-        self.lengths = lengths[:]
+        self.stripLengths = lengths[:]
 
-    def write(self, writer):
-        writer.write("    <TriangleStripArray")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(">\n")
-        writer.write("       <indices>")
-        writer.write(" ".join(map(str, self.indices)))
-        writer.write("</indices>\n")
-        writer.write("       <stripLengths>")
-        writer.write(" ".join(map(str, self.lengths)))
-        writer.write("</stripLengths>\n")
-        writer.write("    </TriangleStripArray>\n")
+    def serialize(self, serializer):
+        attr = {"id": self.id}
+        serializer.startTag("TriangleStripArray", attr)
+        serializer.writeDataTag("indices", self.indices)
+        serializer.writeDataTag("stripLengths", self.stripLengths)
+        serializer.endTag()
 
 
 class VertexArray(object):
@@ -376,7 +356,7 @@ class VertexArray(object):
             vertex[:] = components[start:start + componentCount]
             for c in xrange(componentCount):
                 #quantize
-                q = round((vertex[c] - bias[c]) / scale)
+                q = int(((vertex[c] - bias[c]) / scale) + 0.5)
                 #clamp and write back
                 vertex[c] = max(qMin, min(q, qMax))
             components[start:start + componentCount] = vertex
@@ -419,27 +399,17 @@ class VertexArray(object):
     def __repr__(self):
         return str(self.__dict__)
 
-    def write(self, writer):
-        writer.write("    <VertexArray")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(" componentCount=\"%d\"" % self.componentCount)
-        writer.write(">\n")
+    def serialize(self, serializer):
+        attr = {
+            "id": self.id,
+            "componentCount" : self.componentCount
+            }
+        serializer.startTag("VertexArray", attr)
         if self.componentType == VertexArray.BYTE:
-            writer.write("      <byteComponents>")
-            writer.write("\n    ")
-            for c in self.components:
-                writer.write("%i " % c)
-            writer.write("\n")
-            writer.write("      </byteComponents>\n")
+            serializer.writeDataTag("byteComponents", self.components)
         elif self.componentType == VertexArray.SHORT:
-            writer.write("      <shortComponents>")
-            writer.write("\n    ")
-            for c in self.components:
-                writer.write("%i " % c)
-            writer.write("\n")
-            writer.write("      </shortComponents>\n")
-        writer.write("    </VertexArray>\n")
+            serializer.writeDataTag("shortComponents", self.components)
+        serializer.endTag()
 
 
 class VertexBuffer(object):
@@ -459,43 +429,26 @@ class VertexBuffer(object):
     def addTexcoords(self, texcoords):
         self.texcoords.append(texcoords)
 
-    def write(self, writer):
-        writer.write("    <VertexBuffer")
-        if self.id:
-            writer.write(" id=\"%s\"" % self.id)
-        writer.write(">\n")
-        if self.positions:
-            writer.write("        <positions scale=\"%f\">\n" % self.positions.scale)
-            writer.write("          <bias>%s</bias>\n" % " ".join(map(str, self.positions.bias)))
-            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % self.positions.id)
-            writer.write("        </positions>\n")
-        if self.normals:
-            writer.write("        <normals>\n")
-            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % self.normals.id)
-            writer.write("        </normals>\n")
-        for texcoords in self.texcoords:
-            writer.write("        <texcoords scale=\"%f\">\n" % texcoords.scale)
-            writer.write("          <bias>%s</bias>\n" % " ".join(map(str, texcoords.bias)))
-            writer.write("          <VertexArrayInstance ref=\"%s\" />\n" % texcoords.id)
-            writer.write("        </texcoords>\n")
-        writer.write("    </VertexBuffer>\n")
-
-class Section(object):
-    def __init__(self):
-        object.__init__(self)
-        self.objects = []
-
-    def append(self, object):
-        self.objects.append(object)
-
-    def extend(self, iterable):
-        self.objects.extend(iterable)
-
-    def write(self, writer):
-        writer.write("""  <section>\n""")
-        for object in self.objects:
-            object.write(writer)
-        writer.write("""  </section>\n""")
+    def serialize(self, serializer):
+        attr = {"id" : self.id}
+        serializer.startTag("VertexBuffer", attr)
+        pos = self.positions
+        if pos:
+            serializer.startTag("positions", {"scale": pos.scale})
+            serializer.writeDataTag("bias", pos.bias)
+            serializer.writeReference(pos)
+            serializer.endTag()
+        norm = self.normals
+        if norm:
+            serializer.startTag("normals")
+            serializer.writeReference(norm)
+            serializer.endTag()
+        for tex in self.texcoords:
+            serializer.startTag("texcoords", {"scale": tex.scale})
+            serializer.writeDataTag("bias", tex.bias)
+            serializer.writeReference(tex)
+            serializer.endTag()
+        serializer.endTag()
 
 
 class VertexSeq(object):
@@ -528,17 +481,78 @@ class VertexSeq(object):
         return self.indexByComponents[key]
 
 
+class Serializer(object):
+    def __init__(self, version, writer):
+        object.__init__(self)
+        self.version = version
+        self.writer = writer
+        self.tags = []
+        self.indents = [""]
+        self.addindent = "  "
+        self.serializedObjects = set()
+
+    def startTag(self, name, attr = None):
+        self.tags.append(name)
+        indent = self.indents[-1]
+        self.indents.append(indent + self.addindent)
+        self.writer.write("%s<%s" % (indent, name))
+        if attr:
+            for n, v in attr.iteritems():
+                if v is not None:
+                    self.writer.write(" %s=\"%s\"" % (n, str(v)))
+        self.writer.write(">\n")
+
+    def closedTag(self, name, attr = None):
+        indent = self.indents[-1]
+        self.writer.write("%s<%s" % (indent, name))
+        if attr:
+            for n, v in attr.iteritems():
+                if v is not None:
+                    self.writer.write(" %s=\"%s\"" % (n, str(v)))
+        self.writer.write(" />\n")
+        
+    def endTag(self):
+        name = self.tags.pop()
+        self.indents.pop()
+        indent = self.indents[-1]
+        self.writer.write("%s</%s>\n" % (indent, name))
+
+    def writeDataTag(self, name, data):
+        indent = self.indents[-1]
+        self.writer.write("%s<%s>%s</%s>\n" % (indent, name, " ".join(map(str, data)), name))
+
+    def writeReference(self, object):
+        if not object:
+            return
+        if object in self.serializedObjects:
+            object.serializeInstance(self)
+        else:
+            object.serialize(self)
+            self.serializedObjects.add(object)
+        
+    def serialize(self, sectionsWithRootObjects):
+        self.writer.write("""<?xml version="1.0" encoding="utf-8"?>\n""")
+        versions = [None, "1.0", "2.0"]
+        self.startTag("m3g", {"version" : versions[self.version]})
+        for rootObjects in sectionsWithRootObjects:
+            self.startTag("section")
+            for object in rootObjects:
+                object.serialize(self)
+                self.serializedObjects.add(object)
+            self.endTag()
+        self.endTag()
+
 class M3XConverter(object):
 
     def __init__(self):
         object.__init__(self)
         self.convertedDataObjects = {}
-        self.sections = []
+        self.objects = []
 
     def setVersion(self, version):
         self.version = version
 
-    def getFaceCompositingMode(self, face, hasPerFaceUV, section):
+    def getFaceCompositingMode(self, face, hasPerFaceUV):
         modes = Blender.Mesh.FaceTranspModes
         if hasPerFaceUV:
             bmode = face.transp
@@ -560,9 +574,9 @@ class M3XConverter(object):
         elif blending == modes["CLIP"]:
             blending = CompositingMode.ALPHA
             alphaThreshold = 0.75
-        return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version, section)
+        return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version)
 
-    def getFacePolygonMode(self, face, hasPerFaceUV, section):
+    def getFacePolygonMode(self, face, hasPerFaceUV):
         modes = Blender.Mesh.FaceModes
         if not hasPerFaceUV:
             culling = PolygonMode.CULL_BACK
@@ -570,24 +584,24 @@ class M3XConverter(object):
             culling = PolygonMode.CULL_NONE
         else:
             culling = PolygonMode.CULL_BACK
-        return PolygonMode.getSharedPolygonMode(culling, self.version, section)
+        return PolygonMode.getSharedPolygonMode(culling, self.version)
 
-    def getFaceAppearanceComponents(self, face, mesh, section):
+    def getFaceAppearanceComponents(self, face, mesh):
         hasPerFaceUV = mesh.faceUV
         #get CompositingMode
-        cm = self.getFaceCompositingMode(face, hasPerFaceUV, section)
+        cm = self.getFaceCompositingMode(face, hasPerFaceUV)
         #get PolygonMode
-        pm = self.getFacePolygonMode(face, hasPerFaceUV, section)
+        pm = self.getFacePolygonMode(face, hasPerFaceUV)
         #TODO get Fog
         #TODO get PointSpriteMode
         #actual appearance has to be linked up later with the
         #per instance materials
         return cm, pm, face.mat
 
-    def getAppearance(self, cm, pm, material, section):
-        return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version, section)
+    def getAppearance(self, cm, pm, material):
+        return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version)
 
-    def convertMesh(self, mesh, section):
+    def convertMesh(self, mesh):
         version = self.version
         hasPerVertexColor = mesh.vertexColors
         #otherwise they are per face UVs
@@ -597,7 +611,7 @@ class M3XConverter(object):
         #sort faces by material
         facesByAppearanceComponents = {}
         for face in mesh.faces:
-            key = self.getFaceAppearanceComponents(face, mesh, section)
+            key = self.getFaceAppearanceComponents(face, mesh)
             #print "key:", key
             lst = facesByAppearanceComponents.setdefault(key, [])
             lst.append(face)
@@ -644,7 +658,6 @@ class M3XConverter(object):
                 indexBuffer.setIndices(submeshTris)
             indexBuffers.append(indexBuffer)
 
-        objects = []
         vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")
 
         #create lists representing the normal and position vertex arrays
@@ -655,7 +668,6 @@ class M3XConverter(object):
             #version 1 has SHORT as the highest fidelity type
             #therefore FLOAT data must be compressed
             positionArray.compressShort()
-        objects.append(positionArray)
         vertexBuffer.setPositions(positionArray)
         del positionArray
         
@@ -666,7 +678,6 @@ class M3XConverter(object):
             #ensure it fits in a byte and normals are always in
             #the range [-1, 1]
             normalArray.compressByte(2 / 255.0, [1 / 255.0] * 3)
-        objects.append(normalArray)
         vertexBuffer.setNormals(normalArray)
         del normalArray
 
@@ -679,7 +690,6 @@ class M3XConverter(object):
                 #therefore FLOAT data must be compressed.
                 #ensure data fits in [0, 255]
                 colorArray.compressUnsignedByte(1 / 255.0)
-            objects.append(colorArray)
             vertexBuffer.setColors(colorArray)
             del colorArray
 
@@ -691,13 +701,8 @@ class M3XConverter(object):
                 #version 1 has SHORT as the highest fidelity type
                 #therefore FLOAT data must be compressed
                 uvArray.compressShort()
-            objects.append(uvArray)
             vertexBuffer.addTexcoords(uvArray)
             del uvArray
-
-        objects.append(vertexBuffer)
-        objects.extend(indexBuffers)
-        section.extend(objects)
 
         #store the BlenderMesh for later conversions
         bmesh = BlenderMesh()
@@ -708,7 +713,6 @@ class M3XConverter(object):
         return bmesh
 
     def convert(self, objectsToConvert):
-        section = Section()
         for object in objectsToConvert:
             print "objectName:", object.getName()
             data = object.getData(mesh=True)
@@ -717,7 +721,7 @@ class M3XConverter(object):
             #is it a mesh?
             if type(data) == Blender.Types.MeshType:
                 if data not in self.convertedDataObjects:
-                    self.convertedDataObjects[data] = self.convertMesh(data, section)
+                    self.convertedDataObjects[data] = self.convertMesh(data)
                 bmesh = self.convertedDataObjects[data]
                 #get the materials, supporting the per object override
                 objectMaterials = object.getMaterials(1)
@@ -739,19 +743,18 @@ class M3XConverter(object):
                     ib = bmesh.indexBuffers[i]
                     cm, pm, materialIndex = bmesh.appearanceComponents[i]
                     material = materials[materialIndex]
-                    appearance = self.getAppearance(cm, pm, material, section)
+                    appearance = self.getAppearance(cm, pm, material)
                     mesh.addSubmesh(ib, appearance)
-                section.append(mesh)
+                self.objects.append(mesh)
             else:
                 continue
-        self.sections.append(section)
-    
-    def write(self, writer):
-        writer.write("""<?xml version="1.0" encoding="utf-8"?>\n""")
-        writer.write("""<m3g version="%d.0">\n""" % self.version)
-        for section in self.sections:
-            section.write(writer)
-        writer.write("""</m3g>""")
+
+    def serialize(self, writer):
+        s = Serializer(self.version, writer)
+        sections = []
+        #TODO make this a proper roots only list
+        sections.append(self.objects)
+        s.serialize(sections)
 
 class GUI:
     COL_WIDTH = 100
@@ -828,7 +831,7 @@ class GUI:
                 objects = Blender.Scene.GetCurrent().objects
             self.__converter.convert(objects)
             writer = sys.stdout
-            self.__converter.write(writer)
+            self.__converter.serialize(writer)
             writer.flush()
             
 #
