@@ -84,6 +84,9 @@ class Appearance(AppearanceBase):
     def __init__(self, idValue):
         AppearanceBase.__init__(self, idValue)
 
+    def serializeInstance(self, serializer):
+        serializer.closedTag("AppearanceInstance", {"ref" : self.id})
+
     def serialize(self, serializer):
         attr = {
             "id": self.id
@@ -173,6 +176,9 @@ class CompositingMode(object):
     def setAlphaThreshold(self, alphaThreshold):
         self.alphaThreshold = alphaThreshold
 
+    def serializeInstance(self, serializer):
+        serializer.closedTag("CompositingModeInstance", {"ref" : self.id})
+
     def serialize(self, serializer):
         attr = {
             "id": self.id,
@@ -185,6 +191,31 @@ class CompositingMode(object):
             serializer.endTag()
         else:
             serializer.closedTag("CompositingMode", attr)
+
+
+class Group(object):
+    def __init__(self, idValue):
+        object.__init__(self)
+        self.id = idValue
+        self.children = []
+
+    def addChild(self, child):
+        self.children.append(child)
+
+    def serialize(self, serializer):
+        attr = {
+            "id": self.id,
+            }
+        if serializer.version == 2:
+            #TODO add some more bits to attr
+            pass
+        if len(self.children) > 0:
+            serializer.startTag("Group", attr)
+            for child in self.children:
+                serializer.writeReference(child)
+            serializer.endTag()
+        else:
+            serializer.closedTag("Group", attr)
 
 
 class IndexBuffer(object):
@@ -259,6 +290,9 @@ class PolygonMode(object):
 
     getSharedPolygonMode = staticmethod(getSharedPolygonMode)
 
+    def serializeInstance(self, serializer):
+        serializer.closedTag("PolygonModeInstance", {"ref" : self.id})
+
     def serialize(self, serializer):
         attr = {
             "id": self.id,
@@ -277,6 +311,9 @@ class TriangleStripArray(IndexBuffer):
 
     def setLengths(self, lengths):
         self.stripLengths = lengths[:]
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("TriangleStripArrayInstance", {"ref" : self.id})
 
     def serialize(self, serializer):
         attr = {"id": self.id}
@@ -429,6 +466,9 @@ class VertexBuffer(object):
     def addTexcoords(self, texcoords):
         self.texcoords.append(texcoords)
 
+    def serializeInstance(self, serializer):
+        serializer.closedTag("VertexBufferInstance", {"ref" : self.id})
+        
     def serialize(self, serializer):
         attr = {"id" : self.id}
         serializer.startTag("VertexBuffer", attr)
@@ -712,12 +752,22 @@ class M3XConverter(object):
 
         return bmesh
 
-    def convert(self, objectsToConvert):
-        for object in objectsToConvert:
-            print "objectName:", object.getName()
-            data = object.getData(mesh=True)
-            print "objectData:", data, data.__class__
+    def convertObject(self, object, childrenByObject):
+        print "objectName:", object.getName()
+        hasChildren =  object in childrenByObject
+        returnObject = None
+        if hasChildren:
+            #traverse them next
+            #this is Group in M3X terms, or perhaps a SkinnedMesh
+            #TODO discern if it is a SkinnedMesh
+            returnObject = Group(object.name)
+            for child in childrenByObject[object]:
+                returnObject.addChild(
+                    self.convertObject(child, childrenByObject))
 
+        data = object.getData(mesh=True)
+        if data:
+            print "objectData:", data, data.__class__
             #is it a mesh?
             if type(data) == Blender.Types.MeshType:
                 if data not in self.convertedDataObjects:
@@ -745,9 +795,48 @@ class M3XConverter(object):
                     material = materials[materialIndex]
                     appearance = self.getAppearance(cm, pm, material)
                     mesh.addSubmesh(ib, appearance)
-                self.objects.append(mesh)
-            else:
-                continue
+                if returnObject:
+                    #TODO what happens for SkinnedMesh
+                    returnObject.addChild(mesh)
+                else:
+                    returnObject = mesh
+        elif returnObject is None:
+            #Empty node
+            returnObject = Group(object.name)
+        return returnObject
+
+
+    def convert(self, objectsToConvert):
+        #sort the objects into root first order
+        #identify the non-root set
+        closedSet = set()
+        rootSet = set()
+        #also compile the list of children per object
+        childrenByObject = {}
+        roots = []
+        openList = []
+        for candidate in objectsToConvert:
+            if candidate not in closedSet:
+                openList.append(candidate)
+            while len(openList) > 0:
+                object = openList.pop()
+                closedSet.add(object)
+                parent = object.parent
+                if parent:
+                    children = childrenByObject.setdefault(parent, [])
+                    children.append(object)
+                    if parent not in closedSet:
+                        openList.append(parent)
+                elif object not in rootSet:
+                    roots.append(object)
+                    rootSet.add(object)
+
+        #traverse the roots as a stack
+        #TODO add a world as the root if needed
+        for object in roots:
+            converted = self.convertObject(object, childrenByObject)
+            if converted:
+                self.objects.append(converted)
 
     def serialize(self, writer):
         s = Serializer(self.version, writer)
