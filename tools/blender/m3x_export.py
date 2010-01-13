@@ -38,6 +38,7 @@ import Blender.Camera
 import Blender.Lamp
 import Blender.Mesh
 import Blender.Types
+import Blender.Window
 import Blender.BGL as GL
 import sys
 import re
@@ -60,15 +61,44 @@ class Object3D(object):
             attrs["userID"] = self.userID
         return
 
+    def serializeChildren(self, serializer):
+        #TODO animation tracks
+        pass
+
 
 class Transformable(Object3D):
     def __init__(self, idValue):
         Object3D.__init__(self, idValue)
+        self.translation = None
+        self.scale = None
+        self.orientation = None
+
+    def setTranslation(self, x, y, z):
+        self.translation = [x, y, z]
+
+    def setScale(self, x, y, z):
+        self.scale = [x, y, z]
+
+    def setOrientation(self, angle, x, y, z):
+        self.orientation = [angle, x, y, z]
+        
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        if self.translation:
+            serializer.writeDataTag("translation", self.translation)
+        if self.scale:
+            serializer.writeDataTag("scale", self.scale)
+        if self.orientation:
+            serializer.writeDataTag("orientation",
+                {"angle": self.orientation[0]}, self.orientation[1:])
 
 
 class Node(Transformable):
     def __init__(self, idValue):
         Transformable.__init__(self, idValue)
+
+    def serializeChildren(self, serializer):
+        Transformable.serializeChildren(self, serializer)
 
 
 class AppearanceBase(Object3D):
@@ -109,6 +139,12 @@ class AppearanceBase(Object3D):
 
     getSharedAppearanceBase = staticmethod(getSharedAppearanceBase)
 
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        serializer.writeReference(self.compositingMode)
+        serializer.writeReference(self.polygonMode)
+
+
 class Appearance(AppearanceBase):
     def __init__(self, idValue):
         AppearanceBase.__init__(self, idValue)
@@ -116,12 +152,14 @@ class Appearance(AppearanceBase):
     def serializeInstance(self, serializer):
         serializer.closedTag("AppearanceInstance", {"ref" : self.id})
 
+    def serializeChildren(self, serializer):
+        AppearanceBase.serializeChildren(self, serializer)
+
     def serialize(self, serializer):
         attr = {}
         self.fillAttributes(attr)
         serializer.startTag("Appearance", attr)
-        serializer.writeReference(self.compositingMode)
-        serializer.writeReference(self.polygonMode)
+        self.serializeChildren(serializer)
         serializer.endTag()
 
 
@@ -206,6 +244,12 @@ class CompositingMode(Object3D):
     def serializeInstance(self, serializer):
         serializer.closedTag("CompositingModeInstance", {"ref" : self.id})
 
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        if serializer.version == 2:
+            #TODO add blender and stencil
+            pass
+
     def serialize(self, serializer):
         attr = {
             "blending": self.blending
@@ -213,11 +257,10 @@ class CompositingMode(Object3D):
         self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits to attr
-            serializer.startTag("CompositingMode", attr)
-            #TODO add blender and stencil
-            serializer.endTag()
-        else:
-            serializer.closedTag("CompositingMode", attr)
+            pass
+        serializer.startTag("CompositingMode", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
 
 
 class Group(Node):
@@ -228,19 +271,20 @@ class Group(Node):
     def addChild(self, child):
         self.children.append(child)
 
+    def serializeChildren(self, serializer):
+        Node.serializeChildren(self, serializer)
+        for child in self.children:
+            serializer.writeReference(child)
+
     def serialize(self, serializer):
         attr = {}
         self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits to attr
             pass
-        if len(self.children) > 0:
-            serializer.startTag("Group", attr)
-            for child in self.children:
-                serializer.writeReference(child)
-            serializer.endTag()
-        else:
-            serializer.closedTag("Group", attr)
+        serializer.startTag("Group", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
 
 
 class IndexBuffer(Object3D):
@@ -252,6 +296,10 @@ class IndexBuffer(Object3D):
 
     def setIndices(self, indices):
         self.indices = indices[:]
+
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        serializer.writeDataTag("indices", self.indices)
 
 
 class Mesh(Node):
@@ -316,6 +364,9 @@ class PolygonMode(Object3D):
     def serializeInstance(self, serializer):
         serializer.closedTag("PolygonModeInstance", {"ref" : self.id})
 
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+
     def serialize(self, serializer):
         attr = {
             "culling": self.culling
@@ -324,7 +375,9 @@ class PolygonMode(Object3D):
         if serializer.version == 2:
             #TODO add some more bits
             pass
-        serializer.closedTag("PolygonMode", attr)
+        serializer.startTag("PolygonMode", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
 
 
 class TriangleStripArray(IndexBuffer):
@@ -338,11 +391,14 @@ class TriangleStripArray(IndexBuffer):
     def serializeInstance(self, serializer):
         serializer.closedTag("TriangleStripArrayInstance", {"ref" : self.id})
 
+    def serializeChildren(self, serializer):
+        IndexBuffer.serializeChildren(self, serializer)
+        serializer.writeDataTag("stripLengths", self.stripLengths)
+        
     def serialize(self, serializer):
         attr = {"id": self.id}
         serializer.startTag("TriangleStripArray", attr)
-        serializer.writeDataTag("indices", self.indices)
-        serializer.writeDataTag("stripLengths", self.stripLengths)
+        self.serializeChildren(serializer)
         serializer.endTag()
 
 
@@ -825,6 +881,13 @@ class M3XConverter(object):
         elif returnObject is None:
             #Empty node
             returnObject = Group(object.name)
+        if returnObject:
+            loc = list(object.loc)
+            if loc != ([0.0] * 3):
+                returnObject.setTranslation(*loc)
+            scale = list(object.size)
+            if scale != ([1.0] * 3):
+                returnObject.setScale(*scale)
         return returnObject
 
 
@@ -867,6 +930,7 @@ class M3XConverter(object):
         sections.append(self.objects)
         s.serialize(sections)
 
+
 class GUI:
     COL_WIDTH = 100
     ROW_HEIGHT = 20
@@ -881,8 +945,13 @@ class GUI:
     #
     def __init__(self):
         self.__exportToWorld = 0
+        self.__exportToWorldButton = None
         self.__exportSelectionOnly = 0
+        self.__exportSelectionOnlyButton = None
+        self.__exportVersion1Button = None
+        self.__exportVersion2Button = None
         self.__converter = M3XConverter()
+        self.objectsToConvert = None
 
     #
     def gridCoords(self, col, row):
@@ -893,27 +962,31 @@ class GUI:
     def draw(self):
         width, height = (GUI.COL_WIDTH, GUI.ROW_HEIGHT)
         x, y = self.gridCoords(0, 2)
-        Blender.Draw.Toggle("export to world",
-                            GUI.EVENT_EXPORT_WORLD_TOGGLE,
-                            x, y, width, height,
-                            self.__exportToWorld,
-                            "Tooltip")
+        self.__exportToWorldButton = Blender.Draw.Toggle(
+            "export to world",
+            GUI.EVENT_EXPORT_WORLD_TOGGLE,
+            x, y, width, height,
+            self.__exportToWorld,
+            "Tooltip")
         x, y = self.gridCoords(1, 2)
-        Blender.Draw.Toggle("export selection only",
-                            GUI.EVENT_EXPORT_SELECTION_TOGGLE,
-                            x, y, width, height,
-                            self.__exportSelectionOnly,
-                            "Tooltip")
+        self.__exportSelectionOnlyButton = Blender.Draw.Toggle(
+            "export selection only",
+            GUI.EVENT_EXPORT_SELECTION_TOGGLE,
+            x, y, width, height,
+            self.__exportSelectionOnly,
+            "Tooltip")
         x, y = self.gridCoords(0, 0)
-        Blender.Draw.PushButton("export v1.0",
-                            GUI.EVENT_EXPORT_10,
-                            x, y, width, height,
-                            "Tooltip")
+        self.__exportVersion1Button = Blender.Draw.PushButton(
+            "export v1.0",
+            GUI.EVENT_EXPORT_10,
+            x, y, width, height,
+            "Tooltip")
         x, y = self.gridCoords(1, 0)
-        Blender.Draw.PushButton("export v2.0",
-                            GUI.EVENT_EXPORT_20,
-                            x, y, width, height,
-                            "Tooltip")
+        self.__exportVersion2Button = Blender.Draw.PushButton(
+            "export v2.0",
+            GUI.EVENT_EXPORT_20,
+            x, y, width, height,
+            "Tooltip")
         GL.glRasterPos2i(*self.gridCoords(0, 4))
         Blender.Draw.Text("m3x Export", 'large')
 
@@ -937,14 +1010,17 @@ class GUI:
             self.__converter.setVersion(2)
         if export:
             if self.__exportSelectionOnly:
-                objects = Blender.Object.GetSelected()
+                self.objectsToConvert = Blender.Object.GetSelected()
             else:
-                objects = Blender.Scene.GetCurrent().objects
-            self.__converter.convert(objects)
-            writer = sys.stdout
-            self.__converter.serialize(writer)
-            writer.flush()
-            
+                self.objectsToConvert = Blender.Scene.GetCurrent().objects
+            Blender.Window.FileSelector(self.fileSelectedForConversion)
+
+    def fileSelectedForConversion(self, filename):
+        self.__converter.convert(self.objectsToConvert)
+        writer = open(filename, "wb")
+        self.__converter.serialize(writer)
+        writer.flush()
+        writer.close()
 #
 gui = GUI()
 def draw(): # Define the draw function (which draws your GUI).
