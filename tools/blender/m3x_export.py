@@ -35,8 +35,10 @@ __date__ ="$Dec 31, 2009 11:39:06 AM$"
 
 import Blender
 import Blender.Camera
+import Blender.Image
 import Blender.Lamp
 import Blender.Mesh
+import Blender.Texture
 import Blender.Types
 import Blender.Window
 import Blender.BGL as GL
@@ -116,9 +118,10 @@ class AppearanceBase(Object3D):
     SHARED_BY_MATERIAL = {}
     def getSharedAppearanceBase(cm, pm, material, version):
         shared = AppearanceBase.SHARED_BY_MATERIAL
-        if material not in shared:
-            shared[material] = {}
-        appearances = shared[material]
+        key = material
+        if key not in shared:
+            shared[key] = {}
+        appearances = shared[key]
         key = (cm, pm)
         if key not in appearances:
             if version == 2:
@@ -130,10 +133,22 @@ class AppearanceBase(Object3D):
                 a.setPolygonMode(pm)
                 #TODO get lighting material
                 #get the texture 2D elements from the material
-                textures = []
-                for mtex in material.textures:
-                    #TODO convert from Blender textures
-                    pass
+                m3xTextures = []
+                print "material", material
+                print "textures:", material.getTextures()
+                for mtex in material.getTextures():
+                    if mtex:
+                        texture = mtex.tex
+                        m3xImage = None
+                        m3xTexture = None
+                        if texture:
+                            #convert from Blender textures
+                            m3xImage = ImageBase.getSharedImageBase(texture.image, version)
+                        if m3xImage:
+                            m3xTexture = Texture.getSharedTexture(material, mtex, m3xImage, version)
+                        if m3xTexture:
+                            m3xTextures.append(m3xTexture)
+                a.setTextures(m3xTextures)
             appearances[key] = a
         return appearances[key]
 
@@ -148,12 +163,18 @@ class AppearanceBase(Object3D):
 class Appearance(AppearanceBase):
     def __init__(self, idValue):
         AppearanceBase.__init__(self, idValue)
+        self.textures = None
 
+    def setTextures(self, textures):
+        self.textures = textures[:]
+        
     def serializeInstance(self, serializer):
         serializer.closedTag("AppearanceInstance", {"ref" : self.id})
 
     def serializeChildren(self, serializer):
         AppearanceBase.serializeChildren(self, serializer)
+        for t in self.textures:
+            serializer.writeReference(t)
 
     def serialize(self, serializer):
         attr = {}
@@ -302,6 +323,93 @@ class IndexBuffer(Object3D):
         serializer.writeDataTag("indices", self.indices)
 
 
+class ImageBase(Object3D):
+    LUMINANCE = "LUMINANCE"
+    LUMINANCE_ALPHA = "LUMINANCE_ALPHA"
+    RGB = "RGB"
+    RGBA = "RGBA"
+
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+        self.format = None
+        self.width = None
+        self.height = None
+
+    SHARED_IMAGES = {}
+
+    def getSharedImageBase(bimage, version):
+        if bimage is None:
+            return None
+        images = ImageBase.SHARED_IMAGES
+        key = bimage
+        if key not in images:
+            name = bimage.name
+            stype = bimage.source
+            if stype == Blender.Image.Sources["STILL"]:
+                #TODO support Cube images for version 2
+                im = Image2D.createImage2D(name, bimage)
+            elif stype == Blender.Image.Sources["MOVIE"]:
+                if version == 2:
+                    #TODO support Dynamic images
+                    pass
+                else:
+                    im = Image2D.createImage2D(name, bimage)
+            images[key] = im
+        return images[key]
+
+    getSharedImageBase = staticmethod(getSharedImageBase)
+
+
+class Image2D(ImageBase):
+    def __init__(self, idValue):
+        ImageBase.__init__(self, idValue)
+
+    def set(self, format, width, height, pixels):
+        self.format = format
+        self.width = width
+        self.height = height
+        self.pixels = pixels[:]
+        
+    def createImage2D(idValue, bimage):
+        im = Image2D(idValue)
+        width, height = bimage.size
+        if bimage.depth == 8:
+            #LUMINANCE ?
+            pass
+        if bimage.depth == 16:
+            #LUMINANCE_ALPHA ?
+            pass
+        if bimage.depth in (24, 32):
+            #RGB
+            if bimage.depth == 24:
+                format = ImageBase.RGB
+                bpp = 3
+            elif bimage.depth == 32:
+                format = ImageBase.RGBA
+                bpp = 4
+            pixels = [0] * (width * height * bpp)
+            for y in xrange(height):
+                yOffset = width * bpp * y
+                for x in xrange(width):
+                    rgba = bimage.getPixelI(x, y)
+                    offset = x * bpp + yOffset
+                    pixels[offset:offset + bpp] = rgba[:bpp]
+            im.set(format, width, height, pixels)
+        return im
+
+    createImage2D = staticmethod(createImage2D)
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("Image2DInstance", {"ref" : self.id})
+
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("Image2D", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+
 class Mesh(Node):
     def __init__(self, idValue, version):
         Node.__init__(self, idValue)
@@ -376,6 +484,71 @@ class PolygonMode(Object3D):
             #TODO add some more bits
             pass
         serializer.startTag("PolygonMode", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+
+class Texture(Transformable):
+    FILTER_BASE_LEVEL = "FILTER_BASE_LEVEL"
+    FILTER_LINEAR = "FILTER_LINEAR"
+    FILTER_NEAREST = "FILTER_NEAREST"
+
+    def __init__(self, idValue):
+        Transformable.__init__(self, idValue)
+        self.image = None
+        self.imageFilter = Texture.FILTER_NEAREST
+        self.levelFilter = Texture.FILTER_BASE_LEVEL
+
+    def setImage(self, image):
+        self.image = image
+
+    def setFiltering(self, levelFilter, imageFilter):
+        self.levelFilter = levelFilter
+        self.imageFilter = imageFilter
+        
+    SHARED_TEXTURES = {}
+
+    def getSharedTexture(material, mtex, m3xImage, version):
+        textures = Texture.SHARED_TEXTURES
+        key = (material.name, mtex.tex.name, m3xImage)
+        if key not in textures:
+            if isinstance(m3xImage, Image2D):
+                tex = Texture2D.createTexture2D(material, mtex, m3xImage, version)
+            textures[key] = tex
+        return textures[key]
+
+    getSharedTexture = staticmethod(getSharedTexture)
+
+    def fillAttributes(self, attr):
+        Transformable.fillAttributes(self, attr)
+
+    def serializeChildren(self, serializer):
+        Transformable.serializeChildren(self, serializer)
+        serializer.writeReference(self.image)
+
+
+class Texture2D(Texture):
+    def __init__(self, idValue):
+        Texture.__init__(self, idValue)
+
+    def createTexture2D(material, mtex, m3xImage, version):
+        name = "%s-%s-%s" % (material.name, mtex.tex.name, m3xImage.id)
+        #TODO wrap/clamp tranforms
+        tex = Texture2D(name)
+        if mtex.tex.mipmap:
+            levelFilter = Texture.FILTER_LINEAR
+        else:
+            levelFilter = Texture.FILTER_BASE_LEVEL
+        tex.setFiltering(levelFilter, Texture.FILTER_LINEAR)
+        tex.setImage(m3xImage)
+        return tex
+
+    createTexture2D = staticmethod(createTexture2D)
+
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("Texture2D", attr)
         self.serializeChildren(serializer)
         serializer.endTag()
 
@@ -831,7 +1004,7 @@ class M3XConverter(object):
         return bmesh
 
     def convertObject(self, object, childrenByObject):
-        print "objectName:", object.getName()
+        #print "objectName:", object.getName()
         hasChildren =  object in childrenByObject
         returnObject = None
         if hasChildren:
@@ -845,7 +1018,7 @@ class M3XConverter(object):
 
         data = object.getData(mesh=True)
         if data:
-            print "objectData:", data, data.__class__
+            #print "objectData:", data, data.__class__
             #is it a mesh?
             if type(data) == Blender.Types.MeshType:
                 if data not in self.convertedDataObjects:
@@ -882,10 +1055,10 @@ class M3XConverter(object):
             #Empty node
             returnObject = Group(object.name)
         if returnObject:
-            loc = list(object.loc)
+            loc = tuple(object.loc)
             if loc != ([0.0] * 3):
                 returnObject.setTranslation(*loc)
-            scale = list(object.size)
+            scale = tuple(object.size)
             if scale != ([1.0] * 3):
                 returnObject.setScale(*scale)
         return returnObject
@@ -961,13 +1134,13 @@ class GUI:
     #
     def draw(self):
         width, height = (GUI.COL_WIDTH, GUI.ROW_HEIGHT)
-        x, y = self.gridCoords(0, 2)
-        self.__exportToWorldButton = Blender.Draw.Toggle(
-            "export to world",
-            GUI.EVENT_EXPORT_WORLD_TOGGLE,
-            x, y, width, height,
-            self.__exportToWorld,
-            "Tooltip")
+        #x, y = self.gridCoords(0, 2)
+        #self.__exportToWorldButton = Blender.Draw.Toggle(
+        #    "export to world",
+        #    GUI.EVENT_EXPORT_WORLD_TOGGLE,
+        #    x, y, width, height,
+        #    self.__exportToWorld,
+        #    "Tooltip")
         x, y = self.gridCoords(1, 2)
         self.__exportSelectionOnlyButton = Blender.Draw.Toggle(
             "export selection only",
@@ -981,12 +1154,12 @@ class GUI:
             GUI.EVENT_EXPORT_10,
             x, y, width, height,
             "Tooltip")
-        x, y = self.gridCoords(1, 0)
-        self.__exportVersion2Button = Blender.Draw.PushButton(
-            "export v2.0",
-            GUI.EVENT_EXPORT_20,
-            x, y, width, height,
-            "Tooltip")
+        #x, y = self.gridCoords(1, 0)
+        #self.__exportVersion2Button = Blender.Draw.PushButton(
+        #    "export v2.0",
+        #    GUI.EVENT_EXPORT_20,
+        #    x, y, width, height,
+        #    "Tooltip")
         GL.glRasterPos2i(*self.gridCoords(0, 4))
         Blender.Draw.Text("m3x Export", 'large')
 
@@ -1013,7 +1186,13 @@ class GUI:
                 self.objectsToConvert = Blender.Object.GetSelected()
             else:
                 self.objectsToConvert = Blender.Scene.GetCurrent().objects
-            Blender.Window.FileSelector(self.fileSelectedForConversion)
+            if False:
+                Blender.Window.FileSelector(self.fileSelectedForConversion)
+            else:
+                self.__converter.convert(self.objectsToConvert)
+                writer = sys.stdout
+                self.__converter.serialize(writer)
+                writer.flush()
 
     def fileSelectedForConversion(self, filename):
         self.__converter.convert(self.objectsToConvert)
