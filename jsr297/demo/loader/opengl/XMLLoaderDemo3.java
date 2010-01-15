@@ -27,7 +27,7 @@
 
 package loader.opengl;
 
-import util.DemoFrame;
+import m3x.awt.BaseFrame;
 
 /**
  * @author jgasseli
@@ -41,7 +41,7 @@ public class XMLLoaderDemo3 extends XMLLoaderDemo
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new XMLLoaderDemo3();
+        BaseFrame frame = new XMLLoaderDemo3();
         frame.present(false);
     }
 }

@@ -3,12 +3,19 @@
     <property location="test" name="test.dir"/>
     <property location="lib" name="lib.dir"/>
     <property location="dist" name="dist.dir"/>
-    <path id="demo.path">
+    <path id="lib.path">
         <pathelement location="tools/dist/m3x.jar"/>
-        <pathelement location="jsr297/dist/m3x-jsr297.jar"/>
         <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
         <pathelement location="${lib.dir}/jogl/jogl.jar"/>
         <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
+    </path>
+    <path id="src.path">
+        <path refid="lib.path"/>
+        <pathelement location="jsr297/build"/>
+    </path>
+    <path id="demo.path">
+        <path refid="lib.path"/>
+        <pathelement location="jsr297/dist/m3x-jsr297.jar"/>
         <pathelement location="jsr297/demo/build"/>
     </path>
     <target name="compile-selected-files-in-demo">
@@ -23,6 +30,8 @@
         <java classname="${run.class}" failonerror="true" fork="true">
             <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="demo.path"/>
+            <!--jvmarg value="-Xdock:name=${run.class}"/-->
+            <jvmarg value="-Dsun.java2d.opengl=true"/>
             <jvmarg value="-Dsun.awt.noerasebackground=true"/>
         </java>
     </target>
@@ -46,5 +55,17 @@
         <javac destdir="tools/test/build" includes="${files}" source="1.5" srcdir="tools/test">
             <classpath path="lib/junit-4.4.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-impl.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:tools/build"/>
         </javac>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <classpath refid="src.path"/>
+            <!--jvmarg value="-Xdock:name=${run.class}"/-->
+            <jvmarg value="-Dsun.java2d.opengl=true"/>
+            <jvmarg value="-Dsun.awt.noerasebackground=true"/>
+        </java>
     </target>
 </project>

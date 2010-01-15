@@ -51,15 +51,15 @@ import javax.microedition.m3g.Texture2D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.GeomUtils;
 import m3x.microedition.m3g.TransformController;
 import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
-import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class CameraControllerDemo extends DemoFrame
+public class CameraControllerDemo extends BaseFrame
 {
     private final class CameraControllerCanvas extends GLJPanel
             implements Runnable
@@ -239,7 +239,7 @@ public class CameraControllerDemo extends DemoFrame
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new CameraControllerDemo();
+        BaseFrame frame = new CameraControllerDemo();
         frame.present(false);
     }
 }

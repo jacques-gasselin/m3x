@@ -34,12 +34,12 @@ import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.opengl.GLRenderTarget;
-import util.DemoFrame;
+import m3x.awt.BaseFrame;
 
 /**
  * @author jgasseli
  */
-public class BackgroundDemo extends DemoFrame
+public class BackgroundDemo extends BaseFrame
 {
     private final class BackgroundCanvas extends GLCanvas
             implements Runnable
@@ -108,7 +108,7 @@ public class BackgroundDemo extends DemoFrame
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new BackgroundDemo();
+        BaseFrame frame = new BackgroundDemo();
         frame.present(false);
     }
 

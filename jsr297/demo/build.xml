@@ -33,7 +33,9 @@
             <env key="DYLD_LIBRARY_PATH"
                  path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="run.classpath"/>
-            <jvmarg value="-Xdock:name=BackgroundDemo"/>
+            <jvmarg value="-Xdock:name=BackgroundDemo" />
+            <jvmarg value="-Dsun.java2d.opengl=true" />
+            <jvmarg value="-Dsun.awt.noerasebackground=true"/>
         </java>
     </target>
 

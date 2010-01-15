@@ -39,12 +39,12 @@ import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
-import util.DemoFrame;
+import m3x.awt.BaseFrame;
 
 /**
  * @author jgasseli
  */
-public class SimpleVBDemo extends DemoFrame
+public class SimpleVBDemo extends BaseFrame
 {
     private final class SimpleVBCanvas extends GLCanvas
             implements Runnable
@@ -155,7 +155,7 @@ public class SimpleVBDemo extends DemoFrame
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new SimpleVBDemo();
+        BaseFrame frame = new SimpleVBDemo();
         frame.present(false);
     }
 

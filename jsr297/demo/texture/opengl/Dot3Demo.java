@@ -35,7 +35,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
@@ -52,15 +51,15 @@ import javax.microedition.m3g.TextureCombiner;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.GeomUtils;
 import m3x.microedition.m3g.TransformController;
 import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
-import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public class Dot3Demo extends DemoFrame
+public class Dot3Demo extends BaseFrame
 {
     private static final int xyzAsRGB(float x, float y, float z)
     {
@@ -282,7 +281,7 @@ public class Dot3Demo extends DemoFrame
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new Dot3Demo();
+        BaseFrame frame = new Dot3Demo();
         frame.present(false);
     }
 }

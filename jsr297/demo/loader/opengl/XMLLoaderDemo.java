@@ -28,8 +28,8 @@
 package loader.opengl;
 
 import java.io.IOException;
+import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.XMLLoader;
-import util.DemoFrame;
 
 /**
  * @author jgasseli
@@ -51,7 +51,7 @@ public class XMLLoaderDemo extends AbstractLoaderDemo
 
     public static void main(String[] args)
     {
-        DemoFrame frame = new XMLLoaderDemo("model1.m3x");
+        BaseFrame frame = new XMLLoaderDemo("model1.m3x");
         frame.present(false);
     }
 }

@@ -40,14 +40,14 @@ import javax.microedition.m3g.Node;
 import javax.microedition.m3g.Object3D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.TransformController;
 import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
-import util.DemoFrame;
 
 /**
  * @author jgasseli
  */
-public abstract class AbstractLoaderDemo extends DemoFrame
+public abstract class AbstractLoaderDemo extends BaseFrame
 {
     protected final class LoaderCanvas extends GLCanvas
             implements Runnable
@@ -143,7 +143,7 @@ public abstract class AbstractLoaderDemo extends DemoFrame
                 }
                 catch (InterruptedException e)
                 {
-                    //e.printStackTrace();
+                    Thread.yield();
                 }
                 repaint();
             }
