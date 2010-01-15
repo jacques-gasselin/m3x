@@ -75,11 +75,16 @@ public abstract class AbstractLoaderDemo extends DemoFrame
             new Thread(this).start();
         }
 
+        protected void setRoots(Object3D[] roots)
+        {
+            this.roots = roots;
+        }
+
         protected void load(InputStream stream)
         {
             try
             {
-                roots = Loader.load(stream);
+                setRoots(Loader.load(stream));
             }
             catch (IOException e)
             {

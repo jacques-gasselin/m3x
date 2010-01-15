@@ -246,7 +246,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/src</package-root>
-                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build</classpath>
+                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build:tools/build</classpath>
                 <built-to>jsr297/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

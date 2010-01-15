@@ -128,7 +128,7 @@ class AppearanceBase(Object3D):
                 #TODO support Shaders
                 pass
             else:
-                a = Appearance("Appearance-" + material.name + "-%d" % len(appearances.keys()))
+                a = Appearance("Appearance:" + material.name + "-%d" % len(appearances.keys()))
                 a.setCompositingMode(cm)
                 a.setPolygonMode(pm)
                 #TODO get lighting material
@@ -379,7 +379,7 @@ class Image2D(ImageBase):
         self.pixels = pixels[:]
         
     def createImage2D(idValue, bimage):
-        im = Image2D(idValue)
+        im = Image2D("Image2D:" + idValue)
         width, height = bimage.size
         if bimage.depth == 8:
             #LUMINANCE ?
