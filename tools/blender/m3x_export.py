@@ -134,8 +134,8 @@ class AppearanceBase(Object3D):
                 #TODO get lighting material
                 #get the texture 2D elements from the material
                 m3xTextures = []
-                print "material", material
-                print "textures:", material.getTextures()
+                #print "material", material
+                #print "textures:", material.getTextures()
                 for mtex in material.getTextures():
                     if mtex:
                         texture = mtex.tex
@@ -271,10 +271,12 @@ class CompositingMode(Object3D):
             #TODO add blender and stencil
             pass
 
+    def fillAttributes(self, attr):
+        Object3D.fillAttributes(self, attr)
+        attr["blending"] = self.blending
+
     def serialize(self, serializer):
-        attr = {
-            "blending": self.blending
-            }
+        attr = {}
         self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits to attr
@@ -359,6 +361,12 @@ class ImageBase(Object3D):
 
     getSharedImageBase = staticmethod(getSharedImageBase)
 
+    def fillAttributes(self, attr):
+        Object3D.fillAttributes(self, attr)
+        attr["format"] = self.format
+        attr["width"] = self.width
+        attr["height"] = self.height
+
 
 class Image2D(ImageBase):
     def __init__(self, idValue):
@@ -398,6 +406,10 @@ class Image2D(ImageBase):
         return im
 
     createImage2D = staticmethod(createImage2D)
+
+    def serializeChildren(self, serializer):
+        ImageBase.serializeChildren(self, serializer)
+        serializer.writeDataTag("pixels", self.pixels)
 
     def serializeInstance(self, serializer):
         serializer.closedTag("Image2DInstance", {"ref" : self.id})
@@ -521,6 +533,8 @@ class Texture(Transformable):
 
     def fillAttributes(self, attr):
         Transformable.fillAttributes(self, attr)
+        attr["levelFilter"] = self.levelFilter
+        attr["imageFilter"] = self.imageFilter
 
     def serializeChildren(self, serializer):
         Transformable.serializeChildren(self, serializer)
@@ -687,10 +701,12 @@ class VertexArray(Object3D):
     def __repr__(self):
         return str(self.__dict__)
 
+    def fillAttributes(self, attr):
+        Object3D.fillAttributes(self, attr)
+        attr["componentCount"] = self.componentCount
+    
     def serialize(self, serializer):
-        attr = {
-            "componentCount" : self.componentCount
-            }
+        attr = {}
         self.fillAttributes(attr)
         serializer.startTag("VertexArray", attr)
         if self.componentType == VertexArray.BYTE:
@@ -1186,7 +1202,7 @@ class GUI:
                 self.objectsToConvert = Blender.Object.GetSelected()
             else:
                 self.objectsToConvert = Blender.Scene.GetCurrent().objects
-            if False:
+            if True:
                 Blender.Window.FileSelector(self.fileSelectedForConversion)
             else:
                 self.__converter.convert(self.objectsToConvert)
@@ -1195,11 +1211,14 @@ class GUI:
                 writer.flush()
 
     def fileSelectedForConversion(self, filename):
-        self.__converter.convert(self.objectsToConvert)
-        writer = open(filename, "wb")
-        self.__converter.serialize(writer)
-        writer.flush()
-        writer.close()
+        try:
+            self.__converter.convert(self.objectsToConvert)
+            writer = open(filename, "wb")
+            self.__converter.serialize(writer)
+            writer.flush()
+            writer.close()
+        except e:
+            print e
 #
 gui = GUI()
 def draw(): # Define the draw function (which draws your GUI).
