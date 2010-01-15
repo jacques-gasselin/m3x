@@ -1212,11 +1212,18 @@ class GUI:
 
     def fileSelectedForConversion(self, filename):
         try:
+            pbar = Blender.Window.DrawProgressBar
+            pbar(0.0, "Converting Blender Objects to M3X")
             self.__converter.convert(self.objectsToConvert)
+            pbar(0.2, "Opening destination file")
             writer = open(filename, "wb")
+            pbar(0.3, "Serializing to destination file")
             self.__converter.serialize(writer)
+            pbar(0.8, "Flushing serializing buffers")
             writer.flush()
+            pbar(0.9, "Saving and closing destination file")
             writer.close()
+            pbar(1.0, "Finished")
         except e:
             print e
 #
