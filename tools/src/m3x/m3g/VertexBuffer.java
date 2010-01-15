@@ -432,6 +432,13 @@ public class VertexBuffer extends Object3D implements SectionSerializable
 
     public void setDefaultColor(List<Short> defaultColor)
     {
-        this.defaultColor.set(defaultColor);
+        if (defaultColor == null || defaultColor.size() == 0)
+        {
+            this.defaultColor.set(0xffffffff);
+        }
+        else
+        {
+            this.defaultColor.set(defaultColor);
+        }
     }
 }
