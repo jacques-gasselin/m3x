@@ -27,26 +27,40 @@
 
 package m3x.microedition.m3g.awt;
 
+import java.awt.FileDialog;
 import java.awt.Graphics;
 import java.awt.Menu;
 import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
+import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Node;
 import javax.microedition.m3g.Object3D;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.TransformController;
+import m3x.microedition.m3g.XMLLoader;
 
 /**
  * @author jgasseli
  */
 public class FileViewer extends BaseFrame
 {
+    private final FileViewerCanvas canvas;
+    
     private final class FileViewerCanvas extends GLCanvas
             implements Runnable
     {
@@ -98,9 +112,11 @@ public class FileViewer extends BaseFrame
                 g3d.clear(background);
 
                 transform.setIdentity();
-                if (roots != null)
+                //copy to avoid concurrency issues
+                final Object3D[] rootsArray = this.roots;
+                if (rootsArray != null)
                 {
-                    for (Object3D root : roots)
+                    for (Object3D root : rootsArray)
                     {
                         if (root instanceof Node)
                         {
@@ -136,6 +152,49 @@ public class FileViewer extends BaseFrame
         }
     }
 
+    private void openAction()
+    {
+        FileDialog fd = new FileDialog(this, "", FileDialog.LOAD);
+        fd.setVisible(true);
+
+        final String filename = fd.getFile();
+        if (filename != null)
+        {
+            final File file = new File(fd.getDirectory(), filename);
+            try
+            {
+                InputStream stream = new FileInputStream(file);
+                if (filename.endsWith("m3g"))
+                {
+                    //probably a binary file
+                    canvas.setRoots(Loader.load(stream));
+                }
+                else
+                {
+                    canvas.setRoots(XMLLoader.load(stream));
+                }
+                stream.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private final void initFileMenu(Menu menu)
+    {
+        MenuItem openItem = new MenuItem("Open",
+                new MenuShortcut(KeyEvent.VK_O));
+        openItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                openAction();
+            }
+        });
+        menu.add(openItem);
+    }
+
     private final void initMenu()
     {
         MenuBar menuBar = getMenuBar();
@@ -147,12 +206,14 @@ public class FileViewer extends BaseFrame
 
         Menu fileMenu = new Menu("File");
         menuBar.add(fileMenu);
+        initFileMenu(fileMenu);
     }
 
     FileViewer()
     {
         super("FileViewer");
-        add(new FileViewerCanvas());
+        canvas = new FileViewerCanvas();
+        add(canvas);
 
         initMenu();
     }
