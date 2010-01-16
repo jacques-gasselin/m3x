@@ -931,7 +931,8 @@ class M3XConverter(object):
         indexBuffers = []
         for submeshIndex, components in enumerate(appearanceComponents):
             faces = facesByAppearanceComponents[components]
-            submeshTris = []
+            submeshTriStrips = []
+            stripLengths = []
             for face in faces:
                 #get the indices
                 faceIndices = []
@@ -949,21 +950,31 @@ class M3XConverter(object):
                     else:
                         uv = None
                     faceIndices.append(vseq.getIndex(pos, norm, col, uv))
-                #triangulate and add
-                for i in xrange(len(faceIndices) - 2):
-                    submeshTris.extend(faceIndices[i:i+3])
+                #Make TriangleStripArrays
+                if (len(faceIndices) == 3):
+                    submeshTriStrips.extend(faceIndices)
+                    stripLengths.append(3)
+                else: #len is 4
+                    #triangulate and add, converting to backward Z with CCW winding
+                    submeshTriStrips.append(faceIndices[0])
+                    submeshTriStrips.append(faceIndices[1])
+                    submeshTriStrips.append(faceIndices[3])
+                    submeshTriStrips.append(faceIndices[2])
+                    stripLengths.append(4)
             if version == 1:
                 #Make TriangleStripArrays
                 #TODO clean this up, it is a naive solution
                 #triangles could be merged
-                lengths = [3] * (len(submeshTris) / 3)
                 indexBuffer = TriangleStripArray(mesh.name + "-submesh%d" % submeshIndex)
-                indexBuffer.setIndices(submeshTris)
-                indexBuffer.setLengths(lengths)
+                indexBuffer.setIndices(submeshTriStrips)
+                indexBuffer.setLengths(stripLengths)
             else:
                 #Make plain IndexBuffers in TRIANGLES mode
+                #TODO clean this up, it is a naive solution
+                #triangles could be merged
                 indexBuffer = IndexBuffer(mesh.name + "-submesh%d" % submeshIndex, IndexBuffer.TRIANGLES)
-                indexBuffer.setIndices(submeshTris)
+                indexBuffer.setIndices(submeshTriStrips)
+                indexBuffer.setLengths(stripLengths)
             indexBuffers.append(indexBuffer)
 
         vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")

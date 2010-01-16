@@ -83,12 +83,16 @@ public final class XMLLoader
     public static final Object3D[] load(Reader reader)
         throws IOException
     {
+        final m3x.m3g.Object3D[] binRoots;
+
         //deserialise XML stream
-        final m3x.xml.Deserializer xmlDeserializer = new m3x.xml.Deserializer();
-        final m3x.xml.M3G xmlRoot = xmlDeserializer.deserialize(reader);
-        //convert to binary
-        final m3x.m3g.Object3D[] binRoots = 
-                m3x.translation.m3g.XmlToBinaryTranslator.convertRoot(xmlRoot);
+        {
+            final m3x.xml.Deserializer xmlDeserializer = new m3x.xml.Deserializer();
+            final m3x.xml.M3G xmlRoot = xmlDeserializer.deserialize(reader);
+            //convert to binary
+            binRoots = m3x.translation.m3g.XmlToBinaryTranslator.convertRoot(xmlRoot);
+        }
+        
         final PipedOutputStream outstream = new PipedOutputStream();
         final PipedInputStream instream = new PipedInputStream(outstream);
         //save to pipe
@@ -97,13 +101,17 @@ public final class XMLLoader
         //allow the conversion to get a head start
         try
         {
-            Thread.sleep(5);
+            Thread.sleep(50);
         }
         catch (InterruptedException e)
         {
             e.printStackTrace();
         }
         //load from the pipe
-        return Loader.load(instream);
+        Object3D[] ret = Loader.load(instream);
+        //close the pipe
+        instream.close();
+
+        return ret;
     }
 }

@@ -27,6 +27,7 @@
 
 package m3x.xml;
 
+import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -51,18 +52,20 @@ import org.xml.sax.SAXParseException;
  */
 public final class Deserializer
 {
-    private static Unmarshaller unmarshaller;
+    private static Schema validatingSchema;
+    private static JAXBContext context;
+    private Unmarshaller unmarshaller;
 
     /**
-     * Tries to initialize the xml unmashaller if it is not already initialized.
+     * Tries to initialize the xml context if it is not already initialized.
      * @throws NoClassDefFoundError if unable to receive a context to the m3x.xml
      * databinding schema.
-     * @throws IllegalStateException if the context can not create the unmarshaller.
+     * @throws IllegalStateException if the context can not be created.
      */
-    private static final void initializeOnce()
+    private static final void createContext()
     {
         //skip if already initialized
-        if (unmarshaller != null)
+        if (context != null)
         {
             return;
         }
@@ -71,7 +74,6 @@ public final class Deserializer
         //load the clases needed by the context.
         final ClassLoader clsLoader = Deserializer.class.getClassLoader();
 
-        JAXBContext context = null;
         try
         {
             context = JAXBContext.newInstance("m3x.xml", clsLoader);
@@ -83,6 +85,32 @@ public final class Deserializer
                     "The m3x.xml classes may be missing from your distribution.");
         }
 
+        if (false)
+        {
+            //get a validating schema
+            //load it from the packaged schema
+            final SchemaFactory schemaFactory = SchemaFactory.newInstance(
+                XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            final Source schemaSource = new StreamSource(
+                new BufferedInputStream(
+                    m3x.xml.M3G.class.getResourceAsStream("m3x.xsd")));
+            try
+            {
+                validatingSchema = schemaFactory.newSchema(schemaSource);
+            }
+            catch (SAXException e)
+            {
+                e.printStackTrace();
+                throw new IllegalStateException(
+                    "unable to load the m3x schema");
+            }
+        }
+    }
+
+    private final void createUnmarshaller()
+    {
+        createContext();
+        
         try
         {
             unmarshaller = context.createUnmarshaller();
@@ -95,40 +123,19 @@ public final class Deserializer
         }
 
         //set the validation handler
-        try
+        if (validatingSchema != null)
         {
-            unmarshaller.setEventHandler(new ValidationHandler());
-        }
-        catch (JAXBException e)
-        {
-            e.printStackTrace();
-            unmarshaller = null;
-            throw new IllegalStateException(
-                "can't set validation handler");
-        }
-
-        //set a validating schema
-        if (true)
-        {
-            Schema validatingSchema = unmarshaller.getSchema();
-            if (validatingSchema == null)
+            try
             {
-                //load it from the packaged schema
-                SchemaFactory schemaFactory = SchemaFactory.newInstance(
-                    XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Source schemaSource = new StreamSource(
-                    m3x.xml.M3G.class.getResourceAsStream("m3x.xsd"));
-                try
-                {
-                    validatingSchema = schemaFactory.newSchema(schemaSource);
-                    unmarshaller.setSchema(validatingSchema);
-                }
-                catch (SAXException e)
-                {
-                    e.printStackTrace();
-                    throw new IllegalStateException(
-                        "unable to load the m3x schema");
-                }
+                unmarshaller.setEventHandler(new ValidationHandler());
+                unmarshaller.setSchema(validatingSchema);
+            }
+            catch (JAXBException e)
+            {
+                e.printStackTrace();
+                unmarshaller = null;
+                throw new IllegalStateException(
+                    "can't set validation handler");
             }
         }
     }
@@ -138,7 +145,7 @@ public final class Deserializer
      */
     public Deserializer()
     {
-        initializeOnce();
+        createUnmarshaller();
     }
 
     public static final class ValidationException extends RuntimeException
@@ -227,7 +234,12 @@ public final class Deserializer
         {
             throw new NullPointerException("reader is null");
         }
-        
+
+        if (!(reader instanceof java.io.BufferedReader))
+        {
+            reader = new java.io.BufferedReader(reader);
+        }
+
         try
         {
             return (m3x.xml.M3G) unmarshaller.unmarshal(reader);
