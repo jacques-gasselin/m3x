@@ -45,6 +45,7 @@ import Blender.BGL as GL
 import sys
 import re
 
+
 class Object3D(object):
     def __init__(self, idValue):
         object.__init__(self)
@@ -377,30 +378,32 @@ class Image2D(ImageBase):
         self.format = format
         self.width = width
         self.height = height
-        self.pixels = pixels[:]
+        self.pixels = pixels
         
     def createImage2D(idValue, bimage):
         im = Image2D("Image2D-" + idValue)
         width, height = bimage.size
-        if bimage.depth == 8:
+        depth = bimage.depth
+        if depth == 8:
             #LUMINANCE ?
             pass
-        if bimage.depth == 16:
+        if depth == 16:
             #LUMINANCE_ALPHA ?
             pass
-        if bimage.depth in (24, 32):
+        if depth in (24, 32):
             #RGB
-            if bimage.depth == 24:
+            if depth == 24:
                 format = ImageBase.RGB
                 bpp = 3
-            elif bimage.depth == 32:
+            elif depth == 32:
                 format = ImageBase.RGBA
                 bpp = 4
+            getPixel = bimage.getPixelI
             pixels = [0] * (width * height * bpp)
             for y in xrange(height):
                 yOffset = width * bpp * y
                 for x in xrange(width):
-                    rgba = bimage.getPixelI(x, y)
+                    rgba = getPixel(x, y)
                     offset = x * bpp + yOffset
                     pixels[offset:offset + bpp] = rgba[:bpp]
             im.set(format, width, height, pixels)
@@ -803,21 +806,23 @@ class Serializer(object):
         self.tags.append(name)
         indent = self.indents[-1]
         self.indents.append(indent + self.addindent)
-        self.writer.write("%s<%s" % (indent, name))
+        write = self.writer.write
+        write("%s<%s" % (indent, name))
         if attr:
             for n, v in attr.iteritems():
                 if v is not None:
-                    self.writer.write(" %s=\"%s\"" % (n, str(v)))
-        self.writer.write(">\n")
+                    write(" %s=\"%s\"" % (n, str(v)))
+        write(">\n")
 
     def closedTag(self, name, attr = None):
         indent = self.indents[-1]
-        self.writer.write("%s<%s" % (indent, name))
+        write = self.writer.write
+        write("%s<%s" % (indent, name))
         if attr:
             for n, v in attr.iteritems():
                 if v is not None:
-                    self.writer.write(" %s=\"%s\"" % (n, str(v)))
-        self.writer.write(" />\n")
+                    write(" %s=\"%s\"" % (n, str(v)))
+        write(" />\n")
         
     def endTag(self):
         name = self.tags.pop()
@@ -827,7 +832,11 @@ class Serializer(object):
 
     def writeDataTag(self, name, data):
         indent = self.indents[-1]
-        self.writer.write("%s<%s>%s</%s>\n" % (indent, name, " ".join(map(str, data)), name))
+        write = self.writer.write
+        write("%s<%s>" % (indent, name))
+        strData = (str(x) for x in data)
+        write(" ".join(strData))
+        write("</%s>\n" % name)
 
     def writeReference(self, object):
         if not object:
@@ -859,6 +868,14 @@ class M3XConverter(object):
 
     def setVersion(self, version):
         self.version = version
+
+    def clearCaches(self):
+        AppearanceBase.SHARED_BY_MATERIAL = {}
+        CompositingMode.SHARED_MODES = {}
+        ImageBase.SHARED_IMAGES = {}
+        PolygonMode.SHARED_MODES = {}
+        Texture.SHARED_TEXTURES = {}
+
 
     def getFaceCompositingMode(self, face, hasPerFaceUV):
         modes = Blender.Mesh.FaceTranspModes
@@ -943,10 +960,11 @@ class M3XConverter(object):
                         col = tuple(face.col[i])
                     else:
                         col = None
-                    if hasPerVertexUV:
-                        uv = tuple(v.uvco)
-                    elif hasPerFaceUV:
+                    #per face goes first
+                    if hasPerFaceUV:
                         uv = tuple(face.uv[i])
+                    elif hasPerVertexUV:
+                        uv = tuple(v.uvco)
                     else:
                         uv = None
                     faceIndices.append(vseq.getIndex(pos, norm, col, uv))
@@ -1093,6 +1111,8 @@ class M3XConverter(object):
 
 
     def convert(self, objectsToConvert):
+        #clear all caches from previous conversions
+        self.clearCaches()
         #sort the objects into root first order
         #identify the non-root set
         closedSet = set()

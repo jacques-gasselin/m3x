@@ -44,6 +44,7 @@ public class RendererOpenGL2 extends Renderer
     private int height;
 
     private boolean supportsAnisotropy;
+    private boolean supportsS3TC;
     private float maxAnisotropy;
     private int maxTextureSize;
     private int maxTextureUnits;
@@ -97,6 +98,9 @@ public class RendererOpenGL2 extends Renderer
     {
         supportsAnisotropy = gl.isExtensionAvailable(
                 "GL_EXT_texture_filter_anisotropic");
+        supportsS3TC = gl.isExtensionAvailable(
+                "GL_EXT_texture_compression_s3tc");
+        
         if (supportsAnisotropy)
         {
             maxAnisotropy = glGetFloat(gl, GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
@@ -863,16 +867,42 @@ public class RendererOpenGL2 extends Renderer
                     }
                     case ImageBase.RGB:
                     {
-                        glInternalFormat = lossless ?
-                            GL.GL_RGB : GL.GL_COMPRESSED_RGB;
+                        if (lossless)
+                        {
+                            glInternalFormat = GL.GL_RGB;
+                        }
+                        else
+                        {
+                            if (renderer.supportsS3TC)
+                            {
+                                glInternalFormat = GL.GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                            }
+                            else
+                            {
+                                glInternalFormat = GL.GL_COMPRESSED_RGB;
+                            }
+                        }
                         glFormat = GL.GL_RGB;
                         glDataType = GL.GL_UNSIGNED_BYTE;
                         break;
                     }
                     case ImageBase.RGBA:
                     {
-                        glInternalFormat = lossless ?
-                            GL.GL_RGBA : GL.GL_COMPRESSED_RGBA;
+                        if (lossless)
+                        {
+                            glInternalFormat = GL.GL_RGBA;
+                        }
+                        else
+                        {
+                            if (renderer.supportsS3TC)
+                            {
+                                glInternalFormat = GL.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                            }
+                            else
+                            {
+                                glInternalFormat = GL.GL_COMPRESSED_RGBA;
+                            }
+                        }
                         glFormat = GL.GL_RGBA;
                         glDataType = GL.GL_UNSIGNED_BYTE;
                         break;
@@ -911,30 +941,46 @@ public class RendererOpenGL2 extends Renderer
                 final int width = image.getWidth();
                 final int height = image.getHeight();
 
+                //find the start level
+                int startLevel = 0;
+                final int maxSize = renderer.maxTextureSize;
+                for (; startLevel < numLevels; ++startLevel)
+                {
+                    final int w = Math.max(1, width >> startLevel);
+                    final int h = Math.max(1, height >> startLevel);
+                    if (w <= maxSize && h <= maxSize)
+                    {
+                        break;
+                    }
+                }
+
+
                 //prep the texture objects
                 if (firstUpload)
                 {
-                    for (int level = 0; level < numLevels; ++level)
+                    for (int level = startLevel; level < numLevels; ++level)
                     {
+                        final int w = Math.max(1, width >> level);
+                        final int h = Math.max(1, height >> level);
                         gl.glTexImage2D(GL.GL_TEXTURE_2D,
                                 level, glInternalFormat,
-                                Math.max(1, width >> level),
-                                Math.max(1, height >> level),
+                                w, h,
                                 0, glFormat, glDataType, null);
                     }
                 }
 
                 //upload the data, if there is any
                 final int face = 0;
-                for (int level = 0; level < numLevels; ++level)
+                for (int level = startLevel; level < numLevels; ++level)
                 {
                     if (image.hasLevelBuffer(face, level))
                     {
                         final ByteBuffer buffer = image.getLevelBuffer(face, level);
+                        final int w = Math.max(1, width >> level);
+                        final int h = Math.max(1, height >> level);
                         gl.glTexSubImage2D(GL.GL_TEXTURE_2D,
                                 level, 0, 0,
-                                Math.max(1, width >> level),
-                                Math.max(1, height >> level),
+                                w, h,
                                 glFormat, glDataType, buffer.rewind());
                     }
                 }
