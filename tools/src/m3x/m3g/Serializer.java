@@ -27,6 +27,7 @@
 
 package m3x.m3g;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import m3x.m3g.primitives.Header;
 import m3x.m3g.primitives.Serializable;
@@ -313,10 +314,7 @@ public class Serializer implements DataOutput
         else
         {
             out.writeInt(v.length);
-            for (int i = 0; i < v.length; ++i)
-            {
-                out.writeByte(v[i]);
-            }
+            out.write(v, 0, v.length);
         }
     }
 

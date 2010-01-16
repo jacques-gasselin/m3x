@@ -547,6 +547,24 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_COMPOSITINGMODE:
+                    {
+                        CompositingMode obj = new CompositingMode();
+
+                        loadCompositingMode(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_GROUP:
+                    {
+                        Group obj = new Group();
+
+                        loadGroup(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     case TYPE_IMAGE2D:
                     {
                         Image2D obj = new Image2D();
@@ -676,6 +694,56 @@ public final class Loader
             for (int i = 0; i < textureCount; ++i)
             {
                 obj.setTexture(i, (Texture2D) readReference());
+            }
+        }
+
+        private final void loadCompositingMode(CompositingMode obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            obj.setDepthTestEnable(readBoolean());
+            obj.setDepthWriteEnable(readBoolean());
+            if (isFileFormat1())
+            {
+                obj.setColorWriteEnable(readBoolean());
+                obj.setAlphaWriteEnable(readBoolean());
+            }
+
+            obj.setBlending(readUnsignedByte());
+            final float byteToUniform = 1.0f / 255;
+            obj.setAlphaThreshold(readUnsignedByte() * byteToUniform);
+            final float factor = readFloat();
+            final float units = readFloat();
+            obj.setDepthOffset(factor, units);
+
+            if (!isFileFormat1())
+            {
+                obj.setDepthTest(readUnsignedShort());
+                obj.setAlphaTest(readUnsignedShort());
+                obj.setBlender((Blender) readReference());
+                obj.setStencil((Stencil) readReference());
+                obj.setColorWriteMask(readRGBAasARGB());
+            }
+        }
+
+        private final void loadGroup(Group obj)
+            throws IOException
+        {
+            loadNode(obj);
+
+            final int childCount = readInt();
+            for (int i = 0; i < childCount; ++i)
+            {
+                obj.addChild((Node) readReference());
+            }
+
+            if (!isFileFormat1())
+            {
+                final boolean enable = readBoolean();
+                final float hysteresis = readFloat();
+                obj.setLODEnable(enable, hysteresis);
+                obj.setLODOffset(readFloat());
             }
         }
 

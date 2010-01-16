@@ -27,6 +27,7 @@
 
 package m3x.m3g.primitives;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -222,12 +223,13 @@ public class Section
         ByteArrayOutputStream objectStream = new ByteArrayOutputStream();
         serialiser.pushOutputStream(objectStream);
         {
-            ByteArrayOutputStream perObjectStream = new ByteArrayOutputStream();
+            final ByteArrayOutputStream perObjectStream = new ByteArrayOutputStream();
+            final BufferedOutputStream bufferedPerObjectStream = new BufferedOutputStream(perObjectStream);
             //wrap each object in a SectionObject
             for (SectionSerializable obj : objects)
             {
                 perObjectStream.reset();
-                serialiser.pushOutputStream(perObjectStream);
+                serialiser.pushOutputStream(bufferedPerObjectStream);
                 obj.serialise(serialiser);
                 serialiser.popOutputStream();
                 perObjectStream.flush();

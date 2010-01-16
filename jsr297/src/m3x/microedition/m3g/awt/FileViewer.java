@@ -104,7 +104,7 @@ public class FileViewer extends BaseFrame
                 g3d.bindTarget(renderTarget);
                 camera.setPerspective(50,
                         getWidth() / (float)getHeight(),
-                        0.1f, 10.0f);
+                        1.0f, 100.0f);
                 g3d.setViewport(0, 0, getWidth(), getHeight());
                 cameraController.update(1.0 / getRefreshRate());
                 g3d.setCamera(camera, cameraController.getTransform());

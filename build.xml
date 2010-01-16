@@ -59,7 +59,12 @@
             description="runs the run target in all the subfolders">
         
     </target>
-    
+
+    <target name="profile"
+            description="runs the profile target in all the subfolders">
+
+    </target>
+
     <target name="test"
             description="runs the test target in all the subfolders">
         <echo>*** Testing tools ***</echo>

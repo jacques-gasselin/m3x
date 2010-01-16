@@ -372,6 +372,46 @@ public abstract class ImageBase extends Object3D
                         dst.rewind();
                         break;
                     }
+                    case RGBA:
+                    {
+                        final int bpp = 4;
+                        //convolve with a 2D box filter
+                        for (int dstY = 0; dstY < dstHeight; ++dstY)
+                        {
+                            for (int dstX = 0; dstX < dstWidth; ++dstX)
+                            {
+                                float r = 0;
+                                float g = 0;
+                                float b = 0;
+                                float a = 0;
+
+                                final int srcX = dstX * filterWidth;
+                                final int srcY = dstY * filterHeight;
+                                for (int j = 0; j < filterHeight; ++j)
+                                {
+                                    for (int i = 0; i < filterWidth; ++i)
+                                    {
+                                        //accumulate
+                                        src.position((srcY + j) * srcStride
+                                                + (srcX + i) * bpp);
+                                        r += (src.get() & 0xff) * byteToUniform;
+                                        g += (src.get() & 0xff) * byteToUniform;
+                                        b += (src.get() & 0xff) * byteToUniform;
+                                        a += (src.get() & 0xff) * byteToUniform;
+                                    }
+                                }
+
+                                dst.position(dstY * dstStride + dstX * bpp);
+                                dst.put((byte) Math.round(r * convolutionToByte));
+                                dst.put((byte) Math.round(g * convolutionToByte));
+                                dst.put((byte) Math.round(b * convolutionToByte));
+                                dst.put((byte) Math.round(a * convolutionToByte));
+                            }
+                        }
+                        src.rewind();
+                        dst.rewind();
+                        break;
+                    }
                     default:
                     {
                         throw new UnsupportedOperationException();
