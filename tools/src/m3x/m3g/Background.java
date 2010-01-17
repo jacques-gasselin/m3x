@@ -167,6 +167,11 @@ public class Background extends Object3D
         this.color.set(color);
     }
 
+    public void setColor(byte[] color)
+    {
+        this.color.set(color);
+    }
+
     public void setColor(int argb)
     {
         this.color.set(argb);

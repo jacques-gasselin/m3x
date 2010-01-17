@@ -153,6 +153,11 @@ public class Fog extends Object3D
         this.color.set(color);
     }
 
+    public void setColor(byte[] color)
+    {
+        this.color.set(color);
+    }
+
     public void setColor(int rgb)
     {
         this.color.set(rgb);

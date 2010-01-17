@@ -152,4 +152,16 @@ public class ColorRGB implements Serializable
         set(color.get(0), color.get(1), color.get(2));
     }
 
+    public void set(byte[] color)
+    {
+        if (color == null)
+        {
+            throw new NullPointerException("color is null");
+        }
+        if (color.length < 3)
+        {
+            throw new IllegalArgumentException("color.length < 3");
+        }
+        set(color[0] & 0xff, color[1] & 0xff, color[2] & 0xff);
+    }
 }

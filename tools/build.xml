@@ -55,7 +55,7 @@
                 <include name="*.java"/>
                 <exclude name="Deserializer.java"/>
                 <exclude name="Serializer.java"/>
-                <exclude name="StringInterner.java"/>
+                <exclude name="TypeConverter.java"/>
             </produces>
         </xjc>
         <echo>XJC on collada schema</echo>

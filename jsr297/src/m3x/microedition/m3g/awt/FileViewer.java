@@ -195,6 +195,19 @@ public class FileViewer extends BaseFrame
         menu.add(openItem);
     }
 
+    private final void initWindowMenu(Menu menu)
+    {
+        MenuItem toggleFullscreenItem = new MenuItem("Toggle Fullscreen",
+                new MenuShortcut(KeyEvent.VK_F));
+        toggleFullscreenItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                toggleFullscreen();
+            }
+        });
+        menu.add(toggleFullscreenItem);
+    }
+
     private final void initMenu()
     {
         MenuBar menuBar = getMenuBar();
@@ -207,6 +220,10 @@ public class FileViewer extends BaseFrame
         Menu fileMenu = new Menu("File");
         menuBar.add(fileMenu);
         initFileMenu(fileMenu);
+
+        Menu windowMenu = new Menu("Window");
+        menuBar.add(windowMenu);
+        initWindowMenu(windowMenu);
     }
 
     FileViewer()

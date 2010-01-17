@@ -190,6 +190,14 @@ public class Texture2D extends Transformable implements SectionSerializable
         }
     }
 
+    public void setBlendColor(byte[] blendColor)
+    {
+        if (blendColor != null && blendColor.length > 0)
+        {
+            this.blendColor.set(blendColor);
+        }
+    }
+
     public void setBlending(int func)
     {
         this.blending = func;

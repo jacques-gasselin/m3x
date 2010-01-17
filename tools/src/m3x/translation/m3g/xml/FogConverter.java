@@ -49,8 +49,8 @@ public class FogConverter extends Object3DConverter
     {
         super.setFromXML(translator, to, from);
 
-        final List<Short> xmlColor = from.getColor();
-        if (xmlColor == null || xmlColor.size() == 0)
+        final byte[] xmlColor = from.getColor();
+        if (xmlColor == null || xmlColor.length == 0)
         {
             //defaults to RGB(0, 0, 0)
             to.setColor(0x000000);

@@ -45,14 +45,6 @@
             ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         </xs:documentation>
-        <xs:appinfo>
-            <!--Intern all strings-->
-            <jaxb:globalBindings>
-                <jaxb:javaType name="String"
-                               xmlType="xs:string"
-                               parseMethod="m3x.xml.StringInterner.intern"/>
-            </jaxb:globalBindings>
-        </xs:appinfo>
     </xs:annotation>
     <!-- Simple types -->
     <xs:simpleType name="Byte">
@@ -93,9 +85,6 @@
             <xs:minExclusive value="0"/>
         </xs:restriction>
     </xs:simpleType>
-    <xs:simpleType name="String">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
     <xs:simpleType name="Boolean">
         <xs:restriction base="xs:boolean"/>
     </xs:simpleType>
@@ -115,12 +104,28 @@
         <xs:list itemType="Byte"/>
     </xs:simpleType>
     <xs:simpleType name="UByteList">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:javaType
+                    name="byte[]"
+                    parseMethod="m3x.xml.TypeConverter.parseUByteArray"
+                    printMethod="m3x.xml.TypeConverter.printUByteArray"/>
+            </xs:appinfo>
+        </xs:annotation>
         <xs:list itemType="UByte"/>
     </xs:simpleType>
     <xs:simpleType name="Float32List">
         <xs:list itemType="Float32"/>
     </xs:simpleType>
     <xs:simpleType name="UInt16List">
+        <xs:annotation>
+            <xs:appinfo>
+                <!--jaxb:javaType
+                    name="short[]"
+                    parseMethod="m3x.xml.TypeConverter.parseUShortArray"
+                    printMethod="m3x.xml.TypeConverter.printUShortArray"/-->
+            </xs:appinfo>
+        </xs:annotation>
         <xs:list itemType="UInt16"/>
     </xs:simpleType>
     <xs:simpleType name="Int16List">
@@ -173,7 +178,7 @@
                 The allowed properties for an animation track to target
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="String">
+        <xs:restriction base="xs:string">
             <xs:enumeration value="ALPHA">
                 <xs:annotation>
                     <xs:documentation>
@@ -233,7 +238,7 @@
                 The allowed modes for the repetition of the image in a background element
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="String">
+        <xs:restriction base="xs:string">
             <xs:enumeration value="BORDER">
                 <xs:annotation>
                     <xs:documentation>
@@ -474,10 +479,10 @@
                 </xs:element>
             </xs:sequence>
             <xs:attribute name="version"
-                          type="String"
+                          type="xs:string"
                           fixed="1.0"/>
             <xs:attribute name="author"
-                          type="String"/>
+                          type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="section">

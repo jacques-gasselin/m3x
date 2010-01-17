@@ -129,4 +129,15 @@ public class ColorRGBA extends ColorRGB implements Serializable
         }
         this.a = clampColor(color.get(3) & 0xff);
     }
+
+    @Override
+    public void set(byte[] color)
+    {
+        super.set(color);
+        if (color.length < 4)
+        {
+            throw new IllegalArgumentException("color.length < 4");
+        }
+        this.a = clampColor(color[3] & 0xff);
+    }
 }

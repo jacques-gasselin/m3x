@@ -119,9 +119,21 @@ public class BaseFrame extends Frame
         DisplayMode dm = gd.getDisplayMode();
         setRefreshRate(dm);
 
+        final boolean wasDisplayable = isDisplayable();
+        if (wasDisplayable)
+        {
+            dispose();
+        }
         gd.setFullScreenWindow(null);
+        if (isUndecorated())
+        {
+            setUndecorated(false);
+        }
         setSize(windowedWidth, windowedHeight);
-        setUndecorated(false);
+        if (wasDisplayable)
+        {
+            setVisible(true);
+        }
 
         isFullscreen = false;
     }
@@ -131,6 +143,8 @@ public class BaseFrame extends Frame
         DisplayMode dm = gd.getDisplayMode();
         setRefreshRate(dm);
 
+        final boolean wasDisplayable = isDisplayable();
+
         try
         {
             //try setting fullscreen mode
@@ -139,9 +153,20 @@ public class BaseFrame extends Frame
                 //save the dimensions for later
                 windowedWidth = getWidth();
                 windowedHeight = getHeight();
+                if (wasDisplayable)
+                {
+                    dispose();
+                }
+                if (!isUndecorated())
+                {
+                    setUndecorated(true);
+                }
                 setSize(dm.getWidth(), dm.getHeight());
-                setUndecorated(true);
                 gd.setFullScreenWindow(this);
+                if (wasDisplayable)
+                {
+                    setVisible(true);
+                }
                 isFullscreen = true;
             }
         }
@@ -149,8 +174,11 @@ public class BaseFrame extends Frame
         {
             //unable to set full screen
             gd.setFullScreenWindow(null);
+            if (isUndecorated())
+            {
+                setUndecorated(false);
+            }
             setSize(windowedWidth, windowedHeight);
-            setUndecorated(false);
         }
     }
 

@@ -31,7 +31,7 @@
             <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="demo.path"/>
             <!--jvmarg value="-Xdock:name=${run.class}"/-->
-            <jvmarg value="-Dsun.java2d.opengl=true"/>
+            <!--jvmarg value="-Dsun.java2d.opengl=true"/-->
             <jvmarg value="-Dsun.awt.noerasebackground=true"/>
         </java>
     </target>
@@ -66,7 +66,7 @@
             <!--jvmarg value="-Xdock:name=${run.class}"/-->
             <jvmarg value="-server"/>
             <jvmarg value="-Xmx1024m"/>
-            <jvmarg value="-Dsun.java2d.opengl=true"/>
+            <!--jvmarg value="-Dsun.java2d.opengl=true"/-->
             <jvmarg value="-Dsun.awt.noerasebackground=true"/>
         </java>
     </target>
