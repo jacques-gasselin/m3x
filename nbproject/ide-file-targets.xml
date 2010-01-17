@@ -61,13 +61,34 @@
     <target name="run-selected-file-in-src">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
-            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <env key="DYLD_LIBRARY_PATH"
+                path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <classpath refid="src.path"/>
             <!--jvmarg value="-Xdock:name=${run.class}"/-->
             <jvmarg value="-server"/>
             <jvmarg value="-Xmx1024m"/>
             <!--jvmarg value="-Dsun.java2d.opengl=true"/-->
             <jvmarg value="-Dsun.awt.noerasebackground=true"/>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="debug-selected-file-in-src">
+        <fail unless="debug.class">Must set property 'debug.class'</fail>
+        <nbjpdastart addressproperty="jpda.address" name="m3x" transport="dt_socket">
+            <classpath refid="src.path"/>
+        </nbjpdastart>
+        <java classname="${debug.class}" fork="true">
+            <env key="DYLD_LIBRARY_PATH"
+                path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <classpath refid="src.path"/>
+            <!--jvmarg value="-Xdock:name=${run.class}"/-->
+            <jvmarg value="-server"/>
+            <jvmarg value="-Xmx1024m"/>
+            <!--jvmarg value="-Dsun.java2d.opengl=true"/-->
+            <jvmarg value="-Dsun.awt.noerasebackground=true"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
         </java>
     </target>
 </project>

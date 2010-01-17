@@ -43,14 +43,14 @@ public abstract class IndexBufferConverter extends Object3DConverter
 
         //convert indices to implicit or explicit
         //depending on the index list.
-        List<Integer> indexList = from.getIndices();
+        final short[] indexList = from.getIndices();
         int maxIndex = 0;
-        final int indexCount = indexList.size();
+        final int indexCount = indexList.length;
         final int[] indices = new int[indexCount];
         boolean allImplicit = true;
         for (int i = 0; i < indexCount; ++i)
         {
-            final int index = indexList.get(i);
+            final int index = indexList[i] & 0xffff;
             maxIndex = Math.max(index, maxIndex);
             indices[i] = index;
             

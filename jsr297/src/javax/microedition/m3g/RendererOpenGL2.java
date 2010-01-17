@@ -984,6 +984,7 @@ public class RendererOpenGL2 extends Renderer
                                 glFormat, glDataType, buffer.rewind());
                     }
                 }
+                needsUpdate = false;
             }
         }
 

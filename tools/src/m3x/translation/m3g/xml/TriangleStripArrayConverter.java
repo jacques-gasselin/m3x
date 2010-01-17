@@ -49,12 +49,12 @@ public class TriangleStripArrayConverter extends IndexBufferConverter
     {
         super.setFromXML(translator, to, from);
 
-        List<Integer> stripLengthList = from.getStripLengths();
-        final int stripLengthCount = stripLengthList.size();
+        final short[] stripLengthList = from.getStripLengths();
+        final int stripLengthCount = stripLengthList.length;
         final int[] stripLengths = new int[stripLengthCount];
         for (int i = 0; i < stripLengthCount; ++i)
         {
-            stripLengths[i] = stripLengthList.get(i);
+            stripLengths[i] = stripLengthList[i] & 0xffff;
         }
         to.setStripLengths(stripLengths);
 

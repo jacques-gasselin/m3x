@@ -120,10 +120,10 @@
     <xs:simpleType name="UInt16List">
         <xs:annotation>
             <xs:appinfo>
-                <!--jaxb:javaType
+                <jaxb:javaType
                     name="short[]"
                     parseMethod="m3x.xml.TypeConverter.parseUShortArray"
-                    printMethod="m3x.xml.TypeConverter.printUShortArray"/-->
+                    printMethod="m3x.xml.TypeConverter.printUShortArray"/>
             </xs:appinfo>
         </xs:annotation>
         <xs:list itemType="UInt16"/>
