@@ -27,7 +27,8 @@ public final class TypeConverter
         {
             final int length = value.length();
             int integer = 0;
-            boolean inInterger = false;
+            boolean negative = false;
+            boolean inInteger = false;
             final int radix = this.digitRadix;
             for (int i = 0; i <= length; ++i)
             {
@@ -43,24 +44,41 @@ public final class TypeConverter
                 final int digit = Character.digit(ch, radix);
                 if (digit != -1)
                 {
-                    if (inInterger)
+                    if (inInteger)
                     {
                         integer = integer * radix + digit;
                     }
                     else
                     {
                         integer = digit;
-                        inInterger = true;
+                        inInteger = true;
                     }
                 }
                 else
                 {
-                    if (inInterger)
+                    if (inInteger)
                     {
-                        write(integer);
-                        inInterger = false;
+                        if (negative)
+                        {
+                            write(-integer);
+                        }
+                        else
+                        {
+                            write(integer);
+                        }
+                        inInteger = false;
+                        negative = false;
                     }
-                    //otherwise keep skipping
+                    else if (ch == '-')
+                    {
+                        negative = true;
+                    }
+                    else
+                    {
+                        //otherwise keep skipping
+                        negative = false;
+                    }
+                    
                 }
             }
         }
@@ -73,11 +91,11 @@ public final class TypeConverter
         throw new UnsupportedOperationException();
     }
 
-    private static final class UByteParser extends IntegerParser
+    private static class ByteParser extends IntegerParser
     {
         private final ByteArrayOutputStream stream;
 
-        UByteParser(String value)
+        ByteParser(String value)
         {
             super(10);
             //estimate that the stream length is about half of the
@@ -86,9 +104,9 @@ public final class TypeConverter
         }
 
         @Override
-        final void write(int integer)
+        void write(int integer)
         {
-            stream.write(integer & 0xff);
+            stream.write(integer);
         }
 
         final byte[] toByteArray()
@@ -97,11 +115,64 @@ public final class TypeConverter
         }
     }
 
+    private static final class UByteParser extends ByteParser
+    {
+        UByteParser(String value)
+        {
+            super(value);
+        }
+
+        @Override
+        final void write(int integer)
+        {
+            super.write(integer & 0xff);
+        }
+    }
+
+    public static final byte[] parseByteArray(String value)
+    {
+        try
+        {
+            ByteParser parser = new ByteParser(value);
+            parser.parse(value);
+            return parser.toByteArray();
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            return null;
+        }
+    }
+
+    public static final String printByteArray(byte[] value)
+    {
+        final int length = value.length;
+        //estimate the string length as about 4 times as long as
+        //the value array
+        StringBuilder builder = new StringBuilder(length << 2);
+        builder.append(value[0]);
+        for (int i = 1; i < length; ++i)
+        {
+            builder.append(' ');
+            builder.append(value[i]);
+        }
+
+        return builder.toString();
+    }
+    
     public static final byte[] parseUByteArray(String value)
     {
-        UByteParser parser = new UByteParser(value);
-        parser.parse(value);
-        return parser.toByteArray();
+        try
+        {
+            UByteParser parser = new UByteParser(value);
+            parser.parse(value);
+            return parser.toByteArray();
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            return null;
+        }
     }
 
     public static final String printUByteArray(byte[] value)
@@ -120,11 +191,11 @@ public final class TypeConverter
         return builder.toString();
     }
 
-    private static final class UShortParser extends IntegerParser
+    private static class ShortParser extends IntegerParser
     {
         private final ShortBuffer buffer;
 
-        UShortParser(String value)
+        ShortParser(String value)
         {
             super(10);
             //estimate that the stream length is at most half of the
@@ -133,9 +204,9 @@ public final class TypeConverter
         }
 
         @Override
-        final void write(int integer)
+        void write(int integer)
         {
-            buffer.put((short)(integer & 0xffff));
+            buffer.put((short)integer);
         }
 
         final short[] toShortArray()
@@ -145,6 +216,40 @@ public final class TypeConverter
             sb.get(arr);
             return arr;
         }
+    }
+
+    private static final class UShortParser extends ShortParser
+    {
+        UShortParser(String value)
+        {
+            super(value);
+        }
+
+        @Override
+        final void write(int integer)
+        {
+            super.write(integer & 0xffff);
+        }
+    }
+
+    public static final short[] parseShortArray(String value)
+    {
+        try
+        {
+            ShortParser parser = new ShortParser(value);
+            parser.parse(value);
+            return parser.toShortArray();
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            return null;
+        }
+    }
+
+    public static final String printShortArray(short[] value)
+    {
+        throw new UnsupportedOperationException();
     }
 
     public static final short[] parseUShortArray(String value)
@@ -166,6 +271,7 @@ public final class TypeConverter
     {
         throw new UnsupportedOperationException();
     }
+
 
     public static final ShortBuffer parseShortBuffer(String value)
     {

@@ -101,6 +101,14 @@
     </xs:simpleType>
     <!-- Aggregate types -->
     <xs:simpleType name="ByteList">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:javaType
+                    name="byte[]"
+                    parseMethod="m3x.xml.TypeConverter.parseByteArray"
+                    printMethod="m3x.xml.TypeConverter.printByteArray"/>
+            </xs:appinfo>
+        </xs:annotation>
         <xs:list itemType="Byte"/>
     </xs:simpleType>
     <xs:simpleType name="UByteList">
@@ -129,6 +137,14 @@
         <xs:list itemType="UInt16"/>
     </xs:simpleType>
     <xs:simpleType name="Int16List">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:javaType
+                    name="short[]"
+                    parseMethod="m3x.xml.TypeConverter.parseShortArray"
+                    printMethod="m3x.xml.TypeConverter.printShortArray"/>
+            </xs:appinfo>
+        </xs:annotation>
         <xs:list itemType="Int16"/>
     </xs:simpleType>
     <xs:simpleType name="UInt31List">

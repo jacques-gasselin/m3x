@@ -27,7 +27,6 @@
 
 package m3x.translation.m3g.xml;
 
-import java.util.List;
 import m3x.translation.m3g.XmlToBinaryTranslator;
 
 /**
@@ -50,22 +49,26 @@ public class VertexArrayConverter extends Object3DConverter
         super.setFromXML(translator, to, from);
 
         final int componentCount = from.getComponentCount();
-        int componentType = 0;
 
-        List<? extends Number> values = null;
-        if (from.getByteComponents().size() > 0)
+        final byte[] byteComponents = from.getByteComponents();
+        final short[] shortComponents = from.getShortComponents();
+        if (byteComponents != null && byteComponents.length > 0)
         {
-            componentType = m3x.m3g.VertexArray.BYTE;
-            values = from.getByteComponents();
+            final int vertexCount = byteComponents.length / componentCount;
+            to.setSizeAndType(vertexCount, componentCount,
+                    m3x.m3g.VertexArray.BYTE);
+            to.set(0, vertexCount, byteComponents);
         }
-        if (from.getShortComponents().size() > 0)
+        else if (shortComponents != null && shortComponents.length > 0)
         {
-            componentType = m3x.m3g.VertexArray.SHORT;
-            values = from.getShortComponents();
+            final int vertexCount = shortComponents.length / componentCount;
+            to.setSizeAndType(vertexCount, componentCount,
+                    m3x.m3g.VertexArray.SHORT);
+            to.set(0, vertexCount, shortComponents);
         }
-        
-        final int vertexCount = values.size() / componentCount;
-        to.setSizeAndType(vertexCount, componentCount, componentType);
-        to.set(0, vertexCount, values);
+        else
+        {
+            throw new IllegalArgumentException("no valid components found");
+        }
     }
 }
