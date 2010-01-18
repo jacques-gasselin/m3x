@@ -37,6 +37,7 @@ import Blender
 import Blender.Camera
 import Blender.Image
 import Blender.Lamp
+import Blender.Mathutils
 import Blender.Mesh
 import Blender.Texture
 import Blender.Types
@@ -44,6 +45,8 @@ import Blender.Window
 import Blender.BGL as GL
 import sys
 import re
+import traceback
+import math
 
 
 class Object3D(object):
@@ -90,11 +93,11 @@ class Transformable(Object3D):
         Object3D.serializeChildren(self, serializer)
         if self.translation:
             serializer.writeDataTag("translation", self.translation)
+        if self.orientation:
+            serializer.writeDataTag("orientation", self.orientation[1:],
+                {"angle": self.orientation[0]})
         if self.scale:
             serializer.writeDataTag("scale", self.scale)
-        if self.orientation:
-            serializer.writeDataTag("orientation",
-                {"angle": self.orientation[0]}, self.orientation[1:])
 
 
 class Node(Transformable):
@@ -443,10 +446,8 @@ class Mesh(Node):
         self.appearances.append(appearance)
         self.submeshCount += 1
 
-    def serialize(self, serializer):
-        attr = {}
-        self.fillAttributes(attr)
-        serializer.startTag("Mesh", attr)
+    def serializeChildren(self, serializer):
+        Node.serializeChildren(self, serializer)
         serializer.writeReference(self.vertexBuffer)
         for i in xrange(self.submeshCount):
             ib = self.indexBuffers[i]
@@ -455,6 +456,12 @@ class Mesh(Node):
             serializer.writeReference(ib)
             serializer.writeReference(ap)
             serializer.endTag()
+        
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("Mesh", attr)
+        self.serializeChildren(serializer)
         serializer.endTag()
     
 
@@ -830,10 +837,15 @@ class Serializer(object):
         indent = self.indents[-1]
         self.writer.write("%s</%s>\n" % (indent, name))
 
-    def writeDataTag(self, name, data):
+    def writeDataTag(self, name, data, attr = None):
         indent = self.indents[-1]
         write = self.writer.write
-        write("%s<%s>" % (indent, name))
+        write("%s<%s" % (indent, name))
+        if attr:
+            for n, v in attr.iteritems():
+                if v is not None:
+                    write(" %s=\"%s\"" % (n, str(v)))
+        write(">")
         strData = (str(x) for x in data)
         write(" ".join(strData))
         write("</%s>\n" % name)
@@ -860,6 +872,8 @@ class Serializer(object):
         self.endTag()
 
 class M3XConverter(object):
+    ZEROS_3 = (0.0, 0.0, 0.0)
+    ONES_3 = (1.0, 1.0, 1.0)
 
     def __init__(self):
         object.__init__(self)
@@ -870,6 +884,7 @@ class M3XConverter(object):
         self.version = version
 
     def clearCaches(self):
+        self.convertedDataObjects = {}
         AppearanceBase.SHARED_BY_MATERIAL = {}
         CompositingMode.SHARED_MODES = {}
         ImageBase.SHARED_IMAGES = {}
@@ -1102,11 +1117,20 @@ class M3XConverter(object):
             returnObject = Group(object.name)
         if returnObject:
             loc = tuple(object.loc)
-            if loc != ([0.0] * 3):
+            if loc != M3XConverter.ZEROS_3:
                 returnObject.setTranslation(*loc)
             scale = tuple(object.size)
-            if scale != ([1.0] * 3):
+            if scale != M3XConverter.ONES_3:
                 returnObject.setScale(*scale)
+            rot = tuple(object.rot)
+            if rot != M3XConverter.ZEROS_3:
+                euler = Blender.Mathutils.Euler(rot)
+                quat = euler.toQuat()
+                #TODO potential documentation error in Blender python docs
+                #this is said to be in degrees already but seems to be in radians
+                angle = math.degrees(quat.angle)
+                x, y, z = quat.axis
+                returnObject.setOrientation(angle, x, y, z)
         return returnObject
 
 
@@ -1256,8 +1280,8 @@ class GUI:
             pbar(0.9, "Saving and closing destination file")
             writer.close()
             pbar(1.0, "Finished")
-        except e:
-            print e
+        except:
+            traceback.print_exc()
 #
 gui = GUI()
 def draw(): # Define the draw function (which draws your GUI).
