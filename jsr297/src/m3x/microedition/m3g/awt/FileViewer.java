@@ -41,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
@@ -60,6 +61,12 @@ import m3x.microedition.m3g.XMLLoader;
 public class FileViewer extends BaseFrame
 {
     private final FileViewerCanvas canvas;
+    private static final GLCapabilities GL_CAPS = new GLCapabilities();
+    static
+    {
+        GL_CAPS.setSampleBuffers(true);
+        GL_CAPS.setNumSamples(4);
+    }
     
     private final class FileViewerCanvas extends GLCanvas
             implements Runnable
@@ -74,8 +81,11 @@ public class FileViewer extends BaseFrame
 
         private Object3D[] roots;
 
+
         public FileViewerCanvas()
         {
+            super(GL_CAPS);
+            
             renderTarget = new GLRenderTarget(this);
             background = new Background();
             background.setColor(0x1f1f1f);

@@ -136,11 +136,14 @@ public class RendererOpenGL2 extends Renderer
             this.lastInstanceGL = gl;
         }
 
-        gl.glDisable(GL.GL_DITHER);
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-        gl.glEnable(GL.GL_RESCALE_NORMAL);
         gl.glDisable(GL.GL_NORMALIZE);
         gl.glDisable(GL.GL_LINE_STIPPLE);
+        gl.glDisable(GL.GL_DITHER);
+
+        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+        gl.glEnable(GL.GL_RESCALE_NORMAL);
+        gl.glEnable(GL.GL_MULTISAMPLE);
+
     }
 
     public void release()

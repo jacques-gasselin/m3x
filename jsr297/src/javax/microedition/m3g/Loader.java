@@ -935,7 +935,8 @@ public final class Loader
             final int format;
             if (isFileFormat1())
             {
-                format = readUnsignedByte();
+                //always make version 1.0 images lossless
+                format = readUnsignedByte() | ImageBase.LOSSLESS;
             }
             else
             {
