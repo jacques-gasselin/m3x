@@ -92,12 +92,15 @@ class Transformable(Object3D):
     def serializeChildren(self, serializer):
         Object3D.serializeChildren(self, serializer)
         if self.translation:
+            trans = ["%.6f" % x for x in self.translation]
             serializer.writeDataTag("translation", self.translation)
         if self.orientation:
-            serializer.writeDataTag("orientation", self.orientation[1:],
-                {"angle": self.orientation[0]})
+            orientation = ["%.6f" % x for x in self.orientation]
+            serializer.writeDataTag("orientation", orientation[1:],
+                {"angle": orientation[0]})
         if self.scale:
-            serializer.writeDataTag("scale", self.scale)
+            scale = ["%.6f" % x for x in self.scale]
+            serializer.writeDataTag("scale", scale)
 
 
 class Node(Transformable):
