@@ -574,6 +574,15 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_LIGHT:
+                    {
+                        Light obj = new Light();
+
+                        loadLight(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     case TYPE_MATERIAL:
                     {
                         Material obj = new Material();
@@ -960,6 +969,23 @@ public final class Loader
             obj.set(format, width, height, 1, true);
 
             return isMutable;
+        }
+
+        private final void loadLight(Light obj)
+            throws IOException
+        {
+            loadNode(obj);
+
+            final float constant = readFloat();
+            final float linear = readFloat();
+            final float quadratic = readFloat();
+
+            obj.setAttenuation(constant, linear, quadratic);
+            obj.setColor(readRGBasARGB());
+            obj.setMode(readUnsignedByte());
+            obj.setIntensity(readFloat());
+            obj.setSpotAngle(readFloat());
+            obj.setSpotExponent(readFloat());
         }
 
         private final void loadMaterial(Material obj)

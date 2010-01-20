@@ -1134,30 +1134,40 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Node">
-                    <xs:attribute name="attenuationConstant"
-                                  type="Float32"
-                                  default="1.0"/>
-                    <xs:attribute name="attenuationLinear"
-                                  type="Float32"
-                                  default="0.0"/>
-                    <xs:attribute name="attenuationQuadratic"
-                                  type="Float32"
-                                  default="0.0"/>
-                    <xs:attribute name="color"
-                                  type="ColorRGB"
-                                  default="255 255 255"/>
+                    <xs:sequence>
+                        <xs:element name="color"
+                                    type="ColorRGB"
+                                    default="255 255 255"/>
+                        <xs:element name="attenuation">
+                            <xs:complexType>
+                                <xs:attribute name="constant"
+                                              type="Float32"
+                                              default="1.0"/>
+                                <xs:attribute name="linear"
+                                              type="Float32"
+                                              default="0.0"/>
+                                <xs:attribute name="quadratic"
+                                              type="Float32"
+                                              default="0.0"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="spot">
+                            <xs:complexType>
+                                <xs:attribute name="angle"
+                                              type="Float32"
+                                              default="45.0"/>
+                                <xs:attribute name="exponent"
+                                              type="Float32"
+                                              default="0.0"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
                     <xs:attribute name="mode"
                                   type="LightType"
                                   default="DIRECTIONAL"/>
                     <xs:attribute name="intensity"
                                   type="Float32"
                                   default="1.0"/>
-                    <xs:attribute name="spotAngle"
-                                  type="Float32"
-                                  default="45.0"/>
-                    <xs:attribute name="spotExponent"
-                                  type="Float32"
-                                  default="0.0"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

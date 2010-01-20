@@ -158,6 +158,11 @@ public class Light extends Node
         return this.spotExponent;
     }
 
+    public void setMode(String mode)
+    {
+        setMode(getFieldValue(mode, "mode"));
+    }
+
     public void setMode(int mode)
     {
         requireValidMode(mode);
@@ -169,6 +174,11 @@ public class Light extends Node
         this.constantAttenuation = constant;
         this.linearAttenuation = linear;
         this.quadraticAttenuation = quadratic;
+    }
+
+    public void setColor(byte[] color)
+    {
+        this.color.set(color);
     }
 
     public void setColor(int rgb)

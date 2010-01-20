@@ -198,6 +198,31 @@ class Appearance(AppearanceBase):
         serializer.endTag()
 
 
+class BlenderLamp(object):
+    def __init__(self):
+        object.__init__(self)
+        self.mode = None
+        self.color = None
+
+    def setMode(self, mode):
+        self.mode = mode
+
+    def setColor(self, color):
+        self.color = color
+
+    def setIntensity(self, intensity):
+        self.intensity = intensity
+    
+    def setSpot(self, angle, exponent):
+        self.spotAngle = angle
+        self.spotExponent = exponent
+
+    def setAttenuation(self, cAttn, lAttn, qAttn):
+        self.constantAttenuation = cAttn
+        self.linearAttenuation = lAttn
+        self.quadraticAttenuation = qAttn
+
+
 class BlenderMesh(object):
     """A collection of m3x objects that a Blender Mesh object converts to.
     As the data in each BlenderMesh will need to be duplicated for m3x Mesh
@@ -435,6 +460,66 @@ class Image2D(ImageBase):
         attr = {}
         self.fillAttributes(attr)
         serializer.startTag("Image2D", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+
+class Light(Node):
+    AMBIENT = "AMBIENT"
+    DIRECTIONAL = "DIRECTIONAL"
+    OMNI = "OMNI"
+    SPOT = "SPOT"
+    
+    def __init__(self, idValue):
+        Node.__init__(self, idValue)
+        self.mode = None
+        self.color = None
+        self.intensity = None
+        self.spotAngle = None
+        self.spotExponent = None
+        self.constantAttenuation = None
+        self.linearAttenuation = None
+        self.quadraticAttenuation = None
+    
+    def setMode(self, mode):
+        self.mode = mode
+
+    def setColor(self, color):
+        self.color = color
+
+    def setIntensity(self, intensity):
+        self.intensity = intensity
+    
+    def setSpotAngle(self, angle):
+        self.spotAngle = angle
+
+    def setSpotExponent(self, exponent):
+        self.spotExponent = exponent
+        
+    def setAttenuation(self, constant, linear, quadratic):
+        self.constantAttenuation = constant
+        self.linearAttenuation = linear
+        self.quadraticAttenuation = quadratic
+
+    def fillAttributes(self, attr):
+        Node.fillAttributes(self, attr)
+        attr["mode"] = self.mode
+        attr["intensity"] = self.intensity
+
+    def serializeChildren(self, serializer):
+        Node.serializeChildren(self, serializer)
+        serializer.writeDataTag("color", self.color)
+        serializer.writeDataTag("attenuation", None,
+            {"constant" : self.constantAttenuation,
+            "linear" : self.linearAttenuation,
+            "quadratic" : self.quadraticAttenuation})
+        serializer.writeDataTag("spot", None,
+            {"angle": self.spotAngle, "exponent": self.spotExponent})
+
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("Light", attr)
         self.serializeChildren(serializer)
         serializer.endTag()
 
@@ -1025,6 +1110,61 @@ class M3XConverter(object):
     def getAppearance(self, cm, pm, material):
         return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version)
 
+    def convertLamp(self, lamp):
+        mode = Light.DIRECTIONAL
+        spotAngle = 45
+        spotExponent = 0
+        if lamp.type == Blender.Lamp.Types['Lamp']:
+            mode = Light.OMNI
+        elif lamp.type == Blender.Lamp.Types['Sun']:
+            mode = Light.DIRECTIONAL
+        elif lamp.type == Blender.Lamp.Types['Spot']:
+            mode = Light.SPOT
+            #Blender uses double angle
+            spotAngle = lamp.spotSize * 0.5
+            spotExponent = lamp.spotBlend * 128.0
+        elif lamp.type == Blender.Lamp.Types['Hemi']:
+            mode = Light.AMBIENT
+        elif lamp.type == Blender.Lamp.Types['Area']:
+            #TODO this should actually create an array of lights
+            pass
+        elif lamp.type == Blender.Lamp.Types['Photon']:
+            #TODO how do we emulate this type?
+            return None
+        dist = lamp.dist
+        falloffType = lamp.falloffType
+        cAttn = 1.0
+        lAttn = 0.0
+        qAttn = 0.0
+        if falloffType == Blender.Lamp.Falloffs['INVLINEAR']:
+            #dist is the distance where intensity will be half
+            #thus 1 / (0 + l * dist + 0) = .5 gives l = 2 / dist
+            cAttn = 0.0
+            lAttn = 2 / dist
+            qAttn = 0.0
+        elif falloffType == Blender.Lamp.Falloffs['INVSQUARE']:
+            #dist is the distance where intensity will be half
+            #thus 1 / (0 + 0 + q * dist * dist) = .5 gives q = 2 / (dist * dist)
+            cAttn = 0.0
+            lAttn = 0.0
+            qAttn = 2 / (dist * dist)
+        elif falloffType == Blender.Lamp.Falloffs['LINQUAD']:
+            #mixed linear & quadratic
+            cAttn = 0.0
+            lAttn = lamp.quad1 * 2 / dist
+            qAttn = lamp.quad2 * 2 / (dist * dist)
+        #TODO support other falloffs
+        intensity = lamp.energy
+        if lamp.mode & Blender.Lamp.Modes['Negative']:
+            intensity = -intensity
+        blamp = BlenderLamp()
+        blamp.setMode(mode)
+        blamp.setColor(tuple(lamp.col))
+        blamp.setIntensity(intensity)
+        blamp.setSpot(spotAngle, spotExponent)
+        blamp.setAttenuation(cAttn, lAttn, qAttn)
+        return blamp
+
     def convertMesh(self, mesh):
         version = self.version
         hasPerVertexColor = mesh.vertexColors
@@ -1196,6 +1336,22 @@ class M3XConverter(object):
                     returnObject.addChild(mesh)
                 else:
                     returnObject = mesh
+            elif type(data) == Blender.Types.LampType:
+                if data not in self.convertedDataObjects:
+                    self.convertedDataObjects[data] = self.convertLamp(data)
+                blamp = self.convertedDataObjects[data]
+                light = Light(object.name + "-light")
+                light.setMode(blamp.mode)
+                light.setColor(blamp.color)
+                light.setIntensity(blamp.intensity)
+                light.setSpotAngle(blamp.spotAngle)
+                light.setSpotExponent(blamp.spotExponent)
+                light.setAttenuation(blamp.constantAttenuation,
+                    blamp.linearAttenuation, blamp.quadraticAttenuation)
+                if returnObject:
+                    returnObject.addChild(light)
+                else:
+                    returnObject = light
         elif returnObject is None:
             #Empty node
             returnObject = Group(object.name)

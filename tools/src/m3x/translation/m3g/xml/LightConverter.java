@@ -47,6 +47,27 @@ public class LightConverter extends NodeConverter
         m3x.m3g.Light to, m3x.xml.Light from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+
+        to.setMode(from.getMode().value());
+        to.setIntensity(from.getIntensity());
+        
+        if (from.getAttenuation() != null)
+        {
+            to.setAttenuation(
+                from.getAttenuation().getConstant(),
+                from.getAttenuation().getLinear(),
+                from.getAttenuation().getQuadratic());
+        }
+
+        if (from.getColor() != null)
+        {
+            to.setColor(from.getColor());
+        }
+
+        if (from.getSpot() != null)
+        {
+            to.setSpotAngle(from.getSpot().getAngle());
+            to.setSpotExponent(from.getSpot().getExponent());
+        }
     }
 }
