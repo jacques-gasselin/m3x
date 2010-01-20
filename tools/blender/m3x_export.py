@@ -213,6 +213,7 @@ class BlenderMesh(object):
     def setAppearanceComponents(self, appearanceComponents):
         self.appearanceComponents = appearanceComponents[:]
 
+
 class CompositingMode(Object3D):
     ADD = "ADD"
     ALPHA = "ALPHA"
