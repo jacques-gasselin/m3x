@@ -47,6 +47,27 @@ public class MaterialConverter extends Object3DConverter
         m3x.m3g.Material to, m3x.xml.Material from)
     {
         super.setFromXML(translator, to, from);
-        //TODO
+
+        if (from.getAmbientColor() != null)
+        {
+            to.setColor(m3x.m3g.Material.AMBIENT, from.getAmbientColor());
+        }
+        if (from.getDiffuseColor() != null)
+        {
+            to.setColor(m3x.m3g.Material.DIFFUSE, from.getDiffuseColor());
+        }
+        if (from.getEmissiveColor() != null)
+        {
+            to.setColor(m3x.m3g.Material.EMISSIVE, from.getEmissiveColor());
+        }
+        if (from.getSpecularColor() != null)
+        {
+            if (from.getSpecularColor().getValue() != null)
+            {
+                to.setColor(m3x.m3g.Material.SPECULAR, from.getSpecularColor().getValue());
+            }
+            to.setShininess(from.getSpecularColor().getShininess());
+        }
+        to.setVertexColorTrackingEnabled(from.isVertexColorTrackingEnabled());
     }
 }

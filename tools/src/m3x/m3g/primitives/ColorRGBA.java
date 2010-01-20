@@ -83,6 +83,15 @@ public class ColorRGBA extends ColorRGB implements Serializable
         serialiser.write(this.a);
     }
 
+    @Override
+    public int getARGB()
+    {
+        return (getA() << 24)
+             | (getR() << 16)
+             | (getG() << 8)
+             | (getB() << 0);
+    }
+
     public int getA()
     {
         return this.a;

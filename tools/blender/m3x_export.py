@@ -139,7 +139,8 @@ class AppearanceBase(Object3D):
                 a = Appearance("Appearance-" + material.name + "-%d" % len(appearances.keys()))
                 a.setCompositingMode(cm)
                 a.setPolygonMode(pm)
-                #TODO get lighting material
+                #get lighting material
+                a.setMaterial(Material.getSharedMaterial(material))
                 #get the texture 2D elements from the material
                 m3xTextures = []
                 #print "material", material
@@ -171,8 +172,12 @@ class AppearanceBase(Object3D):
 class Appearance(AppearanceBase):
     def __init__(self, idValue):
         AppearanceBase.__init__(self, idValue)
+        self.material = None
         self.textures = None
 
+    def setMaterial(self, material):
+        self.material = material
+        
     def setTextures(self, textures):
         self.textures = textures[:]
         
@@ -181,6 +186,7 @@ class Appearance(AppearanceBase):
 
     def serializeChildren(self, serializer):
         AppearanceBase.serializeChildren(self, serializer)
+        serializer.writeReference(self.material)
         for t in self.textures:
             serializer.writeReference(t)
 
@@ -429,6 +435,75 @@ class Image2D(ImageBase):
         attr = {}
         self.fillAttributes(attr)
         serializer.startTag("Image2D", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+
+class Material(Object3D):
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+        self.ambientColor = None
+        self.diffuseColor = None
+        self.emissiveColor = None
+        self.specularColor = None
+        self.shininess = None
+        self.vertexColorTrackingEnabled = None
+
+    def setAmbient(self, colorRGB):
+        self.ambientColor = colorRGB
+
+    def setDiffuse(self, colorRGB):
+        self.diffuseColor = colorRGB
+
+    def setEmissive(self, colorRGB):
+        self.emissiveColor = colorRGB
+
+    def setSpecular(self, colorRGB):
+        self.specularColor = colorRGB
+
+    def setShininess(self, shininess):
+        self.shininess = shininess
+
+    def setVertexColorTrackingEnabled(self, enabled):
+        self.vertexColorTrackingEnabled = enabled
+
+    SHARED_MATERIALS = {}
+
+    def getSharedMaterial(bmat):
+        if bmat is None:
+            return None
+        materials = Material.SHARED_MATERIALS
+        key = bmat
+        if key not in materials:
+            name = bmat.name
+            mat = Material(name)
+            mat.setDiffuse(tuple(bmat.rgbCol))
+            mat.setSpecular(tuple(bmat.specCol))
+            mat.setShininess(bmat.hard)
+            #TODO implement emission and ambient
+            materials[key] = mat
+        return materials[key]
+
+    getSharedMaterial = staticmethod(getSharedMaterial)
+
+    def fillAttributes(self, attr):
+        Object3D.fillAttributes(self, attr)
+        attr["vertexColorTrackingEnabled"] = self.vertexColorTrackingEnabled
+
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        serializer.writeDataTag("ambientColor", self.ambientColor)
+        serializer.writeDataTag("diffuseColor", self.diffuseColor)
+        serializer.writeDataTag("specularColor", self.specularColor,
+            {"shininess": self.shininess})
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("MaterialInstance", {"ref" : self.id})
+
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("Material", attr)
         self.serializeChildren(serializer)
         serializer.endTag()
 
@@ -842,6 +917,8 @@ class Serializer(object):
         self.writer.write("%s</%s>\n" % (indent, name))
 
     def writeDataTag(self, name, data, attr = None):
+        if data is None and attr is None:
+            return
         indent = self.indents[-1]
         write = self.writer.write
         write("%s<%s" % (indent, name))
@@ -849,10 +926,13 @@ class Serializer(object):
             for n, v in attr.iteritems():
                 if v is not None:
                     write(" %s=\"%s\"" % (n, str(v)))
-        write(">")
-        strData = (str(x) for x in data)
-        write(" ".join(strData))
-        write("</%s>\n" % name)
+        if data:
+            write(">")
+            strData = (str(x) for x in data)
+            write(" ".join(strData))
+            write("</%s>\n" % name)
+        else:
+            write(" />\n")
 
     def writeReference(self, object):
         if not object:
@@ -892,9 +972,9 @@ class M3XConverter(object):
         AppearanceBase.SHARED_BY_MATERIAL = {}
         CompositingMode.SHARED_MODES = {}
         ImageBase.SHARED_IMAGES = {}
+        Material.SHARED_MATERIALS = {}
         PolygonMode.SHARED_MODES = {}
         Texture.SHARED_TEXTURES = {}
-
 
     def getFaceCompositingMode(self, face, hasPerFaceUV):
         modes = Blender.Mesh.FaceTranspModes

@@ -1166,21 +1166,33 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="Object3D">
-                    <xs:attribute name="ambientColor"
-                                  type="ColorRGB"
-                                  default="51 51 51"/>
-                    <xs:attribute name="diffuseColor"
-                                  type="ColorRGBA"
-                                  default="204 204 204 255"/>
-                    <xs:attribute name="emissiveColor"
-                                  type="ColorRGB"
-                                  default="0 0 0"/>
-                    <xs:attribute name="specularColor"
-                                  type="ColorRGB"
-                                  default="0 0 0"/>
-                    <xs:attribute name="shininess"
-                                  type="Float32"
-                                  default="0.0"/>
+                    <xs:sequence>
+                        <xs:element name="ambientColor"
+                                    type="ColorRGB"
+                                    default="51 51 51"
+                                    minOccurs="0"/>
+                        <xs:element name="diffuseColor"
+                                    type="ColorRGBA"
+                                    default="204 204 204 255"
+                                    minOccurs="0"/>
+                        <xs:element name="emissiveColor"
+                                    type="ColorRGB"
+                                    default="0 0 0"
+                                    minOccurs="0"/>
+                        <xs:element name="specularColor"
+                                    default="0 0 0"
+                                    minOccurs="0">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="ColorRGB">
+                                        <xs:attribute name="shininess"
+                                                      type="Float32"
+                                                      default="0.0"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
                     <xs:attribute name="vertexColorTrackingEnabled"
                                   type="Boolean"
                                   default="false"/>

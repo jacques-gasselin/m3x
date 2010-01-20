@@ -98,6 +98,14 @@ public class ColorRGB implements Serializable
              | (getB() << 0);
     }
 
+    public int getARGB()
+    {
+        return (0xff << 24)
+             | (getR() << 16)
+             | (getG() << 8)
+             | (getB() << 0);
+    }
+
     public int getR()
     {
         return this.r;

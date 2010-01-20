@@ -574,6 +574,15 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_MATERIAL:
+                    {
+                        Material obj = new Material();
+
+                        loadMaterial(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     case TYPE_MESH:
                     {
                         Mesh obj = new Mesh();
@@ -951,6 +960,19 @@ public final class Loader
             obj.set(format, width, height, 1, true);
 
             return isMutable;
+        }
+
+        private final void loadMaterial(Material obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+
+            obj.setColor(Material.AMBIENT, readRGBasARGB());
+            obj.setColor(Material.DIFFUSE, readRGBAasARGB());
+            obj.setColor(Material.EMISSIVE, readRGBasARGB());
+            obj.setColor(Material.SPECULAR, readRGBasARGB());
+            obj.setShininess(readFloat());
+            obj.setVertexColorTrackingEnabled(readBoolean());
         }
 
         private final void loadMesh(Mesh obj)
