@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jgasseli
@@ -108,7 +109,14 @@ public class Group extends Node
     {
         return this.lodOffset;
     }
-    
+
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+        references.addAll(children);
+    }
+
     public void insertChild(Node child, int index)
     {
         Require.indexInRange(index, getChildCount() + 1);

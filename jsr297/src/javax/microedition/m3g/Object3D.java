@@ -27,11 +27,21 @@
 
 package javax.microedition.m3g;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author jgasseli
  */
 public class Object3D
 {
+    private final Map<AnimationTrack, int[]> channelsByTrack =
+            new HashMap<AnimationTrack, int[]>();
     private boolean animationEnabled;
     private int userID;
     private Object userObject;
@@ -43,7 +53,184 @@ public class Object3D
 
     public void addAnimationTrack(AnimationTrack animationTrack, int channel)
     {
+        Require.notNull(animationTrack, "animationTrack");
+        Require.indexInRange(channel, "channel",
+                animationTrack.getKeyframeSequence().getChannelCount());
+        
+        int[] channels = channelsByTrack.get(animationTrack);
+        if (channels == null)
+        {
+            channels = new int[1];
+            channels[0] = channel;
+        }
+        else
+        {
+            //verify the channel is not already bound
+            if (Arrays.binarySearch(channels, channel) >= 0)
+            {
+                throw new IllegalArgumentException("channel" + channel + " of" +
+                        " animationTrack is already attached to this object");
+            }
+            
+            final int[] newChannels = new int[channels.length + 1];
+            System.arraycopy(channels, 0, newChannels, 0, channels.length);
+            channels[channels.length] = channel;
+            Arrays.sort(channels);
+        }
+
+        channelsByTrack.put(animationTrack, channels);
+    }
+
+    public int animate(int time)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Object3D duplicate()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Object3D find(int userID)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Object3D[] findAll(Class type)
+    {
+        final Set<Object3D> closedList = new HashSet<Object3D>();
+        final ArrayList<Object3D> openList = new ArrayList<Object3D>();
+        final ArrayList<Object3D> resultList = new ArrayList<Object3D>();
+
+        //since all operations only touch the end of the list;
+        //this is a depth first search. Breath first search would
+        //require the front to be removed for each iteration
+        openList.add(this);
+        //this is an exhaustive search
+        while (openList.size() > 0)
+        {
+            final Object3D candidate = openList.remove(openList.size() - 1);
+            //skip objects already visited
+            if (!closedList.contains(candidate))
+            {
+                //count it as visited now
+                closedList.add(candidate);
+                //of the required type?
+                if (type.isInstance(candidate))
+                {
+                    resultList.add(candidate);
+                }
+                //add the references from the candidate to the open list
+                candidate.getReferences(openList);
+            }
+        }
+
+        Object3D[] results = new Object3D[resultList.size()];
+        return resultList.toArray(results);
+    }
+
+    /*public int findAnimationEvents(int startTime, int endTime,
+            int eventMask, AnimationEvent[] events)
+    {
         throw new UnsupportedOperationException("Not yet implemented");
+    }*/
+
+    public AnimationTrack getAnimationTrack(int trackIndex)
+    {
+        Require.indexInRange(trackIndex, "trackIndex", getAnimationTrackCount());
+        
+        int index = 0;
+        for (AnimationTrack track : channelsByTrack.keySet())
+        {
+            final int[] channels = channelsByTrack.get(track);
+            index += channels.length;
+            if (trackIndex < index)
+            {
+                return track;
+            }
+        }
+
+        throw new IllegalStateException("the index calculation has failed");
+    }
+
+    public int getAnimationTrackChannel(int trackIndex)
+    {
+        Require.indexInRange(trackIndex, "trackIndex", getAnimationTrackCount());
+
+        int index = 0;
+        for (AnimationTrack track : channelsByTrack.keySet())
+        {
+            final int[] channels = channelsByTrack.get(track);
+            final int nextIndex = index + channels.length;
+            if (trackIndex < nextIndex)
+            {
+                final int offset = nextIndex - trackIndex;
+                return channels[offset];
+            }
+            index = nextIndex;
+        }
+
+        throw new IllegalStateException("the index calculation has failed");
+    }
+
+    public int getAnimationTrackCount()
+    {
+        int count = 0;
+        for (AnimationTrack track : channelsByTrack.keySet())
+        {
+            final int[] channels = channelsByTrack.get(track);
+            count += channels.length;
+        }
+        return count;
+    }
+
+    public Object3D[] getReferences()
+    {
+        final int referenceCount = getReferences((Object3D[]) null);
+        final Object3D[] references = new Object3D[referenceCount];
+        getReferences(references);
+        return references;
+    }
+
+    void getReferences(List<Object3D> references)
+    {
+        references.addAll(channelsByTrack.keySet());
+    }
+
+    public int getReferences(Object3D[] references)
+    {
+        final List<Object3D> list = new ArrayList<Object3D>();
+        getReferences(list);
+        if (references != null)
+        {
+            list.toArray(references);
+        }
+        return list.size();
+    }
+
+    public int getUserID()
+    {
+        return this.userID;
+    }
+
+    public Object getUserObject()
+    {
+        return this.userObject;
+    }
+
+    public boolean isAnimationEnabled()
+    {
+        return this.animationEnabled;
+    }
+
+    public void removeAnimationTrack(AnimationTrack animationTrack)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean replaceMatching(Object3D[] objects)
+    {
+        throw new UnsupportedOperationException();
     }
 
     public void setAnimationEnable(boolean enable)

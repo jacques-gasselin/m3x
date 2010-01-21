@@ -562,10 +562,12 @@ class Material(Object3D):
         if key not in materials:
             name = bmat.name
             mat = Material(name)
-            mat.setDiffuse(tuple(bmat.rgbCol))
-            mat.setSpecular(tuple(bmat.specCol))
-            mat.setShininess(bmat.hard)
-            #TODO implement emission and ambient
+            mat.setDiffuse([int(round(x * 255)) for x in bmat.rgbCol])
+            mat.setSpecular([int(round(x * 255)) for x in bmat.specCol])
+            #remap [1, 511] into the range [0, 128]
+            mat.setShininess(128 * (bmat.hard - 1) / 511.0)
+            mat.setEmissive([int(round(0.5 * bmat.emit * x * 255)) for x in bmat.rgbCol])
+            #TODO ambient
             materials[key] = mat
         return materials[key]
 
@@ -1159,7 +1161,7 @@ class M3XConverter(object):
             intensity = -intensity
         blamp = BlenderLamp()
         blamp.setMode(mode)
-        blamp.setColor(tuple(lamp.col))
+        blamp.setColor([int(round(x * 255)) for x in lamp.col])
         blamp.setIntensity(intensity)
         blamp.setSpot(spotAngle, spotExponent)
         blamp.setAttenuation(cAttn, lAttn, qAttn)
@@ -1411,7 +1413,6 @@ class M3XConverter(object):
     def serialize(self, writer):
         s = Serializer(self.version, writer)
         sections = []
-        #TODO make this a proper roots only list
         sections.append(self.objects)
         s.serialize(sections)
 
@@ -1446,7 +1447,7 @@ class GUI:
     #
     def draw(self):
         width, height = (GUI.COL_WIDTH, GUI.ROW_HEIGHT)
-        #x, y = self.gridCoords(0, 2)
+        x, y = self.gridCoords(0, 2)
         #self.__exportToWorldButton = Blender.Draw.Toggle(
         #    "export to world",
         #    GUI.EVENT_EXPORT_WORLD_TOGGLE,
@@ -1511,6 +1512,8 @@ class GUI:
             pbar = Blender.Window.DrawProgressBar
             pbar(0.0, "Converting Blender Objects to M3X")
             self.__converter.convert(self.objectsToConvert)
+            if self.__exportToWorld:
+                self.__converter.wrapInWorld(Blender.Scene.GetCurrent())
             pbar(0.2, "Opening destination file")
             writer = open(filename, "wb")
             pbar(0.3, "Serializing to destination file")

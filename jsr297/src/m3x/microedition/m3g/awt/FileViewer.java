@@ -46,10 +46,12 @@ import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
+import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Node;
 import javax.microedition.m3g.Object3D;
 import javax.microedition.m3g.Transform;
+import javax.microedition.m3g.World;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.TransformController;
@@ -67,7 +69,20 @@ public class FileViewer extends BaseFrame
         GL_CAPS.setSampleBuffers(true);
         GL_CAPS.setNumSamples(4);
     }
-    
+
+    private static final boolean isRenderingEnabled(Node node)
+    {
+        while (node != null)
+        {
+            if (!node.isRenderingEnabled())
+            {
+                return false;
+            }
+            node = node.getParent();
+        }
+        return true;
+    }
+
     private final class FileViewerCanvas extends GLCanvas
             implements Runnable
     {
@@ -101,7 +116,7 @@ public class FileViewer extends BaseFrame
         {
             this.roots = roots;
         }
-        
+
         @Override
         public void paint(Graphics g)
         {
@@ -120,6 +135,7 @@ public class FileViewer extends BaseFrame
                 g3d.setCamera(camera, cameraController.getTransform());
 
                 g3d.clear(background);
+                g3d.resetLights();
 
                 transform.setIdentity();
                 //copy to avoid concurrency issues
@@ -128,8 +144,35 @@ public class FileViewer extends BaseFrame
                 {
                     for (Object3D root : rootsArray)
                     {
-                        if (root instanceof Node)
+                        if (root instanceof World)
                         {
+                            g3d.render((World) root);
+                        }
+                        else if (root instanceof Light)
+                        {
+                            final Light light = (Light) root;
+                            final Transform lightTransform = new Transform();
+                            light.getCompositeTransform(lightTransform);
+                            g3d.addLight(light, lightTransform);
+                        }
+                        else if (root instanceof Node)
+                        {
+                            final Node rootNode = (Node) root;
+                            final Object3D[] lights = rootNode.findAll(Light.class);
+                            if (lights.length > 0)
+                            {
+                                final Transform lightTransform = new Transform();
+                                for (int i = 0; i < lights.length; ++i)
+                                {
+                                    final Light light = (Light) lights[i];
+                                    if (isRenderingEnabled(light))
+                                    {
+                                        light.getTransformTo(rootNode, lightTransform);
+                                        g3d.addLight(light, lightTransform);
+                                    }
+                                }
+                            }
+                            
                             g3d.render((Node) root, transform);
                         }
                     }

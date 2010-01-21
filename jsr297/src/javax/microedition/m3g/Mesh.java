@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -127,6 +129,30 @@ public class Mesh extends Node
     public int getMorphTargetCount()
     {
         return this.morphTargetCount;
+    }
+
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+        if (vertexBuffer != null)
+        {
+            references.add(vertexBuffer);
+        }
+        for (AppearanceBase appearance : appearances)
+        {
+            if (appearance != null)
+            {
+                references.add(appearance);
+            }
+        }
+        for (IndexBuffer indexBuffer : indexBuffers)
+        {
+            if (indexBuffer != null)
+            {
+                references.add(indexBuffer);
+            }
+        }
     }
 
     public ShaderAppearance getShaderAppearance(int index)

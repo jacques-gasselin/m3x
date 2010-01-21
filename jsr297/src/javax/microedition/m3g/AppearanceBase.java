@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -57,6 +59,22 @@ public abstract class AppearanceBase extends Object3D
         return this.polygonMode;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (compositingMode != null)
+        {
+            references.add(compositingMode);
+        }
+
+        if (polygonMode != null)
+        {
+            references.add(polygonMode);
+        }
+    }
+    
     public boolean isDepthSortEnabled()
     {
         return this.depthSortEnabled;

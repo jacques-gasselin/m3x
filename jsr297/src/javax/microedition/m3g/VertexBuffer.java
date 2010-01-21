@@ -29,6 +29,7 @@ package javax.microedition.m3g;
 
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.List;
 
 /**
  * @author jgasseli
@@ -334,6 +335,45 @@ public class VertexBuffer extends Object3D
         this.positions.getScaleAndBias(scaleBias);
         
         return this.positions.getArray();
+    }
+
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+        
+        if (positions.getArray() != null)
+        {
+            references.add(positions.getArray());
+        }
+        if (normals != null)
+        {
+            references.add(normals);
+        }
+        if (colors != null)
+        {
+            references.add(colors);
+        }
+        if (pointSizes != null)
+        {
+            references.add(pointSizes);
+        }
+        if (boneWeights != null)
+        {
+            references.add(boneWeights);
+        }
+        if (boneIndices != null)
+        {
+            references.add(boneIndices);
+        }
+
+        for (ScaleBiasedVertexArray t : textureCoordinates)
+        {
+            if (t != null && t.getArray() != null)
+            {
+                references.add(t.getArray());
+            }
+        }
     }
 
     public VertexArray getTexCoords(int index, float[] scaleBias)

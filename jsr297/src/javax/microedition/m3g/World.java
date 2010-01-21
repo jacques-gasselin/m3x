@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -48,6 +50,22 @@ public class World extends Group
     public Background getBackground()
     {
         return this.background;
+    }
+
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (activeCamera != null)
+        {
+            references.add(activeCamera);
+        }
+
+        if (background != null)
+        {
+            references.add(background);
+        }
     }
 
     public void setActiveCamera(Camera camera)

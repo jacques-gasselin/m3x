@@ -68,16 +68,21 @@ final class Require
 
     static final void indexInRange(int index, int limit)
     {
+        indexInRange(index, "index", limit);
+    }
+
+    static final void indexInRange(int index, String name, int limit)
+    {
         if (index < 0)
         {
-            throw new IndexOutOfBoundsException("index is negative");
+            throw new IndexOutOfBoundsException(name + " is negative");
         }
         if (index >= limit)
         {
-            throw new IndexOutOfBoundsException("index >= " + limit);
+            throw new IndexOutOfBoundsException(name + " >= " + limit);
         }
     }
-
+        
     static final void argumentInRange(int value, String name, int minValue, int maxValue)
     {
         if (value < minValue)

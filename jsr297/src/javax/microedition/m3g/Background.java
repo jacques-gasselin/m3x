@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -116,6 +118,17 @@ public class Background extends Object3D
         return imageModeY;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (image != null)
+        {
+            references.add(image);
+        }
+    }
+    
     public int getStencil()
     {
         return stencil;

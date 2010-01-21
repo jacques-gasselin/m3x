@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -59,6 +61,35 @@ public class Appearance extends AppearanceBase
         return this.pointSpriteMode;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (fog != null)
+        {
+            references.add(fog);
+        }
+
+        if (material != null)
+        {
+            references.add(material);
+        }
+
+        if (pointSpriteMode != null)
+        {
+            references.add(pointSpriteMode);
+        }
+
+        for (Texture t : textures)
+        {
+            if (t != null)
+            {
+                references.add(t);
+            }
+        }
+    }
+    
     public Texture getTextureBase(int index)
     {
         Require.indexInRange(index, MAX_TEXTURE_COORDS);

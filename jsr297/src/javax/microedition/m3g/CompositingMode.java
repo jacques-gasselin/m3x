@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -107,6 +109,22 @@ public class CompositingMode extends Object3D
         return this.depthTest;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (blender != null)
+        {
+            references.add(blender);
+        }
+
+        if (stencil != null)
+        {
+            references.add(stencil);
+        }
+    }
+    
     public Stencil getStencil()
     {
         return this.stencil;

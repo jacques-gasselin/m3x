@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -68,6 +70,17 @@ public abstract class Texture extends Transformable
         return this.levelFilter;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (imageBase != null)
+        {
+            references.add(imageBase);
+        }
+    }
+    
     final RendererData getRendererData()
     {
         return this.rendererData;

@@ -27,6 +27,8 @@
 
 package javax.microedition.m3g;
 
+import java.util.List;
+
 /**
  * @author jgasseli
  */
@@ -92,6 +94,17 @@ public class Texture2D extends Texture
             (Image2D) image : null;
     }
 
+    @Override
+    void getReferences(List<Object3D> references)
+    {
+        super.getReferences(references);
+
+        if (combiner != null)
+        {
+            references.add(combiner);
+        }
+    }
+    
     public int getWrappingS()
     {
         return this.wrappingS;

@@ -540,6 +540,19 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
+    private static final boolean isRenderingEnabled(Node node)
+    {
+        while (node != null)
+        {
+            if (!node.isRenderingEnabled())
+            {
+                return false;
+            }
+            node = node.getParent();
+        }
+        return true;
+    }
+
     public void render(World world)
     {
         if (world == null)
@@ -561,12 +574,25 @@ public final class Graphics3D
         Background background = world.getBackground();
         clear(background);
         
-        //TODO do lights
+        //do lights
+        resetLights();
+        final Object3D[] worldLights = world.findAll(Light.class);
+        if (worldLights.length > 0)
+        {
+            final Transform lightTransform = new Transform();
+            for (Object3D lightObject : worldLights)
+            {
+                final Light light = (Light) lightObject;
+                if (isRenderingEnabled(light))
+                {
+                    light.getTransformTo(world, lightTransform);
+                    addLight(light, lightTransform);
+                }
+            }
+        }
 
         //render as a node
         render(world, null);
-        
-        throw new UnsupportedOperationException();
     }
 
     /**
