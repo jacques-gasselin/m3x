@@ -675,6 +675,15 @@ public class RendererOpenGL2 extends Renderer
                 }
             }
 
+            if (polygonMode.isPerspectiveCorrectionEnabled())
+            {
+                gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+            }
+            else
+            {
+                gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+            }
+
             if (polygonMode.isLocalCameraLightingEnabled())
             {
                 gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
@@ -700,8 +709,12 @@ public class RendererOpenGL2 extends Renderer
             gl.glFrontFace(GL.GL_CCW);
             
             gl.glEnable(GL.GL_CULL_FACE);
-            
-            gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_FALSE);
+
+            //Default to off to emulate GLES
+            gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+            //Desktop defaults to always perspective correct
+            gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+
             gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
         }
     }

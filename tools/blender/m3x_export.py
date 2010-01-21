@@ -537,8 +537,8 @@ class Material(Object3D):
     def setAmbient(self, colorRGB):
         self.ambientColor = colorRGB
 
-    def setDiffuse(self, colorRGB):
-        self.diffuseColor = colorRGB
+    def setDiffuse(self, colorRGBA):
+        self.diffuseColor = colorRGBA
 
     def setEmissive(self, colorRGB):
         self.emissiveColor = colorRGB
@@ -562,8 +562,10 @@ class Material(Object3D):
         if key not in materials:
             name = bmat.name
             mat = Material(name)
-            mat.setDiffuse([int(round(x * 255)) for x in bmat.rgbCol])
-            mat.setSpecular([int(round(x * 255)) for x in bmat.specCol])
+            diffuseRGBA = [int(round(bmat.ref * x * 255)) for x in bmat.rgbCol]
+            diffuseRGBA.append(int(round(bmat.alpha * 255)))
+            mat.setDiffuse(diffuseRGBA)
+            mat.setSpecular([int(round(bmat.spec * x * 255)) for x in bmat.specCol])
             #remap [1, 511] into the range [0, 128]
             mat.setShininess(128 * (bmat.hard - 1) / 511.0)
             mat.setEmissive([int(round(0.5 * bmat.emit * x * 255)) for x in bmat.rgbCol])
@@ -975,6 +977,10 @@ class VertexSeq(object):
         self.vertexCount = 0
 
     def getIndex(self, pos, norm, col, uv):
+        #normalize the normals
+        if norm:
+            normLen = math.sqrt(sum([x * x for x in norm]))
+            norm = tuple([x / normLen for x in norm])
         key = (pos, norm, col, uv)
         if key not in self.indexByComponents:
             self.positions.extend(pos)
