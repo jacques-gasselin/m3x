@@ -561,6 +561,12 @@
             <xs:element ref="AppearanceInstance"/>
         </xs:choice>
     </xs:group>
+    <xs:group name="BackgroundOrInstance">
+        <xs:choice>
+            <xs:element ref="Background"/>
+            <xs:element ref="BackgroundInstance"/>
+        </xs:choice>
+    </xs:group>
     <xs:group name="IndexBufferOrInstance">
         <xs:choice>
             <xs:element ref="TriangleStripArray"/>
@@ -914,6 +920,13 @@
                                   type="Boolean"
                                   default="true"/>
                 </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BackgroundInstance">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="InstanceType"/>
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
@@ -1456,9 +1469,10 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="GroupType">
+                    <xs:sequence>
+                        <xs:group ref="BackgroundOrInstance"/>
+                    </xs:sequence>
                     <xs:attribute name="activeCamera"
-                                  type="Object3DReference"/>
-                    <xs:attribute name="background"
                                   type="Object3DReference"/>
                 </xs:extension>
             </xs:complexContent>

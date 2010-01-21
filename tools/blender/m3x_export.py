@@ -935,6 +935,29 @@ class VertexBuffer(Object3D):
         serializer.endTag()
 
 
+class World(Group):
+    def __init__(self, idValue):
+        Group.__init__(self, idValue)
+        self.activeCamera = None
+        self.background = None
+
+    def fillAttributes(self, attr):
+        Group.fillAttributes(self, attr)
+        if self.activeCamera:
+            attr["activeCamera"] = self.activeCamera.id
+
+    def serializeChildren(self, serializer):
+        Group.serializeChildren(self, serializer)
+        serializer.writeReference(self.background)
+
+    def serialize(self, serializer):
+        attr = {}
+        self.fillAttributes(attr)
+        serializer.startTag("World", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+
 class VertexSeq(object):
     def __init__(self, hasColors, hasUV):
         object.__init__(self)
@@ -1410,6 +1433,18 @@ class M3XConverter(object):
             if converted:
                 self.objects.append(converted)
 
+    def wrapInWorld(self, scene):
+        world = World(scene.name)
+        #TODO link in the background
+        #TODO set the active camera
+        objects = [world]
+        for o in self.objects:
+            if isinstance(o, Node):
+                world.addChild(o)
+            else:
+                objects.append(o)
+        self.objects = objects
+    
     def serialize(self, writer):
         s = Serializer(self.version, writer)
         sections = []
@@ -1448,12 +1483,12 @@ class GUI:
     def draw(self):
         width, height = (GUI.COL_WIDTH, GUI.ROW_HEIGHT)
         x, y = self.gridCoords(0, 2)
-        #self.__exportToWorldButton = Blender.Draw.Toggle(
-        #    "export to world",
-        #    GUI.EVENT_EXPORT_WORLD_TOGGLE,
-        #    x, y, width, height,
-        #    self.__exportToWorld,
-        #    "Tooltip")
+        self.__exportToWorldButton = Blender.Draw.Toggle(
+            "export to world",
+            GUI.EVENT_EXPORT_WORLD_TOGGLE,
+            x, y, width, height,
+            self.__exportToWorld,
+            "Tooltip")
         x, y = self.gridCoords(1, 2)
         self.__exportSelectionOnlyButton = Blender.Draw.Toggle(
             "export selection only",
@@ -1483,7 +1518,6 @@ class GUI:
 
     def button(self, evt):
         export = False
-        exportVersion = 1
         if evt == GUI.EVENT_EXPORT_WORLD_TOGGLE:
             self.__exportToWorld = 1 - self.__exportToWorld
         elif evt == GUI.EVENT_EXPORT_SELECTION_TOGGLE:
@@ -1503,6 +1537,8 @@ class GUI:
                 Blender.Window.FileSelector(self.fileSelectedForConversion)
             else:
                 self.__converter.convert(self.objectsToConvert)
+                if self.__exportToWorld:
+                    self.__converter.wrapInWorld(Blender.Scene.GetCurrent())
                 writer = sys.stdout
                 self.__converter.serialize(writer)
                 writer.flush()

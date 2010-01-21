@@ -646,6 +646,15 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_WORLD:
+                    {
+                        World obj = new World();
+
+                        loadWorld(obj);
+
+                        addReference(obj);
+                        break;
+                    }
                     default:
                     {
                         throw new IOException("Unsupported object type " + objectType);
@@ -1405,6 +1414,15 @@ public final class Loader
             {
                 throw new UnsupportedOperationException();
             }
+        }
+
+        private final void loadWorld(World obj)
+            throws IOException
+        {
+            loadGroup(obj);
+
+            obj.setActiveCamera((Camera) readReference());
+            obj.setBackground((Background) readReference());
         }
 
         private Object3D[] getRootObjects()

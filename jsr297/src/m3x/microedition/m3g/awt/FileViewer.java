@@ -146,7 +146,15 @@ public class FileViewer extends BaseFrame
                     {
                         if (root instanceof World)
                         {
-                            g3d.render((World) root);
+                            final World world = (World) root;
+                            //override the camera
+                            final Camera oldCamera = world.getActiveCamera();
+                            world.setActiveCamera(camera);
+                            camera.setTransform(cameraController.getTransform());
+                            world.addChild(camera);
+                            g3d.render(world);
+                            world.removeChild(camera);
+                            world.setActiveCamera(oldCamera);
                         }
                         else if (root instanceof Light)
                         {
