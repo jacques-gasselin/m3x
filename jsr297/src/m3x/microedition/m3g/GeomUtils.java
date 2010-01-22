@@ -28,10 +28,12 @@
 package m3x.microedition.m3g;
 
 import javax.microedition.m3g.Appearance;
+import javax.microedition.m3g.Image2D;
 import javax.microedition.m3g.IndexBuffer;
 import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.Mesh;
+import javax.microedition.m3g.Texture2D;
 
 /**
  * @author jgasseli
@@ -244,5 +246,40 @@ public final class GeomUtils
 
         final MeshEvaluator eval = new SphereMeshEvaluator(radius);
         return createMesh(eval, stacks + 1, slices + 1);
+    }
+
+    private static final class ScreenQuadMeshEvaluator implements MeshEvaluator
+    {
+        private final float xScale;
+        private final float yScale;
+
+        private ScreenQuadMeshEvaluator(Texture2D texture)
+        {
+            final Image2D image = texture.getImage2D();
+            this.xScale = image.getWidth();
+            this.yScale = image.getHeight();
+        }
+
+        public void evaluate(double s, double t, float[] position, int poffset,
+                float[] normal, int noffset)
+        {
+            //bottom to top
+            position[poffset + 0] = (float) (xScale * s);
+            position[poffset + 1] = (float) (yScale * t);
+            position[poffset + 2] = 0;
+
+            normal[noffset + 0] = 0;
+            normal[noffset + 1] = 0;
+            normal[noffset + 2] = 1;
+        }
+    }
+
+    public static final Mesh createScreenQuad(Texture2D texture)
+    {
+        final MeshEvaluator eval = new ScreenQuadMeshEvaluator(texture);
+        final Mesh m = createMesh(eval, 2, 2);
+        final Appearance a = m.getAppearance(0);
+        a.setTexture(0, texture);
+        return m;
     }
 }

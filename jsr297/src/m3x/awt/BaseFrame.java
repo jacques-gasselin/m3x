@@ -50,15 +50,21 @@ public class BaseFrame extends Frame
         @Override
         public void windowClosing(WindowEvent e)
         {
-            System.exit(0);
+            super.windowClosing(e);
+            dispose();
         }
     }
 
     private final void init(String title)
     {
         setTitle(title);
-        addWindowListener(new WindowAdapter());
         setSize(800, 600);
+        
+        final WindowAdapter adapter = new WindowAdapter();
+        addWindowFocusListener(adapter);
+        addWindowListener(adapter);
+        addWindowStateListener(adapter);
+
         windowedWidth = getWidth();
         windowedHeight = getHeight();
     }

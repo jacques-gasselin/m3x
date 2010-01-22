@@ -45,7 +45,7 @@ public class Image2D extends ImageBase
         set(format, width, height, 1, true);
     }
 
-    Image2D(int format, BufferedImage image)
+    public Image2D(int format, BufferedImage image)
     {
         set(format, image);
     }

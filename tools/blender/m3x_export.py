@@ -145,8 +145,12 @@ class AppearanceBase(Object3D):
                 m3xTextures = []
                 #print "material", material
                 #print "textures:", material.getTextures()
-                for mtex in material.getTextures():
-                    if mtex:
+                for i, mtex in enumerate(material.textures):
+                    if material.enabledTextures:
+                        enabled = i in material.enabledTextures
+                    else:
+                        enabled = True
+                    if enabled and mtex:
                         texture = mtex.tex
                         m3xImage = None
                         m3xTexture = None
