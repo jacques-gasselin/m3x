@@ -169,16 +169,15 @@
                  author="true"
                  version="true"
                  use="true"
-                 windowtitle="m3x Application Programming Interface">
+                 includenosourcepackages="true"
+                 windowtitle="m3x Application Programming Interface"
+                 Overview="${src.dir}/overview.html">
+            <arg value="-notimestamp"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>
             </classpath>
-            <fileset dir="${src.dir}" defaultexcludes="yes">
-                <exclude name="**/*.html"/>
-            </fileset>
-            <fileset dir="${build.src.dir}" defaultexcludes="yes">
-                <exclude name="**/*.html"/>
-            </fileset>
+            <packageset dir="${src.dir}" defaultexcludes="yes"/>
+            <packageset dir="${build.src.dir}" defaultexcludes="yes"/>
             <doctitle><![CDATA[<h1>m3x Application Programming Interface</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>]]></bottom>
             <group title="XML Packages" packages="${m3x.xml.package}"/>
