@@ -32,17 +32,19 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.LogLevel;
 import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.resources.FileResource;
 import org.apache.tools.ant.util.FileNameMapper;
+import org.apache.tools.ant.util.FileUtils;
 
 /**
  *
@@ -57,7 +59,7 @@ public class XmlToBinaryTask extends Task
     
     public XmlToBinaryTask()
     {
-        filesetList = new Vector<FileSet>();
+        filesetList = new ArrayList<FileSet>();
     }
 
     @Override
@@ -155,21 +157,41 @@ public class XmlToBinaryTask extends Task
             }
         }
 
-        FileNameMapper fnmapper = mapper.getImplementation();
+        final FileNameMapper fnmapper = mapper.getImplementation();
+        //System.out.println("mapper: " + fnmapper.toString());
+        //System.out.println("filesetList: " + filesetList.toString());
+        final FileUtils fileUtils = FileUtils.getFileUtils();
         for (FileSet fs : filesetList)
         {
-            Iterator it = fs.iterator();
+            //System.out.println("fs: " + fs.toString());
+            final Iterator it = fs.iterator();
+            if (!it.hasNext())
+            {
+                System.out.println("empty fileset!");
+            }
             while (it.hasNext())
             {
-                File sourceFile = ((FileResource)it.next()).getFile();
+                final FileResource sourceFileResource = (FileResource)it.next();
+                //System.out.println("sourceFileResource: " + sourceFileResource.toString());
+                final File sourceFile = sourceFileResource.getFile();
                 try
                 {
                     String preMappingPath = sourceFile.getCanonicalPath();
                     String postMappingPath = fnmapper.mapFileName(preMappingPath)[0];
                     //apply the conversion for the given file names.
                     final File targetFile = new File(postMappingPath);
-                    convertMethod.invoke(null, 
-                            new Object[] {sourceFile, targetFile});
+                    if (!fileUtils.isUpToDate(sourceFile, targetFile))
+                    {
+                        log("Converting " + sourceFile + " to " + targetFile,
+                                LogLevel.VERBOSE.getLevel());
+                        convertMethod.invoke(null,
+                                new Object[] {sourceFile, targetFile});
+                    }
+                    else
+                    {
+                        log("Skipping " + sourceFile + " to " + targetFile,
+                                LogLevel.VERBOSE.getLevel());
+                    }
                 }
                 catch (InvocationTargetException ex)
                 {
