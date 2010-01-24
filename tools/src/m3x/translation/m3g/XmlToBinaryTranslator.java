@@ -178,7 +178,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
      * Converts an M3X xml document root to an M3G root object array.
      * @param root
      * @throws NullPointerException if root is null
-     * @return
+     * @return binary root object array
      */
     public static m3x.m3g.Object3D[] convertRoot(m3x.xml.M3G root)
     {

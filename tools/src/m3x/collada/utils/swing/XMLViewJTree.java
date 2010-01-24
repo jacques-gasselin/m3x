@@ -238,7 +238,7 @@ public class XMLViewJTree extends JTree
 
     /**
      *
-     * @param rootNode
+     * @param rootDomNode
      */
     public void setRootNode(final org.w3c.dom.Node rootDomNode)
     {

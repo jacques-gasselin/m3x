@@ -47,8 +47,42 @@ import org.apache.tools.ant.util.FileNameMapper;
 import org.apache.tools.ant.util.FileUtils;
 
 /**
+ * An ANT task for converting M3X files to binary M3G files.
+ * <p>The task supports mappers and applies up-to-date checks on the mapped
+ * Source and Target files. Source-Target pairs will be skipped if they
+ * are up-to-date according to FileUtils.isUpToDate.</p>
+ * 
+ * <p>
+ * Suggested use in a build.xml file:
+ *
+ * <pre>
+ * {@code
+ * <taskdef name="m3x_to_m3g"
+ *          classname="m3x.translation.m3g.XmlToBinaryTask">
+ *   <classpath>
+ *   ... path that includes m3x.jar ...
+ *   </classpath>
+ * </taskdef>
+ * ...
+ * <m3x_to_m3g>
+ *   <classpath>
+ *   ... path that includes m3x.jar & jaxb-impl.jar...
+ *   </classpath>
+ *   <fileset dir="directory containing m3x assets">
+ *     <include name="pattern that includes the .m3x files you want to convert"/>
+ *   </fileset>
+ *   <mapper type="glob" from="*.m3x" to="*.m3g"/>
+ * </m3x_to_m3g>
+ * }
+ * </pre>
+ *
+ * Please Note: The classpath to the JAXB implementation jar is needed in the task.
+ * This is due to JAXB being lazy instatiated at first use, so the taskdef does
+ * not load all the classes needed to use JAXB.
+ * </p>
  *
  * @author jgasseli
+ * @see FileUtils#isUpToDate(java.io.File, java.io.File)
  */
 public class XmlToBinaryTask extends Task
 {
@@ -73,17 +107,40 @@ public class XmlToBinaryTask extends Task
         filesetList.add(fileset);
     }
 
+    /**
+     * Allows the classpath to be set with a refid as the attribute 'classpath'.
+     * @param p the resolved Path reference
+     */
     public void setClasspath(Path p)
     {
         this.classpath = p;
     }
 
-    public Path createClasspath()
+    /**
+     * Allows the classpath to be set with a nested path element with the name
+     * 'classpath'.
+     * @return the created classpath
+     * @throws BuildException if multiple classpaths are set.
+     */
+    public Path createClasspath() throws BuildException
     {
+        if (this.classpath != null)
+        {
+            throw new BuildException("a classpath has already been set");
+        }
+        
         this.classpath = new Path(getProject());
         return this.classpath;
     }
 
+    /**
+     * Allows a mapper to be set with a nested mapper element of any type.
+     * The most likely candidate for use is &lt;mapper type='glob' ... &gt;,
+     * but any other mapper is also allowed.
+     * 
+     * @return the created mapper
+     * @throws BuildException if multiple mappers are set.
+     */
     public Mapper createMapper() throws BuildException
     {
         if (mapper == null)
@@ -92,7 +149,7 @@ public class XmlToBinaryTask extends Task
         }
         else
         {
-            throw new IllegalArgumentException("only one mapper allowed");
+            throw new BuildException("only one mapper allowed");
         }
         return mapper;
     }

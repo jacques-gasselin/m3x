@@ -27,14 +27,12 @@
 
 package m3x.m3g;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import m3x.m3g.primitives.Header;
 import m3x.m3g.primitives.Serializable;
 import m3x.m3g.primitives.FileIdentifier;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.IdentityHashMap;

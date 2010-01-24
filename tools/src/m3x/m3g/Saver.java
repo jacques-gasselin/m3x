@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- *
+ * A utility class for saving m3g binary root objects and their references to an
+ * m3g binary file.
+ * 
  * @author jgasseli
  */
 public abstract class Saver
@@ -42,9 +44,15 @@ public abstract class Saver
     }
 
     /**
-     * @param inputStream
-     * @return
-     * @throws IOException
+     * Writes the root objects, roots, to an outputstream. This is the reverse
+     * funtionality of Loader.load
+     * 
+     * @param outputStream the stream to write to
+     * @param roots the root objects to save.
+     * @param version the version of the file, must be a valid format version.
+     * @param author the author of the file, or null.
+     * @throws IOException if there was an error writing to {@code outputStream}
+     * @see Loader#load(java.io.InputStream)
      */
     public static void save(OutputStream outputStream, Object3D[] roots,
             String version, String author)
