@@ -91,9 +91,49 @@ public class Object3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Finds an object in the hierarchy that has a matching userID.
+     *
+     * <p>The first object found that matches the userID is returned.
+     * If no object has the matching id then null is returned.</p>
+     *
+     * <p>Note: The order of traversal is not specified, intentionally, so
+     * a user should not assume depth first or breadth first search.</p>
+     *
+     * @param userID the user id to match with.
+     * @return the first matching object, or null if none is found.
+     * @see #getUserID()
+     */
     public Object3D find(int userID)
     {
-        throw new UnsupportedOperationException();
+        final Set<Object3D> closedList = new HashSet<Object3D>();
+        final ArrayList<Object3D> openList = new ArrayList<Object3D>();
+
+        //since all operations only touch the end of the list;
+        //this is a depth first search. Breath first search would
+        //require the front to be removed for each iteration
+        openList.add(this);
+        //this is an exhaustive search
+        while (openList.size() > 0)
+        {
+            final Object3D candidate = openList.remove(openList.size() - 1);
+            //skip objects already visited
+            if (!closedList.contains(candidate))
+            {
+                //count it as visited now
+                closedList.add(candidate);
+                //does it have the desired UserID?
+                if (candidate.getUserID() == userID)
+                {
+                    return candidate;
+                }
+                //add the references from the candidate to the open list
+                candidate.getReferences(openList);
+            }
+        }
+
+        //none found
+        return null;
     }
 
     public Object3D[] findAll(Class type)
