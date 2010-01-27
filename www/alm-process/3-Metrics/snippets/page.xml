@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<page visibility="2"><component_list /></page>
+<page visibility="2"><component_list><component visibility="2" type="ArtifactReport" order="1" layout="2"><title localize="false">Double</title><report title="" view_link=""></report><report title="" view_link=""></report></component></component_list></page>
