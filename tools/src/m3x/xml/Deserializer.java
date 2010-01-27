@@ -85,7 +85,7 @@ public final class Deserializer
                     "The m3x.xml classes may be missing from your distribution.");
         }
 
-        if (false)
+        if (true)
         {
             //get a validating schema
             //load it from the packaged schema
@@ -107,7 +107,7 @@ public final class Deserializer
         }
     }
 
-    private final void createUnmarshaller()
+    private final void createUnmarshaller(boolean validating)
     {
         createContext();
         
@@ -123,7 +123,7 @@ public final class Deserializer
         }
 
         //set the validation handler
-        if (validatingSchema != null)
+        if (validatingSchema != null && validating)
         {
             try
             {
@@ -140,12 +140,20 @@ public final class Deserializer
         }
     }
 
-    /**The JAXB unsmahaller that is responsible for converting
-     * an XML document into m3x.xml classes.
+    /**
+     * The JAXB unsmahaller that is responsible for converting
+     * an XML document into m3x.xml classes. This defaults to non-validating.
+     * Use the other constructor if you wich to have control of the validation.
+     * @see #Deserializer(boolean)
      */
     public Deserializer()
     {
-        createUnmarshaller();
+        createUnmarshaller(false);
+    }
+
+    public Deserializer(boolean validating)
+    {
+        createUnmarshaller(validating);
     }
 
     public static final class ValidationException extends RuntimeException

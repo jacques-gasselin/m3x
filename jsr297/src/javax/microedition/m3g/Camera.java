@@ -37,9 +37,10 @@ public class Camera extends Node
     public static final int PERSPECTIVE = 50;
     public static final int SCREEN = 51;
     
-    private int projectionType;
+    private int projectionType = GENERIC;
     private final float[] projectionParams = new float[4];
-    private boolean projectionNeedsUpdate = true;
+    //default is GENERIC, which is already up to date
+    private boolean projectionNeedsUpdate = false;
     private final Transform projection = new Transform();
     
     public Camera()

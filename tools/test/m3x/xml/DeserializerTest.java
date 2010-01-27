@@ -38,7 +38,7 @@ import junit.framework.TestCase;
  */
 public class DeserializerTest extends TestCase
 {
-    private Deserializer deserializer = new Deserializer();
+    private Deserializer deserializer = new Deserializer(true);
     
     public void testDeserialiseEmptyFile()
     {

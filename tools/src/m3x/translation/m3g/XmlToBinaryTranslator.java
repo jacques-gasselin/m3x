@@ -32,6 +32,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
@@ -121,6 +123,11 @@ public class XmlToBinaryTranslator extends BinaryTranslator
 
     public static void convert(File source, File target)
     {
+        convert(source, target, false);
+    }
+
+    public static void convert(File source, File target, boolean validate)
+    {
         if (source == null)
         {
             throw new NullPointerException("source is null");
@@ -143,13 +150,19 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         m3x.xml.M3G xmlRoot = null;
         try
         {
-            final m3x.xml.Deserializer deserializer = new m3x.xml.Deserializer();
-            xmlRoot = deserializer.deserialize(new FileReader(source));
+            final m3x.xml.Deserializer deserializer = new m3x.xml.Deserializer(validate);
+            final Reader reader = new FileReader(source);
+            xmlRoot = deserializer.deserialize(reader);
+            reader.close();
         }
-        catch (FileNotFoundException ex)
+        catch (FileNotFoundException e)
         {
             throw new IllegalArgumentException("source " + source
-                + " is not a valid file", ex);
+                + " is not a valid file", e);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("unable to close source " + source, e);
         }
 
         //translate
@@ -158,19 +171,21 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         //serialise the binary stream
         try
         {
-            m3x.m3g.Saver.save(new FileOutputStream(target),
+            final OutputStream stream = new FileOutputStream(target);
+            m3x.m3g.Saver.save(stream,
                 binRoots,
                 xmlRoot.getVersion(), xmlRoot.getAuthor());
+            stream.close();
         }
-        catch (FileNotFoundException ex)
+        catch (FileNotFoundException e)
         {
             throw new IllegalArgumentException("target " + target
-                + " is not a valid path", ex);
+                + " is not a valid path", e);
         }
-        catch (IOException ex)
+        catch (IOException e)
         {
             throw new IllegalArgumentException(
-                    "unable to serialise xml objects", ex);
+                    "unable to serialise xml objects", e);
         }
     }
 

@@ -90,6 +90,7 @@ public class XmlToBinaryTask extends Task
     private Path classpath;
     private Mapper mapper;
     private File executeDirectory;
+    private boolean validate;
     
     public XmlToBinaryTask()
     {
@@ -116,6 +117,18 @@ public class XmlToBinaryTask extends Task
         this.classpath = p;
     }
 
+    /**
+     * Turns on or off XML Schema validation as part of the translation.
+     * This may slow down translation significantly and use much more memory.
+     * Enable only for debugging.
+     * 
+     * @param enable true to enable, false to disable
+     */
+    public void setValidate(boolean enable)
+    {
+        this.validate = enable;
+    }
+    
     /**
      * Allows the classpath to be set with a nested path element with the name
      * 'classpath'.
@@ -195,21 +208,21 @@ public class XmlToBinaryTask extends Task
             try
             {
                 convertMethod = targetClass.getMethod("convert",
-                        new Class[] {File.class, File.class});
+                        new Class[] {File.class, File.class, boolean.class});
             }
             catch (NoSuchMethodException e)
             {
-                throw new BuildException("No method convert(File, File) in "
+                throw new BuildException("No method convert(File, File, boolean) in "
                                          + classname);
             }
             if (convertMethod == null)
             {
-                throw new BuildException("Could not find convert(File, File) method in "
+                throw new BuildException("Could not find convert(File, File, boolean) method in "
                                          + classname);
             }
             if ((convertMethod.getModifiers() & Modifier.STATIC) == 0)
             {
-                throw new BuildException("convert(File, File) method in " + classname
+                throw new BuildException("convert(File, File, boolean) method in " + classname
                     + " is not declared static");
             }
         }
@@ -242,7 +255,7 @@ public class XmlToBinaryTask extends Task
                         log("Converting " + sourceFile + " to " + targetFile,
                                 LogLevel.VERBOSE.getLevel());
                         convertMethod.invoke(null,
-                                new Object[] {sourceFile, targetFile});
+                                new Object[] {sourceFile, targetFile, Boolean.valueOf(validate)});
                     }
                     else
                     {
