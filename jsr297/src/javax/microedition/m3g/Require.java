@@ -53,6 +53,11 @@ final class Require
 
     static final void argumentNotNegative(float value, String name)
     {
+        if (Float.isNaN(value))
+        {
+            throw new IllegalArgumentException(name + " is NaN");
+        }
+
         if (value < 0)
         {
             throw new IllegalArgumentException(name + " is negative");
@@ -145,6 +150,16 @@ final class Require
 
     static final void argumentGreaterThan(float value, String name, float limit)
     {
+        if (Float.isNaN(value))
+        {
+            throw new IllegalArgumentException(name + " is NaN");
+        }
+
+        if (Float.isNaN(limit))
+        {
+            throw new IllegalArgumentException("limit is NaN");
+        }
+
         if (value <= limit)
         {
             throw new IllegalArgumentException(name + " <= " + limit);
@@ -161,6 +176,11 @@ final class Require
 
     static final void argumentGreaterThanZero(float value, String name)
     {
+        if (Float.isNaN(value))
+        {
+            throw new IllegalArgumentException(name + " is NaN");
+        }
+        
         if (value <= 0)
         {
             throw new IllegalArgumentException(name + " <= 0");
