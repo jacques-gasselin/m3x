@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
@@ -25,51 +25,48 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package m3x.translation.m3g.xml;
+package javax.microedition.m3g;
 
-import java.util.List;
-import java.util.Vector;
-import m3x.translation.m3g.XmlToBinaryTranslator;
-
+import junit.framework.TestCase;
 
 /**
- * 
  * @author jgasseli
  */
-public class GroupConverter extends NodeConverter
+public class Object3DTest extends TestCase
 {
-    @Override
-    public m3x.m3g.Object3D toBinary(XmlToBinaryTranslator translator, m3x.xml.Object3D from)
+    public void testGetAnimationTrackCount()
     {
-        m3x.m3g.Group to = new m3x.m3g.Group();
-        setFromXML(translator, to, (m3x.xml.GroupType)from);
-        return to;
+        Group g = new Group();
+        assertEquals("track count should default to 0",
+                0, g.getAnimationTrackCount());
     }
 
-    protected final void setFromXML(XmlToBinaryTranslator translator,
-        m3x.m3g.Group to, m3x.xml.GroupType from)
+    public void testGetUserID()
     {
-        super.setFromXML(translator, to, from);
-        to.setAlphaFactor(from.getAlphaFactor());
-        to.setPickingEnabled(from.isPickingEnabled());
-        to.setRenderingEnabled(from.isRenderingEnabled());
-        to.setScope(from.getScope());
-        to.setChildNodes(getChildNodes(translator, from));
+        Group g = new Group();
+        assertEquals("userID should default to 0",
+                0, g.getUserID());
     }
-    
-    private static final List<m3x.m3g.Node> getChildNodes(
-        XmlToBinaryTranslator translator, m3x.xml.GroupType from)
+
+    public void testGetUserObject()
     {
-        List<m3x.m3g.Node> childNodes = null;
-        if (from.getChildNodes() != null)
-        {
-            childNodes = new Vector<m3x.m3g.Node>();
-            for (m3x.xml.Node node : from.getChildNodes())
-            {
-                childNodes.add((m3x.m3g.Node) translator.getReference(node));
-            }
-        }
-        return childNodes;
+        Group g = new Group();
+        assertNull("userID should default to null",
+                g.getUserObject());
     }
-    
+
+    public void testIsAnimationEnabled()
+    {
+        Group g = new Group();
+        assertTrue("animation should default to enabled",
+                g.isAnimationEnabled());
+    }
+
+    public void testSetUserID()
+    {
+        Group g = new Group();
+        final int userID = 123;
+        g.setUserID(userID);
+        assertEquals(userID, g.getUserID());
+    }
 }

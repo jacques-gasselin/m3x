@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009, Jacques Gasselin de Richebourg
+ * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -42,7 +42,8 @@ public class Object3D
 {
     private final Map<AnimationTrack, int[]> channelsByTrack =
             new HashMap<AnimationTrack, int[]>();
-    private boolean animationEnabled;
+    //defaults to true
+    private boolean animationEnabled = true;
     private int userID;
     private Object userObject;
     
