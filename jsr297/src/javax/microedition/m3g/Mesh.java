@@ -54,6 +54,7 @@ public class Mesh extends Node
     public Mesh(int numSubmeshes, int numMorphTargets)
     {
         setSubmeshCount(numSubmeshes);
+        setMorphTargetCount(numMorphTargets);
     }
 
     /**
@@ -68,8 +69,22 @@ public class Mesh extends Node
             Appearance[] appearances)
     {
         Require.notNull(vertices, "vertices");
+        Require.argumentNotEmpty(submeshes, "submeshes");
+        for (IndexBuffer submesh : submeshes)
+        {
+            if (submesh == null)
+            {
+                throw new NullPointerException("an element in submeshes is null");
+            }
+        }
+        if ((appearances != null) && (appearances.length < submeshes.length))
+        {
+            throw new IllegalArgumentException("appearances is not null yet" +
+                    "of mismatched length");
+        }
 
         setVertexBuffer(vertices);
+
     }
 
     /**
@@ -90,6 +105,17 @@ public class Mesh extends Node
         setVertexBuffer(vertices);
     }
 
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final Mesh m = (Mesh) target;
+        m.setSubmeshCount(getSubmeshCount());
+        m.setMorphTargetCount(morphTargetCount);
+        //TODO implement the rest
+    }
+    
     public Appearance getAppearance(int index)
     {
         final AppearanceBase a = getAppearanceBase(index);

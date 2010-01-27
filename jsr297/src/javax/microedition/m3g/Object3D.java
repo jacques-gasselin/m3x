@@ -86,9 +86,56 @@ public class Object3D
         throw new UnsupportedOperationException();
     }
 
-    public Object3D duplicate()
+    /**
+     * Duplicates the object, returning a shallow copy of the object.
+     *
+     * <p><b>Implementation Note:</b> and class that wishes to
+     * support this method should implement the version of this method
+     * that takes an argument and a default constructor that is accessible
+     * from here.
+     *
+     * @return a shallow copied duplicate
+     * @see #duplicate(javax.microedition.m3g.Object3D)
+     */
+    public final Object3D duplicate()
     {
-        throw new UnsupportedOperationException();
+        try
+        {
+            final Object3D ret = getClass().newInstance();
+            duplicate(ret);
+            return ret;
+        }
+        catch (InstantiationException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        throw new UnsupportedOperationException("Class " + getClass() + " does" +
+                " not allow duplication");
+    }
+
+    /**
+     * Copies all the properties and references from this object to the
+     * target object.
+     * @param target the object to duplicate to.
+     * @see #duplicate()
+     */
+    void duplicate(Object3D target)
+    {
+        for (AnimationTrack track : channelsByTrack.keySet())
+        {
+            for (int channel : channelsByTrack.get(track))
+            {
+                target.addAnimationTrack(track, channel);
+            }
+        }
+
+        target.setAnimationEnable(isAnimationEnabled());
+        target.setUserID(getUserID());
+        target.setUserObject(getUserObject());
     }
 
     /**

@@ -23,6 +23,15 @@ final class Require
         }
     }
 
+    static final void argumentNotEmpty(Object[] array, String name)
+    {
+        notNull(array, name);
+        if (array.length == 0)
+        {
+            throw new NullPointerException(name + " is empty");
+        }
+    }
+
     static final void argumentNotEmpty(int[] array, String name)
     {
         notNull(array, name);

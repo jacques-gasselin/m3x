@@ -44,17 +44,18 @@ public abstract class Transformable extends Object3D
         
     }
 
-    private final void updateCompositeTransform()
+    @Override
+    void duplicate(Object3D target)
     {
-        final Transform t = this.compositeTransform;
-        t.setIdentity();
-        t.postTranslate(tx, ty, tz);
-        t.postRotateQuat(qx, qy, qz, qw);
-        t.postScale(sx, sy, sz);
-        t.postMultiply(transform);
-        compositeTransformNeedsUpdate = false;
-    }
+        super.duplicate(target);
 
+        final Transformable t = (Transformable) target;
+        t.setOrientationQuat(qx, qy, qz, qw);
+        t.setScale(sx, sy, sz);
+        t.setTranslation(tx, ty, tz);
+        t.setTransform(transform);
+    }
+    
     final Transform getCompositeTransform()
     {
         if (compositeTransformNeedsUpdate)
@@ -232,5 +233,16 @@ public abstract class Transformable extends Object3D
         this.tz += tz;
 
         compositeTransformNeedsUpdate = true;
+    }
+
+    private final void updateCompositeTransform()
+    {
+        final Transform t = this.compositeTransform;
+        t.setIdentity();
+        t.postTranslate(tx, ty, tz);
+        t.postRotateQuat(qx, qy, qz, qw);
+        t.postScale(sx, sy, sz);
+        t.postMultiply(transform);
+        compositeTransformNeedsUpdate = false;
     }
 }

@@ -78,6 +78,20 @@ public abstract class Node extends Transformable
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final Node n = (Node) target;
+        n.setAlphaFactor(getAlphaFactor());
+        n.setCollisionEnable(isCollisionEnabled());
+        n.setLODResolution(getLODResolution());
+        n.setPickingEnable(isPickingEnabled());
+        n.setRenderingEnable(isRenderingEnabled());
+        n.setScope(getScope());
+    }
+
     public void generateCollisionShape(int orientations, boolean useExisting)
     {
         throw new UnsupportedOperationException();

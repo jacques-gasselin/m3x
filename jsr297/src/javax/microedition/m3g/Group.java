@@ -78,6 +78,21 @@ public class Group extends Node
         children.add(child);
     }
 
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final Group g = (Group) target;
+        //TODO support duplicates of the same child
+        for (Node child : children)
+        {
+            g.addChild((Node) child.duplicate());
+        }
+        g.setLODEnable(isLodEnabled(), getLODHysteresis());
+        g.setLODOffset(getLODOffset());
+    }
+    
     public Node getChild(int index)
     {
         Require.indexInRange(index, getChildCount());
