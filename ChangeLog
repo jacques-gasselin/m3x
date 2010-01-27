@@ -1,3 +1,10 @@
+January 28, 2010
+- modified distribution script to include m3x-jsr297.
+- added plenty of tests to jsr297.
+- added file up-to-date checks to the XMLToBinary ANT task.
+- updated the website at https://m3x.dev.java.net.
+  * added subpages, including documentation.
+
 June 18, 2009
 - modified distribution script to include ChangeLog.
 - update web front page.

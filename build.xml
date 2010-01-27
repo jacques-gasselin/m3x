@@ -4,6 +4,7 @@
     <property name="schema.dir" location="${basedir}/schema"/>
     <property name="lib.dir" location="${basedir}/lib"/>
     <property name="tools.dir" location="${basedir}/tools"/>
+    <property name="jsr297.dir" location="${basedir}/jsr297"/>
     <property name="release.dir" location="${basedir}/release"/>
     <property name="checkstyle.policy" location="${basedir}/checkstyle-policy-5.0.xml"/>
     
@@ -105,6 +106,7 @@
 
         <copy todir="${release.dir}">
             <fileset dir="${tools.dir}/dist"/>
+            <fileset dir="${jsr297.dir}/dist"/>
         </copy>
 
         <copy todir="${release.dir}" file="${basedir}/LICENSE"/>
