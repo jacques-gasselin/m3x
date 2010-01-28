@@ -1,37 +1,40 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />                                <p>The M3X project includes some ANT tasks that are suited to being integrated in a build pipeline.</p>
 
 <h4>M3X to Binary</h4>
-<p>Probably the most important task that the M3X project, and by extension the xml format defined, provides.
-This intends to be the easiest and least error prone way to convert source assets to JSR184 and JSR297 targeted assets.<p>
+<p>Probably the most important task that the M3X project, and by extension
+   the xml format provides. This intends to be the easiest and least error prone
+   way to convert source assets to JSR184 and JSR297 targeted assets.<p>
 
 <p>To get this task working in your pipeline you need to follow these steps:</p>
 <ol>
-<li>Download the latest distribution of M3X. From it you will need the m3x.jar file.</li>
-<li>Place the m3x.jar file in your project library folder, or somewhere where your script can access it. The rest of this
-guide assumes that location is ${lib.dir}</li>
-<li>Add the following taskdef to your script:<br />
-    <div style="color:#606060">
-        <pre>
+    <li>Download the latest distribution of M3X. From it you will need the m3x.jar file.</li>
+    <li>Place the m3x.jar file in your project library folder, or somewhere where
+        your script can access it. The rest of this guide assumes that location is ${lib.dir}</li>
+    <li>Place the m3x.jar file in your project library folder, or somewhere where
+        your script can access it. The rest of this guide assumes that location is ${lib.dir}</li>
+    <li>Also copy the JAXB implementation jar file, jaxb-impl.jar, from the distribution.
+        Please note the license file that comes with it and ensure you agree to it before use.
+        From the jaxb folder you will need the jaxb-impl.jar only.
+        Hopefully this can be corrected in the future but due to the dynamic loading
+        internally of the JAXB context (beyond our control) the taskdef below does not
+        resolve all the references to JAXB. Put the jaxb-impl.jar in the same lib folder
+        as m3x.jar, yet again assumed to be ${lib.dir}</li>
+    <li>Add the following taskdef to your script:<br />
+        <div style="color:#606060">
+            <pre>
 &lt;taskdef name="m3x_to_m3g"
          classname="m3x.translation.m3g.XmlToBinaryTask"&gt;
   &lt;classpath&gt;
     &lt;pathelement location="${lib.dir}/m3x.jar"/&gt;
   &lt;/classpath&gt;
 &lt;/taskdef&gt;
-        </pre>
-    </div>
-</li>
-<li>Get a hold of the JAXB implementation jar file. It should ship with the current
-JDK, but to be on the safe side dowload the latest distribution from
-<a href="http://jaxb.dev.java.net/">the JAXB page</a>. You will need the
-jaxb-impl.jar only. Hopefully this can be corrected in the future but due
-to the dynamic loading internally of the JAXB context (beyond our control)
-the taskdef above does not resolve all the references to JAXB. Put the jaxb-impl.jar
-in the same lib folder as m3x.jar, yet again assumed to be ${lib.dir}</li>
-<li>Use the task in your script at the appropriate place (in this example the
-    files are assumed to be in the ${res.dir} location):
-    <div style="color:#606060">
-        <pre>
+            </pre>
+        </div>
+    </li>
+    <li>Use the task in your script at the appropriate place (in this example the
+        files are assumed to be in the ${res.dir} location):
+        <div style="color:#606060">
+            <pre>
 &lt;m3x_to_m3g&gt;
   &lt;classpath&gt;
     &lt;pathelement location="${lib.dir}/m3x.jar"/&gt;
@@ -42,11 +45,10 @@ in the same lib folder as m3x.jar, yet again assumed to be ${lib.dir}</li>
   &lt;/fileset&gt;
   &lt;mapper type="glob" from="*.m3x" to="*.m3g"/&gt;
 &lt;/m3x_to_m3g&gt;
-        </pre>
-    </div>
-</li>
-<li>That's it. The task uses up-to-date comparisons so you should be able to run
-the task often without slowing down your build.</li>
+            </pre>
+        </div>
+    </li>
+    <li>That's it. The task uses up-to-date comparisons so you should be able to run
+        the task often without slowing down your build.</li>
 </ol>
-               
-              
+
