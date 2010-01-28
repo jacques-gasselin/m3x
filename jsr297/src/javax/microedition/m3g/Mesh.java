@@ -39,6 +39,7 @@ public class Mesh extends Node
     private int submeshCount;
     private VertexBuffer vertexBuffer;
     private int morphTargetCount;
+    private int morphSubsetSize;
 
     Mesh()
     {
@@ -111,9 +112,31 @@ public class Mesh extends Node
         super.duplicate(target);
 
         final Mesh m = (Mesh) target;
-        m.setSubmeshCount(getSubmeshCount());
-        m.setMorphTargetCount(morphTargetCount);
-        //TODO implement the rest
+        m.setVertexBuffer(getVertexBuffer());
+        {
+            final int count = getSubmeshCount();
+            m.setSubmeshCount(count);
+            for (int i = 0; i < count; ++i)
+            {
+                m.setIndexBuffer(i, getIndexBuffer(i));
+                m.setAppearanceBase(i, getAppearanceBase(i));
+            }
+        }
+        {
+            final int count = getMorphTargetCount();
+            m.setMorphTargetCount(count);
+            for (int i = 0; i < count; ++i)
+            {
+                m.setMorphTarget(i, getMorphTarget(i));
+            }
+            final int size = getMorphSubset(null);
+            if (size > 0)
+            {
+                final int[] indices = new int[size];
+                getMorphSubset(indices);
+                m.setMorpSubset(size, indices);
+            }
+        }
     }
     
     public Appearance getAppearance(int index)
@@ -142,7 +165,11 @@ public class Mesh extends Node
 
     public int getMorphSubset(int[] morphIndices)
     {
-        throw new UnsupportedOperationException();
+        if (morphIndices != null)
+        {
+            throw new UnsupportedOperationException();
+        }
+        return this.morphSubsetSize;
     }
 
     public VertexBuffer getMorphTarget(int index)
@@ -209,6 +236,11 @@ public class Mesh extends Node
     }
 
     public void setAppearance(int index, Appearance appearance)
+    {
+        setAppearanceBase(index, appearance);
+    }
+
+    void setAppearanceBase(int index, AppearanceBase appearance)
     {
         Require.indexInRange(index, getSubmeshCount());
 
