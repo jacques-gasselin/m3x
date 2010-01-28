@@ -2,8 +2,8 @@
 
 <h4>M3X to Binary</h4>
 <p>Probably the most important task that the M3X project, and by extension
-   the xml format provides. This intends to be the easiest and least error prone
-   way to convert source assets to JSR184 and JSR297 targeted assets.<p>
+    the xml format provides. This intends to be the easiest and least error prone
+    way to convert source assets to JSR184 and JSR297 targeted assets.<p>
 
 <p>To get this task working in your pipeline you need to follow these steps:</p>
 <ol>
@@ -20,20 +20,19 @@
         resolve all the references to JAXB. Put the jaxb-impl.jar in the same lib folder
         as m3x.jar, yet again assumed to be ${lib.dir}</li>
     <li>Add the following taskdef to your script:<br />
-        <div style="color:#606060">
+        <div style="background-color:#F8F8F8; color:#505050">
             <pre>
 &lt;taskdef name="m3x_to_m3g"
          classname="m3x.translation.m3g.XmlToBinaryTask"&gt;
   &lt;classpath&gt;
     &lt;pathelement location="${lib.dir}/m3x.jar"/&gt;
   &lt;/classpath&gt;
-&lt;/taskdef&gt;
-            </pre>
+&lt;/taskdef&gt;</pre>
         </div>
     </li>
     <li>Use the task in your script at the appropriate place (in this example the
         files are assumed to be in the ${res.dir} location):
-        <div style="color:#606060">
+        <div style="background-color:#F8F8F8; color:#505050">
             <pre>
 &lt;m3x_to_m3g&gt;
   &lt;classpath&gt;
@@ -44,11 +43,41 @@
     &lt;include name="**/*.m3x"/&gt;
   &lt;/fileset&gt;
   &lt;mapper type="glob" from="*.m3x" to="*.m3g"/&gt;
-&lt;/m3x_to_m3g&gt;
-            </pre>
+&lt;/m3x_to_m3g&gt;</pre>
         </div>
     </li>
     <li>That's it. The task uses up-to-date comparisons so you should be able to run
         the task often without slowing down your build.</li>
+</ol>
+
+<h4>Blender export script</h4>
+<p><a href="http://www.blender.org">Blender</a> is an amazing open source
+    3D DCC tool. Whilst the interface my be daunting to many newcomers the wide
+    array of powerful features has ensured it has a vibrant community.
+    Supporting Blender with M3X is a high priority and as such we have created
+    an M3X exporter for it.</p>
+
+<p>Currently the exporter is in an incomplete state, but static geometry, materials
+    and lighting work quite well. For a more mature exporter please see Gerhard
+    Völkl's excellent <a href="http://www.nelson-games.de/bl2m3g/">m3g_export</a> script.
+
+<p>To get the exporter installed you need to follow these steps</p>
+<ol>
+    <li>Work out the folder of your blender installation that is the correct
+        place to put python scripts.
+        <ul>
+            <li>Mac and Linux: this is usually ~/.blender/scripts</li>
+            <li>Windows XP: probably C:\Documents and Settings\&lt;Username&gt;\Application Data\Blender Foundation\Blender\.blender\scripts</li>
+            <li>Windows Vista: probably C:\Users\&lt;Username&gt;\AppData\Roaming\Blender Foundation\Blender\.blender\scripts</li>
+        </ul>
+        See the <a href="http://wiki.blender.org/index.php/Doc:Manual/Extensions">
+        Blender manual reference page on extensions</a> for more information.
+    </li>
+    <li>Copy the blender/m3x_export.py script from the M3X distribution to
+        the Blender scripts location.</li>
+    <li>Export to your hearts content.</li>
+    <li>Report any bugs to the 
+        <a href="https://m3x.dev.java.net/servlets/ProjectIssues">Issue Tracker</a>.
+    </li>
 </ol>
 
