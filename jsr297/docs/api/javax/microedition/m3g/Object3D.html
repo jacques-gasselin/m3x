@@ -165,7 +165,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../../javax/microedition/m3g/Object3D.html#duplicate()">duplicate</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Duplicates the object, returning a shallow copy of the object.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -173,7 +173,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../../javax/microedition/m3g/Object3D.html#find(int)">find</A></B>(int&nbsp;userID)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finds an object in the hierarchy that has a matching userID.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -364,10 +364,18 @@ public int <B>animate</B>(int&nbsp;time)</PRE>
 <A NAME="duplicate()"><!-- --></A><H3>
 duplicate</H3>
 <PRE>
-public <A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A> <B>duplicate</B>()</PRE>
+public final <A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A> <B>duplicate</B>()</PRE>
 <DL>
+<DD>Duplicates the object, returning a shallow copy of the object.
+
+ <p><b>Implementation Note:</b> and class that wishes to
+ support this method should implement the version of this method
+ that takes an argument and a default constructor that is accessible
+ from here.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>a shallow copied duplicate<DT><B>See Also:</B><DD><A HREF="../../../javax/microedition/m3g/Object3D.html#duplicate(javax.microedition.m3g.Object3D)"><CODE>duplicate(javax.microedition.m3g.Object3D)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -377,8 +385,17 @@ find</H3>
 <PRE>
 public <A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A> <B>find</B>(int&nbsp;userID)</PRE>
 <DL>
+<DD>Finds an object in the hierarchy that has a matching userID.
+
+ <p>The first object found that matches the userID is returned.
+ If no object has the matching id then null is returned.</p>
+
+ <p>Note: The order of traversal is not specified, intentionally, so
+ a user should not assume depth first or breadth first search.</p>
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>userID</CODE> - the user id to match with.
+<DT><B>Returns:</B><DD>the first matching object, or null if none is found.<DT><B>See Also:</B><DD><A HREF="../../../javax/microedition/m3g/Object3D.html#getUserID()"><CODE>getUserID()</CODE></A></DL>
 </DD>
 </DL>
 <HR>

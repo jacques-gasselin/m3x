@@ -567,8 +567,8 @@ public final class Graphics3D
             throw new IllegalStateException("world has no active camera");
         }
 
-        Transform cameraToWorld = new Transform();
-        camera.getTransformTo(world, cameraToWorld);
+        final Transform cameraToWorld = new Transform();
+        activeCamera.getTransformTo(world, cameraToWorld);
         setCamera(activeCamera, cameraToWorld);
 
         Background background = world.getBackground();

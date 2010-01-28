@@ -88,33 +88,50 @@
         <delete dir="${release.dir}"/>
         <mkdir dir="${release.dir}"/>
 
-        <copy todir="${release.dir}/schema">
+        <copy todir="${release.dir}/schema"
+              preservelastmodified="true">
             <fileset dir="${basedir}/schema"/>
         </copy>
 
-        <copy todir="${release.dir}/res">
+        <copy todir="${release.dir}/res"
+              preservelastmodified="true">
             <fileset dir="${tools.dir}/res"/>
         </copy>
 
-        <copy todir="${release.dir}/api">
+        <copy todir="${release.dir}/api/m3x"
+              preservelastmodified="true">
             <fileset dir="${tools.dir}/docs/api"/>
         </copy>
 
-        <copy todir="${release.dir}/lib/jaxb">
+        <copy todir="${release.dir}/api/jsr297"
+              preservelastmodified="true">
+            <fileset dir="${jsr297.dir}/docs/api"/>
+        </copy>
+
+        <copy todir="${release.dir}/lib/jaxb"
+              preservelastmodified="true">
             <fileset dir="${lib.dir}/jaxb"/>
         </copy>
 
-        <copy todir="${release.dir}">
+        <copy todir="${release.dir}"
+              preservelastmodified="true">
             <fileset dir="${tools.dir}/dist"/>
             <fileset dir="${jsr297.dir}/dist"/>
         </copy>
 
-        <copy todir="${release.dir}" file="${basedir}/LICENSE"/>
-        <copy todir="${release.dir}" file="${basedir}/README"/>
-        <copy todir="${release.dir}" file="${basedir}/ChangeLog"/>
+        <copy todir="${release.dir}"
+              file="${basedir}/LICENSE"
+              preservelastmodified="true"/>
+        <copy todir="${release.dir}"
+              file="${basedir}/README"
+              preservelastmodified="true"/>
+        <copy todir="${release.dir}"
+              file="${basedir}/ChangeLog"
+              preservelastmodified="true"/>
 
         <zip destfile="${basedir}/release.zip"
-             basedir="${release.dir}"/>
+             basedir="${release.dir}"
+             level="9"/>
     </target>
     
 </project>
