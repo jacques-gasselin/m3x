@@ -151,12 +151,67 @@ public class Group extends Node
 
     public boolean pick(int scope, float x, float y, Camera camera, RayIntersection ri)
     {
-        throw new UnsupportedOperationException();
+        Require.notNull(camera, "camera");
+
+        final Transform cameraToGroup = new Transform();
+        if (!camera.getTransformTo(this, cameraToGroup))
+        {
+            throw new IllegalStateException(
+                    "there is no scene graph path between camera and this Group");
+        }
+
+        final Transform inverseProjection = new Transform();
+        camera.getProjection(inverseProjection);
+        inverseProjection.invert();
+        
+        final float[] pNear = { 2 * x - 1, 1 - 2 * y, -1, 1};
+        final float[] pFar = { 2 * x - 1, 1 - 2 * y, 1, 1};
+
+        inverseProjection.transform(pNear);
+        inverseProjection.transform(pFar);
+
+        final float invWNear = 1.0f / pNear[3];
+        final float invWFar = 1.0f / pFar[3];
+        pNear[0] *= invWNear;
+        pNear[1] *= invWNear;
+        pNear[2] *= invWNear;
+        pNear[3] = 1.0f;
+
+        pFar[0] *= invWFar;
+        pFar[1] *= invWFar;
+        pFar[2] *= invWFar;
+        pFar[3] = 1.0f;
+
+        cameraToGroup.transform(pNear);
+        cameraToGroup.transform(pFar);
+
+        final float ox = pNear[0];
+        final float oy = pNear[1];
+        final float oz = pNear[2];
+
+        final float dx = pFar[0] - ox;
+        final float dy = pFar[1] - oy;
+        final float dz = pFar[2] - oz;
+
+        return pick(scope, ox, oy, oz, dx, dy, dz, ri);
     }
 
     public boolean pick(int scope, float ox, float oy, float oz,
             float dx, float dy, float dz, RayIntersection ri)
     {
+        if (dx == 0)
+        {
+            throw new IllegalArgumentException("dx is 0");
+        }
+        if (dy == 0)
+        {
+            throw new IllegalArgumentException("dy is 0");
+        }
+        if (dz == 0)
+        {
+            throw new IllegalArgumentException("dz is 0");
+        }
+            
         throw new UnsupportedOperationException();
     }
 
