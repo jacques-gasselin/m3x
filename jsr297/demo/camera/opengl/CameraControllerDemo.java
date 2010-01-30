@@ -85,6 +85,8 @@ public class CameraControllerDemo extends BaseFrame
         private Image2D baseImage;
         private Texture2D baseTexture;
 
+        private volatile boolean closed;
+
         public CameraControllerCanvas()
         {
             renderTarget = new GLRenderTarget(this);
@@ -216,7 +218,7 @@ public class CameraControllerDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!closed)
             {
                 try
                 {
@@ -231,10 +233,19 @@ public class CameraControllerDemo extends BaseFrame
         }
     }
 
+    final CameraControllerCanvas canvas = new CameraControllerCanvas();
+
     CameraControllerDemo()
     {
         super();
-        add(new CameraControllerCanvas());
+        add(canvas);
+    }
+
+    @Override
+    protected void close()
+    {
+        canvas.closed = true;
+        super.close();
     }
 
     public static void main(String[] args)

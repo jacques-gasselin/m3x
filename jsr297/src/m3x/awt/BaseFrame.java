@@ -51,8 +51,16 @@ public class BaseFrame extends Frame
         public void windowClosing(WindowEvent e)
         {
             super.windowClosing(e);
-            dispose();
+            close();
         }
+    }
+
+    /**
+     * Close the frame and stop any threads used
+     */
+    protected void close()
+    {
+        dispose();
     }
 
     private final void init(String title)
