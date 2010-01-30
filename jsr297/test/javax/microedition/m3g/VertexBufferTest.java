@@ -34,21 +34,6 @@ import junit.framework.TestCase;
  */
 public class VertexBufferTest extends TestCase
 {
-    public void testConstructor()
-    {
-        try
-        {
-            VertexArray va = new VertexArray(3, 3, VertexArray.BYTE);
-            VertexBuffer vb = new VertexBuffer();
-            vb.setPositions(va, 1.0f, null);
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            fail("valid constructor call must not throw");
-        }
-    }
-
     private static final VertexArray createByteVA(int numVertices, int numComponents)
     {
         return new VertexArray(numVertices, numComponents, VertexArray.BYTE);
@@ -76,6 +61,55 @@ public class VertexBufferTest extends TestCase
         createNormals(vb, 3);
     }
 
+    public void testConstructor()
+    {
+        try
+        {
+            VertexBuffer vb = new VertexBuffer();
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail("valid constructor call must not throw");
+        }
+    }
+
+    public void testDuplicate()
+    {
+        final VertexBuffer vb = new VertexBuffer();
+        final int defaultColor = 0xff1f3b;
+        vb.setDefaultColor(defaultColor);
+        final VertexArray positions = createByteVA(4, 3);
+        final float positionScale = 2.0f;
+        final float[] positionBias = { 1, 2, 3 };
+        vb.setPositions(positions, positionScale, positionBias);
+
+        final VertexArray normals = createByteVA(4, 3);
+        vb.setNormals(normals);
+
+        final VertexArray colors = createByteVA(4, 4);
+        vb.setColors(colors);
+
+        //TODO test more attributes
+
+        VertexBuffer dup = (VertexBuffer) vb.duplicate();
+        assertNotNull(dup);
+        assertEquals(vb.getVertexCount(), dup.getVertexCount());
+        assertEquals(defaultColor, dup.getDefaultColor());
+        
+        final float[] positionScaleBias = new float[4];
+        assertSame(positions, dup.getPositions(positionScaleBias));
+        final float delta = 0.001f;
+        assertEquals(positionScale, positionScaleBias[0], delta);
+        assertEquals(positionBias[0], positionScaleBias[1], delta);
+        assertEquals(positionBias[1], positionScaleBias[2], delta);
+        assertEquals(positionBias[2], positionScaleBias[3], delta);
+
+        assertSame(normals, vb.getNormals());
+
+        assertSame(colors, vb.getColors());
+    }
+    
     public void testGetPositionsNullBiasNull()
     {
         VertexBuffer vb = new VertexBuffer();
@@ -314,13 +348,19 @@ public class VertexBufferTest extends TestCase
     public void testSetColors3()
     {
         VertexBuffer vb = new VertexBuffer();
-        vb.setColors(createByteVA(3, 3));
+        final VertexArray va = createByteVA(3, 3);
+        assertNull(vb.getColors());
+        vb.setColors(va);
+        assertSame(va, vb.getColors());
     }
 
     public void testSetColors4()
     {
         VertexBuffer vb = new VertexBuffer();
-        vb.setColors(createByteVA(3, 4));
+        final VertexArray va = createByteVA(3, 4);
+        assertNull(vb.getColors());
+        vb.setColors(va);
+        assertSame(va, vb.getColors());
     }
 
     public void testIsMutable()
@@ -329,15 +369,21 @@ public class VertexBufferTest extends TestCase
         assertTrue(vb.isMutable());
     }
 
-    public void testGetVertexCount()
-    {
-        VertexBuffer vb = new VertexBuffer();
-        assertEquals(0, vb.getVertexCount());
-    }
-
     public void testGetDefaultColor()
     {
         VertexBuffer vb = new VertexBuffer();
         assertEquals(0xffffffff, vb.getDefaultColor());
+    }
+
+    public void testGetDefaultPointSize()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertEquals(1.0f, vb.getDefaultPointSize(), 0.001f);
+    }
+    
+    public void testGetVertexCount()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        assertEquals(0, vb.getVertexCount());
     }
 }

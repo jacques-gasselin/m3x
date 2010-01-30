@@ -27,6 +27,9 @@
 
 package javax.microedition.m3g;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import junit.framework.TestCase;
 
 /**
@@ -68,5 +71,56 @@ public class Object3DTest extends TestCase
         final int userID = 123;
         g.setUserID(userID);
         assertEquals(userID, g.getUserID());
+    }
+
+    public void testFindSimple()
+    {
+        Group g1 = new Group();
+        g1.setUserID(1);
+
+        Group g2 = new Group();
+        g2.setUserID(2);
+
+        Group g3 = new Group();
+        g3.setUserID(3);
+
+        g1.addChild(g2);
+        g1.addChild(g3);
+
+        assertNull(g1.find(0));
+        //ensure find does go down the hierachy
+        assertSame(g1, g1.find(1));
+        assertSame(g2, g1.find(2));
+        assertSame(g3, g1.find(3));
+        //ensure find does not go up the hierachy
+        assertNull(g2.find(1));
+        assertNull(g3.find(1));
+        assertNull(g2.find(3));
+        assertNull(g3.find(2));
+    }
+
+    public void testFindAllSimple()
+    {
+        Group g1 = new Group();
+        Group g2 = new Group();
+        Group g3 = new Group();
+
+        g1.addChild(g2);
+        g1.addChild(g3);
+
+        final Object3D[] objects = g1.findAll(Group.class);
+        assertNotNull(objects);
+        assertEquals(3, objects.length);
+        //no guarantee about the object order, but check for containment
+        final Map<Object3D, Object3D> map = new IdentityHashMap<Object3D, Object3D>();
+        for (Object3D obj : objects)
+        {
+            assertNull("duplicate elements not allowed in this case",
+                    map.put(obj, obj));
+        }
+
+        assertTrue(map.containsKey(g1));
+        assertTrue(map.containsKey(g2));
+        assertTrue(map.containsKey(g3));
     }
 }

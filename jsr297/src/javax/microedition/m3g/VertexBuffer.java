@@ -180,7 +180,6 @@ public class VertexBuffer extends Object3D
         public void set(VertexArray array, float scale, float[] bias)
         {
             //apply the tests early to assert atomicity
-            requireArrayNotNull(array);
             requireValidBias(bias, array);
 
             setArray(array);
@@ -190,8 +189,6 @@ public class VertexBuffer extends Object3D
 
         public void setArray(VertexArray array)
         {
-            requireArrayNotNull(array);
-
             this.array = array;
         }
 
@@ -200,7 +197,7 @@ public class VertexBuffer extends Object3D
             requireValidBias(bias, this.array);
             
             Arrays.fill(this.bias, 0.0f);
-            if (bias != null)
+            if (bias != null && this.array != null)
             {
                 System.arraycopy(bias, 0,
                         this.bias, 0,
@@ -231,8 +228,8 @@ public class VertexBuffer extends Object3D
     }
 
     private boolean mutable = true;
-    private int defaultColorARGB;
-    private float defaultPointSize;
+    private int defaultColorARGB = 0xffffffff;
+    private float defaultPointSize = 1.0f;
     private final VertexCounter vertexCounter = new VertexCounter();
     private final ScaleBiasedVertexArray positions = new ScaleBiasedVertexArray();
     private VertexArray normals;
@@ -246,8 +243,6 @@ public class VertexBuffer extends Object3D
 
     public VertexBuffer()
     {
-        setDefaultColor(0xffffffff);
-
         for (int i = 0; i < MAX_TEXTURE_COORDS; ++i)
         {
             textureCoordinates[i] = new ScaleBiasedVertexArray();
@@ -277,6 +272,39 @@ public class VertexBuffer extends Object3D
     public void commit()
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final VertexBuffer vb = (VertexBuffer) target;
+        //TODO set attributes and bones
+        vb.setColors(getColors());
+        vb.setDefaultColor(getDefaultColor());
+        vb.setDefaultPointSize(getDefaultPointSize());
+        vb.setNormals(getNormals());
+        vb.setPointSizes(getPointSizes());
+        final float[] scaleBias = new float[4];
+        final float[] bias = new float[3];
+        
+        {
+            final VertexArray pos = getPositions(scaleBias);
+            final float scale = scaleBias[0];
+            System.arraycopy(scaleBias, 1, bias, 0, 3);
+            vb.setPositions(pos, scale, bias);
+        }
+        for (int i = 0; i < MAX_TEXTURE_COORDS; ++i)
+        {
+            //the fill is needed because there may be garbage values on the
+            //end that aren't set by the following get if the component count < 3
+            Arrays.fill(scaleBias, 0.0f);
+            final VertexArray texCoords = getTexCoords(i, scaleBias);
+            final float scale = scaleBias[0];
+            System.arraycopy(scaleBias, 1, bias, 0, 3);
+            vb.setTexCoords(i, texCoords, scale, bias);
+        }
     }
 
     public VertexArray getAttribute(String name, boolean signedNormalized[],
