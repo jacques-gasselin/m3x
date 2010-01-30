@@ -34,14 +34,23 @@ import junit.framework.TestCase;
  */
 public class GroupTest extends TestCase
 {
+    private Group g;
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+
+        g = new Group();
+    }
+
     public void testConstructor()
     {
-        final Group g = new Group();
+        assertNotNull(g);
     }
 
     public void testAddChild()
     {
-        final Group g = new Group();
         final Group child = new Group();
         g.addChild(child);
         assertEquals(1, g.getChildCount());
@@ -50,7 +59,6 @@ public class GroupTest extends TestCase
 
     public void testAddChildNull()
     {
-        final Group g = new Group();
         try
         {
             g.addChild(null);
@@ -65,7 +73,6 @@ public class GroupTest extends TestCase
 
     public void testAddChildThis()
     {
-        final Group g = new Group();
         try
         {
             g.addChild(g);
@@ -80,7 +87,6 @@ public class GroupTest extends TestCase
     
     public void testAddChildWorld()
     {
-        final Group g = new Group();
         final World w = new World();
         
         try
@@ -97,7 +103,6 @@ public class GroupTest extends TestCase
 
     public void testAddChildWithOtherParent()
     {
-        final Group g = new Group();
         final Group g2 = new Group();
         final Group child = new Group();
         g.addChild(child);
@@ -116,18 +121,117 @@ public class GroupTest extends TestCase
         }
     }
 
+    public void testGetChild()
+    {
+        final Group child = new Group();
+        g.addChild(child);
+        assertEquals(1, g.getChildCount());
+        assertSame(child, g.getChild(0));
+    }
+
+    public void testGetChildNegative()
+    {
+        final Group child = new Group();
+        g.addChild(child);
+        try
+        {
+            g.getChild(-1);
+            fail("negative index must throw IOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    1, g.getChildCount());
+        }
+        assertSame(child, g.getChild(0));
+    }
+
+    public void testGetChildOverflow()
+    {
+        final Group child = new Group();
+        g.addChild(child);
+        try
+        {
+            g.getChild(10);
+            fail("overflow index must throw IOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    1, g.getChildCount());
+        }
+        assertSame(child, g.getChild(0));
+    }
+
+    public void testGetChildCount()
+    {
+        assertEquals(0, g.getChildCount());
+    }
+
+    public void testGetLODBlendFactor()
+    {
+        final float factor = g.getLODBlendFactor();
+        assertEquals(0.0f, factor, 0.001f);
+    }
+
+    public void testGetLODChild()
+    {
+        final int index = g.getLODChild();
+        assertEquals(-1, index);
+    }
+
+    public void testGetLODHysteresis()
+    {
+        final float hysteresis = g.getLODHysteresis();
+        assertEquals(0.0f, hysteresis, 0.001f);
+    }
+
+    public void testGetLODOffset()
+    {
+        final float offset = g.getLODOffset();
+        assertEquals(0.0f, offset, 0.001f);
+    }
+
     public void testInsertChild()
     {
-        final Group g = new Group();
         final Group child = new Group();
         g.insertChild(child, 0);
         assertEquals(1, g.getChildCount());
         assertSame(child, g.getChild(0));
     }
 
+    public void testInsertChildNegative()
+    {
+        final Group child = new Group();
+        try
+        {
+            g.insertChild(child, -1);
+            fail("negative index must throw IOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getChildCount());
+        }
+    }
+
+    public void testInsertChildOverflow()
+    {
+        final Group child = new Group();
+        try
+        {
+            g.insertChild(child, 10);
+            fail("overflow index must throw IOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getChildCount());
+        }
+    }
+    
     public void testInsertChildFirst()
     {
-        final Group g = new Group();
         final Group first = new Group();
         g.addChild(first);
         final Group child = new Group();
@@ -139,7 +243,6 @@ public class GroupTest extends TestCase
 
     public void testInsertChildLast()
     {
-        final Group g = new Group();
         final Group first = new Group();
         g.addChild(first);
         final Group child = new Group();
@@ -152,7 +255,6 @@ public class GroupTest extends TestCase
 
     public void testInsertChildNull()
     {
-        final Group g = new Group();
         try
         {
             g.insertChild(null, 0);
@@ -167,7 +269,6 @@ public class GroupTest extends TestCase
 
     public void testInsertChildThis()
     {
-        final Group g = new Group();
         try
         {
             g.insertChild(g, 0);
@@ -182,7 +283,6 @@ public class GroupTest extends TestCase
 
     public void testInsertChildWorld()
     {
-        final Group g = new Group();
         final World w = new World();
 
         try
@@ -199,7 +299,6 @@ public class GroupTest extends TestCase
 
     public void testInsertChildWithOtherParent()
     {
-        final Group g = new Group();
         final Group g2 = new Group();
         final Group child = new Group();
         g.addChild(child);
@@ -216,5 +315,71 @@ public class GroupTest extends TestCase
             assertEquals("group must remain invariant on error",
                     0, g2.getChildCount());
         }
+    }
+
+    public void testIsLODEnabled()
+    {
+        assertFalse(g.isLodEnabled());
+    }
+
+    public void testPickCameraNull()
+    {
+        g.pick(g.getScope(), 0, 0, null, null);
+    }
+
+    public void testPickRayNull()
+    {
+        g.pick(g.getScope(), 0, 0, 0, 0, 0, 1, null);
+    }
+
+    public void testRemoveChild()
+    {
+        final Group child = new Group();
+        g.addChild(child);
+        g.removeChild(child);
+        assertEquals(0, g.getChildCount());
+    }
+
+    public void testRemoveChildNull()
+    {
+        final Group child = new Group();
+        g.addChild(child);
+        g.removeChild(null);
+        assertEquals(1, g.getChildCount());
+        assertSame(child, g.getChild(0));
+    }
+
+    public void testSetLODEnable()
+    {
+        final float hysteresis = 0.1f;
+        g.setLODEnable(true, hysteresis);
+        assertTrue(g.isLodEnabled());
+        assertEquals(hysteresis, g.getLODHysteresis(), 0.001f);
+    }
+
+    public void testSetLODEnableNegative()
+    {
+        assertEquals(0, g.getLODHysteresis(), 0.001f);
+        assertFalse(g.isLodEnabled());
+        try
+        {
+            final float hysteresis = -0.1f;
+            g.setLODEnable(true, hysteresis);
+            fail("negative hysteresis must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getLODHysteresis(), 0.001f);
+            assertFalse("group must remain invariant on error",
+                    g.isLodEnabled());
+        }
+    }
+
+    public void testSetLODOffset()
+    {
+        final float offset = 2.0f;
+        g.setLODOffset(offset);
+        assertEquals(offset, g.getLODOffset(), 0.001f);
     }
 }
