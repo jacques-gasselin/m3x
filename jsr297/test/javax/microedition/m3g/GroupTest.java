@@ -39,6 +39,15 @@ public class GroupTest extends TestCase
         final Group g = new Group();
     }
 
+    public void testAddChild()
+    {
+        final Group g = new Group();
+        final Group child = new Group();
+        g.addChild(child);
+        assertEquals(1, g.getChildCount());
+        assertSame(child, g.getChild(0));
+    }
+
     public void testAddChildNull()
     {
         final Group g = new Group();
@@ -96,6 +105,108 @@ public class GroupTest extends TestCase
         try
         {
             g2.addChild(child);
+            fail("child of another parent as child must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    1, g.getChildCount());
+            assertEquals("group must remain invariant on error",
+                    0, g2.getChildCount());
+        }
+    }
+
+    public void testInsertChild()
+    {
+        final Group g = new Group();
+        final Group child = new Group();
+        g.insertChild(child, 0);
+        assertEquals(1, g.getChildCount());
+        assertSame(child, g.getChild(0));
+    }
+
+    public void testInsertChildFirst()
+    {
+        final Group g = new Group();
+        final Group first = new Group();
+        g.addChild(first);
+        final Group child = new Group();
+        g.insertChild(child, 0);
+        assertEquals(2, g.getChildCount());
+        assertSame(child, g.getChild(0));
+        assertSame(first, g.getChild(1));
+    }
+
+    public void testInsertChildLast()
+    {
+        final Group g = new Group();
+        final Group first = new Group();
+        g.addChild(first);
+        final Group child = new Group();
+        g.insertChild(child, 1);
+        assertEquals(2, g.getChildCount());
+        assertSame(first, g.getChild(0));
+        assertSame(child, g.getChild(1));
+    }
+
+
+    public void testInsertChildNull()
+    {
+        final Group g = new Group();
+        try
+        {
+            g.insertChild(null, 0);
+            fail("null as child must throw NPE");
+        }
+        catch (NullPointerException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getChildCount());
+        }
+    }
+
+    public void testInsertChildThis()
+    {
+        final Group g = new Group();
+        try
+        {
+            g.insertChild(g, 0);
+            fail("this as child must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getChildCount());
+        }
+    }
+
+    public void testInsertChildWorld()
+    {
+        final Group g = new Group();
+        final World w = new World();
+
+        try
+        {
+            g.insertChild(w, 0);
+            fail("world as child must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("group must remain invariant on error",
+                    0, g.getChildCount());
+        }
+    }
+
+    public void testInsertChildWithOtherParent()
+    {
+        final Group g = new Group();
+        final Group g2 = new Group();
+        final Group child = new Group();
+        g.addChild(child);
+
+        try
+        {
+            g2.insertChild(child, 0);
             fail("child of another parent as child must throw IAE");
         }
         catch (IllegalArgumentException e)
