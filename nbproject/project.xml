@@ -241,6 +241,10 @@
                     <ide-action name="javadoc"/>
                     <ide-action name="run"/>
                     <ide-action name="test"/>
+                    <action>
+                        <label>release</label>
+                        <target>release</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>
@@ -255,6 +259,7 @@
                 <package-root>tools/src</package-root>
                 <classpath mode="compile">lib/jaxb/jaxb-impl.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:lib/ant/ant.jar:tools/build</classpath>
                 <built-to>tools/build</built-to>
+                <javadoc-built-to>tools/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -274,6 +279,7 @@
                 <package-root>jsr297/src</package-root>
                 <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build:tools/build</classpath>
                 <built-to>jsr297/build</built-to>
+                <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -285,8 +291,9 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/demo</package-root>
-                <classpath mode="compile">jsr297/dist/m3x-jsr297.jar:lib/jogl/jogl.jar:tools/dist/m3x.jar</classpath>
+                <classpath mode="compile">lib/jogl/jogl.jar:jsr297/build:tools/build:lib/vecmath/vecmath.jar</classpath>
                 <built-to>jsr297/build</built-to>
+                <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
@@ -297,19 +304,23 @@
                         <node name="CodeStyle">
                             <node name="project"/>
                         </node>
+                        <node name="project"/>
+                    </node>
+                    <node name="project"/>
+                    <node name="CodeStyle"/>
+                    <node name="x-ant+xml">
+                        <node name="CodeStyle">
+                            <node name="project"/>
+                        </node>
                     </node>
                 </node>
                 <node name="CodeStyle">
-                    <node name="project">
-                        <property name="spaces-per-tab" value="4"/>
-                        <property name="expand-tabs" value="true"/>
-                        <property name="text-limit-width" value="80"/>
-                        <property name="indent-shift-width" value="4"/>
-                        <property name="tab-size" value="4"/>
-                    </node>
-                    <property name="usedProfile" value="default"/>
+                    <node name="project"/>
                 </node>
+                <node name="project"/>
+                <node name="x-java"/>
             </module>
+            <module name="org-netbeans-modules-projectimport-eclipse-core"/>
         </preferences>
     </configuration>
 </project>
