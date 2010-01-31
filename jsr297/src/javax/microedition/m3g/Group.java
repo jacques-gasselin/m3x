@@ -272,6 +272,17 @@ public class Group extends Node
         return pick(scope, ox, oy, oz, dx, dy, dz, ri);
     }
 
+    private static final float dot(float x0, float y0, float z0,
+            float x1, float y1, float z1)
+    {
+        return x0 * x1 + y0 * y1 + z0 * z1;
+    }
+
+    private static final float magSqr(float x, float y, float z)
+    {
+        return x * x + y * y + z * z;
+    }
+    
     public boolean pick(int scope, float ox, float oy, float oz,
             float dx, float dy, float dz, RayIntersection ri)
     {
@@ -279,7 +290,35 @@ public class Group extends Node
         {
             throw new IllegalArgumentException("dx, dy and dz are all 0");
         }
-            
+
+        //quick check against the picking bounding sphere
+        {
+            final float[] sphere = updatePickingBoundingSphere();
+            //rs is the ray origin to sphere origin vector
+            final float radius = sphere[3];
+            if (radius == 0)
+            {
+                //quick exit if sphere is disabled.
+                return false;
+            }
+            final float rsX = sphere[0] - ox;
+            final float rsY = sphere[1] - oy;
+            final float rsZ = sphere[2] - oz;
+
+            final float rayToRadiusLengthSqr = magSqr(
+                    rsX, rsY, rsZ) - radius * radius;
+            final float directionLengthSqr = magSqr(dx, dy, dz);
+            final float dotDRS = dot(dx, dy, dz, rsX, rsY, rsZ);
+            final float cosDRSSqr = (dotDRS * dotDRS) /
+                    directionLengthSqr;
+            final float discriminant = cosDRSSqr - rayToRadiusLengthSqr;
+            if (discriminant < 0)
+            {
+                //no intersection
+                return false;
+            }
+        }
+
         throw new UnsupportedOperationException();
     }
 

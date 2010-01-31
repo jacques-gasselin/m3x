@@ -122,7 +122,6 @@ public abstract class Node extends Transformable
             internalBoundingSphereNeedsUpdate = false;
             calculatePickingBoundingSphere(pickingBoundingSphere);
         }
-
         return pickingBoundingSphere;
     }
 
