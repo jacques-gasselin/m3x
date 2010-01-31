@@ -52,8 +52,10 @@ import javax.microedition.m3g.Transform;
  * 
  * @author jgasseli
  */
-public class BlenderTurntableCameraController extends MouseAndKeyInputTransformController
+public class BlenderTurntableCameraController
+        extends MouseAndKeyInputTransformController
 {
+    private static final float ROTATION_SPEED = 0.35f;
     private final Camera camera;
     
     private float yaw;
@@ -65,6 +67,7 @@ public class BlenderTurntableCameraController extends MouseAndKeyInputTransformC
 
     private boolean leftDown;
     private boolean wheelDown;
+    
 
     public BlenderTurntableCameraController(Camera camera, Component component)
     {
@@ -72,7 +75,7 @@ public class BlenderTurntableCameraController extends MouseAndKeyInputTransformC
     }
 
     public BlenderTurntableCameraController(Camera camera, Component component,
-            float yaw, float pitch, float dolly)
+                                            float yaw, float pitch, float dolly)
     {
         super(component);
         
@@ -89,6 +92,18 @@ public class BlenderTurntableCameraController extends MouseAndKeyInputTransformC
         this.dolly = dolly;
     }
 
+    public void getLookAtPosition(final float[] result)
+    {
+        if (result.length < 3)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        result[0] = x;
+        result[1] = y;
+        result[2] = z;
+    }
+    
     @Override
     public synchronized void mouseDragged(MouseEvent e)
     {
@@ -121,8 +136,8 @@ public class BlenderTurntableCameraController extends MouseAndKeyInputTransformC
             }
             else
             {
-                yaw += -dx * 0.1f;
-                pitch += -dy * 0.1f;
+                yaw += -dx * ROTATION_SPEED;
+                pitch += -dy * ROTATION_SPEED;
             }
         }
     }

@@ -91,17 +91,17 @@ public final class Transform
 
     final float[] getColumnMajor()
     {
-        final float[] matrix = new float[16];
+        final float[] m = new float[16];
         
         //column-major
         final float[] columnValues = new float[4];
         for (int column = 0; column < 4; ++column)
         {
             this.matrix.getColumn(column, columnValues);
-            System.arraycopy(columnValues, 0, matrix, column * 4, 4);
+            System.arraycopy(columnValues, 0, m, column * 4, 4);
         }
 
-        return matrix;
+        return m;
     }
     
     /**

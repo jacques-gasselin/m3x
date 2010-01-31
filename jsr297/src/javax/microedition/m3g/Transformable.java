@@ -119,28 +119,101 @@ public abstract class Transformable extends Object3D
     {
         compositeTransformNeedsUpdate = true;
 
-        throw new UnsupportedOperationException();
+        rotate(angle, ax, ay, az, false);
+    }
+
+    /**
+     * Pre or post rotates the orientation of this quaternion.
+     * @param angle
+     * @param ax
+     * @param ay
+     * @param az
+     * @param pre
+     */
+    private void rotate(float angle, float ax, float ay, float az, boolean pre)
+    {
+        if (angle == 0.0f)
+        {
+            return;
+        }
+        else
+        {
+            final float length = (float) Math.sqrt(ax * ax + ay * ay + az * az);
+
+            if (length == 0)
+            {
+                throw new IllegalArgumentException("rotation axis is zero and" +
+                        " angle is nonzero");
+            }
+
+            final double radHalf = Math.toRadians(angle * 0.5f);
+            final float c = (float) Math.cos(radHalf);
+            final float s = (float) Math.sin(radHalf) / length;
+
+            multiplyQuaternion(ax * s, ay * s, az * s, c, pre);
+        }
+    }
+
+    /**
+     * Multiplies the quaternion of this transformable from the left or right
+     * by a given quaternion
+     * @param qx
+     * @param qy
+     * @param qz
+     * @param qw
+     * @param pre
+     */
+    private void multiplyQuaternion(float qx, float qy, float qz, float qw, boolean pre)
+    {
+        float qwL, qxL, qyL, qzL;
+        float qwR, qxR, qyR, qzR;
+        if (pre) //multiply current quaternion from the left
+        {
+            qwL = qw;
+            qxL = qx;
+            qyL = qy;
+            qzL = qz;
+
+            qwR = this.qw;
+            qxR = this.qx;
+            qyR = this.qy;
+            qzR = this.qz;
+        }
+        else //multiply current quaternion from the right
+        {
+            qwL = this.qw;
+            qxL = this.qx;
+            qyL = this.qy;
+            qzL = this.qz;
+
+            qwR = qw;
+            qxR = qx;
+            qyR = qy;
+            qzR = qz;
+        }
+
+        this.qw = qwL * qwR - qxL * qxR - qyL * qyR - qzL * qzR;
+        this.qx = qwL * qxR + qxL * qwR + qyL * qzR - qzL * qyR;
+        this.qy = qwL * qyR - qxL * qzR + qyL * qwR + qzL * qxR;
+        this.qz = qwL * qzR - qxL * qyR - qyL * qxR + qzL * qwR;
     }
 
     public void postRotateQuat(float qx, float qy, float qz, float qw)
     {
         compositeTransformNeedsUpdate = true;
-
-        throw new UnsupportedOperationException();
+        multiplyQuaternion(qx, qy, qz, qw, false);        
     }
 
     public void preRotate(float angle, float ax, float ay, float az)
     {
         compositeTransformNeedsUpdate = true;
-
-        throw new UnsupportedOperationException();
+        rotate(angle, ax, ay, az, true);
     }
 
     public void preRotateQuat(float qx, float qy, float qz, float qw)
     {
         compositeTransformNeedsUpdate = true;
-
-        throw new UnsupportedOperationException();
+        multiplyQuaternion(qx, qy, qz, qw, true);
     }
 
     public void scale(float sx, float sy, float sz)
@@ -177,15 +250,74 @@ public abstract class Transformable extends Object3D
     }
 
     public void setOrientationLookAt(float targetX, float targetY, float targetZ,
-            float upX, float upY, float upZ)
+                                     float upX, float upY, float upZ)
     {
+        final float upMag = (float)Math.sqrt(upX * upX + upY * upY + upZ * upZ);
+        final float targetMag = (float)Math.sqrt(targetX * targetX +
+                                                 targetY * targetY +
+                                                 targetZ * targetZ);
+
+        if (upMag == 0.0f || targetMag == 0.0f)
+        {
+            throw new ArithmeticException("Expected non-zero target and up vectors, " +
+                    "got target = " + targetX + ", " + targetY + ", " + targetZ +
+                    " and up = " + upX + ", " + upY + ", " + upZ);
+        }
+
+        //normalize the target and up vectors
+        upX /= upMag;
+        upY /= upMag;
+        upZ /= upMag;
+
+        targetX /= targetMag;
+        targetY /= targetMag;
+        targetZ /= targetMag;
+
         compositeTransformNeedsUpdate = true;
+
+        //compute two consecutive rotations:
+        //1. align the -z axis with the target direction
+        //2. align the +y axis with the new up direction.
+        //the result of these transformations is well defined if
+        //the up and target vectors are linearly independent
+
+        //transformation 1
+        float cosHalfAngle1 = (float)Math.sqrt(-0.5f * targetZ + 0.5f);//since cos2v = 2cos^2v - 1
+        float sinHalfAngle1 = (float)Math.sqrt(1 - cosHalfAngle1 * cosHalfAngle1);
+
+        float q1x = targetY * sinHalfAngle1;
+        float q1y = -targetX * sinHalfAngle1;
+        float q1z = 0.0f;
+        float q1w = cosHalfAngle1;
+
+        //transformation 2
+        //compute the transformed default up direction (ie +y) by
+        //quaternion multiplication
+        float defUpTransX = 0.0f;
+        float defUpTransY = 0.0f;
+        float defUpTransZ = 0.0f;
+
+        //find the rotation around the target vector that aligns the
+        //transformed default up direction with the desired up direction
+        float a2x = targetX;
+        float a2y = targetY;
+        float a2z = targetZ;
+
+        float cosAngle2 = upY;
+
+        //getAlignmentTransformation(
 
         throw new UnsupportedOperationException();
     }
 
+
+
     public void setOrientationQuat(float qx, float qy, float qz, float qw)
     {
+        if (!(qx != 0.0f || qy != 0.0f || qz != 0.0f || qw != 0.0f))
+        {
+            throw new IllegalArgumentException("Zero quaternion");
+        }
         this.qx = qx;
         this.qy = qy;
         this.qz = qz;
