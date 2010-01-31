@@ -324,14 +324,66 @@ public class GroupTest extends TestCase
 
     public void testPickCameraNull()
     {
-        g.pick(g.getScope(), 0, 0, null, null);
+        try
+        {
+            g.pick(g.getScope(), 0, 0, null, null);
+            fail("null camera should throw NPE");
+        }
+        catch (NullPointerException e)
+        {
+            assertNotNull(e.getMessage());
+        }
     }
 
-    public void testPickRayNull()
+    public void testPickRayOneDx()
     {
-        g.pick(g.getScope(), 0, 0, 0, 0, 0, 1, null);
+        try
+        {
+            g.pick(g.getScope(), 0, 0, 0, 1, 0, 0, null);
+        }
+        catch (IllegalArgumentException e)
+        {
+            fail("dx = 1, dy = dz = 0 should not throw IAE");
+        }
     }
 
+    public void testPickRayOneDy()
+    {
+        try
+        {
+            g.pick(g.getScope(), 0, 0, 0, 0, 1, 0, null);
+        }
+        catch (IllegalArgumentException e)
+        {
+            fail("dx = 0, dy = 1 and dz = 0 should not throw IAE");
+        }
+    }
+
+    public void testPickRayOneDz()
+    {
+        try
+        {
+            g.pick(g.getScope(), 0, 0, 0, 0, 0, 1, null);
+        }
+        catch (IllegalArgumentException e)
+        {
+            fail("dx = dy = 0 and dz = 1 should not throw IAE");
+        }
+    }
+
+    public void testPickRayZero()
+    {
+        try
+        {
+            g.pick(g.getScope(), 0, 0, 0, 0, 0, 0, null);
+            fail("dx = dy = dz = 0 should throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(e.getMessage());
+        }
+    }
+    
     public void testRemoveChild()
     {
         final Group child = new Group();

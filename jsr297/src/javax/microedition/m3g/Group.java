@@ -275,17 +275,9 @@ public class Group extends Node
     public boolean pick(int scope, float ox, float oy, float oz,
             float dx, float dy, float dz, RayIntersection ri)
     {
-        if (dx == 0)
+        if (dx == 0 && dy == 0 && dz == 0)
         {
-            throw new IllegalArgumentException("dx is 0");
-        }
-        if (dy == 0)
-        {
-            throw new IllegalArgumentException("dy is 0");
-        }
-        if (dz == 0)
-        {
-            throw new IllegalArgumentException("dz is 0");
+            throw new IllegalArgumentException("dx, dy and dz are all 0");
         }
             
         throw new UnsupportedOperationException();

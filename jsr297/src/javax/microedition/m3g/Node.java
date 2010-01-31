@@ -68,6 +68,16 @@ public abstract class Node extends Transformable
 
     public void align(Node reference)
     {
+        if (reference != null && !inSameTree(this, reference))
+        {
+            throw new IllegalArgumentException("reference is not in the same scene graph as this node");
+        }
+
+        if (reference == null)
+        {
+            reference = this;
+        }
+        
         throw new UnsupportedOperationException();
     }
 
@@ -253,6 +263,11 @@ public abstract class Node extends Transformable
     {
         Require.notNull(target, "target");
         Require.notNull(transform, "transform");
+        //quick exit if not in the same tree
+        if (!inSameTree(this, target))
+        {
+            return false;
+        }
 
         ArrayList<Node> path = new ArrayList<Node>();
         final boolean isAncestor = ancestorPath(target, this, path);
@@ -262,7 +277,8 @@ public abstract class Node extends Transformable
             path.clear();
             if (!ancestorPath(this, target, path))
             {
-                return false;
+                throw new IllegalStateException("early detection of being" +
+                        " in the same tree has false positives");
             }
         }
 
@@ -279,6 +295,29 @@ public abstract class Node extends Transformable
         }
 
         return true;
+    }
+
+    static Node getTreeRoot(Node a)
+    {
+        if (a == null)
+        {
+            return null;
+        }
+        
+        while (true)
+        {
+            final Node parent = a.getParent();
+            if (parent == null)
+            {
+                return a;
+            }
+            a = parent;
+        }
+    }
+    
+    static boolean inSameTree(Node a, Node b)
+    {
+        return getTreeRoot(a) == getTreeRoot(b);
     }
 
     public boolean isCollisionEnabled()
