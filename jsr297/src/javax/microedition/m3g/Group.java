@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -76,6 +77,7 @@ public class Group extends Node
         }
         
         children.add(child);
+        invalidatePickingBoundingSphere();
     }
 
     @Override
@@ -91,6 +93,79 @@ public class Group extends Node
         }
         g.setLODEnable(isLodEnabled(), getLODHysteresis());
         g.setLODOffset(getLODOffset());
+    }
+
+    /**
+     * Override to calculate the bounding sphere around all
+     * child nodes. Child nodes that have picking disabled
+     * will be ignored.
+     *
+     * It is acceptable to use any method that overestimates the
+     * bounding or calculates it exactly. Any method that underestimates
+     * the bounding should not be used. This gives picking certain
+     * guarantees that are neccessary for proper operation.
+     *
+     * TODO: use a proper minimum enclosing ball of balls algorithm
+     * @see http://www.cgal.org/
+     */
+    @Override
+    void calculatePickingBoundingSphere(float[] sphere)
+    {
+        //FIXME: for now just use a linear time average sphere
+        float ox = 0;
+        float oy = 0;
+        float oz = 0;
+        float weighting = 0;
+        
+        for (Node child : children)
+        {
+            if (child.isPickingEnabled())
+            {
+                final float[] s = child.updatePickingBoundingSphere();
+                final float weight = s[3]; //radius
+                //weighted accumulate
+                ox += s[0] * weight;
+                oy += s[1] * weight;
+                oz += s[2] * weight;
+                weighting += weight;
+            }
+        }
+
+        if (weighting == 0)
+        {
+            //quick exit if none of the children contain anything
+            Arrays.fill(sphere, 0.0f);
+            return;
+        }
+
+        //average it out
+        ox /= weighting;
+        oy /= weighting;
+        oz /= weighting;
+
+        //find largest radius
+        float radius = 0.0f;
+        for (Node child : children)
+        {
+            if (child.isPickingEnabled())
+            {
+                final float[] s = child.updatePickingBoundingSphere();
+                final float dx = s[0] - ox;
+                final float dy = s[1] - oy;
+                final float dz = s[2] - oz;
+                final float dist = s[3] +
+                        ((float) Math.sqrt(dx * dx + dy * dy + dz * dz));
+                if (dist > radius)
+                {
+                    radius = dist;
+                }
+            }
+        }
+
+        sphere[0] = ox;
+        sphere[1] = oy;
+        sphere[2] = oz;
+        sphere[3] = radius;
     }
     
     public Node getChild(int index)
@@ -142,6 +217,7 @@ public class Group extends Node
         }
 
         children.add(index, child);
+        invalidatePickingBoundingSphere();
     }
 
     public boolean isLodEnabled()

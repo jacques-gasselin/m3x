@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author jgasseli
@@ -51,11 +52,14 @@ public abstract class Node extends Transformable
     private int alignmentTargetZ = NONE;
     private Node alignmentReferenceZ;
     private float lodResolution;
+    private final float[] pickingBoundingSphere = new float[4];
     private final float[] boundingSphere = new float[4];
     private boolean boundingSphereEnabled;
     private final float[] boundingBox = new float[6];
     private boolean boundingBoxEnabled;
     private int collisionShapeOrientations;
+
+    private boolean internalBoundingSphereNeedsUpdate;
 
     public Node()
     {
@@ -90,6 +94,36 @@ public abstract class Node extends Transformable
         n.setPickingEnable(isPickingEnabled());
         n.setRenderingEnable(isRenderingEnabled());
         n.setScope(getScope());
+    }
+
+    final void invalidatePickingBoundingSphere()
+    {
+        internalBoundingSphereNeedsUpdate = true;
+        if (parent != null)
+        {
+            parent.invalidatePickingBoundingSphere();
+        }
+    }
+
+    final float[] updatePickingBoundingSphere()
+    {
+        if (internalBoundingSphereNeedsUpdate)
+        {
+            internalBoundingSphereNeedsUpdate = false;
+            calculatePickingBoundingSphere(pickingBoundingSphere);
+        }
+
+        return pickingBoundingSphere;
+    }
+
+    /**
+     * Override this to calculate the bounding sphere around all
+     * child nodes.
+     */
+    void calculatePickingBoundingSphere(float[] sphere)
+    {
+        //default to not containing anything
+        Arrays.fill(sphere, 0.0f);
     }
 
     public void generateCollisionShape(int orientations, boolean useExisting)
@@ -369,7 +403,11 @@ public abstract class Node extends Transformable
 
     public void setPickingEnable(boolean enable)
     {
-        this.pickingEnabled = enable;
+        if (enable != this.pickingEnabled)
+        {
+            this.pickingEnabled = enable;
+            invalidatePickingBoundingSphere();
+        }
     }
 
     public void setRenderingEnable(boolean enable)
