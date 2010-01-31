@@ -144,7 +144,6 @@ public class PickingDemo extends BaseFrame
         {
             while (true)
             {
-                //System.out.println("run");
                 try
                 {
                     Thread.sleep(1000 / getRefreshRate());
