@@ -435,29 +435,11 @@ public final class GeomUtils
         Require.argumentInRange(x, "x", 0, 1);
         Require.argumentInRange(y, "y", 0, 1);
 
-        final Transform inverseProjection = new Transform();
-        camera.getProjection(inverseProjection);
-        inverseProjection.invert();
-
-        final float[] pNear = { 2 * x - 1, 1 - 2 * y, -1, 1};
-        final float[] pFar = { 2 * x - 1, 1 - 2 * y, 1, 1};
-
-        inverseProjection.transform(pNear);
-        inverseProjection.transform(pFar);
-
-        final float invWNear = 1.0f / pNear[3];
-        pNear[0] *= invWNear;
-        pNear[1] *= invWNear;
-        pNear[2] *= invWNear;
-        pNear[3] = 1.0f;
-
-        final float invWFar = 1.0f / pFar[3];
-        pFar[0] *= invWFar;
-        pFar[1] *= invWFar;
-        pFar[2] *= invWFar;
-        pFar[3] = 1.0f;
+        final float[] near = new float[4];
+        final float[] far = new float[4];
+        TransformUtils.unproject(camera, null, x, y, near, far);
         
-        return createLineMesh(pNear, pFar, 1.0f, 1.0f, 0.0f);
+        return createLineMesh(near, far, 1.0f, 1.0f, 0.0f);
     }
 
     /**

@@ -31,6 +31,7 @@ import m3x.Require;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import m3x.microedition.m3g.TransformUtils;
 
 /**
  * @author jgasseli
@@ -237,38 +238,17 @@ public class Group extends Node
                     "there is no scene graph path between camera and this Group");
         }
 
-        final Transform inverseProjection = new Transform();
-        camera.getProjection(inverseProjection);
-        inverseProjection.invert();
-        
-        final float[] pNear = { 2 * x - 1, 1 - 2 * y, -1, 1};
-        final float[] pFar = { 2 * x - 1, 1 - 2 * y, 1, 1};
+        final float[] near = new float[4];
+        final float[] far = new float[4];
+        TransformUtils.unproject(camera, cameraToGroup, x, y, near, far);
 
-        inverseProjection.transform(pNear);
-        inverseProjection.transform(pFar);
+        final float ox = near[0];
+        final float oy = near[1];
+        final float oz = near[2];
 
-        final float invWNear = 1.0f / pNear[3];
-        pNear[0] *= invWNear;
-        pNear[1] *= invWNear;
-        pNear[2] *= invWNear;
-        pNear[3] = 1.0f;
-
-        final float invWFar = 1.0f / pFar[3];
-        pFar[0] *= invWFar;
-        pFar[1] *= invWFar;
-        pFar[2] *= invWFar;
-        pFar[3] = 1.0f;
-
-        cameraToGroup.transform(pNear);
-        cameraToGroup.transform(pFar);
-
-        final float ox = pNear[0];
-        final float oy = pNear[1];
-        final float oz = pNear[2];
-
-        final float dx = pFar[0] - ox;
-        final float dy = pFar[1] - oy;
-        final float dz = pFar[2] - oz;
+        final float dx = far[0] - ox;
+        final float dy = far[1] - oy;
+        final float dz = far[2] - oz;
 
         return pick(scope, ox, oy, oz, dx, dy, dz, ri);
     }
