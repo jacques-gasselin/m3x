@@ -35,6 +35,8 @@ import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.Texture2D;
+import javax.microedition.m3g.Transform;
+import m3x.Require;
 
 /**
  * @author jgasseli
@@ -423,48 +425,39 @@ public final class GeomUtils
      * @param y Y coordinate of the point on the viewport plane through which
      *          to cast the ray. See Group.pick.
      * @return The pickray Mesh.
+     * @throws NullPointerException if camera is null
+     * @throws IllegalArgumentException if x or y is not in the range [0, 1]
+     * @see Group#pick(int, float, float, javax.microedition.m3g.Camera, javax.microedition.m3g.RayIntersection)
      */
     public static Mesh createPickRayMesh(Camera camera, float x, float y)
     {
-        if (x < 0.0f || x > 1.0f || y < 0.0f || y > 1.0f)
-        {
-            throw new IllegalArgumentException();
-        }
+        Require.notNull(camera, "camera");
+        Require.argumentInRange(x, "x", 0, 1);
+        Require.argumentInRange(y, "y", 0, 1);
 
-        float[] params = new float[4];
-        final int projectionType = camera.getProjection(params);
+        final Transform inverseProjection = new Transform();
+        camera.getProjection(inverseProjection);
+        inverseProjection.invert();
 
-        if (projectionType != Camera.PARALLEL &&
-            projectionType != Camera.PERSPECTIVE)
-        {
-            throw new IllegalArgumentException("camera must have a parallel " +
-                    "or perspective projection.");
-        }
+        final float[] pNear = { 2 * x - 1, 1 - 2 * y, -1, 1};
+        final float[] pFar = { 2 * x - 1, 1 - 2 * y, 1, 1};
 
-        final boolean isParallel = projectionType == Camera.PARALLEL;
-        final float fovy = params[0];
-        final float aspectRatio = params[1];
-        final float near = params[2];
-        final float far = params[3];
+        inverseProjection.transform(pNear);
+        inverseProjection.transform(pFar);
 
-        final float h = isParallel ? fovy : (float)Math.tan(0.5 * fovy * Math.PI / 180.0f);
-        final float w = aspectRatio * h;
+        final float invWNear = 1.0f / pNear[3];
+        pNear[0] *= invWNear;
+        pNear[1] *= invWNear;
+        pNear[2] *= invWNear;
+        pNear[3] = 1.0f;
 
-        //compute the starting point of the ray on the near clipping plane...
-        float halfHeight = isParallel ? h / 2.0f : h * near;
-        float halfWidth = isParallel ? w / 2.0f : w * near;
-        float[] startPoint = {-halfWidth + x * 2 * halfWidth,
-                              halfHeight - y * 2 * halfHeight,
-                              -near};
-
-        //... and on the far clipping plane
-        halfHeight = isParallel ? h / 2.0f : h * far;
-        halfWidth = isParallel ? w / 2.0f : w * far;
-        float[] endPoint = {-halfWidth + x * 2 * halfWidth,
-                            halfHeight - y * 2 * halfHeight,
-                            -far};
-
-        return createLineMesh(startPoint, endPoint, 1.0f, 1.0f, 0.0f);
+        final float invWFar = 1.0f / pFar[3];
+        pFar[0] *= invWFar;
+        pFar[1] *= invWFar;
+        pFar[2] *= invWFar;
+        pFar[3] = 1.0f;
+        
+        return createLineMesh(pNear, pFar, 1.0f, 1.0f, 0.0f);
     }
 
     /**

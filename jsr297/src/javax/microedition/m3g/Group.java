@@ -248,12 +248,12 @@ public class Group extends Node
         inverseProjection.transform(pFar);
 
         final float invWNear = 1.0f / pNear[3];
-        final float invWFar = 1.0f / pFar[3];
         pNear[0] *= invWNear;
         pNear[1] *= invWNear;
         pNear[2] *= invWNear;
         pNear[3] = 1.0f;
 
+        final float invWFar = 1.0f / pFar[3];
         pFar[0] *= invWFar;
         pFar[1] *= invWFar;
         pFar[2] *= invWFar;
