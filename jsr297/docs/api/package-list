@@ -1,5 +1,6 @@
 javax.microedition.m3g
 javax.microedition.m3g.opengl
+m3x
 m3x.awt
 m3x.microedition.m3g
 m3x.microedition.m3g.awt

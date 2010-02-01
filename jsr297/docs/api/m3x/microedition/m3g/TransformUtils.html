@@ -3,7 +3,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-XMLLoader (m3x-jsr297 Application Programming Interface)
+TransformUtils (m3x-jsr297 Application Programming Interface)
 </TITLE>
 
 
@@ -13,7 +13,7 @@ XMLLoader (m3x-jsr297 Application Programming Interface)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="XMLLoader (m3x-jsr297 Application Programming Interface)";
+        parent.document.title="TransformUtils (m3x-jsr297 Application Programming Interface)";
     }
 }
 </SCRIPT>
@@ -38,7 +38,7 @@ function windowTitle()
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/XMLLoader.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/TransformUtils.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -53,11 +53,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;NEXT CLASS</FONT></TD>
+&nbsp;<A HREF="../../../m3x/microedition/m3g/TransformController.html" title="interface in m3x.microedition.m3g"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../m3x/microedition/m3g/XMLLoader.html" title="class in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../index.html?m3x/microedition/m3g/XMLLoader.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="XMLLoader.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../index.html?m3x/microedition/m3g/TransformUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="TransformUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -88,15 +88,25 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
 <FONT SIZE="-1">
 m3x.microedition.m3g</FONT>
 <BR>
-Class XMLLoader</H2>
+Class TransformUtils</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>m3x.microedition.m3g.XMLLoader</B>
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>m3x.microedition.m3g.TransformUtils</B>
 </PRE>
 <HR>
 <DL>
-<DT><PRE>public final class <B>XMLLoader</B><DT>extends java.lang.Object</DL>
+<DT><PRE>public final class <B>TransformUtils</B><DT>extends java.lang.Object</DL>
 </PRE>
+
+<P>
+<p>Utility class for doing common transform operation that otherwise requires
+ some boilerplate code.</p>
+
+ <ul>Some of the features are:
+ <li>Project points in the world space to eye space. This is useful for many
+ screen space or eye space algorithms.</li>
+ </ul>
+<P>
 
 <P>
 <DL>
@@ -117,19 +127,25 @@ java.lang.Object
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A>[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/XMLLoader.html#load(java.io.InputStream)">load</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">project</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+        <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+        float[]&nbsp;position)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+ with the projected w value divided out.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A>[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/XMLLoader.html#load(java.io.Reader)">load</A></B>(java.io.Reader&nbsp;reader)</CODE>
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">projectWithoutPerspectiveDivide</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                                float[]&nbsp;position)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+ without the projected w value divided out.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -154,30 +170,54 @@ java.lang.Object
 </TR>
 </TABLE>
 
-<A NAME="load(java.io.InputStream)"><!-- --></A><H3>
-load</H3>
+<A NAME="projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><!-- --></A><H3>
+projectWithoutPerspectiveDivide</H3>
 <PRE>
-public static final <A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A>[] <B>load</B>(java.io.InputStream&nbsp;stream)
-                             throws java.io.IOException</PRE>
+public static void <B>projectWithoutPerspectiveDivide</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                                   <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                                                   float[]&nbsp;position)</PRE>
 <DL>
+<DD><p>Projects a position in the local space of the coordinate system, localToWorld,
+ without the projected w value divided out. The position is transformed from
+ world space to eye space. The user must do the viewport transform separately
+ if actual screen pixel position is needed.</p>
+<P>
 <DD><DL>
-
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToWorld</CODE> - the local coordinate system, or null to use the world
+ coordinate system (in effect the identity transform).<DD><CODE>position</CODE> - the position to project.
 <DT><B>Throws:</B>
-<DD><CODE>java.io.IOException</CODE></DL>
+<DD><CODE>java.lang.NullPointerException</CODE> - if camera is null
+<DD><CODE>java.lang.NullPointerException</CODE> - if position is null
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if position.length < 4<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><CODE>project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])</CODE></A></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="load(java.io.Reader)"><!-- --></A><H3>
-load</H3>
+<A NAME="project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><!-- --></A><H3>
+project</H3>
 <PRE>
-public static final <A HREF="../../../javax/microedition/m3g/Object3D.html" title="class in javax.microedition.m3g">Object3D</A>[] <B>load</B>(java.io.Reader&nbsp;reader)
-                             throws java.io.IOException</PRE>
+public static void <B>project</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                           <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                           float[]&nbsp;position)</PRE>
 <DL>
-<DD><DL>
+<DD><p>Projects a position in the local space of the coordinate system, localToWorld,
+ with the projected w value divided out. The w coordinate is left untouched,
+ but the rest of the components (x, y, z) are affected.</p>
 
+ <p>If this is not desired; use a method with a contract leave components
+ untouched in regards to the perspective divide.</p>
+
+ <p>The position is transformed from world space to eye space.
+ The user must do the viewport transform separately if actual screen
+ pixel position is needed.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToWorld</CODE> - the local coordinate system, or null to use the world
+ coordinate system (in effect the identity transform).<DD><CODE>position</CODE> - the position to project.
 <DT><B>Throws:</B>
-<DD><CODE>java.io.IOException</CODE></DL>
+<DD><CODE>java.lang.NullPointerException</CODE> - if camera is null
+<DD><CODE>java.lang.NullPointerException</CODE> - if position is null
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if position.length < 4<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><CODE>projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])</CODE></A></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -196,7 +236,7 @@ public static final <A HREF="../../../javax/microedition/m3g/Object3D.html" titl
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/XMLLoader.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/TransformUtils.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -211,11 +251,11 @@ public static final <A HREF="../../../javax/microedition/m3g/Object3D.html" titl
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;NEXT CLASS</FONT></TD>
+&nbsp;<A HREF="../../../m3x/microedition/m3g/TransformController.html" title="interface in m3x.microedition.m3g"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../m3x/microedition/m3g/XMLLoader.html" title="class in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../index.html?m3x/microedition/m3g/XMLLoader.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="XMLLoader.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../index.html?m3x/microedition/m3g/TransformUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="TransformUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

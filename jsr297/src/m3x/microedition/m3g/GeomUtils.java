@@ -471,7 +471,7 @@ public final class GeomUtils
      * Creates a Mesh visualizing the frustum of a given camera.
      * The vertex positions are relative to the coordinate frame of the camera.
      * @param camera
-     * @return
+     * @return a new frustum mesh
      */
     public static Mesh createViewFrustumMesh(Camera camera)
     {

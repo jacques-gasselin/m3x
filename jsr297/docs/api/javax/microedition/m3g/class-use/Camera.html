@@ -92,6 +92,10 @@ Packages that use <A HREF="../../../../javax/microedition/m3g/Camera.html" title
 <TD>&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><A HREF="#m3x.microedition.m3g"><B>m3x.microedition.m3g</B></A></TD>
+<TD>&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><A HREF="#m3x.microedition.m3g.awt"><B>m3x.microedition.m3g.awt</B></A></TD>
 <TD>&nbsp;&nbsp;</TD>
 </TR>
@@ -185,6 +189,63 @@ Uses of <A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the current camera used for immediate mode rendering.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+<A NAME="m3x.microedition.m3g"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+Uses of <A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A> in <A HREF="../../../../m3x/microedition/m3g/package-summary.html">m3x.microedition.m3g</A></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2">Methods in <A HREF="../../../../m3x/microedition/m3g/package-summary.html">m3x.microedition.m3g</A> with parameters of type <A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B>GeomUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/GeomUtils.html#createPickRayMesh(javax.microedition.m3g.Camera, float, float)">createPickRayMesh</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                  float&nbsp;x,
+                  float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a Mesh visualizing a pick ray.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B>GeomUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/GeomUtils.html#createViewFrustumMesh(javax.microedition.m3g.Camera)">createViewFrustumMesh</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a Mesh visualizing the frustum of a given camera.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">project</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+        <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+        float[]&nbsp;position)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+ with the projected w value divided out.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">projectWithoutPerspectiveDivide</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                                float[]&nbsp;position)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+ without the projected w value divided out.</TD>
 </TR>
 </TABLE>
 &nbsp;

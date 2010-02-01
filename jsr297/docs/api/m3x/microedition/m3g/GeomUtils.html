@@ -54,7 +54,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator.html" title="interface in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator1D.html" title="interface in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?m3x/microedition/m3g/GeomUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="GeomUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -117,7 +117,15 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;interface</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator</A></B></CODE>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator1D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator1D</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator2D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator2D</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -135,12 +143,65 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator, int, int)">createMesh</A></B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator</A>&nbsp;evaluator,
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createCoordinateFrameMesh(float)">createCoordinateFrameMesh</A></B>(float&nbsp;axisLength)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a mesh consisting of three line segments representing
+ the positive x, y and z coordinate axes, colored red, green and blue
+ respectively.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createCubeMesh(float, float, float, float, boolean)">createCubeMesh</A></B>(float&nbsp;size,
+               float&nbsp;r,
+               float&nbsp;g,
+               float&nbsp;b,
+               boolean&nbsp;wireFrame)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createLineMesh(float[], float[], float, float, float)">createLineMesh</A></B>(float[]&nbsp;startPos,
+               float[]&nbsp;endPos,
+               float&nbsp;r,
+               float&nbsp;g,
+               float&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a Mesh consisting of a single line segment of a given color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator1D, int)">createMesh</A></B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator1D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator1D</A>&nbsp;evaluator,
+           int&nbsp;subdiv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator2D, int, int)">createMesh</A></B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator2D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator2D</A>&nbsp;evaluator,
            int&nbsp;rows,
            int&nbsp;columns)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createPickRayMesh(javax.microedition.m3g.Camera, float, float)">createPickRayMesh</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                  float&nbsp;x,
+                  float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a Mesh visualizing a pick ray.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -171,6 +232,14 @@ java.lang.Object
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/GeomUtils.html#createViewFrustumMesh(javax.microedition.m3g.Camera)">createViewFrustumMesh</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a Mesh visualizing the frustum of a given camera.</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -194,10 +263,22 @@ java.lang.Object
 </TR>
 </TABLE>
 
-<A NAME="createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator, int, int)"><!-- --></A><H3>
+<A NAME="createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator1D, int)"><!-- --></A><H3>
 createMesh</H3>
 <PRE>
-public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createMesh</B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator</A>&nbsp;evaluator,
+public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createMesh</B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator1D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator1D</A>&nbsp;evaluator,
+                                    int&nbsp;subdiv)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createMesh(m3x.microedition.m3g.GeomUtils.MeshEvaluator2D, int, int)"><!-- --></A><H3>
+createMesh</H3>
+<PRE>
+public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createMesh</B>(<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator2D.html" title="interface in m3x.microedition.m3g">GeomUtils.MeshEvaluator2D</A>&nbsp;evaluator,
                                     int&nbsp;rows,
                                     int&nbsp;columns)</PRE>
 <DL>
@@ -243,6 +324,89 @@ public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="c
 </DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="createLineMesh(float[], float[], float, float, float)"><!-- --></A><H3>
+createLineMesh</H3>
+<PRE>
+public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createLineMesh</B>(float[]&nbsp;startPos,
+                                        float[]&nbsp;endPos,
+                                        float&nbsp;r,
+                                        float&nbsp;g,
+                                        float&nbsp;b)</PRE>
+<DL>
+<DD>Creates a Mesh consisting of a single line segment of a given color.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startPos</CODE> - The position of the start vertex (in local coordinates)<DD><CODE>endPos</CODE> - The position of the end vertex (in local coordinates)<DD><CODE>r</CODE> - The R component of the color of the line segment.<DD><CODE>g</CODE> - The G component of the color of the line segment.<DD><CODE>b</CODE> - The B component of the color of the line segment.
+<DT><B>Returns:</B><DD>The line segment mesh.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPickRayMesh(javax.microedition.m3g.Camera, float, float)"><!-- --></A><H3>
+createPickRayMesh</H3>
+<PRE>
+public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createPickRayMesh</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                     float&nbsp;x,
+                                     float&nbsp;y)</PRE>
+<DL>
+<DD>Creates a Mesh visualizing a pick ray.
+ The vertex positions are relative to the coordinate frame of the camera.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - <DD><CODE>x</CODE> - X coordinate of the point on the viewport plane through which
+          to cast the ray. See Group.pick.<DD><CODE>y</CODE> - Y coordinate of the point on the viewport plane through which
+          to cast the ray. See Group.pick.
+<DT><B>Returns:</B><DD>The pickray Mesh.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createViewFrustumMesh(javax.microedition.m3g.Camera)"><!-- --></A><H3>
+createViewFrustumMesh</H3>
+<PRE>
+public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createViewFrustumMesh</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera)</PRE>
+<DL>
+<DD>Creates a Mesh visualizing the frustum of a given camera.
+ The vertex positions are relative to the coordinate frame of the camera.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - 
+<DT><B>Returns:</B><DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCubeMesh(float, float, float, float, boolean)"><!-- --></A><H3>
+createCubeMesh</H3>
+<PRE>
+public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createCubeMesh</B>(float&nbsp;size,
+                                  float&nbsp;r,
+                                  float&nbsp;g,
+                                  float&nbsp;b,
+                                  boolean&nbsp;wireFrame)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCoordinateFrameMesh(float)"><!-- --></A><H3>
+createCoordinateFrameMesh</H3>
+<PRE>
+public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class in javax.microedition.m3g">Mesh</A> <B>createCoordinateFrameMesh</B>(float&nbsp;axisLength)</PRE>
+<DL>
+<DD>Creates a mesh consisting of three line segments representing
+ the positive x, y and z coordinate axes, colored red, green and blue
+ respectively.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>axisLength</CODE> - The length of each coordinate axis.
+<DT><B>Returns:</B><DD>The coordinate axis mesh.</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -275,7 +439,7 @@ public static final <A HREF="../../../javax/microedition/m3g/Mesh.html" title="c
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator.html" title="interface in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../m3x/microedition/m3g/GeomUtils.MeshEvaluator1D.html" title="interface in m3x.microedition.m3g"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?m3x/microedition/m3g/GeomUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="GeomUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

@@ -30,7 +30,13 @@ package m3x;
 import java.util.Arrays;
 
 /**
+ * <p>Pre and post condition requirements utility class. Inspired by the design
+ * by contract methods created by Bertrand Meyer, used in his
+ * programming language Eiffel.</p>
+ * 
  * @author jgasseli
+ * @see <a href="http://en.wikipedia.org/wiki/Design_by_Contract">Design by Contract</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Eiffel_(programming_language)">Eiffel</a>
  */
 public final class Require
 {
@@ -42,6 +48,13 @@ public final class Require
         
     }
 
+    /**
+     * Checks the condition that the given object reference is not null.
+     * 
+     * @param value the reference to check
+     * @param name the name of the reference
+     * @throws NullPointerException if {@code value is null}
+     */
     public static final void notNull(Object value, String name)
     {
         if (value == null)
@@ -50,6 +63,14 @@ public final class Require
         }
     }
 
+    /**
+     * Checks the condition that the given array is not null and is not empty.
+     *
+     * @param array the array to check
+     * @param name the name of the array to display on error
+     * @throws NullPointerException if {@code array is null}
+     * @throws IllegalArgumentException if {@code array is empty}
+     */
     public static final void argumentNotEmpty(Object[] array, String name)
     {
         notNull(array, name);
@@ -59,6 +80,15 @@ public final class Require
         }
     }
 
+    /**
+     * Checks the condition that the given integer array is not null and
+     * is not empty.
+     *
+     * @param array the array to check
+     * @param name the name of the array to display on error
+     * @throws NullPointerException if {@code array is null}
+     * @throws IllegalArgumentException if {@code array is empty}
+     */
     public static final void argumentNotEmpty(int[] array, String name)
     {
         notNull(array, name);
@@ -70,7 +100,7 @@ public final class Require
     }
 
     /**
-     * Checks the precondition that the given array is not null and has a length
+     * Checks the condition that the given array is not null and has a length
      * of at least capacity elements.
      * 
      * @param array the array to check
