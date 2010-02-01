@@ -36,86 +36,85 @@ public class TransformableTest extends TestCase
         }
     }
 
+    private final void getOrientation(float[] v)
+    {
+        try
+        {
+            g.getOrientation(v);
+            assertNotNull("null angleAxis must throw NPE", v);
+            assertTrue("length < 4 must throw IAE",
+                    v.length >= 4);
+        }
+        catch (NullPointerException e)
+        {
+            assertNull(v);
+            assertNotNull(e.getMessage());
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(v);
+            assertFalse("length >= 4 must not throw IAE",
+                    v.length >= 4);
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    private final void getOrientationQuat(float[] v)
+    {
+        try
+        {
+            g.getOrientationQuat(v);
+            assertNotNull("null quat must throw NPE", v);
+            assertTrue("length < 4 must throw IAE",
+                    v.length >= 4);
+        }
+        catch (NullPointerException e)
+        {
+            assertNull(v);
+            assertNotNull(e.getMessage());
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(v);
+            assertFalse("length >= 4 must not throw IAE",
+                    v.length >= 4);
+            assertNotNull(e.getMessage());
+        }
+    }
+    
     public void testGetOrientation()
     {
-        final float[] angleAxis = new float[4];
-        g.getOrientation(angleAxis);
+        getOrientation(new float[4]);
     }
 
     public void testGetOrientationNull()
     {
-        try
-        {
-            g.getOrientation(null);
-            fail("null angleAxis must throw NPE");
-        }
-        catch (NullPointerException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientation(null);
     }
 
     public void testGetOrientationZeroElements()
     {
-        try
-        {
-            final float[] angleAxis = new float[0];
-            g.getOrientation(angleAxis);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientation(new float[0]);
     }
 
     public void testGetOrientationOneElement()
     {
-        try
-        {
-            final float[] angleAxis = new float[1];
-            g.getOrientation(angleAxis);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
-
+        getOrientation(new float[1]);
     }
 
     public void testGetOrientationTwoElements()
     {
-        try
-        {
-            final float[] angleAxis = new float[2];
-            g.getOrientation(angleAxis);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientation(new float[2]);
     }
 
     public void testGetOrientationThreeElements()
     {
-        try
-        {
-            final float[] angleAxis = new float[3];
-            g.getOrientation(angleAxis);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientation(new float[3]);
     }
 
     public void testGetOrientationFiveElements()
     {
-        final float[] angleAxis = new float[5];
-        g.getOrientation(angleAxis);
+        getOrientation(new float[5]);
     }
 
     public void testGetOrientationQuat()
@@ -126,77 +125,31 @@ public class TransformableTest extends TestCase
 
     public void testGetOrientationQuatNull()
     {
-        try
-        {
-            g.getOrientationQuat(null);
-            fail("null angleAxis must throw NPE");
-        }
-        catch (NullPointerException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientationQuat(null);
     }
 
     public void testGetOrientationQuatZeroElements()
     {
-        try
-        {
-            final float[] quat = new float[0];
-            g.getOrientationQuat(quat);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
-
+        getOrientationQuat(new float[0]);
     }
 
     public void testGetOrientationQuatOneElement()
     {
-        try
-        {
-            final float[] quat = new float[1];
-            g.getOrientationQuat(quat);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientationQuat(new float[1]);
     }
 
     public void testGetOrientationQuatTwoElements()
     {
-        try
-        {
-            final float[] quat = new float[2];
-            g.getOrientationQuat(quat);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientationQuat(new float[2]);
     }
 
     public void testGetOrientationQuatThreeElements()
     {
-        try
-        {
-            final float[] quat = new float[3];
-            g.getOrientationQuat(quat);
-            fail("length < 4 must throw IAE");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertNotNull(e.getMessage());
-        }
+        getOrientationQuat(new float[3]);
     }
 
     public void testGetOrientationQuatFiveElements()
     {
-        final float[] quat = new float[5];
-        g.getOrientationQuat(quat);
+        getOrientationQuat(new float[5]);
     }
 }

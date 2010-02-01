@@ -76,8 +76,26 @@ public abstract class Transformable extends Object3D
     public void getOrientation(float[] angleAxis)
     {
         Require.argumentHasCapacity(angleAxis, "angleAxis", 4);
-        
-        throw new UnsupportedOperationException();
+
+        final float c = qw;
+        if (Math.abs(c) > 0.999999f)
+        {
+            //angle is close enough to zero that rotation is undefined
+            //return the zero vector in this case.
+            angleAxis[0] = 0;
+            angleAxis[1] = 0;
+            angleAxis[2] = 0;
+            angleAxis[3] = 0;
+        }
+        else
+        {
+            //sine of the half angle is found using trig identity
+            final float invS = 1.0f / ((float) Math.sqrt(1 - (c * c)));
+            angleAxis[0] = (float) Math.toDegrees(Math.acos(c) * 2);
+            angleAxis[1] = qx * invS;
+            angleAxis[2] = qy * invS;
+            angleAxis[3] = qz * invS;
+        }
     }
 
     public void getOrientationQuat(float[] quaternion)
