@@ -135,8 +135,6 @@ public abstract class Transformable extends Object3D
 
     public void postRotate(float angle, float ax, float ay, float az)
     {
-        compositeTransformNeedsUpdate = true;
-
         rotate(angle, ax, ay, az, false);
     }
 
@@ -150,6 +148,7 @@ public abstract class Transformable extends Object3D
      */
     private void rotate(float angle, float ax, float ay, float az, boolean pre)
     {
+        //FIXME: this needs to be an epsilon equals
         if (angle == 0.0f)
         {
             return;
@@ -158,6 +157,7 @@ public abstract class Transformable extends Object3D
         {
             final float length = (float) Math.sqrt(ax * ax + ay * ay + az * az);
 
+            //FIXME: this needs to be an epsilon equals
             if (length == 0)
             {
                 throw new IllegalArgumentException("rotation axis is zero and" +
@@ -210,27 +210,26 @@ public abstract class Transformable extends Object3D
             qzR = qz;
         }
 
-        this.qw = qwL * qwR - qxL * qxR - qyL * qyR - qzL * qzR;
-        this.qx = qwL * qxR + qxL * qwR + qyL * qzR - qzL * qyR;
-        this.qy = qwL * qyR - qxL * qzR + qyL * qwR + qzL * qxR;
-        this.qz = qwL * qzR - qxL * qyR - qyL * qxR + qzL * qwR;
+        final float x = qwL * qxR + qxL * qwR + qyL * qzR - qzL * qyR;
+        final float y = qwL * qyR - qxL * qzR + qyL * qwR + qzL * qxR;
+        final float z = qwL * qzR - qxL * qyR - qyL * qxR + qzL * qwR;
+        final float w = qwL * qwR - qxL * qxR - qyL * qyR - qzL * qzR;
+
+        setOrientationQuat(x, y, z, w);
     }
 
     public void postRotateQuat(float qx, float qy, float qz, float qw)
     {
-        compositeTransformNeedsUpdate = true;
         multiplyQuaternion(qx, qy, qz, qw, false);        
     }
 
     public void preRotate(float angle, float ax, float ay, float az)
     {
-        compositeTransformNeedsUpdate = true;
         rotate(angle, ax, ay, az, true);
     }
 
     public void preRotateQuat(float qx, float qy, float qz, float qw)
     {
-        compositeTransformNeedsUpdate = true;
         multiplyQuaternion(qx, qy, qz, qw, true);
     }
 
@@ -290,8 +289,6 @@ public abstract class Transformable extends Object3D
         targetX /= targetMag;
         targetY /= targetMag;
         targetZ /= targetMag;
-
-        compositeTransformNeedsUpdate = true;
 
         //compute two consecutive rotations:
         //1. align the -z axis with the target direction
