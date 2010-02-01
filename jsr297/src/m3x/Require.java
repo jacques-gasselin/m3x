@@ -25,14 +25,14 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.microedition.m3g;
+package m3x;
 
 import java.util.Arrays;
 
 /**
  * @author jgasseli
  */
-final class Require
+public final class Require
 {
     /**
      * Static utility class, should never be instantiated
@@ -42,7 +42,7 @@ final class Require
         
     }
 
-    static final void notNull(Object value, String name)
+    public static final void notNull(Object value, String name)
     {
         if (value == null)
         {
@@ -50,7 +50,7 @@ final class Require
         }
     }
 
-    static final void argumentNotEmpty(Object[] array, String name)
+    public static final void argumentNotEmpty(Object[] array, String name)
     {
         notNull(array, name);
         if (array.length == 0)
@@ -59,7 +59,7 @@ final class Require
         }
     }
 
-    static final void argumentNotEmpty(int[] array, String name)
+    public static final void argumentNotEmpty(int[] array, String name)
     {
         notNull(array, name);
         
@@ -69,7 +69,17 @@ final class Require
         }
     }
 
-    static final void argumentHasCapacity(float[] array, String name, int capacity)
+    /**
+     * Checks the precondition that the given array is not null and has a length
+     * of at least capacity elements.
+     * 
+     * @param array the array to check
+     * @param name the name of the array to display on error
+     * @param capacity the capacity the array must have
+     * @throws NullPointerException if {@code array is null}
+     * @throws IllegalArgumentException if {@code array.length < capacity}
+     */
+    public static final void argumentHasCapacity(float[] array, String name, int capacity)
     {
         notNull(array, name);
         if (array.length < capacity)
@@ -78,7 +88,7 @@ final class Require
         }
     }
 
-    static final void argumentNotNegative(float value, String name)
+    public static final void argumentNotNegative(float value, String name)
     {
         if (Float.isNaN(value))
         {
@@ -91,7 +101,7 @@ final class Require
         }
     }
 
-    static final void argumentNotNegative(int value, String name)
+    public static final void argumentNotNegative(int value, String name)
     {
         if (value < 0)
         {
@@ -99,7 +109,7 @@ final class Require
         }
     }
 
-    static final void indexNotNegative(int value, String name)
+    public static final void indexNotNegative(int value, String name)
     {
         if (value < 0)
         {
@@ -107,12 +117,12 @@ final class Require
         }
     }
 
-    static final void indexInRange(int index, int limit)
+    public static final void indexInRange(int index, int limit)
     {
         indexInRange(index, "index", limit);
     }
 
-    static final void indexInRange(int index, String name, int limit)
+    public static final void indexInRange(int index, String name, int limit)
     {
         if (index < 0)
         {
@@ -124,7 +134,7 @@ final class Require
         }
     }
         
-    static final void argumentInRange(int value, String name, int minValue, int maxValue)
+    public static final void argumentInRange(int value, String name, int minValue, int maxValue)
     {
         if (value < minValue)
         {
@@ -136,7 +146,7 @@ final class Require
         }
     }
 
-    static final void argumentInRange(float value, String name, float minValue, float maxValue)
+    public static final void argumentInRange(float value, String name, float minValue, float maxValue)
     {
         if (Float.isNaN(value))
         {
@@ -153,7 +163,7 @@ final class Require
         }
     }
 
-    static final void argumentIn(int value, String name, int[] list)
+    public static final void argumentIn(int value, String name, int[] list)
     {
         for (int l : list)
         {
@@ -167,12 +177,12 @@ final class Require
                 Arrays.toString(list));
     }
 
-    static final void argumentInEnum(int value, String name, int enumMin, int enumMax)
+    public static final void argumentInEnum(int value, String name, int enumMin, int enumMax)
     {
         argumentInRange(value, name, enumMin, enumMax);
     }
 
-    static final void argumentGreaterThan(int value, String name, int limit)
+    public static final void argumentGreaterThan(int value, String name, int limit)
     {
         if (value <= limit)
         {
@@ -180,7 +190,7 @@ final class Require
         }
     }
 
-    static final void argumentGreaterThan(float value, String name, float limit)
+    public static final void argumentGreaterThan(float value, String name, float limit)
     {
         if (Float.isNaN(value))
         {
@@ -198,7 +208,7 @@ final class Require
         }
     }
 
-    static final void argumentGreaterThanZero(int value, String name)
+    public static final void argumentGreaterThanZero(int value, String name)
     {
         if (value <= 0)
         {
@@ -206,7 +216,7 @@ final class Require
         }
     }
 
-    static final void argumentGreaterThanZero(float value, String name)
+    public static final void argumentGreaterThanZero(float value, String name)
     {
         if (Float.isNaN(value))
         {

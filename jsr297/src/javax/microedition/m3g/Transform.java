@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g;
 
+import m3x.Require;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
