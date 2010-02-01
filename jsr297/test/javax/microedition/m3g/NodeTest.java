@@ -34,15 +34,23 @@ import junit.framework.TestCase;
  */
 public class NodeTest extends TestCase
 {
+    private Group g;
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+
+        g = new Group();
+    }
+
     public void testAlignNull()
     {
-        final Group g = new Group();
         g.align(null);
     }
 
     public void testAlignSeparate()
     {
-        final Group g = new Group();
         final Group g2 = new Group();
         try
         {
@@ -57,18 +65,117 @@ public class NodeTest extends TestCase
 
     public void testInSameTreeFalse()
     {
-        final Group g = new Group();
         final Group g2 = new Group();
         assertFalse(Node.inSameTree(g, g2));
     }
 
     public void testInSameTreeTrue()
     {
-        final Group g = new Group();
         final Group g2 = new Group();
         final Group g3 = new Group();
         g.addChild(g2);
         g.addChild(g3);
         assertTrue(Node.inSameTree(g2, g3));
+    }
+
+    public void testGetAlignmentReferenceX()
+    {
+        try
+        {
+            g.getAlignmentReference(Node.X_AXIS);
+            fail("getting alignment reference for X axis must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    public void testGetAlignmentReferenceY()
+    {
+        assertNull(g.getAlignmentReference(Node.Y_AXIS));
+    }
+
+    public void testGetAlignmentReferenceZ()
+    {
+        assertNull(g.getAlignmentReference(Node.Z_AXIS));
+    }
+
+    public void testGetAlignmentReferenceZero()
+    {
+        try
+        {
+            g.getAlignmentReference(0);
+            fail("getting alignment reference for 0 must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    public void testGetAlignmentReferenceZPlus1()
+    {
+        try
+        {
+            g.getAlignmentReference(Node.Z_AXIS + 1);
+            fail("getting alignment reference for Z + 1 must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    public void testGetAlphaFactor()
+    {
+        assertEquals(1.0f, g.getAlphaFactor(), 0.001f);
+    }
+
+    public void testGetBoundingBoxNull()
+    {
+        assertFalse(g.getBoundingBox(null));
+    }
+
+    public void testGetBoundingShpereNull()
+    {
+        assertFalse(g.getBoundingSphere(null));
+    }
+
+    public void testGetLODResolution()
+    {
+        assertEquals(0.0f, g.getLODResolution(), 0.001f);
+    }
+
+    public void testGetParent()
+    {
+        assertNull(g.getParent());
+    }
+
+    public void testGetParentOfChild()
+    {
+        final Group g2 = new Group();
+        g.addChild(g2);
+        assertSame(g, g2.getParent());
+    }
+
+    public void testGetScope()
+    {
+        assertEquals(-1, g.getScope());
+    }
+
+    public void testIsCollisionEnabled()
+    {
+        assertTrue(g.isCollisionEnabled());
+    }
+
+    public void testIsPickingEnabled()
+    {
+        assertTrue(g.isPickingEnabled());
+    }
+
+    public void testIsRenderingEnabled()
+    {
+        assertTrue(g.isRenderingEnabled());
     }
 }
