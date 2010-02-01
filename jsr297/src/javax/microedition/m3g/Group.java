@@ -278,9 +278,48 @@ public class Group extends Node
         return x0 * x1 + y0 * y1 + z0 * z1;
     }
 
+    private static final float mag(float x, float y, float z)
+    {
+        return (float) Math.sqrt(magSqr(x, y, z));
+    }
+
     private static final float magSqr(float x, float y, float z)
     {
         return x * x + y * y + z * z;
+    }
+
+    static final boolean rayIntersectsSphere(Transform ray, float[] sphere)
+    {
+        final float radius = sphere[3];
+        if (radius == 0)
+        {
+            //quick exit if sphere is disabled.
+            return false;
+        }
+
+        //transform the sphere into the ray's view coordinate system.
+        final float[] origin = new float[4];
+        System.arraycopy(sphere, 0, origin, 0, 3);
+        origin[3] = 1.0f;
+        ray.transform(origin);
+
+        //ray origin is (0, 0, 0) in the ray's coordinate system
+        //ray direction is (0, 0, 1) in the ray's coordinate system
+        
+        //rs is the ray origin to sphere origin vector
+        final float rsX = origin[0];
+        final float rsY = origin[1];
+        final float rsZ = origin[2];
+
+        final float rayToRadiusLengthSqr = magSqr(
+                rsX, rsY, rsZ) - radius * radius;
+        final float discriminant = (rsZ * rsZ) - rayToRadiusLengthSqr;
+        if (discriminant < 0)
+        {
+            //no intersection
+            return false;
+        }
+        return true;
     }
     
     public boolean pick(int scope, float ox, float oy, float oz,
@@ -291,30 +330,49 @@ public class Group extends Node
             throw new IllegalArgumentException("dx, dy and dz are all 0");
         }
 
+        final Transform view = new Transform();
+        //make the view originate from the ray origin
+        view.postTranslate(ox, oy, oz);
+        //make the view z point along the ray
+        {
+            //normalize
+            {
+                final float invNorm = 1.0f / mag(dx, dy, dz);
+                dx *= invNorm;
+                dy *= invNorm;
+                dz *= invNorm;
+            }
+            //axis is (dx, dy, dz) cross (0, 0, 1)
+            float ax = dy;
+            float ay = -dx;
+            float az = 0;
+            {
+                final float norm = mag(ax, ay, az);
+                if (norm < 0.001f)
+                {
+                    //replace with the up vector
+                    ax = 0;
+                    ay = 1;
+                    az = 0;
+                }
+                else
+                {
+                    final float invNorm = 1.0f / norm;
+                    ax *= invNorm;
+                    ay *= invNorm;
+                    az *= invNorm;
+                }
+            }
+            final float c = (float) Math.sqrt(dz * 0.5 + 0.5);
+            final float s = (float) Math.sqrt(1 - (c * c));
+            view.postRotateQuat(ax * s, ay * s, az * s, c);
+        }
+
         //quick check against the picking bounding sphere
         {
             final float[] sphere = updatePickingBoundingSphere();
-            //rs is the ray origin to sphere origin vector
-            final float radius = sphere[3];
-            if (radius == 0)
+            if (!rayIntersectsSphere(view, sphere))
             {
-                //quick exit if sphere is disabled.
-                return false;
-            }
-            final float rsX = sphere[0] - ox;
-            final float rsY = sphere[1] - oy;
-            final float rsZ = sphere[2] - oz;
-
-            final float rayToRadiusLengthSqr = magSqr(
-                    rsX, rsY, rsZ) - radius * radius;
-            final float directionLengthSqr = magSqr(dx, dy, dz);
-            final float dotDRS = dot(dx, dy, dz, rsX, rsY, rsZ);
-            final float cosDRSSqr = (dotDRS * dotDRS) /
-                    directionLengthSqr;
-            final float discriminant = cosDRSSqr - rayToRadiusLengthSqr;
-            if (discriminant < 0)
-            {
-                //no intersection
                 return false;
             }
         }
