@@ -30,6 +30,7 @@ package javax.microedition.m3g;
 import m3x.Require;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * @author jgasseli
@@ -259,39 +260,70 @@ public abstract class Node extends Transformable
         return false;
     }
 
-    public boolean getTransformTo(Node target, Transform transform)
+
+    private static final boolean accumulatePathTransform(Node ancestor, Node child,
+            Transform transform)
     {
-        Require.notNull(target, "target");
-        Require.notNull(transform, "transform");
-        //quick exit if not in the same tree
-        if (!inSameTree(this, target))
+        ArrayList<Node> path = new ArrayList<Node>();
+        if (!ancestorPath(ancestor, child, path))
         {
             return false;
         }
-
-        ArrayList<Node> path = new ArrayList<Node>();
-        final boolean isAncestor = ancestorPath(target, this, path);
-        if (!isAncestor)
-        {
-            //reverse the ancestor path search and invert the transform
-            path.clear();
-            if (!ancestorPath(this, target, path))
-            {
-                throw new IllegalStateException("early detection of being" +
-                        " in the same tree has false positives");
-            }
-        }
-
-        transform.setIdentity();
         //accumulate the transforms in reverse order
         for (int i = path.size() - 1; i >= 0; --i)
         {
             transform.postMultiply(path.get(i).getCompositeTransform());
         }
+        return true;
+    }
 
-        if (!isAncestor)
+    public boolean getTransformTo(Node target, Transform transform)
+    {
+        Require.notNull(target, "target");
+        Require.notNull(transform, "transform");
+        //quick exit if not in the same tree
+        final Node ancestor = findCommonAncestor(this, target);
+        if (ancestor == null)
         {
+            return false;
+        }
+
+        if (ancestor == this)
+        {
+            //target is below this
+            transform.setIdentity();
+            if (!accumulatePathTransform(this, target, transform))
+            {
+                throw new IllegalStateException("early detection of being" +
+                            " in the same tree has false positives");
+            }
             transform.invert();
+        }
+        else if (ancestor == target)
+        {
+            //this is below target
+            transform.setIdentity();
+            if (!accumulatePathTransform(target, this, transform))
+            {
+                throw new IllegalStateException("early detection of being" +
+                            " in the same tree has false positives");
+            }
+        }
+        else
+        {
+            //this and target are in separate branches of the same common ancestor
+            transform.setIdentity();
+            if (!accumulatePathTransform(ancestor, this, transform))
+            {
+                throw new IllegalStateException("early detection of being" +
+                            " in the same tree has false positives");
+            }
+            transform.invert();
+            if (!accumulatePathTransform(ancestor, target, transform))
+            {
+                throw new IllegalStateException("early detection of being" +
+                            " in the same tree has false positives");
+            }
         }
 
         return true;
@@ -318,6 +350,27 @@ public abstract class Node extends Transformable
     static boolean inSameTree(Node a, Node b)
     {
         return getTreeRoot(a) == getTreeRoot(b);
+    }
+
+    static Node findCommonAncestor(Node a, Node b)
+    {
+        final HashSet<Node> ancestorsA = new HashSet<Node>();
+        //get all the ancestors
+        while (a != null)
+        {
+            ancestorsA.add(a);
+            a = a.getParent();
+        }
+        while (b != null)
+        {
+            if (ancestorsA.contains(b))
+            {
+                return b;
+            }
+            b = b.getParent();
+        }
+
+        return null;
     }
 
     public boolean isCollisionEnabled()
