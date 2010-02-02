@@ -48,7 +48,6 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
  */
 public class PickingDemo extends BaseFrame
 {
-
     class PickingDemoCanvas extends GLCanvas
             implements Runnable, MouseListener
     {
@@ -168,7 +167,7 @@ public class PickingDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {

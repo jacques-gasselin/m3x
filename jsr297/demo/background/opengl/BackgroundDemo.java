@@ -85,7 +85,7 @@ public class BackgroundDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {

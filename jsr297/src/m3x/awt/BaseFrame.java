@@ -43,7 +43,8 @@ public class BaseFrame extends Frame
     private int refreshRate = 60;
     private int windowedWidth;
     private int windowedHeight;
-    private boolean isFullscreen;
+    private boolean fullscreen;
+    private volatile boolean closed;
 
     private final class WindowAdapter extends java.awt.event.WindowAdapter
     {
@@ -53,28 +54,6 @@ public class BaseFrame extends Frame
             super.windowClosing(e);
             close();
         }
-    }
-
-    /**
-     * Close the frame and stop any threads used
-     */
-    protected void close()
-    {
-        dispose();
-    }
-
-    private final void init(String title)
-    {
-        setTitle(title);
-        setSize(800, 600);
-        
-        final WindowAdapter adapter = new WindowAdapter();
-        addWindowFocusListener(adapter);
-        addWindowListener(adapter);
-        addWindowStateListener(adapter);
-
-        windowedWidth = getWidth();
-        windowedHeight = getHeight();
     }
 
     public BaseFrame()
@@ -88,10 +67,38 @@ public class BaseFrame extends Frame
         super();
         init(title);
     }
+
+    private final void init(String title)
+    {
+        setTitle(title);
+        setSize(800, 600);
+
+        final WindowAdapter adapter = new WindowAdapter();
+        addWindowFocusListener(adapter);
+        addWindowListener(adapter);
+        addWindowStateListener(adapter);
+
+        windowedWidth = getWidth();
+        windowedHeight = getHeight();
+    }
+
+    /**
+     * Close the frame and stop any threads used
+     */
+    protected void close()
+    {
+        closed = true;
+        dispose();
+    }
     
     public int getRefreshRate()
     {
         return this.refreshRate;
+    }
+
+    public final boolean isClosed()
+    {
+        return this.closed;
     }
 
     private final void setRefreshRate(DisplayMode dm)
@@ -118,7 +125,7 @@ public class BaseFrame extends Frame
             gd = ge.getDefaultScreenDevice();
         }
 
-        if (isFullscreen)
+        if (fullscreen)
         {
             setWindowed(gd);
         }
@@ -149,7 +156,7 @@ public class BaseFrame extends Frame
             setVisible(true);
         }
 
-        isFullscreen = false;
+        fullscreen = false;
     }
 
     public final void setFullscreen(GraphicsDevice gd)
@@ -181,7 +188,7 @@ public class BaseFrame extends Frame
                 {
                     setVisible(true);
                 }
-                isFullscreen = true;
+                fullscreen = true;
             }
         }
         catch (Throwable t)

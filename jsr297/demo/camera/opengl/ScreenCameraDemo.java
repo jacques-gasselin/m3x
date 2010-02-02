@@ -151,7 +151,7 @@ public class ScreenCameraDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {

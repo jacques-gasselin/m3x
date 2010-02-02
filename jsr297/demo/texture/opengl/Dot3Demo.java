@@ -239,7 +239,7 @@ public class Dot3Demo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {

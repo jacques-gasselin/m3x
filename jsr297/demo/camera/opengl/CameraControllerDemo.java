@@ -218,7 +218,7 @@ public class CameraControllerDemo extends BaseFrame
 
         public void run()
         {
-            while (!closed)
+            while (!isClosed())
             {
                 try
                 {
@@ -233,19 +233,10 @@ public class CameraControllerDemo extends BaseFrame
         }
     }
 
-    final CameraControllerCanvas canvas = new CameraControllerCanvas();
-
     CameraControllerDemo()
     {
         super();
-        add(canvas);
-    }
-
-    @Override
-    protected void close()
-    {
-        canvas.closed = true;
-        super.close();
+        add(new CameraControllerCanvas());
     }
 
     public static void main(String[] args)

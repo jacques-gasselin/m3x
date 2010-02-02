@@ -132,7 +132,7 @@ public class SimpleVBDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {

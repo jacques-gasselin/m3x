@@ -135,7 +135,7 @@ public abstract class AbstractLoaderDemo extends BaseFrame
 
         public void run()
         {
-            while (true)
+            while (!isClosed())
             {
                 try
                 {
