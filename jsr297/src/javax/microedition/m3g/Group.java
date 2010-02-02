@@ -31,6 +31,7 @@ import m3x.Require;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import m3x.Vmath;
 import m3x.microedition.m3g.TransformUtils;
 
 /**
@@ -242,32 +243,13 @@ public class Group extends Node
         final float[] near = new float[4];
         final float[] far = new float[4];
         TransformUtils.unproject(camera, cameraToGroup, x, y, near, far);
+        //make far the delta vector, near-to-far
+        Vmath.vsub3(far, near);
 
-        final float ox = near[0];
-        final float oy = near[1];
-        final float oz = near[2];
-
-        final float dx = far[0] - ox;
-        final float dy = far[1] - oy;
-        final float dz = far[2] - oz;
-
-        return pick(scope, ox, oy, oz, dx, dy, dz, ri);
-    }
-
-    private static final float dot(float x0, float y0, float z0,
-            float x1, float y1, float z1)
-    {
-        return x0 * x1 + y0 * y1 + z0 * z1;
-    }
-
-    private static final float mag(float x, float y, float z)
-    {
-        return (float) Math.sqrt(magSqr(x, y, z));
-    }
-
-    private static final float magSqr(float x, float y, float z)
-    {
-        return x * x + y * y + z * z;
+        return pick(scope,
+                near[0], near[1], near[2],
+                far[0], far[1], far[2],
+                ri);
     }
 
     static final boolean rayIntersectsSphere(Transform ray, float[] sphere)
@@ -279,22 +261,17 @@ public class Group extends Node
             return false;
         }
 
-        //transform the sphere into the ray's view coordinate system.
-        final float[] origin = new float[4];
-        System.arraycopy(sphere, 0, origin, 0, 3);
-        origin[3] = 1.0f;
-        ray.transform(origin);
-
         //ray origin is (0, 0, 0) in the ray's coordinate system
         //ray direction is (0, 0, 1) in the ray's coordinate system
-        
-        //rs is the ray origin to sphere origin vector
-        final float rsX = origin[0];
-        final float rsY = origin[1];
+        //transform the sphere into the ray's view coordinate system.
+        final float[] origin = new float[4];
+        Vmath.vmov3(origin, sphere);
+        origin[3] = 1.0f;
+        ray.transform(origin);
+        //thus the ray origin to sphere origin vector is simply the origin vector
+        final float rayToRadiusLengthSqr = Vmath.vmagSqr3(origin)
+                - radius * radius;
         final float rsZ = origin[2];
-
-        final float rayToRadiusLengthSqr = magSqr(
-                rsX, rsY, rsZ) - radius * radius;
         final float discriminant = (rsZ * rsZ) - rayToRadiusLengthSqr;
         if (discriminant < 0)
         {
@@ -319,35 +296,31 @@ public class Group extends Node
         {
             //normalize
             {
-                final float invNorm = 1.0f / mag(dx, dy, dz);
+                final float invNorm = 1.0f / Vmath.vmag3(dx, dy, dz);
                 dx *= invNorm;
                 dy *= invNorm;
                 dz *= invNorm;
             }
             //axis is (dx, dy, dz) cross (0, 0, 1)
-            float ax = dy;
-            float ay = -dx;
-            float az = 0;
+            final float[] axis = new float[3];
+            Vmath.vload3(axis, dy, -dx, 0);
             {
-                final float norm = mag(ax, ay, az);
+                final float norm = Vmath.vmag3(axis);
                 if (norm < 0.001f)
                 {
                     //replace with the up vector
-                    ax = 0;
-                    ay = 1;
-                    az = 0;
+                    Vmath.vload3(axis, 0, 1, 0);
                 }
                 else
                 {
                     final float invNorm = 1.0f / norm;
-                    ax *= invNorm;
-                    ay *= invNorm;
-                    az *= invNorm;
+                    Vmath.vmul3(axis, invNorm);
                 }
             }
             final float c = (float) Math.sqrt(dz * 0.5 + 0.5);
             final float s = (float) Math.sqrt(1 - (c * c));
-            view.postRotateQuat(ax * s, ay * s, az * s, c);
+            Vmath.vmul3(axis, s);
+            view.postRotateQuat(axis[0], axis[1], axis[2], c);
         }
 
         //quick check against the picking bounding sphere

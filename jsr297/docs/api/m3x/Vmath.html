@@ -1,0 +1,812 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Vmath (m3x-jsr297 Application Programming Interface)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Vmath (m3x-jsr297 Application Programming Interface)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/Vmath.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../m3x/Require.html" title="class in m3x"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?m3x/Vmath.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Vmath.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+m3x</FONT>
+<BR>
+Class Vmath</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>m3x.Vmath</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>Vmath</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Vector and linear algebra utility class.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>jgasseli</DD>
+</DL>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vadd3(float[], float[], float[])">vadd3</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds the 3D vector <code>a</code> to the 3D vector <code>b</code>,
+ storing the result in the 3D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vadd4(float[], float[], float[])">vadd4</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds the 4D vector <code>a</code> to the 4D vector <code>b</code>,
+ storing the result in the 4D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vdot3(float[], float[])">vdot3</A></B>(float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes the 3D dot product of 2 input vectors.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vdot4(float[], float[])">vdot4</A></B>(float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes the 4D dot product of 2 input vectors.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vload3(float[], float, float, float)">vload3</A></B>(float[]&nbsp;result,
+       float&nbsp;x,
+       float&nbsp;y,
+       float&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads a 3D vector with the individual components <code>x, y, z</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vload4(float[], float, float, float, float)">vload4</A></B>(float[]&nbsp;result,
+       float&nbsp;x,
+       float&nbsp;y,
+       float&nbsp;z,
+       float&nbsp;w)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads a 4D vector with the individual components <code>x, y, z, w</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmag3(float[])">vmag3</A></B>(float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the magnitude of the 3D vector <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmag3(float, float, float)">vmag3</A></B>(float&nbsp;x,
+      float&nbsp;y,
+      float&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the magnitude of the 3D components <code>x, y, z</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmag4(float[])">vmag4</A></B>(float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the magnitude of the 4D vector <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmagSqr3(float[])">vmagSqr3</A></B>(float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the squared magnitude of the 3D vector <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmagSqr3(float, float, float)">vmagSqr3</A></B>(float&nbsp;x,
+         float&nbsp;y,
+         float&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the squared magnitude of the 3D components <code>x, y, z</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmagSqr4(float[])">vmagSqr4</A></B>(float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the squared magnitude of the 4D vector <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmov3(float[], float[])">vmov3</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies the data from the 3D vector <code>a</code> storing it in
+ the 3D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmov4(float[], float[])">vmov4</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies the data from the 4D vector <code>a</code> storing it in
+ the 4D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmul3(float[], float)">vmul3</A></B>(float[]&nbsp;a,
+      float&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplies the 3D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result back in <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmul3(float[], float[], float)">vmul3</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplies the 3D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result in the 3D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmul4(float[], float)">vmul4</A></B>(float[]&nbsp;a,
+      float&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplies the 4D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result back in <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vmul4(float[], float[], float)">vmul4</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplies the 4D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result in the 4D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vsub3(float[], float[])">vsub3</A></B>(float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtracts the 3D vector <code>b</code> from the 3D vector <code>a</code>,
+ storing the result back in <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vsub3(float[], float[], float[])">vsub3</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtracts the 3D vector <code>b</code> from the 3D vector <code>a</code>,
+ storing the result in the 3D vector <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vsub4(float[], float[])">vsub4</A></B>(float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtracts the 4D vector <code>b</code> from the 4D vector <code>a</code>,
+ storing the result back in <code>a</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vsub4(float[], float[], float[])">vsub4</A></B>(float[]&nbsp;result,
+      float[]&nbsp;a,
+      float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtracts the 4D vector <code>b</code> from the 4D vector <code>a</code>,
+ storing the result in the 4D vector <code>result</code>.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="vadd3(float[], float[], float[])"><!-- --></A><H3>
+vadd3</H3>
+<PRE>
+public static final void <B>vadd3</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Adds the 3D vector <code>a</code> to the 3D vector <code>b</code>,
+ storing the result in the 3D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the + operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using either <code>a</code> or
+ <code>b</code> as the result vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vadd4(float[], float[], float[])"><!-- --></A><H3>
+vadd4</H3>
+<PRE>
+public static final void <B>vadd4</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Adds the 4D vector <code>a</code> to the 4D vector <code>b</code>,
+ storing the result in the 4D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the + operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using either <code>a</code> or
+ <code>b</code> as the result vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vdot3(float[], float[])"><!-- --></A><H3>
+vdot3</H3>
+<PRE>
+public static final float <B>vdot3</B>(float[]&nbsp;a,
+                                float[]&nbsp;b)</PRE>
+<DL>
+<DD>Computes the 3D dot product of 2 input vectors.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.
+<DT><B>Returns:</B><DD>the dot product, scalar</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vdot4(float[], float[])"><!-- --></A><H3>
+vdot4</H3>
+<PRE>
+public static final float <B>vdot4</B>(float[]&nbsp;a,
+                                float[]&nbsp;b)</PRE>
+<DL>
+<DD>Computes the 4D dot product of 2 input vectors.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.
+<DT><B>Returns:</B><DD>the dot product, scalar</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vload3(float[], float, float, float)"><!-- --></A><H3>
+vload3</H3>
+<PRE>
+public static final void <B>vload3</B>(float[]&nbsp;result,
+                                float&nbsp;x,
+                                float&nbsp;y,
+                                float&nbsp;z)</PRE>
+<DL>
+<DD><p>Loads a 3D vector with the individual components <code>x, y, z</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the components in.<DD><CODE>x</CODE> - the x component, stored at index 0.<DD><CODE>y</CODE> - the y component, stored at index 1.<DD><CODE>z</CODE> - the z component, stored at index 2.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vload4(float[], float, float, float, float)"><!-- --></A><H3>
+vload4</H3>
+<PRE>
+public static final void <B>vload4</B>(float[]&nbsp;result,
+                                float&nbsp;x,
+                                float&nbsp;y,
+                                float&nbsp;z,
+                                float&nbsp;w)</PRE>
+<DL>
+<DD><p>Loads a 4D vector with the individual components <code>x, y, z, w</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the components in.<DD><CODE>x</CODE> - the x component, stored at index 0.<DD><CODE>y</CODE> - the y component, stored at index 1.<DD><CODE>z</CODE> - the z component, stored at index 2.<DD><CODE>w</CODE> - the w component, stored at index 3.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmag3(float[])"><!-- --></A><H3>
+vmag3</H3>
+<PRE>
+public static final float <B>vmag3</B>(float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Calculates the magnitude of the 3D vector <code>a</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the vector to get the length of.
+<DT><B>Returns:</B><DD>the vector mangnitude, the scalar length.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmag3(float, float, float)"><!-- --></A><H3>
+vmag3</H3>
+<PRE>
+public static final float <B>vmag3</B>(float&nbsp;x,
+                                float&nbsp;y,
+                                float&nbsp;z)</PRE>
+<DL>
+<DD><p>Calculates the magnitude of the 3D components <code>x, y, z</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the x component<DD><CODE>y</CODE> - the y component<DD><CODE>z</CODE> - the z component
+<DT><B>Returns:</B><DD>the vector mangnitude, the scalar length.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmag4(float[])"><!-- --></A><H3>
+vmag4</H3>
+<PRE>
+public static final float <B>vmag4</B>(float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Calculates the magnitude of the 4D vector <code>a</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the vector to get the length of.
+<DT><B>Returns:</B><DD>the vector mangnitude, the scalar length.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmagSqr3(float[])"><!-- --></A><H3>
+vmagSqr3</H3>
+<PRE>
+public static final float <B>vmagSqr3</B>(float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Calculates the squared magnitude of the 3D vector <code>a</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the vector to get the squared length of.
+<DT><B>Returns:</B><DD>the vector mangnitude squared, the scalar length squared.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmagSqr3(float, float, float)"><!-- --></A><H3>
+vmagSqr3</H3>
+<PRE>
+public static final float <B>vmagSqr3</B>(float&nbsp;x,
+                                   float&nbsp;y,
+                                   float&nbsp;z)</PRE>
+<DL>
+<DD><p>Calculates the squared magnitude of the 3D components <code>x, y, z</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the x component<DD><CODE>y</CODE> - the y component<DD><CODE>z</CODE> - the z component
+<DT><B>Returns:</B><DD>the vector mangnitude squared, the scalar length squared.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmagSqr4(float[])"><!-- --></A><H3>
+vmagSqr4</H3>
+<PRE>
+public static final float <B>vmagSqr4</B>(float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Calculates the squared magnitude of the 4D vector <code>a</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the vector to get the squared length of.
+<DT><B>Returns:</B><DD>the vector mangnitude squared, the scalar length squared.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmov3(float[], float[])"><!-- --></A><H3>
+vmov3</H3>
+<PRE>
+public static final void <B>vmov3</B>(float[]&nbsp;result,
+                               float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Copies the data from the 3D vector <code>a</code> storing it in
+ the 3D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the = operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using <code>a</code> as the result
+ vector is stable and will work as expected. Though in this case it will
+ be and expensive no-op.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmov4(float[], float[])"><!-- --></A><H3>
+vmov4</H3>
+<PRE>
+public static final void <B>vmov4</B>(float[]&nbsp;result,
+                               float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Copies the data from the 4D vector <code>a</code> storing it in
+ the 4D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the = operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using <code>a</code> as the result
+ vector is stable and will work as expected. Though in this case it will
+ be and expensive no-op.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmul3(float[], float)"><!-- --></A><H3>
+vmul3</H3>
+<PRE>
+public static final void <B>vmul3</B>(float[]&nbsp;a,
+                               float&nbsp;b)</PRE>
+<DL>
+<DD><p>Multiplies the 3D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result back in <code>a</code>.</p>
+
+ <p>This is equivalent to the *= operator on a vector</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand and result, vector.<DD><CODE>b</CODE> - the right operand, scalar.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmul3(float[], float[], float)"><!-- --></A><H3>
+vmul3</H3>
+<PRE>
+public static final void <B>vmul3</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float&nbsp;b)</PRE>
+<DL>
+<DD><p>Multiplies the 3D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result in the 3D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the * operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using <code>a</code> as the result
+ vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, scalar.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmul4(float[], float)"><!-- --></A><H3>
+vmul4</H3>
+<PRE>
+public static final void <B>vmul4</B>(float[]&nbsp;a,
+                               float&nbsp;b)</PRE>
+<DL>
+<DD><p>Multiplies the 4D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result back in <code>a</code>.</p>
+
+ <p>This is equivalent to the *= operator on a vector</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand and result, vector.<DD><CODE>b</CODE> - the right operand, scalar.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vmul4(float[], float[], float)"><!-- --></A><H3>
+vmul4</H3>
+<PRE>
+public static final void <B>vmul4</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float&nbsp;b)</PRE>
+<DL>
+<DD><p>Multiplies the 4D vector <code>a</code> by the scalar <code>b</code>,
+ storing the result in the 4D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the * operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using <code>a</code> as the result
+ vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, scalar.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vsub3(float[], float[], float[])"><!-- --></A><H3>
+vsub3</H3>
+<PRE>
+public static final void <B>vsub3</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Subtracts the 3D vector <code>b</code> from the 3D vector <code>a</code>,
+ storing the result in the 3D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the - operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using either <code>a</code> or
+ <code>b</code> as the result vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the result in.<DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vsub3(float[], float[])"><!-- --></A><H3>
+vsub3</H3>
+<PRE>
+public static final void <B>vsub3</B>(float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Subtracts the 3D vector <code>b</code> from the 3D vector <code>a</code>,
+ storing the result back in <code>a</code>.</p>
+
+ <p>This is equivalent to the -= operator on two vectors</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand and result vector.<DD><CODE>b</CODE> - the right operand, vector.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vsub4(float[], float[], float[])"><!-- --></A><H3>
+vsub4</H3>
+<PRE>
+public static final void <B>vsub4</B>(float[]&nbsp;result,
+                               float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Subtracts the 4D vector <code>b</code> from the 4D vector <code>a</code>,
+ storing the result in the 4D vector <code>result</code>.</p>
+
+ <p>This is equivalent to the - operator on two vectors</p>
+
+ <p>Note: the algorithm guarantees that using either <code>a</code> or
+ <code>b</code> as the result vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the result in.<DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vsub4(float[], float[])"><!-- --></A><H3>
+vsub4</H3>
+<PRE>
+public static final void <B>vsub4</B>(float[]&nbsp;a,
+                               float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Subtracts the 4D vector <code>b</code> from the 4D vector <code>a</code>,
+ storing the result back in <code>a</code>.</p>
+
+ <p>This is equivalent to the -= operator on two vectors</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand and result vector.<DD><CODE>b</CODE> - the right operand, vector.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/Vmath.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../m3x/Require.html" title="class in m3x"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?m3x/Vmath.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Vmath.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<i>Copyright &#169; Jacques Gasselin de Richebourg. All Rights Reserved.</i>
+</BODY>
+</HTML>

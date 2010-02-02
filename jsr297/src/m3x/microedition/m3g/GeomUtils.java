@@ -29,6 +29,7 @@ package m3x.microedition.m3g;
 
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Camera;
+import javax.microedition.m3g.Group;
 import javax.microedition.m3g.Image2D;
 import javax.microedition.m3g.IndexBuffer;
 import javax.microedition.m3g.VertexArray;

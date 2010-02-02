@@ -172,6 +172,8 @@
                  includenosourcepackages="true"
                  windowtitle="m3x Application Programming Interface"
                  Overview="${src.dir}/overview.html">
+            <!--taglet name="net.sourceforge.taglets.Taglets"
+                    path="${lib.dir}/taglets/taglets.jar"/-->
             <arg value="-notimestamp"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>

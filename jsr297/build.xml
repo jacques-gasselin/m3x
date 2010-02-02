@@ -139,6 +139,8 @@
                  version="true"
                  use="true"
                  windowtitle="m3x-jsr297 Application Programming Interface">
+            <!--taglet name="net.sourceforge.taglets.Taglets"
+                    path="${lib.dir}/taglets/taglets.jar"/-->
             <arg value="-notimestamp"/>
             <classpath>
                 <fileset dir="${lib.dir}"/>

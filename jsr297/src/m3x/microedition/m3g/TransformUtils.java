@@ -108,7 +108,7 @@ public final class TransformUtils
 
         //do the perspective divide
         final float invW = 1.0f / position[3];
-        Vmath.vmul3(position, invW, position);
+        Vmath.vmul3(position, invW);
     }
 
     /**
@@ -128,15 +128,9 @@ public final class TransformUtils
     {
         final float pX = 2 * x - 1;
         final float pY = 1 - 2 * y;
-        near[0] = pX;
-        near[1] = pY;
-        near[2] = -1;
-        near[3] = 1;
 
-        far[0] = pX;
-        far[1] = pY;
-        far[2] = 1;
-        far[3] = 1;
+        Vmath.vload4(near, pX, pY, -1, 1);
+        Vmath.vload4(far, pX, pY, 1, 1);
 
         unproject(camera, cameraToLocal, near, far);
     }
@@ -156,11 +150,11 @@ public final class TransformUtils
         inverseProjection.transform(far);
 
         final float invWNear = 1.0f / near[3];
-        Vmath.vmul3(near, invWNear, near);
+        Vmath.vmul3(near, invWNear);
         near[3] = 1.0f;
 
         final float invWFar = 1.0f / far[3];
-        Vmath.vmul3(far, invWFar, far);
+        Vmath.vmul3(far, invWFar);
         far[3] = 1.0f;
 
         if (cameraToLocal != null)

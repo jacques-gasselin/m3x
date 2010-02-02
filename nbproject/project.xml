@@ -257,7 +257,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>tools/src</package-root>
-                <classpath mode="compile">lib/jaxb/jaxb-impl.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:lib/ant/ant.jar:tools/build</classpath>
+                <classpath mode="compile">lib/jaxb/jaxb-impl.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:lib/ant/ant.jar:tools/build:lib/taglets/taglets.jar</classpath>
                 <built-to>tools/build</built-to>
                 <javadoc-built-to>tools/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
@@ -277,7 +277,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/src</package-root>
-                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build:tools/build</classpath>
+                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build:tools/build:lib/taglets/taglets.jar</classpath>
                 <built-to>jsr297/build</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
