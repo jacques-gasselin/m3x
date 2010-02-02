@@ -110,8 +110,8 @@ public class PickingDemo extends BaseFrame
             camera = new Camera();
             topGroup.addChild(camera);
 
-            //lookatMarker = GeomUtils.createCubeMesh(0.5f, 1.0f, 1.0f, 0.0f, true);
-            //topGroup.addChild(lookatMarker);
+            lookatMarker = GeomUtils.createCubeMesh(0.01f, 1.0f, 1.0f, 0.0f, true);
+            topGroup.addChild(lookatMarker);
 
             cameraController = 
                     new BlenderTurntableCameraController(camera, this, 0.0f, 10.0f, 4.0f);
@@ -142,9 +142,9 @@ public class PickingDemo extends BaseFrame
 
                 g3d.setViewport(0, 0, getWidth(), getHeight());
                 cameraController.update(0);
-                /*float[] lookatPos = new float[3];
+                float[] lookatPos = new float[3];
                 cameraController.getLookAtPosition(lookatPos);
-                lookatMarker.setTranslation(lookatPos[0], lookatPos[1], lookatPos[2]);*/
+                lookatMarker.setTranslation(lookatPos[0], lookatPos[1], lookatPos[2]);
                 Transform cameraTransform = cameraController.getTransform();
                 g3d.setCamera(camera, cameraTransform);
 
@@ -211,7 +211,7 @@ public class PickingDemo extends BaseFrame
             RayIntersection ri = new RayIntersection();
             float x = e.getX() / (float)getWidth();
             float y = e.getY() / (float)getHeight();
-            //topGroup.pick(0, x, y, camera, ri);
+            topGroup.pick(0, x, y, camera, ri);
             //System.out.println("intersected node: " + ri.getIntersected());
 
             //create a pick ray visualization mesh
