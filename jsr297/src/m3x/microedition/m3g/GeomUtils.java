@@ -35,7 +35,6 @@ import javax.microedition.m3g.VertexArray;
 import javax.microedition.m3g.VertexBuffer;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.Texture2D;
-import javax.microedition.m3g.Transform;
 import m3x.Require;
 
 /**

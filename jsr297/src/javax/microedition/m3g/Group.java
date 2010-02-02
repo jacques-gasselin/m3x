@@ -141,9 +141,10 @@ public class Group extends Node
         }
 
         //average it out
-        ox /= weighting;
-        oy /= weighting;
-        oz /= weighting;
+        final float invWeighting = 1.0f / weighting;
+        ox *= invWeighting;
+        oy *= invWeighting;
+        oz *= invWeighting;
 
         //find largest radius
         float radius = 0.0f;

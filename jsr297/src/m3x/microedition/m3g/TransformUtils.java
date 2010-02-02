@@ -30,6 +30,7 @@ package m3x.microedition.m3g;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Transform;
 import m3x.Require;
+import m3x.Vmath;
 
 /**
  * <p>Utility class for doing common transform operation that otherwise requires
@@ -107,9 +108,7 @@ public final class TransformUtils
 
         //do the perspective divide
         final float invW = 1.0f / position[3];
-        position[0] *= invW;
-        position[1] *= invW;
-        position[2] *= invW;
+        Vmath.vmul3(position, invW, position);
     }
 
     /**
@@ -157,15 +156,11 @@ public final class TransformUtils
         inverseProjection.transform(far);
 
         final float invWNear = 1.0f / near[3];
-        near[0] *= invWNear;
-        near[1] *= invWNear;
-        near[2] *= invWNear;
+        Vmath.vmul3(near, invWNear, near);
         near[3] = 1.0f;
 
         final float invWFar = 1.0f / far[3];
-        far[0] *= invWFar;
-        far[1] *= invWFar;
-        far[2] *= invWFar;
+        Vmath.vmul3(far, invWFar, far);
         far[3] = 1.0f;
 
         if (cameraToLocal != null)
