@@ -30,6 +30,7 @@ package picking;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.media.opengl.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Camera;
@@ -41,6 +42,7 @@ import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.opengl.GLRenderTarget;
 import m3x.microedition.m3g.GeomUtils;
 import m3x.awt.BaseFrame;
+import m3x.microedition.m3g.TransformUtils;
 import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
 
 /**
@@ -49,7 +51,7 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
 public class PickingDemo extends BaseFrame
 {
     class PickingDemoCanvas extends GLCanvas
-            implements Runnable, MouseListener
+            implements Runnable, MouseListener, MouseMotionListener
     {
         Camera camera;
         Mesh lookatMarker;
@@ -65,12 +67,15 @@ public class PickingDemo extends BaseFrame
         Group topGroup;
         
         BlenderTurntableCameraController cameraController;
+
+        int xMouse, yMouse;
         
         private AbstractRenderTarget renderTarget;
 
         private PickingDemoCanvas()
         {
             addMouseListener(this);
+            addMouseMotionListener(this);
 
             //a top group to hold all meshes
             topGroup = new Group();
@@ -203,7 +208,8 @@ public class PickingDemo extends BaseFrame
         @Override
         public void mousePressed(MouseEvent e)
         {
-
+            xMouse = e.getX();
+            yMouse = e.getY();
         }
 
         @Override
@@ -234,6 +240,52 @@ public class PickingDemo extends BaseFrame
             viewFrustumMesh.setTransform(cameraController.getTransform());
 
             topGroup.addChild(viewFrustumMesh);
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e)
+        {
+
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e)
+        {
+            //if dragging with the left mouse button down...
+            if (e.getButton() == MouseEvent.BUTTON1)
+            {
+                int dx = e.getX() - xMouse;
+                xMouse = e.getX();
+                int dy = e.getY() - yMouse;
+                yMouse = e.getY();
+                
+                //test dragging of one of the spheres
+                float[] t = new float[4];
+                cube2.getTranslation(t);
+                t[3] = 1.0f;
+
+                /*
+                Transform tr = new Transform(cameraController.getTransform());
+                tr.invert();
+                float[] l = new float[3];
+                cameraController.getLookAtPosition(l);
+                //tr.postTranslate(-l[0], -l[1], -l[2]);
+                tr.transform(t);
+                 *
+                 */
+
+                //sort out the transformations to pass
+                //throw new UnsupportedOperationException();
+
+                
+                float[] offset = TransformUtils.screenTo3DOffset(camera, 
+                                                                 cameraController.getTransform(),
+                                                                 t,
+                                                                 dx, dy,
+                                                                 getWidth(), getHeight());
+                cube2.translate(offset[0], offset[1], offset[2]);
+                
+            }
         }
     }
 

@@ -172,7 +172,7 @@ public final class TransformUtils
      * object in 3D space to ensure that the object stays under the cursor.
      * @param camera The camera the scene is viewed through.
      * @param localToCamera The transformation to eye coordinates.
-     * @param eyeCoordinateZ The z depth (in eye coordinates) at which
+     * @param point A 3D point at the z depth (in eye coordinates) at which
      *        the screen projection of point translations
      *        correspond to the given screen translation.
      * @param dxScreen The desired translation along the screen x axis.
@@ -184,7 +184,7 @@ public final class TransformUtils
      */
     public static float[] screenTo3DOffset(Camera camera,
                                            Transform localToCamera,
-                                           float eyeCoordinateZ,
+                                           float[] point,
                                            float dxScreen,
                                            float dyScreen,
                                            float screenWidth,
@@ -202,6 +202,15 @@ public final class TransformUtils
         final boolean isPersp = projectionType == Camera.PERSPECTIVE;
         final float fovy = params[0];
         final float aspectRatio = params[1];
+
+
+        float[] pointInEyeCoords = new float[4];
+        System.arraycopy(point, 0, pointInEyeCoords, 0, 3);
+        pointInEyeCoords[3] = 1.0f;
+        Transform localToCameraInv = new Transform(localToCamera);
+        localToCameraInv.invert();
+        localToCameraInv.transform(pointInEyeCoords);
+        final float eyeCoordinateZ = pointInEyeCoords[2];
 
         final float h = isPersp ?
                             2.0f * (float)Math.tan(Math.PI / 180.0f * fovy / 2.0f) :

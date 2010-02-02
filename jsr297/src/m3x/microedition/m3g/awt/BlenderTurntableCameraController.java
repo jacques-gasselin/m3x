@@ -130,8 +130,8 @@ public class BlenderTurntableCameraController
                 //get the 3d space offset corresponding to the screen offset
                 float[] worldOffset = TransformUtils.screenTo3DOffset(camera,
                                                    getTransform(),
-                                                   dolly,
-                                                   dx, dy,
+                                                   new float[] {this.x, this.y, this.z},
+                                                   -dx, -dy, 
                                                    getComponent().getWidth(),
                                                    getComponent().getHeight());
 
