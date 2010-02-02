@@ -163,4 +163,68 @@ public final class TransformUtils
             cameraToLocal.transform(far);
         }
     }
+
+    /**
+     * Computes a 3D space offset corresponding to a given screen offset.
+     * The 3D space offset is computed such that points at a given z depth 
+     * (in eye coordinates) move a given distance in pixels along the x and y
+     * directions in screen space. This is for example useful when dragging an
+     * object in 3D space to ensure that the object stays under the cursor.
+     * @param camera The camera the scene is viewed through.
+     * @param localToCamera The transformation to eye coordinates.
+     * @param eyeCoordinateZ The z depth (in eye coordinates) at which
+     *        the screen projection of point translations
+     *        correspond to the given screen translation.
+     * @param dxScreen The desired translation along the screen x axis.
+     * @param dyScreen The desired translation along the screen y axis.
+     * @param screenWidth The screen width in pixels
+     * @param screenHeight The screen height in pixels
+     * @return A 3 element array containing the x, y and z components of the
+     *         world space offset vector.
+     */
+    public static float[] screenTo3DOffset(Camera camera,
+                                           Transform localToCamera,
+                                           float eyeCoordinateZ,
+                                           float dxScreen,
+                                           float dyScreen,
+                                           float screenWidth,
+                                           float screenHeight)
+    {
+        //get frustum information from the camera
+        float[] params = new float[4];
+        final int projectionType = camera.getProjection(params);
+        if (projectionType != Camera.PARALLEL &&
+            projectionType != Camera.PERSPECTIVE)
+        {
+            throw new IllegalArgumentException("camera must have parallel or" +
+                                               " perspective projection.");
+        }
+        final boolean isPersp = projectionType == Camera.PERSPECTIVE;
+        final float fovy = params[0];
+        final float aspectRatio = params[1];
+
+        final float h = isPersp ?
+                            2.0f * (float)Math.tan(Math.PI / 180.0f * fovy / 2.0f) :
+                            2.0f * fovy;
+        final float w = 2.0f * aspectRatio * h;
+
+        //compute the width and height of the frustum at the z value
+        //of the lookat
+        final float frustumHeight = isPersp ? eyeCoordinateZ * h : h / 2.0f;
+
+        //compute the pixel offset relative to the screen width and height
+        final float dxRel = 1.0f / screenWidth;
+        final float dyRel = 1.0f / screenHeight;
+
+        //compute the factor ensuring the world offset at the depth
+        //of the lookat conincides with the screen offset
+        final float factorY = frustumHeight * dyRel;
+        final float factorX = aspectRatio * frustumHeight * dxRel;
+
+        //transform the x and y to become x and y in the local camera space
+        final float[] vector = new float[]{ -dxScreen * factorX, dyScreen * factorY, 0, 0 };
+        localToCamera.transform(vector);
+
+        return new float[] {vector[0], vector[1], vector[2]};
+    }
 }

@@ -32,6 +32,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Transform;
+import m3x.microedition.m3g.TransformUtils;
 
 /**
  * A turntable camera controller operating like the one in Blender 2.4+
@@ -126,50 +127,18 @@ public class BlenderTurntableCameraController
             //pan if shift is down
             if (e.isShiftDown())
             {
-                //the following lines ensure that a point at the same depth
-                //as the lookat will move the same pixel distance as the cursor.
-                final float distanceToLookAt = dolly;
-
-                //get frustum information from the camera
-                float[] params = new float[4];
-                final int projectionType = camera.getProjection(params);
-                if (projectionType != Camera.PARALLEL &&
-                    projectionType != Camera.PERSPECTIVE)
-                {
-                    throw new IllegalStateException();
-                }
-                final boolean isPersp = projectionType == Camera.PERSPECTIVE;
-                final float fovy = params[0];
-                final float aspectRatio = params[1];
-                final float near = params[2];
-                final float far = params[3];
-
-                final float h = isPersp ? 
-                                    2.0f * (float)Math.tan(Math.PI / 180.0f * fovy / 2.0f) : 
-                                    2.0f * fovy;
-                final float w = 2.0f * aspectRatio * h;
-
-                //compute the width and height of the frustum at the z value
-                //of the lookat
-                final float frustumHeight = isPersp ? distanceToLookAt * h : h / 2.0f;
-
-                //compute the pixel offset relative to the screen width and height
-                final float dxRel = 1.0f / (float)getComponent().getWidth();
-                final float dyRel = 1.0f / (float)getComponent().getHeight();
-
-                //compute the factor ensuring the world offset at the depth 
-                //of the lookat conincides with the screen offset
-                final float factorY = frustumHeight * dyRel;
-                final float factorX = aspectRatio * frustumHeight * dxRel;
-
-                //transform the x and y to become x and y in the local camera space
-                final float[] vector = new float[]{ -dx * factorX, dy * factorY, 0, 0 };
-                this.getTransform().transform(vector);
+                //get the 3d space offset corresponding to the screen offset
+                float[] worldOffset = TransformUtils.screenTo3DOffset(camera,
+                                                   getTransform(),
+                                                   dolly,
+                                                   dx, dy,
+                                                   getComponent().getWidth(),
+                                                   getComponent().getHeight());
 
                 //move the camera
-                this.x += vector[0];
-                this.y += vector[1];
-                this.z += vector[2];
+                this.x += worldOffset[0];
+                this.y += worldOffset[1];
+                this.z += worldOffset[2];
             }
             else if (e.isControlDown())
             {

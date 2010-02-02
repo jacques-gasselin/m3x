@@ -110,6 +110,7 @@ public class PickingDemo extends BaseFrame
             camera = new Camera();
             topGroup.addChild(camera);
 
+            //create a mesh marking the camera pivot point, aka the lookat.
             lookatMarker = GeomUtils.createCubeMesh(0.01f, 1.0f, 1.0f, 0.0f, true);
             topGroup.addChild(lookatMarker);
 
