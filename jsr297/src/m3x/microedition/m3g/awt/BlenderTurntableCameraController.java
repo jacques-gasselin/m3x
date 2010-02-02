@@ -68,6 +68,12 @@ public class BlenderTurntableCameraController
     private boolean leftDown;
     private boolean wheelDown;
 
+    /**
+     * Indicates if the previous rotation ended with the positive
+     * up axis pointing down, in which case the yaw direction is reversed.
+     */
+    private boolean isUpAxisDown;
+    
 
     public BlenderTurntableCameraController(Camera camera, Component component)
     {
@@ -172,7 +178,7 @@ public class BlenderTurntableCameraController
             }
             else
             {
-                yaw += -dx * ROTATION_SPEED;
+                yaw += isUpAxisDown ? dx * ROTATION_SPEED : -dx * ROTATION_SPEED;
                 pitch += -dy * ROTATION_SPEED;
             }
         }
@@ -216,6 +222,21 @@ public class BlenderTurntableCameraController
                 break;
             }
         }
+
+        //check if the up axis is pointing down. this information
+        //is used during the next rotation to make sure points between
+        //the lookat and the camera move in the same horizontal direction
+        //as the cursor
+        float wrappedPitch = pitch;
+        if (pitch > 180.0f)
+        {
+            wrappedPitch = pitch - 360.0f * (int)((pitch + 180.0f) / 360.0f);
+        }
+        else if (pitch < -180.0f)
+        {
+            wrappedPitch = pitch - 360.0f * (int)((pitch - 180.0f) / 360.0f);
+        }
+        isUpAxisDown = wrappedPitch < -90.0f || wrappedPitch > 90.0f;
     }
 
     @Override
