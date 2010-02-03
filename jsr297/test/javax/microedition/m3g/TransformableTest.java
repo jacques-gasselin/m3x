@@ -152,4 +152,89 @@ public class TransformableTest extends AbstractTestCase
     {
         getOrientationQuat(new float[5]);
     }
+
+    public void testPostRotateZero()
+    {
+        Transform expected = new Transform();
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPostRotateSmall()
+    {
+        final float angle = 15.0f;
+        g.postRotate(angle, 0, 1, 0);
+        
+        Transform expected = new Transform();
+        expected.postRotate(angle, 0, 1, 0);
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPostRotateSmallNonNormal()
+    {
+        final float angle = 15.0f;
+        g.postRotate(angle, 1, 2, 3);
+
+        Transform expected = new Transform();
+        expected.postRotate(angle, 1, 2, 3);
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPostRotateMultiple()
+    {
+        final float angle1 = 15.0f;
+        final float angle2 = -66.3f;
+        final float angle3 = -15.0f;
+        g.postRotate(angle1, 1, 2, 3);
+        g.postRotate(angle2, 0, 0, 1);
+        g.postRotate(angle3, 1, 0, 1);
+
+        Transform expected = new Transform();
+        expected.postRotate(angle1, 1, 2, 3);
+        expected.postRotate(angle2, 0, 0, 1);
+        expected.postRotate(angle3, 1, 0, 1);
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPreRotateSmall()
+    {
+        final float angle = 15.0f;
+        g.preRotate(angle, 0, 1, 0);
+
+        Transform expected = new Transform();
+        expected.postRotate(angle, 0, 1, 0);
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPreRotateSmallNonNormal()
+    {
+        final float angle = 15.0f;
+        g.preRotate(angle, 1, 2, 3);
+
+        Transform expected = new Transform();
+        expected.postRotate(angle, 1, 2, 3);
+
+        assertCompositeTransformEquals(expected, g);
+    }
+
+    public void testPreRotateMultiple()
+    {
+        final float angle1 = 15.0f;
+        final float angle2 = -66.3f;
+        final float angle3 = -15.0f;
+        g.preRotate(angle1, 1, 2, 3);
+        g.preRotate(angle2, 0, 0, 1);
+        g.preRotate(angle3, 1, 0, 1);
+
+        Transform expected = new Transform();
+        expected.postRotate(angle3, 1, 0, 1);
+        expected.postRotate(angle2, 0, 0, 1);
+        expected.postRotate(angle1, 1, 2, 3);
+
+        assertCompositeTransformEquals(expected, g);
+    }
 }

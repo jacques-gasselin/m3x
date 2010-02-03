@@ -372,7 +372,7 @@ public class TransformTest extends AbstractTestCase
         trans.postTranslate(1, 2, 3);
         trans.invert();
 
-        float[] expected = {
+        final float[] expected = {
             1, 0, 0, -1,
             0, 1, 0, -2,
             0, 0, 1, -3,
@@ -441,6 +441,40 @@ public class TransformTest extends AbstractTestCase
         Transform actual = new Transform();
         actual.postTranslate(3, 2, 1);
         actual.postScale(2, 3, 1);
+        actual.invert();
+
+        assertEquals(expected, actual);
+    }
+
+    public void testInvertMultiple1()
+    {
+        Transform expected = new Transform();
+        expected.postScale(1 / 2.0f, 1 / 3.0f, 1);
+        expected.postTranslate(-3, -2, -1);
+        expected.postRotate(-30, 0, 1, 0);
+
+        Transform actual = new Transform();
+        actual.postRotate(30, 0, 1, 0);
+        actual.postTranslate(3, 2, 1);
+        actual.postScale(2, 3, 1);
+        actual.invert();
+
+        assertEquals(expected, actual);
+    }
+
+    public void testInvertMultiple2()
+    {
+        Transform expected = new Transform();
+        expected.postScale(1 / 4.0f, 1 / 3.0f, 1);
+        expected.postTranslate(-3, -2, -1);
+        expected.postRotate(-30, 0, 1, 0);
+        expected.postScale(4.0f, 3.0f, 1);
+
+        Transform actual = new Transform();
+        actual.postScale(1 / 4.0f, 1 / 3.0f, 1);
+        actual.postRotate(30, 0, 1, 0);
+        actual.postTranslate(3, 2, 1);
+        actual.postScale(4, 3, 1);
         actual.invert();
 
         assertEquals(expected, actual);

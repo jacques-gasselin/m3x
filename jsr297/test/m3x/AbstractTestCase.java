@@ -1,6 +1,7 @@
 package m3x;
 
 import javax.microedition.m3g.Transform;
+import javax.microedition.m3g.Transformable;
 import junit.framework.AssertionFailedError;
 
 /**
@@ -58,6 +59,17 @@ public abstract class AbstractTestCase extends junit.framework.TestCase
         {
             assertEquals(expected[i], actual[i], delta);
         }
+    }
+
+    public static final void assertCompositeTransformEquals(final Transform expected,
+            final Transformable actualTransformable)
+    {
+        assertNotNull(actualTransformable);
+        
+        final Transform actual = new Transform();
+        actualTransformable.getCompositeTransform(actual);
+
+        assertEquals(expected, actual);
     }
 
     public static final void assertEquals(final Transform expected, final Transform actual)
