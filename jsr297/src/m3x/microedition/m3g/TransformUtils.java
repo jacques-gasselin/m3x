@@ -50,10 +50,108 @@ public final class TransformUtils
     }
 
     /**
+     * Returns true if the given normalized device coordinate is outside the unit
+     * cube.
+     * 
+     * @param ndc the normalized device coordinate to check.
+     * @return true if outside the unit cube, false otherwise.
+     */
+    public static final boolean ndcIsClipped(float[] ndc)
+    {
+        final float ndcX = ndc[0];
+        final float ndcY = ndc[1];
+        final float ndcZ = ndc[2];
+        if (ndcX < -1 || ndcX > 1)
+        {
+            //outside x clip
+            return true;
+        }
+        if (ndcY < -1 || ndcY > 1)
+        {
+            //outside y clip
+            return true;
+        }
+        if (ndcZ < -1 || ndcZ > 1)
+        {
+            //outside z clip
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * <p>Transforms a normalized device coordinate into an absolute
+     * screen space point. Note: this is not suitable for calculating delta
+     * screen positions from delta ndc positions as for exmaple; ndc (0,0)
+     * becomes screen (0.5, 0.5).</p>
+     *
+     * @param result the vector to store the screen space mapping in.
+     * @param ndc the normalized device coordinate to map.
+     */
+    public static final void ndcToScreen(float[] result, float[] ndc)
+    {
+        final float pX = ndc[0];
+        final float pY = ndc[1];
+        final float x = (pX + 1) * 0.5f;
+        final float y = (1 - pY) * 0.5f;
+
+        Vmath.vload4(result, x, y, ndc[2], ndc[3]);
+    }
+
+    /**
+     * <p>Transforms a normalized device coordinate into an absolute
+     * screen space point. Note: this is not suitable for calculating delta
+     * screen positions from delta ndc positions as for exmaple; ndc (0,0)
+     * becomes screen (0.5, 0.5).</p>
+     * 
+     * @param result the vector to store the screen space mapping in.
+     * @param ndc the normalized device coordinate to map.
+     */
+    public static final void ndcToScreen(float[] result, float[] ndc,
+            int deviceWidth, int deviceHeight)
+    {
+        ndcToScreen(result, ndc);
+        result[0] *= deviceWidth;
+        result[1] *= deviceHeight;
+    }
+    
+    /**
      * <p>Projects a position in the local space of the coordinate system, localToCamera,
      * without the projected w value divided out. The position is transformed from
      * world space to eye space. The user must do the viewport transform separately
      * if actual screen pixel position is needed.</p>
+     *
+     * <p>Note: take care to ensure you are using the correct localToCamera
+     * transform. This can trip people up as it is not the transform from the
+     * camera to the local object but the inverse.</p>
+     *
+     * <ul>Below are some examples of correct use:
+     * <li>Retained mode:
+     *   <div style="background-color: #efefef">
+     *      <pre>
+     * {@code Camera camera = new Camera();
+     * camera.translate(0, 0, 6);
+     *
+     * Group group = new Group();
+     * group.addChild(camera);
+     *
+     * Transform localToCamera = new Transform();
+     * group.getTransformTo(camera, localToCamera);}</pre>
+     *   </div>
+     * </li>
+     * <li>Immediate mode: (note the invert() call!)
+     *   <div style="background-color: #efefef">
+     *      <pre>
+     * {@code Camera camera = new Camera();
+     * camera.translate(0, 0, 6);
+     *
+     * Transform localToCamera = new Transform();
+     * camera.getCompositeTransform(localToCamera);
+     * localToCamera.invert();}</pre>
+     *   </div>
+     * </li>
+     * </ul>
      *
      * @param camera the camera to use for projecting
      * @param localToCamera the local coordinate system, or null to use the camera
@@ -112,25 +210,83 @@ public final class TransformUtils
     }
 
     /**
-     * <p>Unprojects an eye space point into a ray from the near to far clipping
+     * <p>Transforms a screen space point into a normalized device coordinate.</p>
+     *
+     * <p>{@code x} and {@code y} are in parametric screen coordinates with
+     * the origin in the upper left corner. Thus (0, 0) signifies the upper
+     * left corner, whilst (1, 1) signifies the bottom right corner.</p>
+     *
+     * @param result a 4D vector to place the result in.
+     * @param x the screen space x coordinate, in the range [0, 1]
+     * @param y the screen space y coordinate, in the range [0, 1]
+     * @param ndcZ the desired z component of the screen space point when
+     * transformed, in the range [-1, 1]
+     */
+    public static final void screenToNDC(float[] result, float x, float y, float ndcZ)
+    {
+        final float pX = 2 * x - 1;
+        final float pY = 1 - 2 * y;
+
+        Vmath.vload4(result, pX, pY, ndcZ, 1);
+    }
+
+    /**
+     * <p>Transforms a screen space point into a normalized device coordinate.</p>
+     *
+     * <p>{@code x} and {@code y} are in pixel screen coordinates with
+     * the origin in the upper left corner. Thus (0, 0) signifies the upper
+     * left corner, whilst ({@code deviceWidth}, @{code deviceHeight})
+     * signifies the bottom right corner.</p>
+     *
+     * @param result a 4D vector to place the result in.
+     * @param x the screen space x pixel coordinate, in the range [0, {@code deviceWidth}]
+     * @param y the screen space y pixel coordinate, in the range [0, {@code deviceHeight}]
+     * @param ndcZ the desired z component of the screen space point when
+     * transformed, in the range [-1, 1]
+     * @param deviceWidth the width of the device the pixel coordinates are relative to.
+     * This is used to find the parametric screen coordiantes.
+     * @param deviceHeight the height of the device the pixel coordinates are relative to.
+     * This is used to find the parametric screen coordiantes.
+     * @see #screenToNDC(float[], float, float, float)
+     */
+    public static final void screenToNDC(float[] result, int x, int y,
+            int deviceWidth, int deviceHeight, float ndcZ)
+    {
+        screenToNDC(result,
+                x / ((float) deviceWidth),
+                y / ((float) deviceHeight),
+                ndcZ);
+    }
+
+    public static final void screenToNDC(float[] result, float[] screenPoint,
+            int deviceWidth, int deviceHeight)
+    {
+        screenToNDC(result,
+                screenPoint[0] / deviceWidth,
+                screenPoint[1] / deviceHeight,
+                screenPoint[2]);
+    }
+    /**
+     * <p>Unprojects a screen space point into a ray from the near to far clipping
      * planes. As no depth can be assertained in unprojection it is the duty
      * of the user to interpolate the ray to find a desired world position.</p>
      *
+     * <p>{@code x} and {@code y} are in parametric screen coordinates with
+     * the origin in the upper left corner. Thus (0, 0) signifies the upper
+     * left corner, whilst (1, 1) signifies the bottom right corner.</p>
+     * 
      * @param camera the camera to unproject from.
      * @param cameraToLocal
-     * @param x the eye space x coordinate
-     * @param y the eye space y coordinate
+     * @param x the screen space x coordinate, in the range [0, 1]
+     * @param y the screen space y coordinate, in the range [0, 1]
      * @param near
      * @param far
      */
     public static void unproject(Camera camera, Transform cameraToLocal,
             float x, float y, float[] near, float[] far)
     {
-        final float pX = 2 * x - 1;
-        final float pY = 1 - 2 * y;
-
-        Vmath.vload4(near, pX, pY, -1, 1);
-        Vmath.vload4(far, pX, pY, 1, 1);
+        screenToNDC(near, x, y, -1);
+        screenToNDC(far, x, y, 1);
 
         unproject(camera, cameraToLocal, near, far);
     }
@@ -141,6 +297,8 @@ public final class TransformUtils
         Require.notNull(camera, "camera");
         Require.argumentHasCapacity(near, "near", 4);
         Require.argumentHasCapacity(far, "far", 4);
+        Require.argumentInRange(near[2], "near.z", -1, 1);
+        Require.argumentInRange(far[2], "far.z", -1, 1);
 
         final Transform inverseProjection = new Transform();
         camera.getProjection(inverseProjection);
@@ -164,76 +322,100 @@ public final class TransformUtils
         }
     }
 
+    public static void unproject(Camera camera, Transform cameraToLocal,
+            float[] point)
+    {
+        Require.notNull(camera, "camera");
+        Require.argumentHasCapacity(point, "near", 4);
+
+        final Transform inverseProjection = new Transform();
+        camera.getProjection(inverseProjection);
+        inverseProjection.invert();
+
+        inverseProjection.transform(point);
+
+        final float invW = 1.0f / point[3];
+        Vmath.vmul3(point, invW);
+        point[3] = 1.0f;
+
+        if (cameraToLocal != null)
+        {
+            cameraToLocal.transform(point);
+        }
+    }
+
+    
     /**
-     * Computes a 3D space offset corresponding to a given screen offset.
+     * <p>Computes a 3D local space offset corresponding to a given screen offset.
      * The 3D space offset is computed such that points at a given z depth 
      * (in eye coordinates) move a given distance in pixels along the x and y
      * directions in screen space. This is for example useful when dragging an
-     * object in 3D space to ensure that the object stays under the cursor.
+     * object in 3D space to ensure that the object stays under the cursor.</p>
+     *
+     * <p>Note: take care to ensure you are using the correct localToCamera
+     * transform. This can trip people up as it is not the transform from the
+     * camera to the local object but the inverse.</p>
+     *
+     * <ul>Below are some examples of correct use:
+     * <li>Retained mode:
+     *   <div style="background-color: #efefef">
+     *      <pre>
+     * {@code Camera camera = new Camera();
+     * camera.translate(0, 0, 6);
+     * 
+     * Group group = new Group();
+     * group.addChild(camera);
+     *
+     * Transform localToCamera = new Transform();
+     * group.getTransformTo(camera, localToCamera);}</pre>
+     *   </div>
+     * </li>
+     * <li>Immediate mode: (note the invert() call!)
+     *   <div style="background-color: #efefef">
+     *      <pre>
+     * {@code Camera camera = new Camera();
+     * camera.translate(0, 0, 6);
+     *
+     * Transform localToCamera = new Transform();
+     * camera.getCompositeTransform(localToCamera);
+     * localToCamera.invert();}</pre>
+     *   </div>
+     * </li>
+     * </ul>
+     *
      * @param camera The camera the scene is viewed through.
      * @param localToCamera The transformation to eye coordinates.
-     * @param point A 3D point at the z depth (in eye coordinates) at which
+     * @param local A 3D point at the z depth (in eye coordinates) at which
      *        the screen projection of point translations
      *        correspond to the given screen translation.
      * @param dxScreen The desired translation along the screen x axis.
      * @param dyScreen The desired translation along the screen y axis.
-     * @param screenWidth The screen width in pixels
-     * @param screenHeight The screen height in pixels
-     * @return A 3 element array containing the x, y and z components of the
-     *         world space offset vector.
+     * @param deviceWidth The device width in pixels
+     * @param deviceHeight The device height in pixels
      */
-    public static float[] screenTo3DOffset(Camera camera,
-                                           Transform localToCamera,
-                                           float[] point,
-                                           float dxScreen,
-                                           float dyScreen,
-                                           float screenWidth,
-                                           float screenHeight)
+    public static void screenToLocalOffset(Camera camera,
+            Transform localToCamera, float[] local,
+            int dxScreen, int dyScreen,
+            int deviceWidth, int deviceHeight)
     {
-        //get frustum information from the camera
-        float[] params = new float[4];
-        final int projectionType = camera.getProjection(params);
-        if (projectionType != Camera.PARALLEL &&
-            projectionType != Camera.PERSPECTIVE)
+        //project the local space point to NDC
+        final float[] ndcPoint = new float[4];
+        Vmath.vmov4(ndcPoint, local);
+        project(camera, localToCamera, ndcPoint);
+        //apply the offset, mapped to ndc coordiantes
+        ndcPoint[0] += 2 * dxScreen / ((float) deviceWidth);
+        ndcPoint[1] -= 2 * dyScreen / ((float) deviceHeight);
+        //check for clip space validity, disabled for now
+        if (false && ndcIsClipped(ndcPoint))
         {
-            throw new IllegalArgumentException("camera must have parallel or" +
-                                               " perspective projection.");
+            return;
         }
-        final boolean isPersp = projectionType == Camera.PERSPECTIVE;
-        final float fovy = params[0];
-        final float aspectRatio = params[1];
-
-
-        float[] pointInEyeCoords = new float[4];
-        System.arraycopy(point, 0, pointInEyeCoords, 0, 3);
-        pointInEyeCoords[3] = 1.0f;
-        Transform localToCameraInv = new Transform(localToCamera);
-        localToCameraInv.invert();
-        localToCameraInv.transform(pointInEyeCoords);
-        final float eyeCoordinateZ = pointInEyeCoords[2];
-
-        final float h = isPersp ?
-                            2.0f * (float)Math.tan(Math.PI / 180.0f * fovy / 2.0f) :
-                            2.0f * fovy;
-        final float w = 2.0f * aspectRatio * h;
-
-        //compute the width and height of the frustum at the z value
-        //of the lookat
-        final float frustumHeight = isPersp ? eyeCoordinateZ * h : h / 2.0f;
-
-        //compute the pixel offset relative to the screen width and height
-        final float dxRel = 1.0f / screenWidth;
-        final float dyRel = 1.0f / screenHeight;
-
-        //compute the factor ensuring the world offset at the depth
-        //of the lookat conincides with the screen offset
-        final float factorY = frustumHeight * dyRel;
-        final float factorX = aspectRatio * frustumHeight * dxRel;
-
-        //transform the x and y to become x and y in the local camera space
-        final float[] vector = new float[]{ -dxScreen * factorX, dyScreen * factorY, 0, 0 };
-        localToCamera.transform(vector);
-
-        return new float[] {vector[0], vector[1], vector[2]};
+        //clear w
+        ndcPoint[3] = 1.0f;
+        //unproject back to the local coordinate system
+        Transform cameraToLocal = new Transform(localToCamera);
+        cameraToLocal.invert();
+        unproject(camera, cameraToLocal, ndcPoint);
+        Vmath.vmov3(local, ndcPoint);
     }
 }

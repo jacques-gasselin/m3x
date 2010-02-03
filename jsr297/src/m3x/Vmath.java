@@ -79,6 +79,20 @@ public final class Vmath
         result[2] = a[2] + b[2];
         result[3] = a[3] + b[3];
     }
+
+    /**
+     * <p>Adds the 4D vector {@code a} to the 4D vector {@code b},
+     * storing the result back in {@code a}.</p>
+     *
+     * <p>This is equivalent to the += operator on two vectors</p>
+     *
+     * @param a the left operand and result, vector.
+     * @param b the right operand, vector.
+     */
+    public static final void vadd4(float[] a, float[] b)
+    {
+        vadd4(a, a, b);
+    }
     
     /**
      * Computes the 3D dot product of 2 input vectors.

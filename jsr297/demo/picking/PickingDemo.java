@@ -277,13 +277,12 @@ public class PickingDemo extends BaseFrame
                 //sort out the transformations to pass
                 //throw new UnsupportedOperationException();
 
-                
-                float[] offset = TransformUtils.screenTo3DOffset(camera, 
-                                                                 cameraController.getTransform(),
-                                                                 t,
-                                                                 dx, dy,
-                                                                 getWidth(), getHeight());
-                cube2.translate(offset[0], offset[1], offset[2]);
+                final Transform localToCamera = new Transform(cameraController.getTransform());
+                localToCamera.invert();
+                TransformUtils.screenToLocalOffset(camera,
+                        localToCamera, t,
+                        dx, dy, getWidth(), getHeight());
+                cube2.setTranslation(t[0], t[1], t[2]);
                 
             }
         }

@@ -32,6 +32,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Transform;
+import m3x.Vmath;
 import m3x.microedition.m3g.TransformUtils;
 
 /**
@@ -128,17 +129,21 @@ public class BlenderTurntableCameraController
             if (e.isShiftDown())
             {
                 //get the 3d space offset corresponding to the screen offset
-                float[] worldOffset = TransformUtils.screenTo3DOffset(camera,
-                                                   getTransform(),
-                                                   new float[] {this.x, this.y, this.z},
+                final float[] t = new float[4];
+                Vmath.vload4(t, x, y, z, 1);
+                final Transform localToCamera = new Transform(getTransform());
+                localToCamera.invert();
+                TransformUtils.screenToLocalOffset(camera,
+                                                   localToCamera,
+                                                   t,
                                                    -dx, -dy, 
                                                    getComponent().getWidth(),
                                                    getComponent().getHeight());
 
                 //move the camera
-                this.x += worldOffset[0];
-                this.y += worldOffset[1];
-                this.z += worldOffset[2];
+                this.x = t[0];
+                this.y = t[1];
+                this.z = t[2];
             }
             else if (e.isControlDown())
             {
