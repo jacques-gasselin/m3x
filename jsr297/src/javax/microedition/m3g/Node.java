@@ -264,7 +264,7 @@ public abstract class Node extends Transformable
     private static final boolean accumulatePathTransform(Node ancestor, Node child,
             Transform transform)
     {
-        ArrayList<Node> path = new ArrayList<Node>();
+        final ArrayList<Node> path = new ArrayList<Node>();
         if (!ancestorPath(ancestor, child, path))
         {
             return false;
@@ -312,18 +312,26 @@ public abstract class Node extends Transformable
         else
         {
             //this and target are in separate branches of the same common ancestor
-            transform.setIdentity();
-            if (!accumulatePathTransform(ancestor, this, transform))
+            //both of them are below ancestor.
+            
+            final Transform ancestorToThis = new Transform();
+            if (!accumulatePathTransform(ancestor, this, ancestorToThis))
             {
                 throw new IllegalStateException("early detection of being" +
                             " in the same tree has false positives");
             }
+
+            final Transform ancestorToTarget = new Transform();
+            if (!accumulatePathTransform(ancestor, target, ancestorToTarget))
+            {
+                throw new IllegalStateException("early detection of being" +
+                            " in the same tree has false positives");
+            }
+
+            //is this the correct order?
+            transform.set(ancestorToTarget);
             transform.invert();
-            if (!accumulatePathTransform(ancestor, target, transform))
-            {
-                throw new IllegalStateException("early detection of being" +
-                            " in the same tree has false positives");
-            }
+            transform.postMultiply(ancestorToThis);
         }
 
         return true;

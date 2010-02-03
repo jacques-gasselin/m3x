@@ -27,12 +27,12 @@
 
 package javax.microedition.m3g;
 
-import junit.framework.TestCase;
+import m3x.AbstractTestCase;
 
 /**
  * @author jgasseli
  */
-public class NodeTest extends TestCase
+public class NodeTest extends AbstractTestCase
 {
     private Group g;
 
@@ -78,6 +78,28 @@ public class NodeTest extends TestCase
         assertTrue(Node.inSameTree(g2, g3));
     }
 
+    public void testFindCommonAncestor()
+    {
+        Camera camera = new Camera();
+        camera.setTranslation(2, 2, 20);
+        Group child = new Group();
+        child.setTranslation(10, 0, 0);
+        g.addChild(camera);
+        g.addChild(child);
+
+        assertSame(g, Node.findCommonAncestor(camera, child));
+    }
+
+    public void testFindCommonAncestorImpossible()
+    {
+        Camera camera = new Camera();
+        camera.setTranslation(2, 2, 20);
+        Group child = new Group();
+        child.setTranslation(10, 0, 0);
+
+        assertNull(Node.findCommonAncestor(camera, child));
+    }
+    
     public void testGetAlignmentReferenceX()
     {
         try
@@ -177,5 +199,87 @@ public class NodeTest extends TestCase
     public void testIsRenderingEnabled()
     {
         assertTrue(g.isRenderingEnabled());
+    }
+
+    public void testGetTransformToParent()
+    {
+        Camera camera = new Camera();
+        camera.setTranslation(2, 2, 20);
+        g.addChild(camera);
+
+        final Transform worldToCamera = new Transform();
+        assertTrue(g.getTransformTo(camera, worldToCamera));
+
+        final Transform cameraToWorld = new Transform();
+        assertTrue(camera.getTransformTo(g, cameraToWorld));
+
+        assertInverse(worldToCamera, cameraToWorld);
+
+        Transform worldToCameraExpected = new Transform();
+        worldToCameraExpected.postTranslate(-2, -2, -20);
+
+        assertEquals(worldToCameraExpected, worldToCamera);
+
+        Transform cameraToWorldExpected = new Transform();
+        cameraToWorldExpected.postTranslate(2, 2, 20);
+
+        assertEquals(cameraToWorldExpected, cameraToWorld);
+    }
+
+    public void testGetTransformToSiblings()
+    {
+        Camera camera = new Camera();
+        camera.setTranslation(2, 2, 20);
+        Group child = new Group();
+        child.setTranslation(10, 0, 0);
+        g.addChild(camera);
+        g.addChild(child);
+
+        final Transform childToCamera = new Transform();
+        assertTrue(child.getTransformTo(camera, childToCamera));
+
+        final Transform cameraToChild = new Transform();
+        assertTrue(camera.getTransformTo(child, cameraToChild));
+
+        assertInverse(childToCamera, cameraToChild);
+
+        Transform childToCameraExpected = new Transform();
+        childToCameraExpected.postTranslate(10, 0, 0);
+        childToCameraExpected.postTranslate(-2, -2, -20);
+
+        assertEquals(childToCameraExpected, childToCamera);
+
+        Transform cameraToChildExpected = new Transform();
+        cameraToChildExpected.postTranslate(2, 2, 20);
+        cameraToChildExpected.postTranslate(-10, 0, 0);
+
+        assertEquals(cameraToChildExpected, cameraToChild);
+    }
+    
+    public void testGetTransformToSiblingsIndentityChild()
+    {
+        Camera camera = new Camera();
+        camera.setTranslation(2, 2, 20);
+        Group child = new Group();
+        g.addChild(camera);
+        g.addChild(child);
+
+        final Transform worldToCamera = new Transform();
+        assertTrue(child.getTransformTo(camera, worldToCamera));
+
+        final Transform cameraToWorld = new Transform();
+        assertTrue(camera.getTransformTo(child, cameraToWorld));
+
+        assertInverse(worldToCamera, cameraToWorld);
+
+        Transform worldToCameraExpected = new Transform();
+        worldToCameraExpected.postTranslate(-2, -2, -20);
+
+        assertEquals(worldToCameraExpected, worldToCamera);
+
+        Transform cameraToWorldExpected = new Transform();
+        cameraToWorldExpected.postTranslate(2, 2, 20);
+
+        assertEquals(cameraToWorldExpected, cameraToWorld);
     }
 }

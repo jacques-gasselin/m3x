@@ -431,4 +431,18 @@ public class TransformTest extends AbstractTestCase
 
         assertEquals(expected, trans);
     }
+
+    public void testInvertTranslateScale3()
+    {
+        Transform expected = new Transform();
+        expected.postScale(1 / 2.0f, 1 / 3.0f, 1);
+        expected.postTranslate(-3, -2, -1);
+
+        Transform actual = new Transform();
+        actual.postTranslate(3, 2, 1);
+        actual.postScale(2, 3, 1);
+        actual.invert();
+
+        assertEquals(expected, actual);
+    }
 }

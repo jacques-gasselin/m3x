@@ -152,20 +152,4 @@ public class TransformableTest extends AbstractTestCase
     {
         getOrientationQuat(new float[5]);
     }
-
-    public void testGetTransformToSiblings()
-    {
-        Camera camera = new Camera();
-        camera.setTranslation(2, 2, 20);
-        Group child = new Group();
-        child.setTranslation(10, 0, 0);
-
-        final Transform childToCamera = new Transform();
-        child.getTransformTo(camera, childToCamera);
-
-        final Transform camerToChild = new Transform();
-        camera.getTransformTo(child, camerToChild);
-
-        assertIsInverse(childToCamera, camerToChild);
-    }
 }
