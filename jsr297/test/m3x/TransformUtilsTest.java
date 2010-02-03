@@ -2,23 +2,13 @@ package m3x;
 
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Transform;
-import junit.framework.TestCase;
 import m3x.microedition.m3g.TransformUtils;
 
 /**
  * @author jgasseli
  */
-public class TransformUtilsTest extends TestCase
+public class TransformUtilsTest extends AbstractTestCase
 {
-    private final void assertEquals(float[] expected, float[] actual, float epsilon)
-    {
-        final int length = Math.max(expected.length, actual.length);
-        for (int i = 0; i < length; ++i)
-        {
-            assertEquals(expected[i], actual[i], epsilon);
-        }
-    }
-    
     public void testProjectUnproject()
     {
         final Camera camera = new Camera();

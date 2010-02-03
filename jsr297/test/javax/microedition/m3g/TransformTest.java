@@ -27,13 +27,13 @@
 
 package javax.microedition.m3g;
 
-import junit.framework.TestCase;
+import m3x.AbstractTestCase;
 
 /**
  *
  * @author jgasseli
  */
-public class TransformTest extends TestCase
+public class TransformTest extends AbstractTestCase
 {
     public TransformTest()
     {
@@ -47,28 +47,6 @@ public class TransformTest extends TestCase
     @Override
     public void tearDown()
     {
-    }
-
-    private static final void assertEquals(float[] expected, float[] result, float delta)
-    {
-        assertNotNull(expected);
-        assertNotNull(result);
-        assertEquals(expected.length, result.length);
-
-        final int length = expected.length;
-        for (int i = 0; i < length; ++i)
-        {
-            assertEquals(expected[i], result[i], delta);
-        }
-    }
-
-    private static final void assertEquals(float[] expected, Transform result)
-    {
-        assertNotNull(result);
-        
-        float[] mat = new float[16];
-        result.get(mat);
-        assertEquals(expected, mat, 0.001f);
     }
 
     public void testNew()
