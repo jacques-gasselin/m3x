@@ -147,8 +147,8 @@ public final class TransformUtils
      * 
      * @param result the vector to store the screen space mapping in.
      * @param ndc the normalized device coordinate to map.
-     * @param deviceWidth the width of the device, in pixels.
-     * @param deviceHeight the height of the device, in pixels.
+     * @param width the width of the device, in pixels.
+     * @param height the height of the device, in pixels.
      */
     public static final void ndcToScreen(float[] result, float[] ndc,
             int deviceWidth, int deviceHeight)
@@ -267,18 +267,18 @@ public final class TransformUtils
      * @param y the screen space y pixel coordinate, in the range [0, {@code deviceHeight}]
      * @param ndcZ the desired z component of the screen space point when
      * transformed, in the range [-1, 1]
-     * @param deviceWidth the width of the device the pixel coordinates are relative to.
+     * @param width the width of the area the pixel coordinates are relative to.
      * This is used to find the parametric screen coordiantes.
-     * @param deviceHeight the height of the device the pixel coordinates are relative to.
+     * @param height the height of the area the pixel coordinates are relative to.
      * This is used to find the parametric screen coordiantes.
      * @see #screenToNDC(float[], float, float, float)
      */
     public static final void screenToNDC(float[] result, int x, int y,
-            int deviceWidth, int deviceHeight, float ndcZ)
+            int width, int height, float ndcZ)
     {
         screenToNDC(result,
-                x / ((float) deviceWidth),
-                y / ((float) deviceHeight),
+                x / ((float) width),
+                y / ((float) height),
                 ndcZ);
     }
 
@@ -295,18 +295,18 @@ public final class TransformUtils
      * @param screenPoint a 3D vector containing the screen space (x, y) pixel
      * coordinates, in the range [0, {@code deviceWidth}], and the normalized
      * device coordinate z value as the z component.
-     * @param deviceWidth the width of the device the pixel coordinates are relative to.
+     * @param width the width of the area the pixel coordinates are relative to.
      * This is used to find the parametric screen coordiantes.
-     * @param deviceHeight the height of the device the pixel coordinates are relative to.
+     * @param height the height of the area the pixel coordinates are relative to.
      * This is used to find the parametric screen coordiantes.
      * @see #screenToNDC(float[], int, int, int, int, float)
      */
     public static final void screenToNDC(float[] result, float[] screenPoint,
-            int deviceWidth, int deviceHeight)
+            int width, int height)
     {
         screenToNDC(result,
-                screenPoint[0] / deviceWidth,
-                screenPoint[1] / deviceHeight,
+                screenPoint[0] / width,
+                screenPoint[1] / height,
                 screenPoint[2]);
     }
     
@@ -336,6 +336,15 @@ public final class TransformUtils
         unproject(camera, cameraToLocal, near, far);
     }
 
+    public static void unproject(Camera camera, Transform cameraToLocal,
+            int x, int y, int width, int height, float[] near, float[] far)
+    {
+        screenToNDC(near, x, y, width, height, -1);
+        screenToNDC(far, x, y, width, height, 1);
+
+        unproject(camera, cameraToLocal, near, far);
+    }
+    
     /**
      * <p>Unprojects a pair of normalized device coordinate points into local
      * space points. This is most often used for getting a ray in local space
@@ -430,30 +439,29 @@ public final class TransformUtils
      * @param local A 3D point at the z depth (in eye coordinates) at which
      *        the screen projection of point translations
      *        correspond to the given screen translation.
-     * @param dxScreen The desired translation along the screen x axis.
-     * @param dyScreen The desired translation along the screen y axis.
-     * @param deviceWidth The device width in pixels
-     * @param deviceHeight The device height in pixels
+     * @param dx the desired translation along the screen x axis.
+     * @param dy the desired translation along the screen y axis.
+     * @param width the device width in pixels
+     * @param height the device height in pixels
      */
     public static void screenToLocalOffset(Camera camera,
             Transform localToCamera, float[] local,
-            int dxScreen, int dyScreen,
-            int deviceWidth, int deviceHeight)
+            int dx, int dy, int width, int height)
     {
         //project the local space point to NDC
         final float[] ndcPoint = new float[4];
         Vmath.vmov4(ndcPoint, local);
         project(camera, localToCamera, ndcPoint);
         //apply the offset, mapped to ndc coordiantes
-        ndcPoint[0] += 2 * dxScreen / ((float) deviceWidth);
-        ndcPoint[1] -= 2 * dyScreen / ((float) deviceHeight);
+        ndcPoint[0] += 2 * dx / ((float) width);
+        ndcPoint[1] -= 2 * dy / ((float) height);
         //check for clip space validity, disabled for now
         if (false && ndcIsClipped(ndcPoint))
         {
             return;
         }
         //unproject back to the local coordinate system
-        Transform cameraToLocal = new Transform(localToCamera);
+        final Transform cameraToLocal = new Transform(localToCamera);
         cameraToLocal.invert();
         unproject(camera, cameraToLocal, ndcPoint);
         Vmath.vmov3(local, ndcPoint);
@@ -481,15 +489,14 @@ public final class TransformUtils
      * @param local A 3D point at the z depth (in eye coordinates) at which
      *        the screen projection of point translations
      *        correspond to the given screen translation.
-     * @param xScreen The desired x coordinate in screen space.
-     * @param yScreen The desired y corrdinate in screen space.
-     * @param deviceWidth The device width in pixels
-     * @param deviceHeight The device height in pixels
+     * @param x the desired x coordinate in screen space.
+     * @param y the desired y corrdinate in screen space.
+     * @param width the device width in pixels
+     * @param height the device height in pixels
      */
     public static void screenToLocal(Camera camera,
             Transform localToCamera, float[] local,
-            int xScreen, int yScreen,
-            int deviceWidth, int deviceHeight)
+            int x, int y, int width, int height)
     {
         //project the local space point to NDC
         final float[] ndcPoint = new float[4];
@@ -498,8 +505,8 @@ public final class TransformUtils
         final float ndcZ = ndcPoint[2];
         //apply the screen position, mapped to ndc coordiantes
         screenToNDC(ndcPoint,
-                xScreen, yScreen,
-                deviceWidth, deviceHeight,
+                x, y,
+                width, height,
                 ndcZ);
         //check for clip space validity, disabled for now
         if (false && ndcIsClipped(ndcPoint))
@@ -507,9 +514,49 @@ public final class TransformUtils
             return;
         }
         //unproject back to the local coordinate system
-        Transform cameraToLocal = new Transform(localToCamera);
+        final Transform cameraToLocal = new Transform(localToCamera);
         cameraToLocal.invert();
         unproject(camera, cameraToLocal, ndcPoint);
         Vmath.vmov3(local, ndcPoint);
+    }
+
+    /**
+     * <p>Computes a 3D local space coordinate corresponding to a given screen
+     * coordinate that is on the local space plane, {@code local}. This is for
+     * example useful when placing or dragging an object in 3D space to ensure
+     * that the object stays under the cursor whilst being on the plane.</p>
+     *
+     * <p>Note: take care to ensure you are using the correct cameraToLocal
+     * transform. See the section on
+     * <a href="#cameraToLocalTransform">correct camera to local transforms</a>
+     * in the class documentation for more information.</p>
+     *
+     * @param camera The camera the scene is viewed through.
+     * @param cameraToLocal The transformation from eye coordinates to local
+     * coordinates.
+     * @param plane a plane in local space which is used to unproject the screen
+     * space coordinates onto.
+     * @param x the desired x coordinate in screen space.
+     * @param y the desired y corrdinate in screen space.
+     * @param width the device width in pixels
+     * @param height the device height in pixels
+     * @param position the 4D result vector, position in local space.
+     */
+    public static void screenToLocalPlane(Camera camera,
+            Transform cameraToLocal, float[] plane,
+            int x, int y, int width, int height,
+            float[] position)
+    {
+        //unproject the screen point to a near-to-far ray
+        final float[] near = new float[4];
+        final float[] far = new float[4];
+        unproject(camera, cameraToLocal, x, y, width, height, near, far);
+        final float nearNormal = Vmath.vdot3(plane, near);
+        final float farNormal = Vmath.vdot3(plane, far);
+        //find the intepolant for the intersection of the line:
+        //near * (1 - s) + far * s
+        final float s = -(nearNormal + plane[3]) / (farNormal - nearNormal);
+        Vmath.vlerp3(position, near, far, s);
+        position[3] = 1.0f;
     }
 }

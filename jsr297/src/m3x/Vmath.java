@@ -40,6 +40,19 @@ public final class Vmath
     }
 
     /**
+     * <p>Gets the distance of the given vector from the given plane. The plane
+     * vector is considered to consist of (nx, ny, nz, d).</p>
+     *
+     * @param plane the plane normal and distance from origin.
+     * @param vector the input vector to find the distance to the plane with.
+     * @return the distance from the plane for the vector.
+     */
+    public static float pdist(float[] plane, float[] vector)
+    {
+        return vdot3(plane, vector) - plane[3];
+    }
+
+    /**
      * <p>Adds the 3D vector {@code a} to the 3D vector {@code b},
      * storing the result in the 3D vector {@code result}.</p>
      *
@@ -336,6 +349,28 @@ public final class Vmath
         result[0] = a[0] * b;
         result[1] = a[1] * b;
         result[2] = a[2] * b;
+    }
+
+    /**
+     * <p>Interpolates the two 3D vectors {@code a, b} by the linear interpolant
+     * {@code s}, storing the result in the 3D vector {@code result}.</p>
+     *
+     * <p>Note: the algorithm guarantees that using either {@code a} or {@code b}
+     * as the result vector is stable and will work as expected.</p>
+     *
+     * @param a the left operand, vector.
+     * @param b the right operand, vector.
+     * @param s the interpolant, scalar. The norm is to use a value in the range
+     * [0, 1] though using values outside this range is valid, usually referred
+     * to as extrapolation.
+     * @param result the vector to store the result in.
+     */
+    public static final void vlerp3(float[] result, float[] a, float[] b,
+            float s)
+    {
+        result[0] = a[0] * (1 - s) + b[0] * s;
+        result[1] = a[1] * (1 - s) + b[1] * s;
+        result[2] = a[2] * (1 - s) + b[2] * s;
     }
     
     /**
