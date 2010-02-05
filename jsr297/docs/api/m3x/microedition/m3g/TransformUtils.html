@@ -103,8 +103,48 @@ java.lang.Object
  some boilerplate code.</p>
 
  <ul>Some of the features are:
- <li>Project points in the world space to eye space. This is useful for many
+ <li>Project points in the local space to eye space. This is useful for many
  screen space or eye space algorithms.</li>
+ <li>Unproject screen coordinates into rays going from the near clip to the
+ far clip.</li>
+ <li>Transform a local space point along a screen aligned plane that preserves
+ the eye space depth. Useful for pan and drag.
+ <li>Find the local space point where a screen ray intersects a user defined
+ plane. Useful for screen aligned transforms constrained on a plane.</li>
+ </ul>
+
+ 
+ <h4><a id="localToCameraTransform">Local to Camera Transform</a></h4>
+ <p>For many of the algorithms below there is a need for a transform from the
+ local space of an object to the camera's local space. Getting this transform
+ correct is of utmost importance for the proper functioning of these algorithms.
+ </p>
+
+ <ul>Below are some examples of correct use:
+ <li>Retained mode:<br />
+   <div style="border:1px solid #f0f0f0; background-color:#f8f8f8">
+      <pre>
+ <code>Camera camera = new Camera();
+ camera.translate(0, 0, 6);
+
+ Group group = new Group();
+ group.addChild(camera);
+
+ Transform localToCamera = new Transform();
+ group.getTransformTo(camera, localToCamera);</code></pre>
+   </div>
+ </li>
+ <li>Immediate mode: (note the invert() call!)<br />
+   <div style="border:1px solid #f0f0f0; background-color:#f8f8f8">
+      <pre>
+ <code>Camera camera = new Camera();
+ camera.translate(0, 0, 6);
+
+ Transform localToCamera = new Transform();
+ camera.getCompositeTransform(localToCamera);
+ localToCamera.invert();</code></pre>
+   </div>
+ </li>
  </ul>
 <P>
 
@@ -127,25 +167,157 @@ java.lang.Object
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#ndcIsClipped(float[])">ndcIsClipped</A></B>(float[]&nbsp;ndc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if the given normalized device coordinate is outside the unit
+ cube.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#ndcToScreen(float[], float[])">ndcToScreen</A></B>(float[]&nbsp;result,
+            float[]&nbsp;ndc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transforms a normalized device coordinate into an absolute
+ screen space point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#ndcToScreen(float[], float[], int, int)">ndcToScreen</A></B>(float[]&nbsp;result,
+            float[]&nbsp;ndc,
+            int&nbsp;deviceWidth,
+            int&nbsp;deviceHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transforms a normalized device coordinate into an absolute
+ screen space point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#project(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">project</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
-        <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+        <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
         float[]&nbsp;position)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToCamera,
  with the projected w value divided out.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">projectWithoutPerspectiveDivide</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
-                                <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                                <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
                                 float[]&nbsp;position)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToWorld,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projects a position in the local space of the coordinate system, localToCamera,
  without the projected w value divided out.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToLocal(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)">screenToLocal</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+              <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
+              float[]&nbsp;local,
+              int&nbsp;xScreen,
+              int&nbsp;yScreen,
+              int&nbsp;deviceWidth,
+              int&nbsp;deviceHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes a 3D local space coordinate corresponding to a given screen
+ coordinate that is on the screen aligned plane that contains <code>local</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToLocalOffset(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)">screenToLocalOffset</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                    <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
+                    float[]&nbsp;local,
+                    int&nbsp;dxScreen,
+                    int&nbsp;dyScreen,
+                    int&nbsp;deviceWidth,
+                    int&nbsp;deviceHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes a 3D local space offset corresponding to a given screen offset.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], float[], int, int)">screenToNDC</A></B>(float[]&nbsp;result,
+            float[]&nbsp;screenPoint,
+            int&nbsp;deviceWidth,
+            int&nbsp;deviceHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transforms a screen space point into a normalized device coordinate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], float, float, float)">screenToNDC</A></B>(float[]&nbsp;result,
+            float&nbsp;x,
+            float&nbsp;y,
+            float&nbsp;ndcZ)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transforms a screen space point into a normalized device coordinate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], int, int, int, int, float)">screenToNDC</A></B>(float[]&nbsp;result,
+            int&nbsp;x,
+            int&nbsp;y,
+            int&nbsp;deviceWidth,
+            int&nbsp;deviceHeight,
+            float&nbsp;ndcZ)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transforms a screen space point into a normalized device coordinate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])">unproject</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+          <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+          float[]&nbsp;point)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unprojects a normalized device coordinate point into local
+ space.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])">unproject</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+          <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+          float[]&nbsp;near,
+          float[]&nbsp;far)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unprojects a pair of normalized device coordinate points into local
+ space points.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float, float, float[], float[])">unproject</A></B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+          <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+          float&nbsp;x,
+          float&nbsp;y,
+          float[]&nbsp;near,
+          float[]&nbsp;far)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unprojects a screen space point into a ray from the near to far clipping
+ planes.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -170,20 +342,77 @@ java.lang.Object
 </TR>
 </TABLE>
 
+<A NAME="ndcIsClipped(float[])"><!-- --></A><H3>
+ndcIsClipped</H3>
+<PRE>
+public static final boolean <B>ndcIsClipped</B>(float[]&nbsp;ndc)</PRE>
+<DL>
+<DD>Returns true if the given normalized device coordinate is outside the unit
+ cube.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ndc</CODE> - the normalized device coordinate to check.
+<DT><B>Returns:</B><DD>true if outside the unit cube, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ndcToScreen(float[], float[])"><!-- --></A><H3>
+ndcToScreen</H3>
+<PRE>
+public static final void <B>ndcToScreen</B>(float[]&nbsp;result,
+                                     float[]&nbsp;ndc)</PRE>
+<DL>
+<DD><p>Transforms a normalized device coordinate into an absolute
+ screen space point. Note: this is not suitable for calculating delta
+ screen positions from delta ndc positions as for exmaple; ndc (0,0)
+ becomes screen (0.5, 0.5).</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the screen space mapping in.<DD><CODE>ndc</CODE> - the normalized device coordinate to map.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ndcToScreen(float[], float[], int, int)"><!-- --></A><H3>
+ndcToScreen</H3>
+<PRE>
+public static final void <B>ndcToScreen</B>(float[]&nbsp;result,
+                                     float[]&nbsp;ndc,
+                                     int&nbsp;deviceWidth,
+                                     int&nbsp;deviceHeight)</PRE>
+<DL>
+<DD><p>Transforms a normalized device coordinate into an absolute
+ screen space point. Note: this is not suitable for calculating delta
+ screen positions from delta ndc positions as for exmaple; ndc (0,0)
+ becomes screen (0.5, 0.5).</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the screen space mapping in.<DD><CODE>ndc</CODE> - the normalized device coordinate to map.<DD><CODE>deviceWidth</CODE> - the width of the device, in pixels.<DD><CODE>deviceHeight</CODE> - the height of the device, in pixels.</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><!-- --></A><H3>
 projectWithoutPerspectiveDivide</H3>
 <PRE>
 public static void <B>projectWithoutPerspectiveDivide</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
-                                                   <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                                                   <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
                                                    float[]&nbsp;position)</PRE>
 <DL>
-<DD><p>Projects a position in the local space of the coordinate system, localToWorld,
+<DD><p>Projects a position in the local space of the coordinate system, localToCamera,
  without the projected w value divided out. The position is transformed from
  world space to eye space. The user must do the viewport transform separately
  if actual screen pixel position is needed.</p>
+
+ <p>Note: take care to ensure you are using the correct localToCamera
+ transform. This can trip people up as it is not the transform from the
+ camera to the local object but the inverse. See the section on
+ <a href="#localToCameraTransform">correct local to camera transforms</a>
+ in the class documentation for more information.</p>
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToWorld</CODE> - the local coordinate system, or null to use the world
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToCamera</CODE> - the local coordinate system, or null to use the camera
  coordinate system (in effect the identity transform).<DD><CODE>position</CODE> - the position to project.
 <DT><B>Throws:</B>
 <DD><CODE>java.lang.NullPointerException</CODE> - if camera is null
@@ -197,27 +426,233 @@ public static void <B>projectWithoutPerspectiveDivide</B>(<A HREF="../../../java
 project</H3>
 <PRE>
 public static void <B>project</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
-                           <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToWorld,
+                           <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
                            float[]&nbsp;position)</PRE>
 <DL>
-<DD><p>Projects a position in the local space of the coordinate system, localToWorld,
- with the projected w value divided out. The w coordinate is left untouched,
- but the rest of the components (x, y, z) are affected.</p>
+<DD><p>Projects a position in the local space of the coordinate system, localToCamera,
+ with the projected w value divided out. The w value is set to 1.0
+ and the rest of the components (x, y, z) are affected as well.</p>
 
  <p>If this is not desired; use a method with a contract leave components
  untouched in regards to the perspective divide.</p>
 
- <p>The position is transformed from world space to eye space.
+ <p>The position is transformed from local space to eye space.
  The user must do the viewport transform separately if actual screen
  pixel position is needed.</p>
+
+ <p>Note: take care to ensure you are using the correct localToCamera
+ transform. This can trip people up as it is not the transform from the
+ camera to the local object but the inverse. See the section on
+ <a href="#localToCameraTransform">correct local to camera transforms</a>
+ in the class documentation for more information.</p>
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToWorld</CODE> - the local coordinate system, or null to use the world
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to use for projecting<DD><CODE>localToCamera</CODE> - the local coordinate system, or null to use the camera
  coordinate system (in effect the identity transform).<DD><CODE>position</CODE> - the position to project.
 <DT><B>Throws:</B>
 <DD><CODE>java.lang.NullPointerException</CODE> - if camera is null
 <DD><CODE>java.lang.NullPointerException</CODE> - if position is null
 <DD><CODE>java.lang.IllegalArgumentException</CODE> - if position.length < 4<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><CODE>projectWithoutPerspectiveDivide(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="screenToNDC(float[], float, float, float)"><!-- --></A><H3>
+screenToNDC</H3>
+<PRE>
+public static final void <B>screenToNDC</B>(float[]&nbsp;result,
+                                     float&nbsp;x,
+                                     float&nbsp;y,
+                                     float&nbsp;ndcZ)</PRE>
+<DL>
+<DD><p>Transforms a screen space point into a normalized device coordinate.</p>
+
+ <p><code>x</code> and <code>y</code> are in parametric screen coordinates with
+ the origin in the upper left corner. Thus (0, 0) signifies the upper
+ left corner, whilst (1, 1) signifies the bottom right corner.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - a 4D vector to place the result in.<DD><CODE>x</CODE> - the screen space x coordinate, in the range [0, 1]<DD><CODE>y</CODE> - the screen space y coordinate, in the range [0, 1]<DD><CODE>ndcZ</CODE> - the desired z component of the screen space point when
+ transformed, in the range [-1, 1]</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="screenToNDC(float[], int, int, int, int, float)"><!-- --></A><H3>
+screenToNDC</H3>
+<PRE>
+public static final void <B>screenToNDC</B>(float[]&nbsp;result,
+                                     int&nbsp;x,
+                                     int&nbsp;y,
+                                     int&nbsp;deviceWidth,
+                                     int&nbsp;deviceHeight,
+                                     float&nbsp;ndcZ)</PRE>
+<DL>
+<DD><p>Transforms a screen space point into a normalized device coordinate.</p>
+
+ <p><code>x</code> and <code>y</code> are in pixel screen coordinates with
+ the origin in the upper left corner. Thus (0, 0) signifies the upper
+ left corner, whilst (<code>deviceWidth</code>, @{code deviceHeight})
+ signifies the bottom right corner.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - a 4D vector to place the result in.<DD><CODE>x</CODE> - the screen space x pixel coordinate, in the range [0, <code>deviceWidth</code>]<DD><CODE>y</CODE> - the screen space y pixel coordinate, in the range [0, <code>deviceHeight</code>]<DD><CODE>ndcZ</CODE> - the desired z component of the screen space point when
+ transformed, in the range [-1, 1]<DD><CODE>deviceWidth</CODE> - the width of the device the pixel coordinates are relative to.
+ This is used to find the parametric screen coordiantes.<DD><CODE>deviceHeight</CODE> - the height of the device the pixel coordinates are relative to.
+ This is used to find the parametric screen coordiantes.<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], float, float, float)"><CODE>screenToNDC(float[], float, float, float)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="screenToNDC(float[], float[], int, int)"><!-- --></A><H3>
+screenToNDC</H3>
+<PRE>
+public static final void <B>screenToNDC</B>(float[]&nbsp;result,
+                                     float[]&nbsp;screenPoint,
+                                     int&nbsp;deviceWidth,
+                                     int&nbsp;deviceHeight)</PRE>
+<DL>
+<DD><p>Transforms a screen space point into a normalized device coordinate.</p>
+
+ <p><code>screenPoint</code> x, y components are in pixel screen coordinates with
+ the origin in the upper left corner. Thus (0, 0) signifies the upper
+ left corner, whilst (<code>deviceWidth</code>, @{code deviceHeight})
+ signifies the bottom right corner. The third element in <code>screenPoint</code>
+ is the normalized device coordinate z value to be used.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - a 4D vector to place the result in.<DD><CODE>screenPoint</CODE> - a 3D vector containing the screen space (x, y) pixel
+ coordinates, in the range [0, <code>deviceWidth</code>], and the normalized
+ device coordinate z value as the z component.<DD><CODE>deviceWidth</CODE> - the width of the device the pixel coordinates are relative to.
+ This is used to find the parametric screen coordiantes.<DD><CODE>deviceHeight</CODE> - the height of the device the pixel coordinates are relative to.
+ This is used to find the parametric screen coordiantes.<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], int, int, int, int, float)"><CODE>screenToNDC(float[], int, int, int, int, float)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float, float, float[], float[])"><!-- --></A><H3>
+unproject</H3>
+<PRE>
+public static void <B>unproject</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                             <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+                             float&nbsp;x,
+                             float&nbsp;y,
+                             float[]&nbsp;near,
+                             float[]&nbsp;far)</PRE>
+<DL>
+<DD><p>Unprojects a screen space point into a ray from the near to far clipping
+ planes. As no depth can be assertained in unprojection it is the duty
+ of the user to interpolate the ray to find a desired world position.</p>
+
+ <p><code>x</code> and <code>y</code> are in parametric screen coordinates with
+ the origin in the upper left corner. Thus (0, 0) signifies the upper
+ left corner, whilst (1, 1) signifies the bottom right corner.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to unproject from.<DD><CODE>cameraToLocal</CODE> - <DD><CODE>x</CODE> - the screen space x coordinate, in the range [0, 1]<DD><CODE>y</CODE> - the screen space y coordinate, in the range [0, 1]<DD><CODE>near</CODE> - the 4D result vector corresponding to the near clip point.<DD><CODE>far</CODE> - the 4D result vector corresponding to the far clip point.<DT><B>See Also:</B><DD><A HREF="../../../m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])"><CODE>unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])"><!-- --></A><H3>
+unproject</H3>
+<PRE>
+public static void <B>unproject</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                             <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+                             float[]&nbsp;near,
+                             float[]&nbsp;far)</PRE>
+<DL>
+<DD><p>Unprojects a pair of normalized device coordinate points into local
+ space points. This is most often used for getting a ray in local space
+ from a pair of ndc space points</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to unproject from.<DD><CODE>cameraToLocal</CODE> - <DD><CODE>near</CODE> - the 4D vector in ndc space that is assumed to be the nearer
+ of the two to the near clip.<DD><CODE>far</CODE> - the 4D vector in ndc space that is assumed to be the nearer
+ of the two to the far clip.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[])"><!-- --></A><H3>
+unproject</H3>
+<PRE>
+public static void <B>unproject</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                             <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+                             float[]&nbsp;point)</PRE>
+<DL>
+<DD><p>Unprojects a normalized device coordinate point into local
+ space. This is most often used for moving a point in local space along
+ an ndc space plane.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - the camera to unproject from.<DD><CODE>cameraToLocal</CODE> - <DD><CODE>point</CODE> - the 4D input and result. The input values are in ndc space.
+ The output values are in local space.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="screenToLocalOffset(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)"><!-- --></A><H3>
+screenToLocalOffset</H3>
+<PRE>
+public static void <B>screenToLocalOffset</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                       <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
+                                       float[]&nbsp;local,
+                                       int&nbsp;dxScreen,
+                                       int&nbsp;dyScreen,
+                                       int&nbsp;deviceWidth,
+                                       int&nbsp;deviceHeight)</PRE>
+<DL>
+<DD><p>Computes a 3D local space offset corresponding to a given screen offset.
+ The 3D space offset is computed such that points at a given z depth 
+ (in eye coordinates) move a given distance in pixels along the x and y
+ directions in screen space. This is for example useful when dragging an
+ object in 3D space to ensure that the object stays under the cursor.</p>
+
+ <p>Note: take care to ensure you are using the correct localToCamera
+ transform. This can trip people up as it is not the transform from the
+ camera to the local object but the inverse. See the section on
+ <a href="#localToCameraTransform">correct local to camera transforms</a>
+ in the class documentation for more information.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - The camera the scene is viewed through.<DD><CODE>localToCamera</CODE> - The transformation to eye coordinates.<DD><CODE>local</CODE> - A 3D point at the z depth (in eye coordinates) at which
+        the screen projection of point translations
+        correspond to the given screen translation.<DD><CODE>dxScreen</CODE> - The desired translation along the screen x axis.<DD><CODE>dyScreen</CODE> - The desired translation along the screen y axis.<DD><CODE>deviceWidth</CODE> - The device width in pixels<DD><CODE>deviceHeight</CODE> - The device height in pixels</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="screenToLocal(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)"><!-- --></A><H3>
+screenToLocal</H3>
+<PRE>
+public static void <B>screenToLocal</B>(<A HREF="../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                                 <A HREF="../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
+                                 float[]&nbsp;local,
+                                 int&nbsp;xScreen,
+                                 int&nbsp;yScreen,
+                                 int&nbsp;deviceWidth,
+                                 int&nbsp;deviceHeight)</PRE>
+<DL>
+<DD><p>Computes a 3D local space coordinate corresponding to a given screen
+ coordinate that is on the screen aligned plane that contains <code>local</code>.
+ The local space coordinate is computed such that points at a given
+ z depth (in eye coordinates) will still retain that z depth at
+ the new local coordinate. In effect this moves a local coordinate to
+ a corresponding position projected from the x and y coordinates in screen
+ space. This is for example useful when placing or dragging an object in
+ 3D space to ensure that the object stays under the cursor.</p>
+
+ <p>Note: take care to ensure you are using the correct localToCamera
+ transform. This can trip people up as it is not the transform from the
+ camera to the local object but the inverse. See the section on
+ <a href="#localToCameraTransform">correct local to camera transforms</a>
+ in the class documentation for more information.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>camera</CODE> - The camera the scene is viewed through.<DD><CODE>localToCamera</CODE> - The transformation to eye coordinates.<DD><CODE>local</CODE> - A 3D point at the z depth (in eye coordinates) at which
+        the screen projection of point translations
+        correspond to the given screen translation.<DD><CODE>xScreen</CODE> - The desired x coordinate in screen space.<DD><CODE>yScreen</CODE> - The desired y corrdinate in screen space.<DD><CODE>deviceWidth</CODE> - The device width in pixels<DD><CODE>deviceHeight</CODE> - The device height in pixels</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

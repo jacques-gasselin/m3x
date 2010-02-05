@@ -358,7 +358,10 @@ public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class i
 <DT><B>Parameters:</B><DD><CODE>camera</CODE> - <DD><CODE>x</CODE> - X coordinate of the point on the viewport plane through which
           to cast the ray. See Group.pick.<DD><CODE>y</CODE> - Y coordinate of the point on the viewport plane through which
           to cast the ray. See Group.pick.
-<DT><B>Returns:</B><DD>The pickray Mesh.</DL>
+<DT><B>Returns:</B><DD>The pickray Mesh.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.NullPointerException</CODE> - if camera is null
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if x or y is not in the range [0, 1]<DT><B>See Also:</B><DD><A HREF="../../../javax/microedition/m3g/Group.html#pick(int, float, float, javax.microedition.m3g.Camera, javax.microedition.m3g.RayIntersection)"><CODE>Group.pick(int, float, float, javax.microedition.m3g.Camera, javax.microedition.m3g.RayIntersection)</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -373,7 +376,7 @@ public static <A HREF="../../../javax/microedition/m3g/Mesh.html" title="class i
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>camera</CODE> - 
-<DT><B>Returns:</B><DD></DL>
+<DT><B>Returns:</B><DD>a new frustum mesh</DL>
 </DD>
 </DL>
 <HR>

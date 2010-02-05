@@ -37,8 +37,48 @@ import m3x.Vmath;
  * some boilerplate code.</p>
  *
  * <ul>Some of the features are:
- * <li>Project points in the world space to eye space. This is useful for many
+ * <li>Project points in the local space to eye space. This is useful for many
  * screen space or eye space algorithms.</li>
+ * <li>Unproject screen coordinates into rays going from the near clip to the
+ * far clip.</li>
+ * <li>Transform a local space point along a screen aligned plane that preserves
+ * the eye space depth. Useful for pan and drag.
+ * <li>Find the local space point where a screen ray intersects a user defined
+ * plane. Useful for screen aligned transforms constrained on a plane.</li>
+ * </ul>
+ *
+ * 
+ * <h4><a id="localToCameraTransform">Local to Camera Transform</a></h4>
+ * <p>For many of the algorithms below there is a need for a transform from the
+ * local space of an object to the camera's local space. Getting this transform
+ * correct is of utmost importance for the proper functioning of these algorithms.
+ * </p>
+ *
+ * <ul>Below are some examples of correct use:
+ * <li>Retained mode:
+ *   <div style="border:1px solid #f0f0f0; background-color:#f8f8f8">
+ *      <pre>
+ * {@code Camera camera = new Camera();
+ * camera.translate(0, 0, 6);
+ *
+ * Group group = new Group();
+ * group.addChild(camera);
+ *
+ * Transform localToCamera = new Transform();
+ * group.getTransformTo(camera, localToCamera);}</pre>
+ *   </div>
+ * </li>
+ * <li>Immediate mode: (note the invert() call!)
+ *   <div style="border:1px solid #f0f0f0; background-color:#f8f8f8">
+ *      <pre>
+ * {@code Camera camera = new Camera();
+ * camera.translate(0, 0, 6);
+ *
+ * Transform localToCamera = new Transform();
+ * camera.getCompositeTransform(localToCamera);
+ * localToCamera.invert();}</pre>
+ *   </div>
+ * </li>
  * </ul>
  * @author jgasseli
  */
@@ -107,6 +147,8 @@ public final class TransformUtils
      * 
      * @param result the vector to store the screen space mapping in.
      * @param ndc the normalized device coordinate to map.
+     * @param deviceWidth the width of the device, in pixels.
+     * @param deviceHeight the height of the device, in pixels.
      */
     public static final void ndcToScreen(float[] result, float[] ndc,
             int deviceWidth, int deviceHeight)
@@ -124,34 +166,9 @@ public final class TransformUtils
      *
      * <p>Note: take care to ensure you are using the correct localToCamera
      * transform. This can trip people up as it is not the transform from the
-     * camera to the local object but the inverse.</p>
-     *
-     * <ul>Below are some examples of correct use:
-     * <li>Retained mode:
-     *   <div style="background-color: #efefef">
-     *      <pre>
-     * {@code Camera camera = new Camera();
-     * camera.translate(0, 0, 6);
-     *
-     * Group group = new Group();
-     * group.addChild(camera);
-     *
-     * Transform localToCamera = new Transform();
-     * group.getTransformTo(camera, localToCamera);}</pre>
-     *   </div>
-     * </li>
-     * <li>Immediate mode: (note the invert() call!)
-     *   <div style="background-color: #efefef">
-     *      <pre>
-     * {@code Camera camera = new Camera();
-     * camera.translate(0, 0, 6);
-     *
-     * Transform localToCamera = new Transform();
-     * camera.getCompositeTransform(localToCamera);
-     * localToCamera.invert();}</pre>
-     *   </div>
-     * </li>
-     * </ul>
+     * camera to the local object but the inverse. See the section on
+     * <a href="#localToCameraTransform">correct local to camera transforms</a>
+     * in the class documentation for more information.</p>
      *
      * @param camera the camera to use for projecting
      * @param localToCamera the local coordinate system, or null to use the camera
@@ -180,8 +197,8 @@ public final class TransformUtils
 
     /**
      * <p>Projects a position in the local space of the coordinate system, localToCamera,
-     * with the projected w value divided out. The w coordinate is left untouched,
-     * but the rest of the components (x, y, z) are affected.</p>
+     * with the projected w value divided out. The w value is set to 1.0
+     * and the rest of the components (x, y, z) are affected as well.</p>
      *
      * <p>If this is not desired; use a method with a contract leave components
      * untouched in regards to the perspective divide.</p>
@@ -189,6 +206,12 @@ public final class TransformUtils
      * <p>The position is transformed from local space to eye space.
      * The user must do the viewport transform separately if actual screen
      * pixel position is needed.</p>
+     *
+     * <p>Note: take care to ensure you are using the correct localToCamera
+     * transform. This can trip people up as it is not the transform from the
+     * camera to the local object but the inverse. See the section on
+     * <a href="#localToCameraTransform">correct local to camera transforms</a>
+     * in the class documentation for more information.</p>
      *
      * @param camera the camera to use for projecting
      * @param localToCamera the local coordinate system, or null to use the camera
@@ -207,6 +230,7 @@ public final class TransformUtils
         //do the perspective divide
         final float invW = 1.0f / position[3];
         Vmath.vmul3(position, invW);
+        position[3] = 1.0f;
     }
 
     /**
@@ -258,6 +282,25 @@ public final class TransformUtils
                 ndcZ);
     }
 
+    /**
+     * <p>Transforms a screen space point into a normalized device coordinate.</p>
+     *
+     * <p>{@code screenPoint} x, y components are in pixel screen coordinates with
+     * the origin in the upper left corner. Thus (0, 0) signifies the upper
+     * left corner, whilst ({@code deviceWidth}, @{code deviceHeight})
+     * signifies the bottom right corner. The third element in {@code screenPoint}
+     * is the normalized device coordinate z value to be used.</p>
+     *
+     * @param result a 4D vector to place the result in.
+     * @param screenPoint a 3D vector containing the screen space (x, y) pixel
+     * coordinates, in the range [0, {@code deviceWidth}], and the normalized
+     * device coordinate z value as the z component.
+     * @param deviceWidth the width of the device the pixel coordinates are relative to.
+     * This is used to find the parametric screen coordiantes.
+     * @param deviceHeight the height of the device the pixel coordinates are relative to.
+     * This is used to find the parametric screen coordiantes.
+     * @see #screenToNDC(float[], int, int, int, int, float)
+     */
     public static final void screenToNDC(float[] result, float[] screenPoint,
             int deviceWidth, int deviceHeight)
     {
@@ -266,6 +309,7 @@ public final class TransformUtils
                 screenPoint[1] / deviceHeight,
                 screenPoint[2]);
     }
+    
     /**
      * <p>Unprojects a screen space point into a ray from the near to far clipping
      * planes. As no depth can be assertained in unprojection it is the duty
@@ -279,8 +323,9 @@ public final class TransformUtils
      * @param cameraToLocal
      * @param x the screen space x coordinate, in the range [0, 1]
      * @param y the screen space y coordinate, in the range [0, 1]
-     * @param near
-     * @param far
+     * @param near the 4D result vector corresponding to the near clip point.
+     * @param far the 4D result vector corresponding to the far clip point.
+     * @see #unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])
      */
     public static void unproject(Camera camera, Transform cameraToLocal,
             float x, float y, float[] near, float[] far)
@@ -291,6 +336,18 @@ public final class TransformUtils
         unproject(camera, cameraToLocal, near, far);
     }
 
+    /**
+     * <p>Unprojects a pair of normalized device coordinate points into local
+     * space points. This is most often used for getting a ray in local space
+     * from a pair of ndc space points</p>
+     *
+     * @param camera the camera to unproject from.
+     * @param cameraToLocal
+     * @param near the 4D vector in ndc space that is assumed to be the nearer
+     * of the two to the near clip.
+     * @param far the 4D vector in ndc space that is assumed to be the nearer
+     * of the two to the far clip.
+     */
     public static void unproject(Camera camera, Transform cameraToLocal,
             float[] near, float[] far)
     {
@@ -322,6 +379,16 @@ public final class TransformUtils
         }
     }
 
+    /**
+     * <p>Unprojects a normalized device coordinate point into local
+     * space. This is most often used for moving a point in local space along
+     * an ndc space plane.</p>
+     *
+     * @param camera the camera to unproject from.
+     * @param cameraToLocal
+     * @param point the 4D input and result. The input values are in ndc space.
+     * The output values are in local space.
+     */
     public static void unproject(Camera camera, Transform cameraToLocal,
             float[] point)
     {
@@ -354,35 +421,10 @@ public final class TransformUtils
      *
      * <p>Note: take care to ensure you are using the correct localToCamera
      * transform. This can trip people up as it is not the transform from the
-     * camera to the local object but the inverse.</p>
-     *
-     * <ul>Below are some examples of correct use:
-     * <li>Retained mode:
-     *   <div style="background-color: #efefef">
-     *      <pre>
-     * {@code Camera camera = new Camera();
-     * camera.translate(0, 0, 6);
+     * camera to the local object but the inverse. See the section on
+     * <a href="#localToCameraTransform">correct local to camera transforms</a>
+     * in the class documentation for more information.</p>
      * 
-     * Group group = new Group();
-     * group.addChild(camera);
-     *
-     * Transform localToCamera = new Transform();
-     * group.getTransformTo(camera, localToCamera);}</pre>
-     *   </div>
-     * </li>
-     * <li>Immediate mode: (note the invert() call!)
-     *   <div style="background-color: #efefef">
-     *      <pre>
-     * {@code Camera camera = new Camera();
-     * camera.translate(0, 0, 6);
-     *
-     * Transform localToCamera = new Transform();
-     * camera.getCompositeTransform(localToCamera);
-     * localToCamera.invert();}</pre>
-     *   </div>
-     * </li>
-     * </ul>
-     *
      * @param camera The camera the scene is viewed through.
      * @param localToCamera The transformation to eye coordinates.
      * @param local A 3D point at the z depth (in eye coordinates) at which
@@ -410,8 +452,60 @@ public final class TransformUtils
         {
             return;
         }
-        //clear w
-        ndcPoint[3] = 1.0f;
+        //unproject back to the local coordinate system
+        Transform cameraToLocal = new Transform(localToCamera);
+        cameraToLocal.invert();
+        unproject(camera, cameraToLocal, ndcPoint);
+        Vmath.vmov3(local, ndcPoint);
+    }
+
+
+    /**
+     * <p>Computes a 3D local space coordinate corresponding to a given screen
+     * coordinate that is on the screen aligned plane that contains {@code local}.
+     * The local space coordinate is computed such that points at a given
+     * z depth (in eye coordinates) will still retain that z depth at
+     * the new local coordinate. In effect this moves a local coordinate to
+     * a corresponding position projected from the x and y coordinates in screen
+     * space. This is for example useful when placing or dragging an object in
+     * 3D space to ensure that the object stays under the cursor.</p>
+     *
+     * <p>Note: take care to ensure you are using the correct localToCamera
+     * transform. This can trip people up as it is not the transform from the
+     * camera to the local object but the inverse. See the section on
+     * <a href="#localToCameraTransform">correct local to camera transforms</a>
+     * in the class documentation for more information.</p>
+     *
+     * @param camera The camera the scene is viewed through.
+     * @param localToCamera The transformation to eye coordinates.
+     * @param local A 3D point at the z depth (in eye coordinates) at which
+     *        the screen projection of point translations
+     *        correspond to the given screen translation.
+     * @param xScreen The desired x coordinate in screen space.
+     * @param yScreen The desired y corrdinate in screen space.
+     * @param deviceWidth The device width in pixels
+     * @param deviceHeight The device height in pixels
+     */
+    public static void screenToLocal(Camera camera,
+            Transform localToCamera, float[] local,
+            int xScreen, int yScreen,
+            int deviceWidth, int deviceHeight)
+    {
+        //project the local space point to NDC
+        final float[] ndcPoint = new float[4];
+        Vmath.vmov4(ndcPoint, local);
+        project(camera, localToCamera, ndcPoint);
+        final float ndcZ = ndcPoint[2];
+        //apply the screen position, mapped to ndc coordiantes
+        screenToNDC(ndcPoint,
+                xScreen, yScreen,
+                deviceWidth, deviceHeight,
+                ndcZ);
+        //check for clip space validity, disabled for now
+        if (false && ndcIsClipped(ndcPoint))
+        {
+            return;
+        }
         //unproject back to the local coordinate system
         Transform cameraToLocal = new Transform(localToCamera);
         cameraToLocal.invert();

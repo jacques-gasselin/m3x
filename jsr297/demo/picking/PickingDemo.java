@@ -282,6 +282,9 @@ public class PickingDemo extends BaseFrame
                 TransformUtils.screenToLocalOffset(camera,
                         localToCamera, t,
                         dx, dy, getWidth(), getHeight());
+                /*TransformUtils.screenToLocal(camera,
+                        localToCamera, t,
+                        xMouse, yMouse, getWidth(), getHeight());*/
                 cube2.setTranslation(t[0], t[1], t[2]);
                 
             }
