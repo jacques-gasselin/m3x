@@ -151,11 +151,11 @@ public final class TransformUtils
      * @param height the height of the device, in pixels.
      */
     public static final void ndcToScreen(float[] result, float[] ndc,
-            int deviceWidth, int deviceHeight)
+            int width, int height)
     {
         ndcToScreen(result, ndc);
-        result[0] *= deviceWidth;
-        result[1] *= deviceHeight;
+        result[0] *= width;
+        result[1] *= height;
     }
     
     /**
@@ -551,11 +551,11 @@ public final class TransformUtils
         final float[] near = new float[4];
         final float[] far = new float[4];
         unproject(camera, cameraToLocal, x, y, width, height, near, far);
-        final float nearNormal = Vmath.vdot3(plane, near);
-        final float farNormal = Vmath.vdot3(plane, far);
+        final float nearDot = Vmath.vdot3(plane, near);
+        final float farDot = Vmath.vdot3(plane, far);
         //find the intepolant for the intersection of the line:
         //near * (1 - s) + far * s
-        final float s = -(nearNormal + plane[3]) / (farNormal - nearNormal);
+        final float s = -(nearDot + plane[3]) / (farDot - nearDot);
         Vmath.vlerp3(position, near, far, s);
         position[3] = 1.0f;
     }
