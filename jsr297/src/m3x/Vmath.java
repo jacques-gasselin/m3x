@@ -63,6 +63,21 @@ public final class Vmath
     }
 
     /**
+     * <p>Create a plane from one position vector, {@code a}, and a normal,
+     * {@code normal}. The position vector {@code a} is considered to be on the
+     * plane and will be used to calculate the plane offset.
+     *
+     * @param plane the plane 4D vector to store the results in.
+     * @param normal the plane normal, must be normalized already.
+     * @param a a position vector that is on the plane.
+     */
+    public static final void pcreate(float[] plane, float[] normal, float[] a)
+    {
+        vmov3(plane, normal);
+        plane[3] = -vdot3(normal, a);
+    }
+
+    /**
      * <p>Gets the distance of the given position vector from the given plane.
      * The plane vector is considered to consist of (nx, ny, nz, d).</p>
      *
