@@ -31,9 +31,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.OutputStream;
 
-/**The Serialiser class hides the complexities of binding a JAXB context
+/**
+ * The Serialiser class hides the complexities of binding a JAXB context
  * and marshalling the classes. 
- * This is a reversed version of the Deserialiser class that was written earlier.
+ * 
  *
  * @author jgasseli
  */
