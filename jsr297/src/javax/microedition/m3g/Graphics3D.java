@@ -430,9 +430,11 @@ public final class Graphics3D
                     final IndexBuffer ib = mesh.getIndexBuffer(i);
                     //TODO support shader appearances
                     final Appearance a = mesh.getAppearance(i);
-                    
-                    renderGraph.add(Submesh.create(vertices, ib, a,
-                            transform, scope, alpha));
+                    if (a != null)
+                    {
+                        renderGraph.add(Submesh.create(vertices, ib, a,
+                                transform, scope, alpha));
+                    }
                 }
             }
         }

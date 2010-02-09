@@ -87,6 +87,16 @@ public class Mesh extends Node
 
         setVertexBuffer(vertices);
 
+        final int count = submeshes.length;
+        setSubmeshCount(count);
+        for (int i = 0; i < count; ++i)
+        {
+            setIndexBuffer(i, submeshes[i]);
+            if (appearances != null)
+            {
+                setAppearance(i, appearances[i]);
+            }
+        }
     }
 
     /**
@@ -105,6 +115,8 @@ public class Mesh extends Node
 
         setSubmeshCount(1);
         setVertexBuffer(vertices);
+        setIndexBuffer(0, submesh);
+        setAppearance(0, appearance);
     }
 
     @Override
