@@ -35,7 +35,6 @@ import java.io.OutputStream;
  * and marshalling the classes. 
  * This is a reversed version of the Deserialiser class that was written earlier.
  *
- * @author imsteve
  * @author jgasseli
  */
 public final class Serializer
