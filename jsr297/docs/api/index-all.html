@@ -1546,6 +1546,17 @@ Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3
 <DT><A HREF="./javax/microedition/m3g/Camera.html#PARALLEL"><B>PARALLEL</B></A> - 
 Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>
 <DD>&nbsp;
+<DT><A HREF="./m3x/Vmath.html#pcreate(float[], float[], float[], float[])"><B>pcreate(float[], float[], float[], float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Create a plane from the 3 position vectors <code>a</code>, <code>b</code> and
+ <code>c</code>.
+<DT><A HREF="./m3x/Vmath.html#pcreate(float[], float[], float[])"><B>pcreate(float[], float[], float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Create a plane from one position vector, <code>a</code>, and a normal,
+ <code>normal</code>.
+<DT><A HREF="./m3x/Vmath.html#pdist(float[], float[])"><B>pdist(float[], float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Gets the distance of the given position vector from the given plane.
 <DT><A HREF="./javax/microedition/m3g/Camera.html#PERSPECTIVE"><B>PERSPECTIVE</B></A> - 
 Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>
 <DD>&nbsp;
@@ -1775,6 +1786,10 @@ Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/Tran
 <DT><A HREF="./m3x/microedition/m3g/TransformUtils.html#screenToLocalOffset(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)"><B>screenToLocalOffset(Camera, Transform, float[], int, int, int, int)</B></A> - 
 Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
 <DD>Computes a 3D local space offset corresponding to a given screen offset.
+<DT><A HREF="./m3x/microedition/m3g/TransformUtils.html#screenToLocalPlane(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int, float[])"><B>screenToLocalPlane(Camera, Transform, float[], int, int, int, int, float[])</B></A> - 
+Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
+<DD>Computes a 3D local space coordinate corresponding to a given screen
+ coordinate that is on the local space plane, <code>local</code>.
 <DT><A HREF="./m3x/microedition/m3g/TransformUtils.html#screenToNDC(float[], float, float, float)"><B>screenToNDC(float[], float, float, float)</B></A> - 
 Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
 <DD>Transforms a screen space point into a normalized device coordinate.
@@ -2375,6 +2390,9 @@ Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3
 Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
 <DD>Unprojects a screen space point into a ray from the near to far clipping
  planes.
+<DT><A HREF="./m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, int, int, int, int, float[], float[])"><B>unproject(Camera, Transform, int, int, int, int, float[], float[])</B></A> - 
+Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
+<DD>&nbsp;
 <DT><A HREF="./m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], float[])"><B>unproject(Camera, Transform, float[], float[])</B></A> - 
 Static method in class m3x.microedition.m3g.<A HREF="./m3x/microedition/m3g/TransformUtils.html" title="class in m3x.microedition.m3g">TransformUtils</A>
 <DD>Unprojects a pair of normalized device coordinate points into local
@@ -2413,6 +2431,10 @@ Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath
 <DT><A HREF="./javax/microedition/m3g/Graphics3D.html#VALIDATE"><B>VALIDATE</B></A> - 
 Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3g/Graphics3D.html" title="class in javax.microedition.m3g">Graphics3D</A>
 <DD>&nbsp;
+<DT><A HREF="./m3x/Vmath.html#vcross(float[], float[], float[])"><B>vcross(float[], float[], float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Computes the 3D cross product of the vectors <code>a</code> and <code>b</code>,
+ storing the result in <code>result</code>.
 <DT><A HREF="./m3x/Vmath.html#vdot3(float[], float[])"><B>vdot3(float[], float[])</B></A> - 
 Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
 <DD>Computes the 3D dot product of 2 input vectors.
@@ -2429,6 +2451,10 @@ Constructor for class javax.microedition.m3g.<A HREF="./javax/microedition/m3g/V
 <DT><A HREF="./javax/microedition/m3g/AnimationTrack.html#VISIBILITY"><B>VISIBILITY</B></A> - 
 Static variable in class javax.microedition.m3g.<A HREF="./javax/microedition/m3g/AnimationTrack.html" title="class in javax.microedition.m3g">AnimationTrack</A>
 <DD>&nbsp;
+<DT><A HREF="./m3x/Vmath.html#vlerp3(float[], float[], float[], float)"><B>vlerp3(float[], float[], float[], float)</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Interpolates the two 3D vectors <code>a, b</code> by the linear interpolant
+ <code>s</code>, storing the result in the 3D vector <code>result</code>.
 <DT><A HREF="./m3x/Vmath.html#vload3(float[], float, float, float)"><B>vload3(float[], float, float, float)</B></A> - 
 Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
 <DD>Loads a 3D vector with the individual components <code>x, y, z</code>.
@@ -2477,6 +2503,14 @@ Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath
 Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
 <DD>Multiplies the 4D vector <code>a</code> by the scalar <code>b</code>,
  storing the result in the 4D vector <code>result</code>.
+<DT><A HREF="./m3x/Vmath.html#vnormalize3(float[], float[])"><B>vnormalize3(float[], float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Normalizes the 3D vector, <code>vector</code>, storing the result in another
+ vector, <code>result</code>.
+<DT><A HREF="./m3x/Vmath.html#vnormalize3(float[])"><B>vnormalize3(float[])</B></A> - 
+Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
+<DD>Normalizes the 3D vector, <code>vector</code>, storing the result back in
+ itself.
 <DT><A HREF="./m3x/Vmath.html#vsub3(float[], float[], float[])"><B>vsub3(float[], float[], float[])</B></A> - 
 Static method in class m3x.<A HREF="./m3x/Vmath.html" title="class in m3x">Vmath</A>
 <DD>Subtracts the 3D vector <code>b</code> from the 3D vector <code>a</code>,

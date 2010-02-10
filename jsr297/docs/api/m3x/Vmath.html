@@ -122,6 +122,38 @@ Vector and linear algebra utility class.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#pcreate(float[], float[], float[])">pcreate</A></B>(float[]&nbsp;plane,
+        float[]&nbsp;normal,
+        float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a plane from one position vector, <code>a</code>, and a normal,
+ <code>normal</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#pcreate(float[], float[], float[], float[])">pcreate</A></B>(float[]&nbsp;plane,
+        float[]&nbsp;a,
+        float[]&nbsp;b,
+        float[]&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a plane from the 3 position vectors <code>a</code>, <code>b</code> and
+ <code>c</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#pdist(float[], float[])">pdist</A></B>(float[]&nbsp;plane,
+      float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the distance of the given position vector from the given plane.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../m3x/Vmath.html#vadd3(float[], float[], float[])">vadd3</A></B>(float[]&nbsp;result,
       float[]&nbsp;a,
       float[]&nbsp;b)</CODE>
@@ -153,6 +185,17 @@ Vector and linear algebra utility class.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vcross(float[], float[], float[])">vcross</A></B>(float[]&nbsp;result,
+       float[]&nbsp;a,
+       float[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes the 3D cross product of the vectors <code>a</code> and <code>b</code>,
+ storing the result in <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;float</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../m3x/Vmath.html#vdot3(float[], float[])">vdot3</A></B>(float[]&nbsp;a,
       float[]&nbsp;b)</CODE>
@@ -168,6 +211,18 @@ Vector and linear algebra utility class.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes the 4D dot product of 2 input vectors.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vlerp3(float[], float[], float[], float)">vlerp3</A></B>(float[]&nbsp;result,
+       float[]&nbsp;a,
+       float[]&nbsp;b,
+       float&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Interpolates the two 3D vectors <code>a, b</code> by the linear interpolant
+ <code>s</code>, storing the result in the 3D vector <code>result</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -309,6 +364,25 @@ Vector and linear algebra utility class.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vnormalize3(float[])">vnormalize3</A></B>(float[]&nbsp;result)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normalizes the 3D vector, <code>vector</code>, storing the result back in
+ itself.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../m3x/Vmath.html#vnormalize3(float[], float[])">vnormalize3</A></B>(float[]&nbsp;result,
+            float[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normalizes the 3D vector, <code>vector</code>, storing the result in another
+ vector, <code>result</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../m3x/Vmath.html#vsub3(float[], float[])">vsub3</A></B>(float[]&nbsp;a,
       float[]&nbsp;b)</CODE>
 
@@ -371,6 +445,59 @@ Vector and linear algebra utility class.
 </TR>
 </TABLE>
 
+<A NAME="pcreate(float[], float[], float[], float[])"><!-- --></A><H3>
+pcreate</H3>
+<PRE>
+public static final void <B>pcreate</B>(float[]&nbsp;plane,
+                                 float[]&nbsp;a,
+                                 float[]&nbsp;b,
+                                 float[]&nbsp;c)</PRE>
+<DL>
+<DD><p>Create a plane from the 3 position vectors <code>a</code>, <code>b</code> and
+ <code>c</code>. A normal will be calculated from the positions with <code>a</code>,
+ <code>b</code> and <code>c</code> considered to be in counter clockwise order.
+ Thus the normal of the plane should be the normalized cross product of
+ <code>b-&gt;a</code> and <code>b-&gt;c</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>plane</CODE> - the plane 4D vector to store the results in.<DD><CODE>a</CODE> - the first 3D position vector.<DD><CODE>b</CODE> - the second 3D position vector.<DD><CODE>c</CODE> - the third 3D position vector.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="pcreate(float[], float[], float[])"><!-- --></A><H3>
+pcreate</H3>
+<PRE>
+public static final void <B>pcreate</B>(float[]&nbsp;plane,
+                                 float[]&nbsp;normal,
+                                 float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Create a plane from one position vector, <code>a</code>, and a normal,
+ <code>normal</code>. The position vector <code>a</code> is considered to be on the
+ plane and will be used to calculate the plane offset.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>plane</CODE> - the plane 4D vector to store the results in.<DD><CODE>normal</CODE> - the plane normal, must be normalized already.<DD><CODE>a</CODE> - a position vector that is on the plane.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="pdist(float[], float[])"><!-- --></A><H3>
+pdist</H3>
+<PRE>
+public static final float <B>pdist</B>(float[]&nbsp;plane,
+                                float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Gets the distance of the given position vector from the given plane.
+ The plane vector is considered to consist of (nx, ny, nz, d).</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>plane</CODE> - the plane normal and distance from origin.<DD><CODE>a</CODE> - the input position vector to find the distance to the plane with.
+<DT><B>Returns:</B><DD>the distance from the plane for the vector.</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="vadd3(float[], float[], float[])"><!-- --></A><H3>
 vadd3</H3>
 <PRE>
@@ -430,6 +557,22 @@ public static final void <B>vadd4</B>(float[]&nbsp;a,
 </DL>
 <HR>
 
+<A NAME="vcross(float[], float[], float[])"><!-- --></A><H3>
+vcross</H3>
+<PRE>
+public static final void <B>vcross</B>(float[]&nbsp;result,
+                                float[]&nbsp;a,
+                                float[]&nbsp;b)</PRE>
+<DL>
+<DD><p>Computes the 3D cross product of the vectors <code>a</code> and <code>b</code>,
+ storing the result in <code>result</code>.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the result in.<DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="vdot3(float[], float[])"><!-- --></A><H3>
 vdot3</H3>
 <PRE>
@@ -456,6 +599,28 @@ public static final float <B>vdot4</B>(float[]&nbsp;a,
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.
 <DT><B>Returns:</B><DD>the dot product, scalar</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vlerp3(float[], float[], float[], float)"><!-- --></A><H3>
+vlerp3</H3>
+<PRE>
+public static final void <B>vlerp3</B>(float[]&nbsp;result,
+                                float[]&nbsp;a,
+                                float[]&nbsp;b,
+                                float&nbsp;s)</PRE>
+<DL>
+<DD><p>Interpolates the two 3D vectors <code>a, b</code> by the linear interpolant
+ <code>s</code>, storing the result in the 3D vector <code>result</code>.</p>
+
+ <p>Note: the algorithm guarantees that using either <code>a</code> or <code>b</code>
+ as the result vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, vector.<DD><CODE>s</CODE> - the interpolant, scalar. The norm is to use a value in the range
+ [0, 1] though using values outside this range is valid, usually referred
+ to as extrapolation.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
 </DD>
 </DL>
 <HR>
@@ -695,6 +860,38 @@ public static final void <B>vmul4</B>(float[]&nbsp;result,
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>a</CODE> - the left operand, vector.<DD><CODE>b</CODE> - the right operand, scalar.<DD><CODE>result</CODE> - the vector to store the result in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vnormalize3(float[], float[])"><!-- --></A><H3>
+vnormalize3</H3>
+<PRE>
+public static final void <B>vnormalize3</B>(float[]&nbsp;result,
+                                     float[]&nbsp;a)</PRE>
+<DL>
+<DD><p>Normalizes the 3D vector, <code>vector</code>, storing the result in another
+ vector, <code>result</code>.</p>
+ 
+ <p>Note: the algorithm guarantees that using <code>vector</code> as the result
+ vector is stable and will work as expected.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to store the result in.<DD><CODE>a</CODE> - the vector to normalize.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vnormalize3(float[])"><!-- --></A><H3>
+vnormalize3</H3>
+<PRE>
+public static final void <B>vnormalize3</B>(float[]&nbsp;result)</PRE>
+<DL>
+<DD><p>Normalizes the 3D vector, <code>vector</code>, storing the result back in
+ itself.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>result</CODE> - the vector to normalize and store the result in.</DL>
 </DD>
 </DL>
 <HR>

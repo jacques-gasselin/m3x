@@ -424,10 +424,10 @@ Uses of <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class
 <TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#screenToLocal(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)">screenToLocal</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
               <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
               float[]&nbsp;local,
-              int&nbsp;xScreen,
-              int&nbsp;yScreen,
-              int&nbsp;deviceWidth,
-              int&nbsp;deviceHeight)</CODE>
+              int&nbsp;x,
+              int&nbsp;y,
+              int&nbsp;width,
+              int&nbsp;height)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes a 3D local space coordinate corresponding to a given screen
@@ -439,13 +439,29 @@ Uses of <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class
 <TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#screenToLocalOffset(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int)">screenToLocalOffset</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
                     <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;localToCamera,
                     float[]&nbsp;local,
-                    int&nbsp;dxScreen,
-                    int&nbsp;dyScreen,
-                    int&nbsp;deviceWidth,
-                    int&nbsp;deviceHeight)</CODE>
+                    int&nbsp;dx,
+                    int&nbsp;dy,
+                    int&nbsp;width,
+                    int&nbsp;height)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes a 3D local space offset corresponding to a given screen offset.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#screenToLocalPlane(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, float[], int, int, int, int, float[])">screenToLocalPlane</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+                   <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+                   float[]&nbsp;plane,
+                   int&nbsp;x,
+                   int&nbsp;y,
+                   int&nbsp;width,
+                   int&nbsp;height,
+                   float[]&nbsp;position)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes a 3D local space coordinate corresponding to a given screen
+ coordinate that is on the local space plane, <code>local</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -491,6 +507,21 @@ Uses of <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unprojects a screen space point into a ray from the near to far clipping
  planes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B>TransformUtils.</B><B><A HREF="../../../../m3x/microedition/m3g/TransformUtils.html#unproject(javax.microedition.m3g.Camera, javax.microedition.m3g.Transform, int, int, int, int, float[], float[])">unproject</A></B>(<A HREF="../../../../javax/microedition/m3g/Camera.html" title="class in javax.microedition.m3g">Camera</A>&nbsp;camera,
+          <A HREF="../../../../javax/microedition/m3g/Transform.html" title="class in javax.microedition.m3g">Transform</A>&nbsp;cameraToLocal,
+          int&nbsp;x,
+          int&nbsp;y,
+          int&nbsp;width,
+          int&nbsp;height,
+          float[]&nbsp;near,
+          float[]&nbsp;far)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
