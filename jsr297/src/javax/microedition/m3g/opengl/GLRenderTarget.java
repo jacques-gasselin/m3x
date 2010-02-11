@@ -73,7 +73,7 @@ public class GLRenderTarget extends AbstractRenderTarget
     public boolean isDepthBuffered()
     {
         GLCapabilities caps = drawable.getChosenGLCapabilities();
-        return caps.getDoubleBuffered();
+        return caps.getDepthBits() > 0;
     }
 
     public boolean isStencilBuffered()
@@ -106,8 +106,6 @@ public class GLRenderTarget extends AbstractRenderTarget
                 gl = debugGL;
             }
         }
-        //enable vertical sync
-        gl.setSwapInterval(1);
         renderer.bind(gl, getWidth(), getHeight());
         return renderer;
     }
@@ -120,6 +118,6 @@ public class GLRenderTarget extends AbstractRenderTarget
         final GLContext context = drawable.getContext();
         requireValidContext(context);
         
-        context.release();
+        //context.release();
     }    
 }
