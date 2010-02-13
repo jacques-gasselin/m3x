@@ -47,4 +47,73 @@ public class BackgroundTest extends AbstractTestCase
         assertEquals(0, b.getColor());
     }
 
+    public void testGetColorClearMask()
+    {
+        assertEquals(0xffffffff, b.getColorClearMask());
+    }
+
+    public void testGetCropHeight()
+    {
+        assertEquals(0, b.getCropHeight());
+    }
+
+    public void testGetCropWidth()
+    {
+        assertEquals(0, b.getCropWidth());
+    }
+
+    public void testGetCropX()
+    {
+        assertEquals(0, b.getCropX());
+    }
+
+    public void testGetCropY()
+    {
+        assertEquals(0, b.getCropY());
+    }
+
+    public void testGetDepth()
+    {
+        assertEquals(1.0f, b.getDepth(), 0.001f);
+    }
+
+    public void testGetImage()
+    {
+        assertNull(b.getImage());
+    }
+
+    public void testGetImageModeX()
+    {
+        assertEquals(Background.BORDER, b.getImageModeX());
+    }
+
+    public void testGetImageModeY()
+    {
+        assertEquals(Background.BORDER, b.getImageModeY());
+    }
+
+    public void testGetReferences()
+    {
+        assertEquals(0, b.getReferences((Object3D[])null));
+    }
+
+    public void testGetStencil()
+    {
+        assertEquals(0, b.getStencil());
+    }
+
+    public void testGetStencilClearMask()
+    {
+        assertEquals(0xffffffff, b.getStencilClearMask());
+    }
+
+    public void testIsColorClearEnabled()
+    {
+        assertTrue(b.isColorClearEnabled());
+    }
+
+    public void testIsDepthClearEnabled()
+    {
+        assertTrue(b.isDepthClearEnabled());
+    }
 }
