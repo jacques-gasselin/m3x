@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+ * Copyright (c) 2009-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,6 @@ public abstract class AbstractRenderTarget
     public abstract boolean isDepthBuffered();
     public abstract boolean isStencilBuffered();
 
-    public abstract Renderer bindTarget();
-    public abstract void releaseTarget();
+    public abstract Renderer bindRenderer();
+    public abstract void releaseRenderer();
 }

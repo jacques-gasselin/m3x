@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+ * Copyright (c) 2009-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -170,7 +170,7 @@ public final class Graphics3D
 
         this.target = target;
         this.renderingFlags = flags;
-        renderer = renderTarget.bindTarget();
+        renderer = renderTarget.bindRenderer();
         renderer.setViewport(0, 0, renderTarget.getWidth(), renderTarget.getHeight());
     }
 
@@ -321,7 +321,7 @@ public final class Graphics3D
     {
         if (renderTarget != null)
         {
-            renderTarget.releaseTarget();
+            renderTarget.releaseRenderer();
         }
         renderer = null;
         target = null;

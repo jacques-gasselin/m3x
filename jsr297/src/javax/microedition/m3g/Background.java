@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+ * Copyright (c) 2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -39,26 +39,18 @@ public class Background extends Object3D
     @Deprecated
     public static final int REPEAT = 33;
 
-    private int colorClearMask;
+    private int colorClearMask = 0xffffffff;
     private int color;
-    private boolean depthClearEnabled;
-    private float depth;
-    private int stencilClearMask;
+    private boolean depthClearEnabled = true;
+    private float depth = 1.0f;
+    private int stencilClearMask = 0xffffffff;
     private int stencil;
     private Image2D image;
-    private int imageModeX;
-    private int imageModeY;
+    private int imageModeX = BORDER;
+    private int imageModeY = BORDER;
     
     public Background()
     {
-        setColorClearMask(0xffffffff);
-        setColor(0x00000000);
-        setDepthClearEnable(true);
-        setDepth(1.0f);
-        setStencilClearMask(0xffffffff);
-        setStencil(0);
-        setImage(null);
-        setImageMode(BORDER, BORDER);
     }
 
     public int getColor()
@@ -158,6 +150,12 @@ public class Background extends Object3D
     @Deprecated
     public void setColorClearEnable(boolean enable)
     {
+        setColorClearEnabled(enable);
+    }
+
+    @Deprecated
+    public void setColorClearEnabled(boolean enabled)
+    {
         throw new UnsupportedOperationException();
     }
 
@@ -166,6 +164,7 @@ public class Background extends Object3D
         colorClearMask = mask;
     }
 
+    @Deprecated
     public void setCrop(int cropX, int cropY, int width, int height)
     {
         throw new UnsupportedOperationException();
@@ -187,7 +186,12 @@ public class Background extends Object3D
 
     public void setDepthClearEnable(boolean enable)
     {
-        depthClearEnabled = enable;
+        setDepthClearEnabled(enable);
+    }
+
+    public void setDepthClearEnabled(boolean enabled)
+    {
+        depthClearEnabled = enabled;
     }
 
     @Deprecated

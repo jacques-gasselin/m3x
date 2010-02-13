@@ -90,7 +90,7 @@ public class GLRenderTarget extends AbstractRenderTarget
         }
     }
 
-    public Renderer bindTarget()
+    public Renderer bindRenderer()
     {
         final GLContext context = drawable.getContext();
         requireValidContext(context);
@@ -106,14 +106,14 @@ public class GLRenderTarget extends AbstractRenderTarget
                 gl = debugGL;
             }
         }
-        renderer.bind(gl, getWidth(), getHeight());
+        renderer.bindContext(gl, getWidth(), getHeight());
         return renderer;
     }
 
-    public void releaseTarget()
+    public void releaseRenderer()
     {
         //disable any more rendering
-        renderer.release();
+        renderer.releaseContext();
         
         final GLContext context = drawable.getContext();
         requireValidContext(context);

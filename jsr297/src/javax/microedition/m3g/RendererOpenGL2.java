@@ -125,8 +125,13 @@ public class RendererOpenGL2 extends Renderer
         lights = new Light[maxLights];
     }
 
-    public void bind(GL gl, int width, int height)
+    public void bindContext(GL gl, int width, int height)
     {
+        if (this.instanceGL != null)
+        {
+            throw new IllegalStateException("another context is already bound");
+        }
+
         this.instanceGL = gl;
         this.width = width;
         this.height = height;
@@ -147,7 +152,7 @@ public class RendererOpenGL2 extends Renderer
 
     }
 
-    public void release()
+    public void releaseContext()
     {
         this.instanceGL = null;
 

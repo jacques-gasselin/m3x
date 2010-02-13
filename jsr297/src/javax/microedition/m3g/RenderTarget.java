@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+ * Copyright (c) 2009-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -64,12 +64,12 @@ public class RenderTarget extends AbstractRenderTarget
         return false;
     }
 
-    public Renderer bindTarget()
+    public Renderer bindRenderer()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void releaseTarget()
+    public void releaseRenderer()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

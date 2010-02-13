@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010, Jacques Gasselin de Richebourg
+ * Copyright (c) 2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,10 +27,24 @@
 
 package javax.microedition.m3g;
 
+import m3x.AbstractTestCase;
+
 /**
  * @author jgasseli
  */
-public class SkinnedMesh extends Mesh
+public class BackgroundTest extends AbstractTestCase
 {
+    private Background b;
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        b = new Background();
+    }
+
+    public void testGetColor()
+    {
+        assertEquals(0, b.getColor());
+    }
 
 }
