@@ -198,6 +198,11 @@ public final class Transform
     {
         Require.notNull(transform, "transform");
 
+        if (transform == this)
+        {
+            return;
+        }
+
         this.matrix.set(transform.matrix);
     }
 

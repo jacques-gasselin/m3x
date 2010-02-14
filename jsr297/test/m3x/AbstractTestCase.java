@@ -119,7 +119,7 @@ public abstract class AbstractTestCase extends junit.framework.TestCase
         {
             StringBuilder b = new StringBuilder();
             b.append("expected:\n").append(toString(expected));
-            b.append("but was:\n").append(toString(actual));
+            b.append("actual:\n").append(toString(actual));
             throw new AssertionFailedError(b.toString());
         }
     }

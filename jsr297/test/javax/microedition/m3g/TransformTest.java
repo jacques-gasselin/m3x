@@ -175,245 +175,6 @@ public class TransformTest extends AbstractTestCase
         }
     }
 
-    public void testSetIdentity()
-    {
-        trans.postScale(2, 3, 4);
-        trans.setIdentity();
-
-        assertEquals(IDENTITY, trans);
-    }
-
-    public void testSetMatrix()
-    {
-        //test NPE handling
-        try
-        {
-            trans.set((float[])null);
-            fail();
-        }
-        catch (NullPointerException e)
-        {
-            //correct
-        }
-        catch (Throwable t)
-        {
-            fail(t.toString());
-        }
-
-        float[] expected = new float[16];
-        for (int i = 0; i < 16; ++i)
-        {
-            expected[i] = i;
-        }
-        trans.set(expected);
-        //elements should have retained row-major order
-        assertEquals(expected, trans);
-    }
-
-    public void testPostMultiplyNull()
-    {
-        try
-        {
-            trans.postMultiply(null);
-            fail("must throw NPE");
-        }
-        catch (NullPointerException e)
-        {
-            //correct
-        }
-    }
-
-    public void testPostMultiply1()
-    {
-        trans.postTranslate(1, 2, 3);
-        Transform t2 = new Transform();
-        t2.postScale(1, 2, 3);
-        trans.postMultiply(t2);
-
-        float[] expected = {
-            1, 0, 0, 1,
-            0, 2, 0, 2,
-            0, 0, 3, 3,
-            0, 0, 0, 1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testTranslate1()
-    {
-        trans.postTranslate(1, 2, 3);
-
-        float[] expected = {
-            1, 0, 0, 1,
-            0, 1, 0, 2,
-            0, 0, 1, 3,
-            0, 0, 0, 1
-        };
-        
-        assertEquals(expected, trans);
-    }
-
-    public void testTranslate2()
-    {
-        trans.postTranslate(1, 2, 3);
-        trans.postTranslate(3, 2, 1);
-
-        float[] expected = {
-            1, 0, 0, 4,
-            0, 1, 0, 4,
-            0, 0, 1, 4,
-            0, 0, 0, 1
-        };
-        
-        assertEquals(expected, trans);
-    }
-
-    public void testTranslate3()
-    {
-        trans.postTranslate(1, 2, 3);
-        trans.postTranslate(3, 2, 1);
-        trans.postTranslate(-4, -4, -4);
-
-        float[] expected = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        };
-        
-        assertEquals(expected, trans);
-    }
-
-    public void testTranspose1()
-    {
-        trans.postTranslate(1, 2, 3);
-        trans.transpose();
-
-        float[] expected = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            1, 2, 3, 1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testTranspose2()
-    {
-        trans.postScale(1, 2, 3);
-        trans.transpose();
-
-        float[] expected = {
-            1, 0, 0, 0,
-            0, 2, 0, 0,
-            0, 0, 3, 0,
-            0, 0, 0, 1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testScale1()
-    {
-        trans.postScale(1, 2, 3);
-
-        float[] expected = {
-            1, 0, 0, 0,
-            0, 2, 0, 0,
-            0, 0, 3, 0,
-            0, 0, 0, 1
-        };
-        
-        assertEquals(expected, trans);
-    }
-
-    public void testScale2()
-    {
-        trans.postScale(1, 2, 3);
-        trans.postScale(3, 2, 1);
-
-        float[] expected = {
-            3, 0, 0, 0,
-            0, 4, 0, 0,
-            0, 0, 3, 0,
-            0, 0, 0, 1
-        };
-        
-        assertEquals(expected, trans);
-    }
-
-    public void testTranslateScale1()
-    {
-        trans.postTranslate(1, 2, 3);
-        trans.postScale(1, 2, 3);
-
-        float[] expected = {
-            1, 0, 0, 1,
-            0, 2, 0, 2,
-            0, 0, 3, 3,
-            0, 0, 0, 1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testRotateIllegal()
-    {
-        try
-        {
-            trans.postRotate(1, 0, 0, 0);
-            fail("must throw IEA as angle is non-zero and axis is zero");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //correct
-        }
-    }
-
-    public void testRotate1()
-    {
-        trans.postRotate(10, 0, 1, 0);
-
-        float[] expected = {
-            0.9848078f,    0,    0.1736482f,   0,
-            0,             1,    0,            0,
-           -0.1736482f,    0,    0.9848078f,   0,
-            0,             0,    0,            1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testRotate1Normalized()
-    {
-        trans.postRotate(10, 0, 2, 0);
-
-        float[] expected = {
-            0.9848078f,    0,    0.1736482f,   0,
-            0,             1,    0,            0,
-           -0.1736482f,    0,    0.9848078f,   0,
-            0,             0,    0,            1
-        };
-
-        assertEquals(expected, trans);
-    }
-
-    public void testRotate2()
-    {
-        trans.postRotate(25, 1, 1, 1);
-
-        float[] expected = {
-            0.9375385f,   -0.2127680f,    0.2752295f,    0,
-            0.2752295f,    0.9375385f,   -0.2127680f,    0,
-           -0.2127680f,    0.2752295f,    0.9375385f,    0,
-            0,             0,             0,             1
-        };
-
-        assertEquals(expected, trans);
-    }
-    
     public void testInvertTranslate1()
     {
         trans.postTranslate(1, 2, 3);
@@ -522,5 +283,295 @@ public class TransformTest extends AbstractTestCase
         actual.invert();
 
         assertEquals(expected, actual);
+    }
+
+    public void testPostMultiplyNull()
+    {
+        try
+        {
+            trans.postMultiply(null);
+            fail("must throw NPE");
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+    }
+
+    public void testPostMultiply1()
+    {
+        trans.postTranslate(1, 2, 3);
+        Transform t2 = new Transform();
+        t2.postScale(1, 2, 3);
+        trans.postMultiply(t2);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 2, 0, 2,
+            0, 0, 3, 3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostRotateIllegal()
+    {
+        try
+        {
+            trans.postRotate(1, 0, 0, 0);
+            fail("must throw IEA as angle is non-zero and axis is zero");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testPostRotate1()
+    {
+        trans.postRotate(10, 0, 1, 0);
+
+        float[] expected = {
+            0.9848078f,    0,    0.1736482f,   0,
+            0,             1,    0,            0,
+           -0.1736482f,    0,    0.9848078f,   0,
+            0,             0,    0,            1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostRotate1Normalized()
+    {
+        trans.postRotate(10, 0, 2, 0);
+
+        float[] expected = {
+            0.9848078f,    0,    0.1736482f,   0,
+            0,             1,    0,            0,
+           -0.1736482f,    0,    0.9848078f,   0,
+            0,             0,    0,            1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostRotate2()
+    {
+        trans.postRotate(25, 1, 1, 1);
+
+        float[] expected = {
+            0.9375385f,   -0.2127680f,    0.2752295f,    0,
+            0.2752295f,    0.9375385f,   -0.2127680f,    0,
+           -0.2127680f,    0.2752295f,    0.9375385f,    0,
+            0,             0,             0,             1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostScale1()
+    {
+        trans.postScale(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 2, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostScale2()
+    {
+        trans.postScale(1, 2, 3);
+        trans.postScale(3, 2, 1);
+
+        float[] expected = {
+            3, 0, 0, 0,
+            0, 4, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostTranslate1()
+    {
+        trans.postTranslate(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 1, 0, 2,
+            0, 0, 1, 3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostTranslate2()
+    {
+        trans.postTranslate(1, 2, 3);
+        trans.postTranslate(3, 2, 1);
+
+        float[] expected = {
+            1, 0, 0, 4,
+            0, 1, 0, 4,
+            0, 0, 1, 4,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostTranslate3()
+    {
+        trans.postTranslate(1, 2, 3);
+        trans.postTranslate(3, 2, 1);
+        trans.postTranslate(-4, -4, -4);
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostTranslateScale1()
+    {
+        trans.postTranslate(1, 2, 3);
+        trans.postScale(1, 2, 3);
+
+        float[] expected = {
+            1, 0, 0, 1,
+            0, 2, 0, 2,
+            0, 0, 3, 3,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testSetIdentity()
+    {
+        trans.postScale(2, 3, 4);
+        trans.setIdentity();
+
+        assertEquals(IDENTITY, trans);
+    }
+
+    public void testSetMatrix()
+    {
+        float[] expected = new float[16];
+        for (int i = 0; i < 16; ++i)
+        {
+            expected[i] = i;
+        }
+        trans.set(expected);
+        //elements should have retained row-major order
+        assertEquals(expected, trans);
+    }
+
+    public void testSetMatrixNull()
+    {
+        //test NPE handling
+        try
+        {
+            trans.set((float[])null);
+            fail();
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+    }
+
+    public void testSetTransformNull()
+    {
+        //test NPE handling
+        try
+        {
+            trans.set((Transform)null);
+            fail();
+        }
+        catch (NullPointerException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            fail(t.toString());
+        }
+    }
+
+    public void testTranspose1()
+    {
+        trans.postTranslate(1, 2, 3);
+        trans.transpose();
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            1, 2, 3, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testTranspose2()
+    {
+        trans.postScale(1, 2, 3);
+        trans.transpose();
+
+        float[] expected = {
+            1, 0, 0, 0,
+            0, 2, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testTranspose3()
+    {
+        float[] actual = {
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+        };
+        
+        trans.set(actual);
+        trans.transpose();
+
+        float[] expected = {
+            1, 5, 9, 13,
+            2, 6, 10, 14,
+            3, 7, 11, 15,
+            4, 8, 12, 16
+        };
+
+        assertEquals(expected, trans);
     }
 }
