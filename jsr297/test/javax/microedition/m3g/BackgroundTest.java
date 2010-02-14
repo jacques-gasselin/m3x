@@ -42,6 +42,12 @@ public class BackgroundTest extends AbstractTestCase
         b = new Background();
     }
 
+    @Override
+    protected void tearDown()
+    {
+        b = null;
+    }
+
     public void testGetColor()
     {
         assertEquals(0, b.getColor());
@@ -49,7 +55,7 @@ public class BackgroundTest extends AbstractTestCase
 
     public void testGetColorClearMask()
     {
-        assertEquals(0xffffffff, b.getColorClearMask());
+        assertEquals(-1, b.getColorClearMask());
     }
 
     public void testGetCropHeight()
@@ -104,7 +110,7 @@ public class BackgroundTest extends AbstractTestCase
 
     public void testGetStencilClearMask()
     {
-        assertEquals(0xffffffff, b.getStencilClearMask());
+        assertEquals(-1, b.getStencilClearMask());
     }
 
     public void testIsColorClearEnabled()
