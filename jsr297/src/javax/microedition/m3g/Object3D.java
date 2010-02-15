@@ -324,7 +324,19 @@ public class Object3D
 
     public void setAnimationEnable(boolean enable)
     {
-        this.animationEnabled = enable;
+        setAnimationEnabled(enable);
+    }
+
+    /**
+     * Sets the animationEnabled flag on or off. This is the proper
+     * bean pattern setter for the animationEnabled property.
+     * 
+     * @param enabled
+     * @see #isAnimationEnabled()
+     */
+    public void setAnimationEnabled(boolean enabled)
+    {
+        this.animationEnabled = enabled;
     }
 
     public void setUserID(int userID)

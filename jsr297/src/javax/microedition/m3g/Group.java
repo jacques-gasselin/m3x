@@ -66,7 +66,7 @@ public class Group extends Node
         final Node parent = child.getParent();
         if (parent != null && parent != this)
         {
-            throw new IllegalArgumentException("child already has a parent other than this group");
+            throw new IllegalArgumentException("child already has a parent other than this Group");
         }
 
         return parent != this;

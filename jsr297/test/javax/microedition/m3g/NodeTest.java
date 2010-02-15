@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g;
 
+import junit.framework.AssertionFailedError;
 import m3x.AbstractTestCase;
 
 /**
@@ -281,5 +282,55 @@ public class NodeTest extends AbstractTestCase
         cameraToWorldExpected.postTranslate(2, 2, 20);
 
         assertEquals(cameraToWorldExpected, cameraToWorld);
+    }
+
+    public void testSetAlphaFactor()
+    {
+        final float alphaFactor = 0.65f;
+        g.setAlphaFactor(alphaFactor);
+
+        assertEquals(alphaFactor, g.getAlphaFactor());
+    }
+
+    public void testSetAlphaFactorNegative()
+    {
+        try
+        {
+            g.setAlphaFactor(-0.01f);
+            fail("must throw IAE for factor < 0");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
+    }
+
+    public void testSetAlphaFactorOverflow()
+    {
+        try
+        {
+            g.setAlphaFactor(1.01f);
+            fail("must throw IAE for factor > 1");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
     }
 }

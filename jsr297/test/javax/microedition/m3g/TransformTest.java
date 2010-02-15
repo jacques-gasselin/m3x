@@ -285,19 +285,6 @@ public class TransformTest extends AbstractTestCase
         assertEquals(expected, actual);
     }
 
-    public void testPostMultiplyNull()
-    {
-        try
-        {
-            trans.postMultiply(null);
-            fail("must throw NPE");
-        }
-        catch (NullPointerException e)
-        {
-            //correct
-        }
-    }
-
     public void testPostMultiply1()
     {
         trans.postTranslate(1, 2, 3);
@@ -315,14 +302,14 @@ public class TransformTest extends AbstractTestCase
         assertEquals(expected, trans);
     }
 
-    public void testPostRotateIllegal()
+    public void testPostMultiplyNull()
     {
         try
         {
-            trans.postRotate(1, 0, 0, 0);
-            fail("must throw IEA as angle is non-zero and axis is zero");
+            trans.postMultiply(null);
+            fail("must throw NPE");
         }
-        catch (IllegalArgumentException e)
+        catch (NullPointerException e)
         {
             //correct
         }
@@ -360,7 +347,7 @@ public class TransformTest extends AbstractTestCase
     {
         trans.postRotate(25, 1, 1, 1);
 
-        float[] expected = {
+        final float[] expected = {
             0.9375385f,   -0.2127680f,    0.2752295f,    0,
             0.2752295f,    0.9375385f,   -0.2127680f,    0,
            -0.2127680f,    0.2752295f,    0.9375385f,    0,
@@ -369,6 +356,70 @@ public class TransformTest extends AbstractTestCase
 
         assertEquals(expected, trans);
     }
+
+    public void testPostRotateIllegal()
+    {
+        try
+        {
+            trans.postRotate(1, 0, 0, 0);
+            fail("must throw IEA as angle is non-zero and axis is zero");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
+    public void testPostRotateQuat1()
+    {
+        final float degrees = 10;
+        final double halfRad = Math.toRadians(degrees) * 0.5;
+        final float c = (float) Math.cos(halfRad);
+        final float s = (float) Math.sin(halfRad);
+        trans.postRotateQuat(0 * s, 1 * s, 0 * s, c);
+
+        final float[] expected = {
+            0.9848078f,    0,    0.1736482f,   0,
+            0,             1,    0,            0,
+           -0.1736482f,    0,    0.9848078f,   0,
+            0,             0,    0,            1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostRotateQuat2()
+    {
+        final float degrees = 25;
+        final double halfRad = Math.toRadians(degrees) * 0.5;
+        final double cosHalfRad = Math.cos(halfRad);
+        final float c = (float) (cosHalfRad * Math.sqrt(3 + cosHalfRad * cosHalfRad));
+        final float s = (float) Math.sin(halfRad);
+        trans.postRotateQuat(1 * s, 1 * s, 1 * s, c);
+
+        final float[] expected = {
+            0.9375385f,   -0.2127680f,    0.2752295f,    0,
+            0.2752295f,    0.9375385f,   -0.2127680f,    0,
+           -0.2127680f,    0.2752295f,    0.9375385f,    0,
+            0,             0,             0,             1
+        };
+
+        assertEquals(expected, trans);
+    }
+
+    public void testPostRotateQuatIllegal()
+    {
+        try
+        {
+            trans.postRotateQuat(0, 0, 0, 0);
+            fail("must throw IEA as quaternion is zero");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+    }
+
 
     public void testPostScale1()
     {

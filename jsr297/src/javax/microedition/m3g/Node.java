@@ -430,6 +430,8 @@ public abstract class Node extends Transformable
 
     public void setAlphaFactor(float alphaFactor)
     {
+        Require.argumentInRange(alphaFactor, "alphaFactor", 0, 1);
+        
         this.alphaFactor = alphaFactor;
     }
 
@@ -486,9 +488,15 @@ public abstract class Node extends Transformable
         this.boundingSphereEnabled = true;
     }
 
+    @Deprecated
     public void setCollisionEnable(boolean enable)
     {
-        this.collisionEnabled = enable;
+        setCollisionEnabled(enable);
+    }
+
+    public void setCollisionEnabled(boolean enabled)
+    {
+        collisionEnabled = enabled;
     }
 
     public void setCollisionShape(int orientations, float[] min, float[] max)
@@ -498,21 +506,33 @@ public abstract class Node extends Transformable
 
     public void setLODResolution(float featuresPerUnit)
     {
-        this.lodResolution = featuresPerUnit;
+        lodResolution = featuresPerUnit;
     }
 
+    @Deprecated
     public void setPickingEnable(boolean enable)
     {
-        if (enable != this.pickingEnabled)
+        setPickingEnabled(enable);
+    }
+
+    public void setPickingEnabled(boolean enabled)
+    {
+        if (enabled != pickingEnabled)
         {
-            this.pickingEnabled = enable;
+            pickingEnabled = enabled;
             invalidatePickingBoundingSphere();
         }
     }
 
+    @Deprecated
     public void setRenderingEnable(boolean enable)
     {
-        this.renderingEnabled = enable;
+        setRenderingEnabled(enable);
+    }
+
+    public void setRenderingEnabled(boolean enabled)
+    {
+        renderingEnabled = enabled;
     }
 
     public void setScope(int scope)

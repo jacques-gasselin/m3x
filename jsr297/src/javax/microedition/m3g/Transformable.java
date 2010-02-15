@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import m3x.Require;
+import m3x.Vmath;
 
 /**
  * @author jgasseli
@@ -252,8 +253,7 @@ public abstract class Transformable extends Object3D
         }
         else
         {
-            final float length = (float) Math.sqrt(ax * ax + ay * ay + az * az);
-
+            final float length = Vmath.vmag3(ax, ay, az);
             if (length == 0)
             {
                 throw new IllegalArgumentException("rotation axis is zero and" +
@@ -331,7 +331,7 @@ public abstract class Transformable extends Object3D
 
     public void setOrientationQuat(float qx, float qy, float qz, float qw)
     {
-        if (!(qx != 0.0f || qy != 0.0f || qz != 0.0f || qw != 0.0f))
+        if (qx == 0.0f && qy == 0.0f && qz == 0.0f && qw == 0.0f)
         {
             throw new IllegalArgumentException("Zero quaternion");
         }
