@@ -662,7 +662,10 @@ public final class Graphics3D
         this.depthRangeNear = near;
         this.depthRangeFar = far;
 
-        throw new UnsupportedOperationException();
+        if (this.renderer != null)
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public void setLight(int index, Light light, Transform transform)
