@@ -70,6 +70,24 @@ public class CompositingMode extends Object3D
         
     }
 
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final CompositingMode cm = (CompositingMode) target;
+        cm.setAlphaTest(cm.getAlphaTest());
+        cm.setAlphaThreshold(cm.getAlphaThreshold());
+        cm.setBlender(cm.getBlender());
+        cm.setBlending(cm.getBlending());
+        cm.setColorWriteMask(cm.getColorWriteMask());
+        cm.setDepthOffset(getDepthOffsetFactor(), getDepthOffsetUnits());
+        cm.setDepthTest(getDepthTest());
+        cm.setDepthTestEnabled(isDepthTestEnabled());
+        cm.setDepthWriteEnabled(isDepthWriteEnabled());
+        cm.setStencil(getStencil());
+    }
+
     public int getAlphaTest()
     {
         return this.alphaTest;
@@ -211,14 +229,26 @@ public class CompositingMode extends Object3D
         this.depthTest = func;
     }
 
+    @Deprecated
     public void setDepthTestEnable(boolean enable)
     {
-        this.depthTestEnabled = enable;
+        setDepthTestEnabled(enable);
     }
 
+    public void setDepthTestEnabled(boolean enabled)
+    {
+        this.depthTestEnabled = enabled;
+    }
+
+    @Deprecated
     public void setDepthWriteEnable(boolean enable)
     {
-        this.depthWriteEnabled = enable;
+        setDepthWriteEnabled(enable);
+    }
+
+    public void setDepthWriteEnabled(boolean enabled)
+    {
+        this.depthWriteEnabled = enabled;
     }
 
     public void setStencil(Stencil stencil)

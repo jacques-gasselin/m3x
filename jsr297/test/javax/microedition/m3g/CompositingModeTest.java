@@ -32,102 +32,83 @@ import m3x.AbstractTestCase;
 /**
  * @author jgasseli
  */
-public class BackgroundTest extends AbstractTestCase
+public class CompositingModeTest extends AbstractTestCase
 {
-    private Background b;
+    private CompositingMode cm;
 
     @Override
-    protected void setUp() throws Exception
+    public void setUp()
     {
-        b = new Background();
+        cm = new CompositingMode();
     }
 
     @Override
-    protected void tearDown()
+    public void tearDown()
     {
-        b = null;
+        cm = null;
     }
 
-    public void testGetColor()
+    public void testDuplicate()
     {
-        assertEquals(0, b.getColor());
+        cm.setAlphaTest(CompositingMode.EQUAL);
+        cm.setAlphaThreshold(0.128f);
+        
+        final Object3D dup = cm.duplicate();
+        assertNotNull(dup);
+        assertTrue(cm.getClass().isInstance(dup));
+        final CompositingMode cmDup = (CompositingMode) dup;
+        assertEquals(cm.getAlphaTest(), cmDup.getAlphaTest());
+        assertEquals(cm.getAlphaThreshold(), cmDup.getAlphaThreshold(), 0.001f);
     }
 
-    public void testGetColorClearMask()
+    public void testGetAlphaTest()
     {
-        assertEquals(-1, b.getColorClearMask());
+        assertEquals(CompositingMode.GEQUAL, cm.getAlphaTest());
     }
 
-    @Deprecated
-    public void testGetCropHeight()
+    public void testGetAlphaThreshold()
     {
-        assertEquals(0, b.getCropHeight());
+        assertEquals(0, cm.getAlphaThreshold(), 0.001f);
     }
 
-    @Deprecated
-    public void testGetCropWidth()
+    public void testGetBlender()
     {
-        assertEquals(0, b.getCropWidth());
+        assertNull(cm.getBlender());
     }
 
-    @Deprecated
-    public void testGetCropX()
+    public void testGetBlending()
     {
-        assertEquals(0, b.getCropX());
+        assertEquals(CompositingMode.REPLACE, cm.getBlending());
     }
 
-    @Deprecated
-    public void testGetCropY()
+    public void testGetColorWriteMask()
     {
-        assertEquals(0, b.getCropY());
+        assertEquals(-1, cm.getColorWriteMask());
     }
 
-    public void testGetDepth()
+    public void testGetDepthOffsetFactor()
     {
-        assertEquals(1.0f, b.getDepth(), 0.001f);
+        assertEquals(0, cm.getDepthOffsetFactor(), 0.001f);
     }
 
-    @Deprecated
-    public void testGetImage()
+    public void testGetDepthOffsetUnits()
     {
-        assertNull(b.getImage());
+        assertEquals(0, cm.getDepthOffsetUnits(), 0.001f);
     }
 
-    @Deprecated
-    public void testGetImageModeX()
+    public void testGetDepthTest()
     {
-        assertEquals(Background.BORDER, b.getImageModeX());
-    }
-
-    @Deprecated
-    public void testGetImageModeY()
-    {
-        assertEquals(Background.BORDER, b.getImageModeY());
-    }
-
-    public void testGetReferences()
-    {
-        assertEquals(0, b.getReferences((Object3D[])null));
+        assertEquals(CompositingMode.LEQUAL, cm.getDepthTest());
     }
 
     public void testGetStencil()
     {
-        assertEquals(0, b.getStencil());
-    }
-
-    public void testGetStencilClearMask()
-    {
-        assertEquals(-1, b.getStencilClearMask());
+        assertNull(cm.getStencil());
     }
 
     @Deprecated
-    public void testIsColorClearEnabled()
+    public void testIsAlphaWriteEnabled()
     {
-        assertTrue(b.isColorClearEnabled());
-    }
-
-    public void testIsDepthClearEnabled()
-    {
-        assertTrue(b.isDepthClearEnabled());
+        assertTrue(cm.isAlphaWriteEnabled());
     }
 }
