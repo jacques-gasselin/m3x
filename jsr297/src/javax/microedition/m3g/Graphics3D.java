@@ -59,8 +59,8 @@ public final class Graphics3D
     private final Transform inverseCameraTransform = new Transform();
     private final ArrayList<Light> lights = new ArrayList<Light>(LIGHTS_LIST_CAPACITY);
     private final ArrayList<Transform> lightTransforms = new ArrayList<Transform>(LIGHTS_LIST_CAPACITY);
-    private float depthRangeNear;
     private float depthRangeFar;
+    private float depthRangeNear;
     private int viewportX;
     private int viewportY;
     private int viewportWidth;
@@ -672,6 +672,9 @@ public final class Graphics3D
 
     public void setViewport(int x, int y, int width, int height)
     {
+        Require.argumentGreaterThanZero(width, "width");
+        Require.argumentGreaterThanZero(height, "height");
+
         this.viewportX = x;
         this.viewportY = y;
         this.viewportWidth = width;

@@ -27,6 +27,7 @@
 
 package javax.microedition.m3g;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
@@ -46,6 +47,7 @@ public class Graphics3DTest extends TestCase
     public void tearDown()
     {
         g3d.resetLights();
+        g3d = null;
     }
     
     public void testGetInstance()
@@ -62,52 +64,6 @@ public class Graphics3DTest extends TestCase
     {
         Transform t = new Transform();
         assertNull(g3d.getCamera(t));
-    }
-
-    public void testSetCameraNullNull()
-    {
-        g3d.setCamera(null, null);
-    }
-
-    public void testSetCamera1stNull()
-    {
-        Transform t = new Transform();
-        g3d.setCamera(null, t);
-    }
-
-    public void testSetCamera2ndNull()
-    {
-        Camera c = new Camera();
-        g3d.setCamera(c, null);
-    }
-
-    public void testSetCameraNonIvertibleZero()
-    {
-        Camera c = new Camera();
-        Transform t = new Transform();
-        float[] m = {
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0 };
-        t.set(m);
-        try
-        {
-            g3d.setCamera(c, t);
-            fail("must throw AE");
-        }
-        catch (ArithmeticException e)
-        {
-            //correct
-        }
-    }
-
-    public void testSetCamera()
-    {
-        Camera c = new Camera();
-        Transform t = new Transform();
-        g3d.setCamera(c, t);
-        assertEquals(c, g3d.getCamera(t));
     }
 
     public void testAddLightNull()
@@ -191,5 +147,148 @@ public class Graphics3DTest extends TestCase
 
         assertEquals(1, g3d.getLightCount());
         l = g3d.getLight(0, t);
+    }
+
+    public void testSetCamera()
+    {
+        Camera c = new Camera();
+        Transform t = new Transform();
+        g3d.setCamera(c, t);
+        assertEquals(c, g3d.getCamera(t));
+    }
+
+    public void testSetCameraNullNull()
+    {
+        g3d.setCamera(null, null);
+    }
+
+    public void testSetCamera1stNull()
+    {
+        Transform t = new Transform();
+        g3d.setCamera(null, t);
+    }
+
+    public void testSetCamera2ndNull()
+    {
+        Camera c = new Camera();
+        g3d.setCamera(c, null);
+    }
+
+    public void testSetCameraNonIvertibleZero()
+    {
+        Camera c = new Camera();
+        Transform t = new Transform();
+        float[] m = {
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0 };
+        t.set(m);
+        try
+        {
+            g3d.setCamera(c, t);
+            fail("must throw AE");
+        }
+        catch (ArithmeticException e)
+        {
+            //correct
+        }
+    }
+
+    public void testSetViewport()
+    {
+        final int x = 10;
+        final int y = -10;
+        final int width = 800;
+        final int height = 600;
+        g3d.setViewport(x, y, width, height);
+        assertEquals(x, g3d.getViewportX());
+        assertEquals(y, g3d.getViewportY());
+        assertEquals(width, g3d.getViewportWidth());
+        assertEquals(height, g3d.getViewportHeight());
+    }
+
+    public void testSetViewportNegativeWidth()
+    {
+        try
+        {
+            g3d.setViewport(0, 0, -100, 500);
+            fail("negative width must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
+    }
+
+    public void testSetViewportNegativeHeight()
+    {
+        try
+        {
+            g3d.setViewport(0, 0, 600, -150);
+            fail("negative height must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
+    }
+
+    public void testSetViewportZeroWidth()
+    {
+        try
+        {
+            g3d.setViewport(0, 0, 0, 500);
+            fail("zero width must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
+    }
+
+    public void testSetViewportZeroHeight()
+    {
+        try
+        {
+            g3d.setViewport(0, 0, 700, 0);
+            fail("zero height must throw IAE");
+        }
+        catch (IllegalArgumentException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError(t.getMessage());
+        }
     }
 }

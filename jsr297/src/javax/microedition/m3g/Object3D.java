@@ -322,6 +322,15 @@ public class Object3D
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Sets the animationEnabled flag on or off. This is the legacy
+     * setter for the animationEnabled property, it does not conform to the
+     * bean pattern.
+     * 
+     * @param enable
+     * @deprecated
+     */
+    @Deprecated
     public void setAnimationEnable(boolean enable)
     {
         setAnimationEnabled(enable);

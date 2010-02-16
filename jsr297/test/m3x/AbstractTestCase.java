@@ -159,7 +159,7 @@ public abstract class AbstractTestCase extends junit.framework.TestCase
         {
             StringBuilder b = new StringBuilder();
             b.append("original:\n").append(toString(original));
-            b.append("multiplied by :\n").append(toString(inverse));
+            b.append("multiplied by:\n").append(toString(inverse));
             b.append("is not identity, but:\n").append(toString(transform));
             throw new AssertionFailedError(b.toString());
         }
