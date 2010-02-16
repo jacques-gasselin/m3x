@@ -49,9 +49,19 @@ public class AppearanceTest extends AbstractTestCase
         a = null;
     }
 
+    public void testCompositingMode()
+    {
+        assertNull(a.getCompositingMode());
+    }
+
     public void testGetFog()
     {
         assertNull(a.getFog());
+    }
+
+    public void testGetLayer()
+    {
+        assertEquals(0, a.getLayer());
     }
 
     public void testGetMaterial()
@@ -59,6 +69,11 @@ public class AppearanceTest extends AbstractTestCase
         assertNull(a.getMaterial());
     }
 
+    public void testGetPolygonMode()
+    {
+        assertNull(a.getPolygonMode());
+    }
+    
     public void testGetPointSpriteMode()
     {
         assertNull(a.getPointSpriteMode());
@@ -87,8 +102,26 @@ public class AppearanceTest extends AbstractTestCase
         }
         catch (Throwable t)
         {
-            throw new AssertionFailedError(t.getMessage());
+            fail(t.getMessage());
         }
+    }
+
+    public void testIsDepthSortEnabled()
+    {
+        assertFalse(a.isDepthSortEnabled());
+    }
+
+    public void testSetCompositingMode()
+    {
+        final CompositingMode c = new CompositingMode();
+        a.setCompositingMode(c);
+        assertSame(c, a.getCompositingMode());
+    }
+
+    public void testSetDepthSortEnabled()
+    {
+        a.setDepthSortEnabled(true);
+        assertTrue(a.isDepthSortEnabled());
     }
 
     public void testSetFog()
@@ -107,6 +140,71 @@ public class AppearanceTest extends AbstractTestCase
         assertNull(a.getFog());
     }
 
+    public void testSetLayer()
+    {
+        final int layer = 1;
+        a.setLayer(layer);
+        assertEquals(layer, a.getLayer());
+    }
+
+    public void testSetLayerMinimum()
+    {
+        final int layer = -63;
+        a.setLayer(layer);
+        assertEquals(layer, a.getLayer());
+    }
+
+    public void testSetLayerMaximum()
+    {
+        final int layer = 63;
+        a.setLayer(layer);
+        assertEquals(layer, a.getLayer());
+    }
+
+    public void testSetLayerTooLow()
+    {
+        final int layer = -64;
+        try
+        {
+            a.setLayer(layer);
+            fail("layer < -63 must throw IOOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            fail(t.getMessage());
+        }
+    }
+
+    public void testSetLayerTooHigh()
+    {
+        final int layer = 64;
+        try
+        {
+            a.setLayer(layer);
+            fail("layer > 63 must throw IOOBE");
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            //correct
+        }
+        catch (AssertionFailedError e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            fail(t.getMessage());
+        }
+    }
+    
     public void testSetMaterial()
     {
         final Material m = new Material();
@@ -121,5 +219,21 @@ public class AppearanceTest extends AbstractTestCase
         assertNotNull(a.getMaterial());
         a.setMaterial(null);
         assertNull(a.getMaterial());
+    }
+
+    public void testSetPolygonMode()
+    {
+        final PolygonMode p = new PolygonMode();
+        a.setPolygonMode(p);
+        assertSame(p, a.getPolygonMode());
+    }
+
+    public void testSetPolygonModeNull()
+    {
+        final PolygonMode p = new PolygonMode();
+        a.setPolygonMode(p);
+        assertNotNull(a.getPolygonMode());
+        a.setPolygonMode(null);
+        assertNull(a.getPolygonMode());
     }
 }
