@@ -28,12 +28,12 @@
 package javax.microedition.m3g;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import m3x.AbstractTestCase;
 
 /**
  * @author jgasseli
  */
-public class Graphics3DTest extends TestCase
+public class Graphics3DTest extends AbstractTestCase
 {
     private Graphics3D g3d;
 

@@ -393,7 +393,8 @@ public class TransformTest extends AbstractTestCase
         final float degrees = 25;
         final double halfRad = Math.toRadians(degrees) * 0.5;
         final double cosHalfRad = Math.cos(halfRad);
-        final float c = (float) (cosHalfRad * Math.sqrt(3 + cosHalfRad * cosHalfRad));
+        //compensate for the normalization
+        final float c = (float) (cosHalfRad * Math.sqrt(3));
         final float s = (float) Math.sin(halfRad);
         trans.postRotateQuat(1 * s, 1 * s, 1 * s, c);
 

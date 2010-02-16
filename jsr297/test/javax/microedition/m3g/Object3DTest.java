@@ -36,37 +36,54 @@ import junit.framework.TestCase;
  */
 public class Object3DTest extends TestCase
 {
+    private Group g;
+
+    @Override
+    public void setUp()
+    {
+        g = new Group();
+    }
+
+    @Override
+    public void tearDown()
+    {
+        g = null;
+    }
+
+    public void testDuplicate()
+    {
+        final Object3D d = g.duplicate();
+        assertNotNull(d);
+        assertNotSame(g, d);
+        assertTrue(g.getClass().isInstance(d));
+    }
+    
     public void testGetAnimationTrackCount()
     {
-        Group g = new Group();
         assertEquals("track count should default to 0",
                 0, g.getAnimationTrackCount());
     }
 
     public void testGetUserID()
     {
-        Group g = new Group();
         assertEquals("userID should default to 0",
                 0, g.getUserID());
     }
 
     public void testGetUserObject()
     {
-        Group g = new Group();
         assertNull("userID should default to null",
                 g.getUserObject());
     }
 
     public void testIsAnimationEnabled()
     {
-        Group g = new Group();
         assertTrue("animation should default to enabled",
                 g.isAnimationEnabled());
     }
 
     public void testSetUserID()
     {
-        Group g = new Group();
         final int userID = 123;
         g.setUserID(userID);
         assertEquals(userID, g.getUserID());
@@ -74,13 +91,13 @@ public class Object3DTest extends TestCase
 
     public void testFindSimple()
     {
-        Group g1 = new Group();
+        final Group g1 = g;
         g1.setUserID(1);
 
-        Group g2 = new Group();
+        final Group g2 = new Group();
         g2.setUserID(2);
 
-        Group g3 = new Group();
+        final Group g3 = new Group();
         g3.setUserID(3);
 
         g1.addChild(g2);
@@ -100,9 +117,9 @@ public class Object3DTest extends TestCase
 
     public void testFindAllSimple()
     {
-        Group g1 = new Group();
-        Group g2 = new Group();
-        Group g3 = new Group();
+        final Group g1 = g;
+        final Group g2 = new Group();
+        final Group g3 = new Group();
 
         g1.addChild(g2);
         g1.addChild(g3);

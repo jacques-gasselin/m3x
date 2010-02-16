@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.util.List;
+import m3x.Require;
 
 /**
  * @author jgasseli
@@ -41,6 +42,10 @@ public class Background extends Object3D
 
     private int colorClearMask = 0xffffffff;
     private int color;
+    private int cropX;
+    private int cropY;
+    private int cropWidth;
+    private int cropHeight;
     private boolean depthClearEnabled = true;
     private float depth = 1.0f;
     private int stencilClearMask = 0xffffffff;
@@ -66,25 +71,25 @@ public class Background extends Object3D
     @Deprecated
     public int getCropHeight()
     {
-        throw new UnsupportedOperationException();
+        return cropHeight;
     }
 
     @Deprecated
     public int getCropWidth()
     {
-        throw new UnsupportedOperationException();
+        return cropWidth;
     }
     
     @Deprecated
     public int getCropX()
     {
-        throw new UnsupportedOperationException();
+        return cropX;
     }
 
     @Deprecated
     public int getCropY()
     {
-        throw new UnsupportedOperationException();
+        return cropY;
     }
 
     public float getDepth()
@@ -167,7 +172,13 @@ public class Background extends Object3D
     @Deprecated
     public void setCrop(int cropX, int cropY, int width, int height)
     {
-        throw new UnsupportedOperationException();
+        Require.argumentNotNegative(width, "width");
+        Require.argumentNotNegative(height, "height");
+
+        this.cropX = cropX;
+        this.cropY = cropY;
+        this.cropWidth = width;
+        this.cropHeight = height;
     }
 
     public void setDepth(float depth)
