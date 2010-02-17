@@ -205,8 +205,8 @@ public class Camera extends Node
 
     public void setScreen(float x, float y, float width, float height)
     {
-        Require.argumentNotNegative(width, "width");
-        Require.argumentNotNegative(height, "height");
+        Require.argumentGreaterThanZero(width, "width");
+        Require.argumentGreaterThanZero(height, "height");
 
         final float[] params = this.projectionParams;
         params[0] = x;

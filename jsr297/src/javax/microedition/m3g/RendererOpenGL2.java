@@ -1459,7 +1459,8 @@ public class RendererOpenGL2 extends Renderer
 
     private void setVertexBuffer(GL gl, VertexBuffer vertices, float alphaFactor)
     {
-        gl.glColor4fv(argbAsRGBAVolatile(vertices.getDefaultColor(), alphaFactor), 0);
+        final float rgba[] = argbAsRGBAVolatile(vertices.getDefaultColor(), alphaFactor);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
 
         //positions
         if (true)
@@ -1687,7 +1688,7 @@ public class RendererOpenGL2 extends Renderer
             }
             case IndexBuffer.POINT_SPRITES:
             {
-                return GL.GL_POINT;
+                return GL.GL_POINTS;
             }
             default:
             {

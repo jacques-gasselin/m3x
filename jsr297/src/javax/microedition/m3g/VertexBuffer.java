@@ -143,14 +143,6 @@ public class VertexBuffer extends Object3D
             return this.scale;
         }
 
-        private static final void requireArrayNotNull(VertexArray array)
-        {
-            if (array == null)
-            {
-                throw new NullPointerException("array is null");
-            }
-        }
-
         private static final void requireValidScaleAndBias(float[] scaleBias, VertexArray array)
         {
             if (array == null || scaleBias == null)

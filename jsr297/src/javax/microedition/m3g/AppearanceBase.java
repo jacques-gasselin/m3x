@@ -44,6 +44,18 @@ public abstract class AppearanceBase extends Object3D
         
     }
 
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final AppearanceBase a = (AppearanceBase) target;
+        a.setCompositingMode(getCompositingMode());
+        a.setDepthSortEnabled(isDepthSortEnabled());
+        a.setLayer(getLayer());
+        a.setPolygonMode(getPolygonMode());
+    }
+    
     public CompositingMode getCompositingMode()
     {
         return this.compositingMode;

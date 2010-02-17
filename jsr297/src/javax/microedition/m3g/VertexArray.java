@@ -55,9 +55,9 @@ public class VertexArray extends Object3D
     public static final int FLOAT = 4;
     public static final int HALF = 5;
 
-    private int vertexCount;
     private int componentCount;
     private int componentType;
+    private int vertexCount;
 
     private ByteBuffer directBuffer;
     private Buffer directBufferView;

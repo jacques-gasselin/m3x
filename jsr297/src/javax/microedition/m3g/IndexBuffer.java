@@ -174,7 +174,10 @@ public class IndexBuffer extends Object3D
             }
         }
 
-        this.stripLengths = stripLengths;
+        //copy it first
+        final int[] lengths = new int[stripLengths.length];
+        System.arraycopy(stripLengths, 0, lengths, 0, lengths.length);
+        this.stripLengths = lengths;
     }
 
     void setImplicitIndex(int firstIndex, int indexCount)
