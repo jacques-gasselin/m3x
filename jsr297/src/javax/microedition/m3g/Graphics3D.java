@@ -30,6 +30,7 @@ package javax.microedition.m3g;
 import m3x.Require;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 /**
@@ -119,7 +120,7 @@ public final class Graphics3D
         final int index = lights.size();
 
         lights.add(light);
-        lightTransforms.add(transform);
+        lightTransforms.add(lightTransform);
 
         if (this.renderer != null)
         {
@@ -543,17 +544,50 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    private static final boolean isRenderingEnabled(Node node)
+    private final void addAllLights(World world)
     {
-        while (node != null)
+        final Transform lightTransform = new Transform();
+        
+        final HashSet<Node> closedList = new HashSet<Node>();
+        final ArrayList<Node> openList = new ArrayList<Node>();
+
+        //since all operations only touch the end of the list;
+        //this is a depth first search. Breath first search would
+        //require the front to be removed for each iteration
+        openList.add(world);
+        //this is an exhaustive search
+        while (openList.size() > 0)
         {
-            if (!node.isRenderingEnabled())
+            final Node candidate = openList.remove(openList.size() - 1);
+            //skip objects already visited
+            if (!closedList.contains(candidate))
             {
-                return false;
+                //count it as visited now
+                closedList.add(candidate);
+                //is it renderable
+                if (candidate.isRenderingEnabled())
+                {
+                    //is it a light
+                    if (candidate instanceof Light)
+                    {
+                        final Light light = (Light) candidate;
+                        light.getTransformTo(world, lightTransform);
+                        addLight(light, lightTransform);
+                    }
+                    else if (candidate instanceof Group)
+                    {
+                        final Group group = (Group) candidate;
+                        //add the children from the candidate to the open list
+                        final int count = group.getChildCount();
+                        for (int i = 0; i < count; ++i)
+                        {
+                            openList.add(group.getChild(i));
+                        }
+                    }
+                    //TODO support skinned mesh skeleton
+                }
             }
-            node = node.getParent();
         }
-        return true;
     }
 
     public void render(World world)
@@ -579,20 +613,7 @@ public final class Graphics3D
         
         //do lights
         resetLights();
-        final Object3D[] worldLights = world.findAll(Light.class);
-        if (worldLights.length > 0)
-        {
-            final Transform lightTransform = new Transform();
-            for (Object3D lightObject : worldLights)
-            {
-                final Light light = (Light) lightObject;
-                if (isRenderingEnabled(light))
-                {
-                    light.getTransformTo(world, lightTransform);
-                    addLight(light, lightTransform);
-                }
-            }
-        }
+        addAllLights(world);
 
         //render as a node
         render(world, null);

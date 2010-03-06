@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author jgasseli
@@ -135,7 +134,7 @@ public class Object3D
             }
         }
 
-        target.setAnimationEnable(isAnimationEnabled());
+        target.setAnimationEnabled(isAnimationEnabled());
         target.setUserID(getUserID());
         target.setUserObject(getUserObject());
     }
@@ -155,7 +154,7 @@ public class Object3D
      */
     public Object3D find(int userID)
     {
-        final Set<Object3D> closedList = new HashSet<Object3D>();
+        final HashSet<Object3D> closedList = new HashSet<Object3D>();
         final ArrayList<Object3D> openList = new ArrayList<Object3D>();
 
         //since all operations only touch the end of the list;
@@ -187,7 +186,7 @@ public class Object3D
 
     public Object3D[] findAll(Class type)
     {
-        final Set<Object3D> closedList = new HashSet<Object3D>();
+        final HashSet<Object3D> closedList = new HashSet<Object3D>();
         final ArrayList<Object3D> openList = new ArrayList<Object3D>();
         final ArrayList<Object3D> resultList = new ArrayList<Object3D>();
 

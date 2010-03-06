@@ -37,6 +37,7 @@ import Blender
 import Blender.Camera
 import Blender.Image
 import Blender.Lamp
+import Blender.Material
 import Blender.Mathutils
 import Blender.Mesh
 import Blender.Texture
@@ -433,13 +434,9 @@ class Image2D(ImageBase):
             #LUMINANCE_ALPHA ?
             pass
         if depth in (24, 32):
-            #RGB
-            if depth == 24:
-                format = ImageBase.RGB
-                bpp = 3
-            elif depth == 32:
-                format = ImageBase.RGBA
-                bpp = 4
+            #RGB or RGBA
+            format = ImageBase.RGBA
+            bpp = 4
             getPixel = bimage.getPixelI
             pixels = [0] * (width * height * bpp)
             for y in xrange(height):
@@ -560,6 +557,8 @@ class Material(Object3D):
 
     def getSharedMaterial(bmat):
         if bmat is None:
+            return None
+        if (bmat.mode & Blender.Material.Modes.SHADELESS):
             return None
         materials = Material.SHARED_MATERIALS
         key = bmat
@@ -903,11 +902,15 @@ class VertexBuffer(Object3D):
     def __init__(self, idValue):
         Object3D.__init__(self, idValue)
         self.positions = None
+        self.colors = None
         self.normals = None
         self.texcoords = []
 
     def setPositions(self, positions):
         self.positions = positions
+
+    def setColors(self, colors):
+        self.colors = colors
 
     def setNormals(self, normals):
         self.normals = normals
@@ -932,6 +935,11 @@ class VertexBuffer(Object3D):
         if norm:
             serializer.startTag("normals")
             serializer.writeReference(norm)
+            serializer.endTag()
+        colors = self.colors
+        if colors:
+            serializer.startTag("colors")
+            serializer.writeReference(colors)
             serializer.endTag()
         for tex in self.texcoords:
             serializer.startTag("texcoords", {"scale": tex.scale})
@@ -1120,11 +1128,14 @@ class M3XConverter(object):
             alphaThreshold = 0.75
         return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version)
 
-    def getFacePolygonMode(self, face, hasPerFaceUV):
+    def getFacePolygonMode(self, face, twoSided, hasPerFaceUV):
         modes = Blender.Mesh.FaceModes
         if not hasPerFaceUV:
-            culling = PolygonMode.CULL_BACK
-        elif face.mode & modes["TWOSIDE"]:
+            if twoSided:
+                culling = PolygonMode.CULL_NONE
+            else:
+                culling = PolygonMode.CULL_BACK
+        elif face.mode & modes.TWOSIDE:
             culling = PolygonMode.CULL_NONE
         else:
             culling = PolygonMode.CULL_BACK
@@ -1132,10 +1143,11 @@ class M3XConverter(object):
 
     def getFaceAppearanceComponents(self, face, mesh):
         hasPerFaceUV = mesh.faceUV
+        twoSided = mesh.mode & Blender.Mesh.Modes.TWOSIDED
         #get CompositingMode
         cm = self.getFaceCompositingMode(face, hasPerFaceUV)
         #get PolygonMode
-        pm = self.getFacePolygonMode(face, hasPerFaceUV)
+        pm = self.getFacePolygonMode(face, twoSided, hasPerFaceUV)
         #TODO get Fog
         #TODO get PointSpriteMode
         #actual appearance has to be linked up later with the

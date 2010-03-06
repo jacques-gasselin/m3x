@@ -166,7 +166,7 @@ public final class Loader
          * Reads an unsigned byte value.
          * @return the value.
          * @throws IOException if the stream hits any error
-         * @throws EOFExcpetion if the stream is at EOF before the read.
+         * @throws EOFException if the stream is at EOF before the read.
          */
         private int readChecked() throws IOException
         {
@@ -730,12 +730,16 @@ public final class Loader
         {
             loadObject3D(obj);
 
-            obj.setDepthTestEnable(readBoolean());
-            obj.setDepthWriteEnable(readBoolean());
+            obj.setDepthTestEnabled(readBoolean());
+            obj.setDepthWriteEnabled(readBoolean());
             if (isFileFormat1())
             {
-                obj.setColorWriteEnable(readBoolean());
-                obj.setAlphaWriteEnable(readBoolean());
+                int mask = 0;
+                mask |= readBoolean() ?
+                    0x00ffffff : 0;
+                mask |= readBoolean() ?
+                    0xff000000 : 0;
+                obj.setColorWriteMask(mask);
             }
 
             obj.setBlending(readUnsignedByte());
@@ -1047,8 +1051,8 @@ public final class Loader
         {
             loadTransformable(obj);
 
-            obj.setRenderingEnable(readBoolean());
-            obj.setPickingEnable(readBoolean());
+            obj.setRenderingEnabled(readBoolean());
+            obj.setPickingEnabled(readBoolean());
             obj.setAlphaFactor(readUnsignedByte() / 255.0f);
             obj.setScope(readInt());
 
@@ -1113,7 +1117,7 @@ public final class Loader
 
             if (isFileFormat2())
             {
-                obj.setAnimationEnable(readBoolean());
+                obj.setAnimationEnabled(readBoolean());
             }
         }
 

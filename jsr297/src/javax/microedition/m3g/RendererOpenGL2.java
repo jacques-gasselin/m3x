@@ -32,6 +32,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 import javax.media.opengl.GL;
 
 /**
@@ -212,8 +213,9 @@ public class RendererOpenGL2 extends Renderer
 
         final GL gl = getGL();
         gl.glColorMask(redMask, greenMask, blueMask, alphaMask);
-        gl.glClearColor(redColor, greenColor, blueColor, alphaColor);
+        gl.glDepthMask(true);
         gl.glStencilMask(stencilMask);
+        gl.glClearColor(redColor, greenColor, blueColor, alphaColor);
         gl.glClearStencil(clearStencil);
         gl.glClearDepth(clearDepth);
         gl.glClear(clearFlags);
@@ -243,8 +245,7 @@ public class RendererOpenGL2 extends Renderer
     private static final float[] LIGHT_POSITIONAL = new float[]{ 0, 0, 0, 1 };
     private static final float[] LIGHT_DIRECTIONAL = new float[]{ 0, 0, 1, 0 };
     private static final float[] COLOR_BLACK_RGB = new float[]{ 0, 0, 0 };
-    private static final Transform IDENTITY = new Transform();
-
+    
 
     @Override
     public void resetLights()
@@ -269,14 +270,7 @@ public class RendererOpenGL2 extends Renderer
             final GL gl = getGL();
 
             final int glLight = GL.GL_LIGHT0 + index;
-            if (transform != null)
-            {
-                commitModelViewMatrix(gl, transform);
-            }
-            else
-            {
-                commitModelViewMatrix(gl, IDENTITY);
-            }
+            commitModelViewMatrix(gl, transform);
             
             final float[] pos = (mode == Light.DIRECTIONAL) ?
                 LIGHT_DIRECTIONAL : LIGHT_POSITIONAL;
@@ -357,7 +351,14 @@ public class RendererOpenGL2 extends Renderer
         Require.notNull(appearance, "appearance");
 
         final GL gl = getGL();
-        selectLights(gl, scope);
+        if (appearance.getMaterial() != null)
+        {
+            selectLights(gl, scope);
+        }
+        else
+        {
+            gl.glDisable(GL.GL_LIGHTING);
+        }
         setModelTransform(transform);
         setAppearance(gl, appearance);
         setVertexBuffer(gl, vertices, alphaFactor);
@@ -601,7 +602,7 @@ public class RendererOpenGL2 extends Renderer
                             throw new UnsupportedOperationException("blend mode not supported yet");
                         }
                     }
-                    gl.glBlendEquation(GL.GL_ADD);
+                    gl.glBlendEquation(GL.GL_FUNC_ADD);
                     gl.glBlendFunc(src, dst);
                     gl.glEnable(GL.GL_BLEND);
                 }
@@ -777,16 +778,6 @@ public class RendererOpenGL2 extends Renderer
         else
         {
             gl.glDisable(GL.GL_COLOR_MATERIAL);
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
-                    argbAsRGBAVolatile(0x00333333), 0);
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,
-                    argbAsRGBAVolatile(0xFFCCCCCC), 0);
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
-                    argbAsRGBAVolatile(0x00000000), 0);
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    argbAsRGBAVolatile(0x00000000), 0);
-            gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS,
-                    0.0f);
         }
     }
 
@@ -1154,7 +1145,7 @@ public class RendererOpenGL2 extends Renderer
                 }
                 case Texture2D.WRAP_REPEAT:
                 {
-                    return GL.GL_CLAMP_TO_EDGE;
+                    return GL.GL_REPEAT;
                 }
                 case Texture2D.WRAP_MIRROR:
                 {
@@ -1166,6 +1157,7 @@ public class RendererOpenGL2 extends Renderer
                 }
             }
         }
+        
         private void updateWrapping(int wrappingS, int wrappingT)
         {
             glWrapS = wrappingAsGLenum(wrappingS);
@@ -1324,12 +1316,12 @@ public class RendererOpenGL2 extends Renderer
             gl.glTexEnvfv(GL.GL_TEXTURE_ENV, pname, param, 0);
         }
 
-        private static final void glTexParameter(GL gl, int pname, float param)
+        private static final void glTexParameter2D(GL gl, int pname, float param)
         {
             gl.glTexParameterf(GL.GL_TEXTURE_2D, pname, param);
         }
 
-        private static final void glTexParameter(GL gl, int pname, int param)
+        private static final void glTexParameter2D(GL gl, int pname, int param)
         {
             gl.glTexParameteri(GL.GL_TEXTURE_2D, pname, param);
         }
@@ -1371,15 +1363,15 @@ public class RendererOpenGL2 extends Renderer
             }
             rendererData.upload(renderer, gl);
 
-            glTexParameter(gl, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
-            glTexParameter(gl, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+            glTexParameter2D(gl, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
+            glTexParameter2D(gl, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
             if (renderer.supportsAnisotropy)
             {
-                glTexParameter(gl, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                glTexParameter2D(gl, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT,
                         glMaxAnisotropy);
             }
-            glTexParameter(gl, GL.GL_TEXTURE_WRAP_S, glWrapS);
-            glTexParameter(gl, GL.GL_TEXTURE_WRAP_T, glWrapT);
+            glTexParameter2D(gl, GL.GL_TEXTURE_WRAP_S, glWrapS);
+            glTexParameter2D(gl, GL.GL_TEXTURE_WRAP_T, glWrapT);
 
             glTexEnv(gl, GL.GL_TEXTURE_ENV_COLOR, glTexEnvColor);
             glTexEnv(gl, GL.GL_TEXTURE_ENV_MODE, glTexEnvMode);
@@ -1461,7 +1453,7 @@ public class RendererOpenGL2 extends Renderer
     {
         final float rgba[] = argbAsRGBAVolatile(vertices.getDefaultColor(), alphaFactor);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-
+        
         //positions
         if (true)
         {
@@ -1697,11 +1689,14 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void commitModelViewMatrix(GL gl, Transform modelTransform)
+    private void commitModelViewMatrix(GL gl, Transform local)
     {
         final Transform transform = modelViewTransform;
         transform.set(viewTransform);
-        transform.postMultiply(modelTransform);
+        if (local != null)
+        {
+            transform.postMultiply(local);
+        }
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
