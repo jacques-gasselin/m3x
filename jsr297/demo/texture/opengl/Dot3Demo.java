@@ -61,6 +61,8 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
  */
 public class Dot3Demo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private static final int xyzAsRGB(float x, float y, float z)
     {
         final double lengthInv = 1.0 / Math.sqrt(x* x + y * y + z * z);
@@ -76,6 +78,8 @@ public class Dot3Demo extends BaseFrame
     private final class Dot3Canvas extends GLJPanel
             implements Runnable, KeyListener
     {
+        private static final long serialVersionUID = 1L;
+        
         private Background background;
         private AbstractRenderTarget renderTarget;
 

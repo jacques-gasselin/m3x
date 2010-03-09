@@ -1130,8 +1130,8 @@ public final class Loader
             obj.setShading(readUnsignedByte());
             obj.setWinding(readUnsignedByte());
             obj.setTwoSidedLightingEnabled(readBoolean());
-            obj.setLocalCameraLightingEnable(readBoolean());
-            obj.setPerspectiveCorrectionEnable(readBoolean());
+            obj.setLocalCameraLightingEnabled(readBoolean());
+            obj.setPerspectiveCorrectionEnabled(readBoolean());
 
             if (!isFileFormat1())
             {

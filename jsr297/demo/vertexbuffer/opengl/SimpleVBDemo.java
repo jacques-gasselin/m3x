@@ -46,9 +46,13 @@ import m3x.awt.BaseFrame;
  */
 public class SimpleVBDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private final class SimpleVBCanvas extends GLCanvas
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+
         private Background background;
         private AbstractRenderTarget renderTarget;
 

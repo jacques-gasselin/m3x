@@ -50,9 +50,13 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
  */
 public class PickingDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     class PickingDemoCanvas extends GLCanvas
             implements Runnable, MouseListener, MouseMotionListener
     {
+        private static final long serialVersionUID = 1L;
+        
         Camera camera;
         Mesh lookatMarker;
         Mesh sphere1;

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-import m3x.m3g.primitives.Matrix;
 import m3x.m3g.util.Object3DReferences;
 
 /**

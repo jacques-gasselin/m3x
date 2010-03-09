@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="tools/src"/>
-	<classpathentry kind="src" path="tools/build/src"/>
-	<classpathentry kind="src" path="tools/test"/>
+	<classpathentry excluding="**/.svn" kind="src" path="tools/src"/>
+	<classpathentry excluding="**/.svn" kind="src" path="tools/build/src"/>
+	<classpathentry excluding="**/.svn" kind="src" path="tools/test"/>
 	<classpathentry kind="lib" path="lib/jaxb/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb/jaxb-impl.jar"/>

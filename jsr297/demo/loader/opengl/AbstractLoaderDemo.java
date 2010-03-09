@@ -49,9 +49,13 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
  */
 public abstract class AbstractLoaderDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     protected final class LoaderCanvas extends GLCanvas
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+        
         private Background background;
         private AbstractRenderTarget renderTarget;
 

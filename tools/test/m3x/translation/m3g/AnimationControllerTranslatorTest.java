@@ -27,7 +27,6 @@
 
 package m3x.translation.m3g;
 
-import m3x.translation.*;
 import m3x.m3g.AnimationController;
 
 /**

@@ -51,6 +51,7 @@ public class AnimationTrackTranslatorTest extends TranslatorSupport
         at.setTargetProperty(AnimationTargetType.COLOR);
 
         AnimationTrack m3gAt = (AnimationTrack) translator.getObject(at);
+        assertNotNull(m3gAt);
     }
 
     public void testTranslatorNoInterpolation()

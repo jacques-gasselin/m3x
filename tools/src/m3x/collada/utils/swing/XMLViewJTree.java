@@ -227,6 +227,8 @@ class XMLTreeModel implements TreeModel
  */
 public class XMLViewJTree extends JTree
 {
+    private static final long serialVersionUID = 1L;
+    
     public XMLViewJTree(final org.w3c.dom.Node rootNode)
     {
         removeAll();

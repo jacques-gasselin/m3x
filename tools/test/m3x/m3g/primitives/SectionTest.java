@@ -37,6 +37,6 @@ public class SectionTest extends AbstractTestCase
 {
     public void testNew()
     {
-        Section s = new Section();
+        new Section();
     }
 }

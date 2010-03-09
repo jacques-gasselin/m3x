@@ -81,9 +81,7 @@ public class Section
     /**
      * Creates a new Section object.
      *
-     * @param compressionScheme
-     *  Whether to compress or not?
-     * @throws IOException
+     * @param compressionScheme whether to compress or not?
      */
     public Section(int compressionScheme)
     {
@@ -148,10 +146,10 @@ public class Section
             }
             // uncompressed, just read the array
             deserialiser.readFully(objectData);
-            //this.calculateChecksum(objectsAsBytes);
+            //this.calculateChecksum(objectData);
         }
 
-        final int checksumFromStream = deserialiser.readInt();
+        /*final int checksumFromStream =*/ deserialiser.readInt();
         /*if (this.checksum != checksumFromStream)
         {
             throw new IllegalStateException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);

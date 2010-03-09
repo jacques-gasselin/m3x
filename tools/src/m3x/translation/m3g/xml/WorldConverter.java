@@ -50,7 +50,7 @@ public class WorldConverter extends GroupConverter
         to.setActiveCamera((m3x.m3g.Camera)
             translator.getReference((m3x.xml.Node) from.getActiveCamera()));
         to.setBackground((m3x.m3g.Background)
-            translator.getReference((m3x.xml.Background) from.getBackground()));
+            translator.getReference(from.getBackground()));
 
     }
 }

@@ -479,6 +479,8 @@ public class KeyframeSequence extends Object3D
             case SHORT:
                 reader = new ShortKeyframeReader(this);
                 break;
+            default:
+                throw new IOException("unsupported encoding (" + encoding + ") in KeyframeSequence");
         }
         reader.readScaleAndBias(deserialiser);
 
@@ -521,6 +523,8 @@ public class KeyframeSequence extends Object3D
             case SHORT:
                 writer = new ShortKeyframeWriter(this);
                 break;
+            default:
+                throw new IOException("unsupported encoding (" + encoding + ") in KeyframeSequence");
         }
         writer.writeScaleAndBias(serialiser);
         

@@ -166,7 +166,7 @@ public abstract class AbstractTestCase extends TestCase
 
     protected void assertSerialiseSingle(Serializable from)
     {
-        Class cls = from.getClass();
+        Class<?> cls = from.getClass();
         Serializable to = null;
         try
         {
@@ -195,7 +195,7 @@ public abstract class AbstractTestCase extends TestCase
      */
     protected void doTestAccessors(Object object1, Object object2) throws AssertionFailedError
     {
-        Class cls = object1.getClass();
+        Class<?> cls = object1.getClass();
         assertTrue(cls.equals(object2.getClass()));
 
         BeanInfo beanInfo;
@@ -252,24 +252,21 @@ public abstract class AbstractTestCase extends TestCase
             // ok if both are null
             return;
         }
-        else
+        if (result1 == null)
         {
-            if (result1 == null)
-            {
-                fail("result1 is null");
-            }
-            if (result2 == null)
-            {
-                fail("result2 is null");
-            }
-            compareClasses(result1, result2);
+            fail("result1 is null");
         }
+        if (result2 == null)
+        {
+            fail("result2 is null");
+        }
+        compareClasses(result1, result2);
     }
 
     private void compareClasses(Object result1, Object result2)
     {
-        Class cls1 = result1.getClass();
-        Class cls2 = result2.getClass();
+        Class<?> cls1 = result1.getClass();
+        Class<?> cls2 = result2.getClass();
         if (cls1.isArray() && cls2.isArray())
         {
             // we have two arrays, now we need to find out
@@ -298,7 +295,7 @@ public abstract class AbstractTestCase extends TestCase
     }
 
     private void comparePrimitiveArrays(Object result1, Object result2,
-            Class cls1, Class cls2)
+            Class<?> cls1, Class<?> cls2)
     {
         if (cls1.equals(boolean[].class) && cls2.equals(boolean[].class))
         {

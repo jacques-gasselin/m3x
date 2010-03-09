@@ -180,7 +180,7 @@ public class XmlToBinaryTask extends Task
         final String classname = "m3x.translation.m3g.XmlToBinaryTranslator";
 
         {
-            Class targetClass = null;
+            Class<?> targetClass = null;
             try
             {
                 if (classpath == null)
@@ -234,7 +234,7 @@ public class XmlToBinaryTask extends Task
         for (FileSet fs : filesetList)
         {
             //System.out.println("fs: " + fs.toString());
-            final Iterator it = fs.iterator();
+            final Iterator<?> it = fs.iterator();
             if (!it.hasNext())
             {
                 System.out.println("empty fileset!");

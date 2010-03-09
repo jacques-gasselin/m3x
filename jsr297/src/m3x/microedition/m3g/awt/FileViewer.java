@@ -62,6 +62,8 @@ import m3x.microedition.m3g.XMLLoader;
  */
 public class FileViewer extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private final FileViewerCanvas canvas;
     private static final GLCapabilities GL_CAPS = new GLCapabilities();
     static
@@ -86,6 +88,8 @@ public class FileViewer extends BaseFrame
     private final class FileViewerCanvas extends GLCanvas
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+        
         private Background background;
         private AbstractRenderTarget renderTarget;
 

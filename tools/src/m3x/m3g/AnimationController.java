@@ -99,9 +99,8 @@ public class AnimationController extends Object3D
 
 
     /**
-     * Deserialization done as specified in the class JavaDoc.
+     * Deserializes the object as specified in the class JavaDoc.
      * @throws IOException
-     * @throws FileFormatException
      */
     @Override
     public void deserialise(Deserializer deserialiser)

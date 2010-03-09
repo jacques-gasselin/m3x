@@ -65,12 +65,12 @@ import m3x.translation.m3g.xml.WorldConverter;
  */
 public class XmlToBinaryTranslator extends BinaryTranslator
 {
-    private Map<Class, Class> converterMap;
+    private Map<Class<?>, Class<?>> converterMap;
     private String version;
 
     public XmlToBinaryTranslator(String version)
     {
-        converterMap = new Hashtable<Class, Class>();
+        converterMap = new Hashtable<Class<?>, Class<?>>();
         this.version = version;
 
         //add supported class converters
@@ -146,7 +146,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
                     "target file exists but is write protected");
         }
         
-        //deserialise XML stream
+        //deserialize XML stream
         m3x.xml.M3G xmlRoot = null;
         try
         {
@@ -168,7 +168,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
         //translate
         final m3x.m3g.Object3D[] binRoots = convertRoot(xmlRoot);
 
-        //serialise the binary stream
+        //serialize the binary stream
         try
         {
             final OutputStream stream = new FileOutputStream(target);
@@ -226,6 +226,11 @@ public class XmlToBinaryTranslator extends BinaryTranslator
     {
         return super.getReference((java.lang.Object)key);
     }
+    
+    public final String getVersion()
+    {
+        return version;
+    }
 
     public void setObject(m3x.xml.Object3D key, m3x.m3g.Object3D value)
     {
@@ -233,7 +238,7 @@ public class XmlToBinaryTranslator extends BinaryTranslator
     }
 
     @Override
-    protected Class getConverterClass(Class objectClass)
+    protected Class<?> getConverterClass(Class<?> objectClass)
     {
         return converterMap.get(objectClass);
     }

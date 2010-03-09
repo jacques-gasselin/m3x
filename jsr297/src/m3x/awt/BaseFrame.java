@@ -40,6 +40,8 @@ import java.awt.event.WindowEvent;
  */
 public class BaseFrame extends Frame
 {
+    private static final long serialVersionUID = 1L;
+    
     private int refreshRate = 60;
     private int windowedWidth;
     private int windowedHeight;

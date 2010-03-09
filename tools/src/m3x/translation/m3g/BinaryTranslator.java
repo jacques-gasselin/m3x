@@ -37,14 +37,14 @@ import java.util.Vector;
 public abstract class BinaryTranslator
 {
     private Hashtable<Object, m3x.m3g.Object3D> objectToBinaryMap;
-    private Hashtable<Class, BinaryConverter> objectClassToBinaryConverterMap;
+    private Hashtable<Class<?>, BinaryConverter> objectClassToBinaryConverterMap;
     private Vector<m3x.m3g.Object3D> objects;
     private Vector<m3x.m3g.Object3D> rootObjects;
 
     public BinaryTranslator()
     {
         objectToBinaryMap = new Hashtable<Object, m3x.m3g.Object3D>();
-        objectClassToBinaryConverterMap = new Hashtable<Class, BinaryConverter>();
+        objectClassToBinaryConverterMap = new Hashtable<Class<?>, BinaryConverter>();
         objects = new Vector<m3x.m3g.Object3D>();
         rootObjects = new Vector<m3x.m3g.Object3D>();
     }
@@ -94,17 +94,17 @@ public abstract class BinaryTranslator
         rootObjects.add(value);
     }
 
-    protected abstract Class getConverterClass(Class objectClass);
+    protected abstract Class<?> getConverterClass(Class<?> objectClass);
 
     private void convertObject(Object key)
     {
-        Class keyClass = key.getClass();
+        Class<?> keyClass = key.getClass();
         BinaryConverter converter = objectClassToBinaryConverterMap.get(keyClass);
         if (converter == null)
         {
             try
             {
-                Class converterClass = getConverterClass(keyClass);
+                Class<?> converterClass = getConverterClass(keyClass);
                 if (converterClass == null)
                 {
                     throw new NullPointerException("no converter class for " + key);

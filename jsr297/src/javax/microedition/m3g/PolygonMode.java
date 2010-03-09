@@ -75,19 +75,16 @@ public class PolygonMode extends Object3D
         return this.winding;
     }
 
-    @Deprecated
     public boolean isLocalCameraLightingEnabled()
     {
         return this.localCameraLightingEnabled;
     }
 
-    @Deprecated
     public boolean isPerspectiveCorrectionEnabled()
     {
         return this.perspectiveCorrectionEnabled;
     }
 
-    @Deprecated
     public boolean isTwoSidedLightingEnabled()
     {
         return this.twoSidedLightingEnabled;
@@ -109,11 +106,21 @@ public class PolygonMode extends Object3D
     @Deprecated
     public void setLocalCameraLightingEnable(boolean enable)
     {
+        setLocalCameraLightingEnabled(enable);
+    }
+
+    public void setLocalCameraLightingEnabled(boolean enable)
+    {
         this.localCameraLightingEnabled = enable;
     }
 
     @Deprecated
     public void setPerspectiveCorrectionEnable(boolean enable)
+    {
+        setPerspectiveCorrectionEnabled(enable);
+    }
+
+    public void setPerspectiveCorrectionEnabled(boolean enable)
     {
         this.perspectiveCorrectionEnabled = enable;
     }
@@ -126,6 +133,11 @@ public class PolygonMode extends Object3D
     }
 
     @Deprecated
+    public void setTwoSidedLightingEnable(boolean enable)
+    {
+        setTwoSidedLightingEnabled(enable);
+    }
+
     public void setTwoSidedLightingEnabled(boolean enable)
     {
         this.twoSidedLightingEnabled = enable;

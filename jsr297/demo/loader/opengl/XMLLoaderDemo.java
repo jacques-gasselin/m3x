@@ -36,6 +36,8 @@ import m3x.microedition.m3g.XMLLoader;
  */
 public class XMLLoaderDemo extends AbstractLoaderDemo
 {
+    private static final long serialVersionUID = 1L;
+
     public XMLLoaderDemo(String resourceName)
     {
         super();

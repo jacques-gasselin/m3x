@@ -57,7 +57,7 @@ public class VertexBufferTest extends AbstractTestCase
 
     public void testConstructor()
     {
-        VertexBuffer vb = new VertexBuffer();
+        new VertexBuffer();
     }
 
     private static final void createPositions(VertexBuffer vb, int vertexCount, int numComponents, float[] bias)

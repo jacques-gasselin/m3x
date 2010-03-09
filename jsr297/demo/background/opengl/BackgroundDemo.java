@@ -41,9 +41,13 @@ import m3x.awt.BaseFrame;
  */
 public class BackgroundDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private final class BackgroundCanvas extends GLCanvas
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+
         Background background;
         AbstractRenderTarget renderTarget;
         float hue;

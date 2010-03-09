@@ -34,6 +34,8 @@ import m3x.awt.BaseFrame;
  */
 public class XMLLoaderDemo3 extends XMLLoaderDemo
 {
+    private static final long serialVersionUID = 1L;
+
     public XMLLoaderDemo3()
     {
         super("model3.m3x");

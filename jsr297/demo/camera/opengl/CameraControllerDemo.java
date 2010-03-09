@@ -61,9 +61,13 @@ import m3x.microedition.m3g.awt.BlenderTurntableCameraController;
  */
 public class CameraControllerDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private final class CameraControllerCanvas extends GLJPanel
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+        
         private static final int NO_LIGHT_SCOPE = 1;
         private static final int LIGHT0_SCOPE = 2;
 
@@ -155,7 +159,7 @@ public class CameraControllerDemo extends BaseFrame
                 m.setShininess(20);
                 a.setMaterial(m);
                 final PolygonMode pm = new PolygonMode();
-                pm.setLocalCameraLightingEnable(true);
+                pm.setLocalCameraLightingEnabled(true);
                 a.setPolygonMode(pm);
                 a.setTexture(0, specularTexture);
                 a.setTexture(1, baseTexture);

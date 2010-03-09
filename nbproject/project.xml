@@ -291,7 +291,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/demo</package-root>
-                <classpath mode="compile">lib/jogl/jogl.jar:jsr297/build:tools/build:lib/vecmath/vecmath.jar</classpath>
+                <classpath mode="compile">jsr297/build:tools/build:lib/vecmath/vecmath.jar:lib/jogl/jogl.jar</classpath>
                 <built-to>jsr297/build</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.5</source-level>
@@ -302,20 +302,32 @@
                 <node name="text">
                     <node name="x-java">
                         <node name="CodeStyle">
-                            <node name="project"/>
+                            <node name="project">
+                                <property name="alignMultilineMethodParams" value="true"/>
+                                <property name="placeElseOnNewLine" value="true"/>
+                                <property name="alignMultilineCallArgs" value="true"/>
+                                <property name="placeFinallyOnNewLine" value="true"/>
+                                <property name="placeCatchOnNewLine" value="true"/>
+                                <property name="classDeclBracePlacement" value="NEW_LINE"/>
+                                <property name="text-limit-width" value="80"/>
+                                <property name="otherBracePlacement" value="NEW_LINE"/>
+                                <property name="methodDeclBracePlacement" value="NEW_LINE"/>
+                            </node>
                         </node>
                         <node name="project"/>
                     </node>
                     <node name="project"/>
                     <node name="CodeStyle"/>
-                    <node name="x-ant+xml">
-                        <node name="CodeStyle">
-                            <node name="project"/>
-                        </node>
-                    </node>
                 </node>
                 <node name="CodeStyle">
-                    <node name="project"/>
+                    <node name="project">
+                        <property name="spaces-per-tab" value="4"/>
+                        <property name="tab-size" value="4"/>
+                        <property name="indent-shift-width" value="4"/>
+                        <property name="text-limit-width" value="80"/>
+                        <property name="expand-tabs" value="true"/>
+                    </node>
+                    <property name="usedProfile" value="project"/>
                 </node>
                 <node name="project"/>
                 <node name="x-java"/>

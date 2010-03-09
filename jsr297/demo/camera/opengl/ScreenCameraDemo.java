@@ -47,9 +47,13 @@ import m3x.awt.BaseFrame;
  */
 public class ScreenCameraDemo extends BaseFrame
 {
+    private static final long serialVersionUID = 1L;
+
     private final class ScreenCameraCanvas extends GLCanvas
             implements Runnable
     {
+        private static final long serialVersionUID = 1L;
+        
         private boolean cleared;
         private Background background;
         private AbstractRenderTarget renderTarget;
