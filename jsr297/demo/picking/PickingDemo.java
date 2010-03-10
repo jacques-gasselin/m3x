@@ -191,32 +191,27 @@ public class PickingDemo extends BaseFrame
             }
         }
 
-        @Override
         public void mouseExited(MouseEvent e)
         {
 
         }
 
-        @Override
         public void mouseEntered(MouseEvent e)
         {
 
         }
 
-        @Override
         public void mouseReleased(MouseEvent e)
         {
 
         }
 
-        @Override
         public void mousePressed(MouseEvent e)
         {
             xMouse = e.getX();
             yMouse = e.getY();
         }
 
-        @Override
         public void mouseClicked(MouseEvent e)
         {
             RayIntersection ri = new RayIntersection();
@@ -246,13 +241,11 @@ public class PickingDemo extends BaseFrame
             topGroup.addChild(viewFrustumMesh);
         }
 
-        @Override
         public void mouseMoved(MouseEvent e)
         {
 
         }
 
-        @Override
         public void mouseDragged(MouseEvent e)
         {
             //if dragging with the left mouse button down...
