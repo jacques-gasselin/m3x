@@ -170,36 +170,6 @@
                     </context>
                 </action>
             </ide-actions>
-            <export>
-                <type>folder</type>
-                <location>tools/build</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>tools/build</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>tools/test/build</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>jsr297/build</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>jsr297/test/build</location>
-                <build-target>build</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>jsr297/build</location>
-                <build-target>build</build-target>
-            </export>
             <view>
                 <items>
                     <source-folder style="packages">
