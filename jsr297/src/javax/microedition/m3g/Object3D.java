@@ -96,7 +96,6 @@ public class Object3D
      * from here.
      *
      * @return a shallow copied duplicate
-     * @see #duplicate(javax.microedition.m3g.Object3D)
      */
     public final Object3D duplicate()
     {

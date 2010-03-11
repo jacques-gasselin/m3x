@@ -76,11 +76,11 @@ public class CompositingMode extends Object3D
         super.duplicate(target);
 
         final CompositingMode cm = (CompositingMode) target;
-        cm.setAlphaTest(cm.getAlphaTest());
-        cm.setAlphaThreshold(cm.getAlphaThreshold());
-        cm.setBlender(cm.getBlender());
-        cm.setBlending(cm.getBlending());
-        cm.setColorWriteMask(cm.getColorWriteMask());
+        cm.setAlphaTest(getAlphaTest());
+        cm.setAlphaThreshold(getAlphaThreshold());
+        cm.setBlender(getBlender());
+        cm.setBlending(getBlending());
+        cm.setColorWriteMask(getColorWriteMask());
         cm.setDepthOffset(getDepthOffsetFactor(), getDepthOffsetUnits());
         cm.setDepthTest(getDepthTest());
         cm.setDepthTestEnabled(isDepthTestEnabled());

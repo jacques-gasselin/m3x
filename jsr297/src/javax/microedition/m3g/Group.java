@@ -106,10 +106,11 @@ public class Group extends Node
      * It is acceptable to use any method that overestimates the
      * bounding or calculates it exactly. Any method that underestimates
      * the bounding should not be used. This gives picking certain
-     * guarantees that are neccessary for proper operation.
+     * guarantees that are necessary for proper operation.
      *
+     * <a href="http://www.cgal.org/">See the cgal project for more info on this.</a>
+     * 
      * TODO: use a proper minimum enclosing ball of balls algorithm
-     * @see http://www.cgal.org/
      */
     @Override
     void calculatePickingBoundingSphere(float[] sphere)

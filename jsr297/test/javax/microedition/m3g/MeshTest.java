@@ -64,33 +64,35 @@ public class MeshTest extends AbstractTestCase
         assertSame(va, dup.getVertexBuffer().getPositions(null));
         assertSame(ib, dup.getIndexBuffer(0));
         assertNull(dup.getAppearance(0));
-     }
+    }
 
-     public void testDeprectedNewMeshSingle()
-     {
-         VertexBuffer vb = new VertexBuffer();
-         IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, 1, 0);
-         Appearance a = new Appearance();
-         
-         Mesh m = new Mesh(vb, ib, a);
+    @SuppressWarnings("deprecation")
+    public void testDeprectedNewMeshSingle()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, 1, 0);
+        Appearance a = new Appearance();
 
-         assertSame(vb, m.getVertexBuffer());
-         assertEquals(1, m.getSubmeshCount());
-         assertSame(ib, m.getIndexBuffer(0));
-         assertSame(a, m.getAppearance(0));
-     }
+        Mesh m = new Mesh(vb, ib, a);
 
-     public void testDeprectedNewMeshSingleArray()
-     {
-         VertexBuffer vb = new VertexBuffer();
-         IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, 1, 0);
-         Appearance a = new Appearance();
+        assertSame(vb, m.getVertexBuffer());
+        assertEquals(1, m.getSubmeshCount());
+        assertSame(ib, m.getIndexBuffer(0));
+        assertSame(a, m.getAppearance(0));
+    }
 
-         Mesh m = new Mesh(vb, new IndexBuffer[]{ib}, new Appearance[]{a});
+    @SuppressWarnings("deprecation")
+    public void testDeprectedNewMeshSingleArray()
+    {
+        VertexBuffer vb = new VertexBuffer();
+        IndexBuffer ib = new IndexBuffer(IndexBuffer.TRIANGLES, 1, 0);
+        Appearance a = new Appearance();
 
-         assertSame(vb, m.getVertexBuffer());
-         assertEquals(1, m.getSubmeshCount());
-         assertSame(ib, m.getIndexBuffer(0));
-         assertSame(a, m.getAppearance(0));
-     }
+        Mesh m = new Mesh(vb, new IndexBuffer[]{ib}, new Appearance[]{a});
+
+        assertSame(vb, m.getVertexBuffer());
+        assertEquals(1, m.getSubmeshCount());
+        assertSame(ib, m.getIndexBuffer(0));
+        assertSame(a, m.getAppearance(0));
+    }
 }

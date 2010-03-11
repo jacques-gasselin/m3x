@@ -456,10 +456,10 @@ public final class TransformUtils
         ndcPoint[0] += 2 * dx / ((float) width);
         ndcPoint[1] -= 2 * dy / ((float) height);
         //check for clip space validity, disabled for now
-        if (false && ndcIsClipped(ndcPoint))
+        /*if (ndcIsClipped(ndcPoint))
         {
             return;
-        }
+        }*/
         //unproject back to the local coordinate system
         final Transform cameraToLocal = new Transform(localToCamera);
         cameraToLocal.invert();
@@ -509,10 +509,10 @@ public final class TransformUtils
                 width, height,
                 ndcZ);
         //check for clip space validity, disabled for now
-        if (false && ndcIsClipped(ndcPoint))
+        /*if (ndcIsClipped(ndcPoint))
         {
             return;
-        }
+        }*/
         //unproject back to the local coordinate system
         final Transform cameraToLocal = new Transform(localToCamera);
         cameraToLocal.invert();

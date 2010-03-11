@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/.svn" kind="src" path="tools/src"/>
+	<classpathentry kind="src" path="jsr297/demo"/>
+	<classpathentry kind="src" path="jsr297/src"/>
+	<classpathentry kind="src" path="jsr297/test"/>
 	<classpathentry excluding="**/.svn" kind="src" path="tools/build/src"/>
 	<classpathentry excluding="**/.svn" kind="src" path="tools/test"/>
 	<classpathentry kind="lib" path="lib/jaxb/activation.jar"/>
@@ -11,5 +14,16 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
+	<classpathentry kind="lib" path="lib/jogl/jogl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="m3x/lib/jogl/jnilib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/vecmath/vecmath.jar"/>
+	<classpathentry kind="lib" path="lib/jogl/gluegen-rt.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="m3x/lib/jogl/jnilib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
