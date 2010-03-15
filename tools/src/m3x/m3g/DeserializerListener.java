@@ -50,6 +50,12 @@ public interface DeserializerListener
      * is allowed to modify the object or even return a different object. If the
      * returned object is not compatible with the passed in object the
      * deserialization may fail.
+     *
+     * Note: Refences tend to come before objects, so a tool that intends to compile a tree
+     * will need to hold on to references and then attribute them to the next object
+     * in the stream. For example when an Appearance is read the listener will be informed
+     * of the CompositingMode and PolygonMode being referenced before being informed
+     * of the Appearance being deserialized.
      * 
      * @param obj the referenced object
      * @param objectIndex the binary file reference index of the object
