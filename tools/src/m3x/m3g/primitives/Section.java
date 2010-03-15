@@ -114,6 +114,8 @@ public class Section
             throw new IllegalStateException("Invalid uncompressed length: " + this.uncompressedLength);
         }
 
+        deserialiser.sectionStarted(compressionScheme, totalSectionLength, uncompressedLength);
+
         // read Section.objects bytes
         final int compressedLength = this.totalSectionLength - 1 - 4 - 4 - 4;
         byte[] objectData = new byte[this.uncompressedLength];
@@ -149,7 +151,7 @@ public class Section
             //this.calculateChecksum(objectData);
         }
 
-        /*final int checksumFromStream =*/ deserialiser.readInt();
+        final int checksumFromStream = deserialiser.readInt();
         /*if (this.checksum != checksumFromStream)
         {
             throw new IllegalStateException("Invalid checksum, was " + checksumFromStream + ", should have been " + checksum);
@@ -188,6 +190,8 @@ public class Section
             }
         }
         deserialiser.popInputStream();
+
+        deserialiser.sectionEnded(checksumFromStream);
     }
 
     @Override

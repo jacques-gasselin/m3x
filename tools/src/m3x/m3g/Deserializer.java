@@ -43,14 +43,22 @@ import m3x.util.LittleEndianDeserializer;
  * @author jgasseli
  */
 public final class Deserializer extends LittleEndianDeserializer
+        implements DeserializerListener
 {
-
     private Vector<Object3D> rootObjects;
     private Vector<Object3D> objects;
+    private DeserializerListener listener;
 
     public Deserializer()
     {
+        this(null);
+    }
+
+    public Deserializer(DeserializerListener l)
+    {
         super();
+        
+        listener = l;
         rootObjects = new Vector<Object3D>();
         objects = new Vector<Object3D>();
 
@@ -58,6 +66,16 @@ public final class Deserializer extends LittleEndianDeserializer
         objects.add(null);
     }
 
+    /**
+     * Sets the listener to be used in deserialization. It may be handy for tools
+     * to inject one of these for polishing or visualization.
+     * @param l the listener to use, or null to disable listening
+     */
+    public void setListener(DeserializerListener l)
+    {
+        listener = l;
+    }
+    
     /**
      * Checks the stream for the correct file identifier.
      * Do this before actually deserialising the stream.
@@ -119,6 +137,8 @@ public final class Deserializer extends LittleEndianDeserializer
 
     public void addObject(Object3D obj)
     {
+        final int index = objects.size();
+        obj = objectDeserialized(obj, index);
         objects.add(obj);
         if (obj != null)
         {
@@ -174,9 +194,8 @@ public final class Deserializer extends LittleEndianDeserializer
         //rely on the implementation to make remove a no-op if obj is not
         //in the collection.
         rootObjects.remove(obj);
-        
-        System.out.println(index + " : " + obj);
-        return obj;
+
+        return referenceDeserialized(obj, index);
     }
 
     /**
@@ -187,7 +206,45 @@ public final class Deserializer extends LittleEndianDeserializer
      */
     public Object3D readWeakReference() throws IOException
     {
-        Object3D obj = objects.elementAt(readInt());
-        return obj;
+        final int index = readInt();
+        Object3D obj = objects.elementAt(index);
+
+        return referenceDeserialized(obj, index);
+    }
+
+    public void sectionStarted(int compressionScheme, int totalSectionLength, int uncompressedLength)
+    {
+        if (listener != null)
+        {
+            listener.sectionStarted(compressionScheme, totalSectionLength, uncompressedLength);
+        }
+    }
+
+    public void sectionEnded(int checksum)
+    {
+        if (listener != null)
+        {
+            listener.sectionEnded(checksum);
+        }
+    }
+
+    public m3x.m3g.Object3D objectDeserialized(m3x.m3g.Object3D obj, int objectIndex)
+    {
+        m3x.m3g.Object3D ret = obj;
+        if (listener != null)
+        {
+            ret = listener.objectDeserialized(obj, objectIndex);
+        }
+        return ret;
+    }
+
+    public m3x.m3g.Object3D referenceDeserialized(m3x.m3g.Object3D obj, int objectIndex)
+    {
+        m3x.m3g.Object3D ret = obj;
+        if (listener != null)
+        {
+            ret = listener.referenceDeserialized(obj, objectIndex);
+        }
+        return ret;
     }
 }
