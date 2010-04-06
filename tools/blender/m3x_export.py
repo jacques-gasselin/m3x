@@ -741,6 +741,9 @@ class Texture2D(Texture):
 
     createTexture2D = staticmethod(createTexture2D)
 
+    def serializeInstance(self, serializer):
+        serializer.closedTag("Texture2DInstance", {"ref" : self.id})
+
     def serialize(self, serializer):
         attr = {}
         self.fillAttributes(attr)
