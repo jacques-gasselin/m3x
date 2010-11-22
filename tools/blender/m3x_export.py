@@ -644,7 +644,7 @@ class PolygonMode(Object3D):
     def __init__(self, idValue, version):
         Object3D.__init__(self, idValue)
         self.version = version
-        self.culling  = PolygonMode.CULL_BACK
+        self.culling = PolygonMode.CULL_BACK
 
     def setCulling(self, culling):
         self.culling = culling
