@@ -1406,19 +1406,17 @@ class M3XConverter(object):
             #Empty node
             returnObject = Group(object.name)
         if returnObject:
-            loc = tuple(object.loc)
+            transform = object.matrixLocal.copy()
+            loc = tuple(transform.translationPart())
             if loc != M3XConverter.ZEROS_3:
                 returnObject.setTranslation(*loc)
-            scale = tuple(object.size)
+            scale = tuple(transform.scalePart())
             if scale != M3XConverter.ONES_3:
                 returnObject.setScale(*scale)
             rot = tuple(object.rot)
             if rot != M3XConverter.ZEROS_3:
-                euler = Blender.Mathutils.Euler(rot)
-                quat = euler.toQuat()
-                #TODO potential documentation error in Blender python docs
-                #this is said to be in degrees already but seems to be in radians
-                angle = math.degrees(quat.angle)
+                quat = transform.rotationPart().toQuat()
+                angle = quat.angle
                 x, y, z = quat.axis
                 returnObject.setOrientation(angle, x, y, z)
         return returnObject
