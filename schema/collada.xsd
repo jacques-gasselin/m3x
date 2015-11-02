@@ -89,8 +89,8 @@
         </xs:appinfo>
     </xs:annotation>
     <!-- Import xml::base -->
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-               schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <!--xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="http://www.w3.org/2001/03/xml.xsd"/-->
     <!-- Root Element -->
     <xs:element name="COLLADA">
         <xs:annotation>
@@ -150,7 +150,7 @@
             <xs:attribute name="version"
                           type="VersionType"
                           use="required"/>
-			<xs:attribute ref="xml:base"/>
+			<!--xs:attribute ref="xml:base"/-->
         </xs:complexType>
     </xs:element>
     <!-- Simple types -->

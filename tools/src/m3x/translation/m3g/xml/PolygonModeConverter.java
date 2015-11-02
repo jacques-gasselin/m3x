@@ -51,9 +51,9 @@ public class PolygonModeConverter extends Object3DConverter
         to.setCulling(from.getCulling().value());
         to.setShading(from.getShading().value());
         to.setWinding(from.getWinding().value());
-        to.setLocalCameraLightingEnabled(from.isLocalCameraLightingEnabled());
-        to.setPerspectiveCorrectionEnabled(from.isPerspectiveCorrectionEnabled());
-        to.setTwoSidedLightingEnabled(from.isTwoSidedLightingEnabled());
+        to.setLocalCameraLightingEnabled(from.getLocalCameraLightingEnabled());
+        to.setPerspectiveCorrectionEnabled(from.getPerspectiveCorrectionEnabled());
+        to.setTwoSidedLightingEnabled(from.getTwoSidedLightingEnabled());
 
     }
 }

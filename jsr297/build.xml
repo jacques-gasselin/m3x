@@ -68,7 +68,8 @@
                fork="true"
                debug="true"
                failonerror="true"
-               target="1.6">
+               target="1.8"
+               includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${src.dir}"/>
             <include name="**/*.java"/>
@@ -101,7 +102,8 @@
                fork="true"
                debug="true"
                failonerror="true"
-               target="1.6">
+               target="1.8"
+               includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${test.dir}"/>
             <include name="**/*.java"/>
@@ -121,7 +123,8 @@
                fork="true"
                debug="true"
                failonerror="true"
-               target="1.6">
+               target="1.8"
+               includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${demo.dir}"/>
             <include name="**/*.java"/>

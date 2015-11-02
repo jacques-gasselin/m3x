@@ -76,8 +76,8 @@ public class BackgroundConverter extends Object3DConverter
         }
         to.setImageMode(from.getImageModeX().value(),
             from.getImageModeY().value());
-        to.setColorClearEnable(from.isColorClearEnabled());
-        to.setDepthClearEnable(from.isDepthClearEnabled());
+        to.setColorClearEnable(from.getColorClearEnabled());
+        to.setDepthClearEnable(from.getDepthClearEnabled());
     }
 
     private static final int getOptionalValueWithDefault(final Integer value,

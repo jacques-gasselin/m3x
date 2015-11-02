@@ -130,7 +130,8 @@
         <javac destdir="${build.dir}"
                fork="true"
                debug="true"
-               target="1.6">
+               source="1.8"
+               includeantruntime="false">
             <src>
                 <pathelement location="${build.src.dir}"/>
                 <pathelement location="${src.dir}"/>
@@ -146,7 +147,8 @@
         <javac destdir="${build.dir}"
                fork="true"
                debug="true"
-               target="1.6">
+               source="1.8"
+               includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src>
                 <pathelement location="${src.dir}"/>
@@ -173,7 +175,8 @@
         <javac destdir="${test.build.dir}"
                fork="true"
                debug="true"
-               target="1.6">
+               source="1.8"
+               includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${test.dir}"/>
             <include name="**/*.java"/>

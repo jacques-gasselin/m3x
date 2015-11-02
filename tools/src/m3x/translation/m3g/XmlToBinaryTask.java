@@ -175,7 +175,6 @@ public class XmlToBinaryTask extends Task
     @Override
     public void execute()
     {
-        AntClassLoader loader = null;
         Method convertMethod = null;
         final String classname = "m3x.translation.m3g.XmlToBinaryTranslator";
 
@@ -189,7 +188,7 @@ public class XmlToBinaryTask extends Task
                 }
                 else
                 {
-                    loader = getProject().createClassLoader(classpath);
+                    AntClassLoader loader = getProject().createClassLoader(classpath);
                     loader.setParent(getProject().getCoreLoader());
                     loader.setParentFirst(false);
                     loader.addJavaLibraries();
@@ -208,7 +207,7 @@ public class XmlToBinaryTask extends Task
             try
             {
                 convertMethod = targetClass.getMethod("convert",
-                        new Class[] {File.class, File.class, boolean.class});
+                        new Class<?>[] {File.class, File.class, boolean.class});
             }
             catch (NoSuchMethodException e)
             {
@@ -255,7 +254,7 @@ public class XmlToBinaryTask extends Task
                         log("Converting " + sourceFile + " to " + targetFile,
                                 LogLevel.VERBOSE.getLevel());
                         convertMethod.invoke(null,
-                                new Object[] {sourceFile, targetFile, Boolean.valueOf(validate)});
+                                new Object[] {sourceFile, targetFile, validate});
                     }
                     else
                     {

@@ -68,6 +68,6 @@ public class MaterialConverter extends Object3DConverter
             }
             to.setShininess(from.getSpecularColor().getShininess());
         }
-        to.setVertexColorTrackingEnabled(from.isVertexColorTrackingEnabled());
+        to.setVertexColorTrackingEnabled(from.getVertexColorTrackingEnabled());
     }
 }
