@@ -40,8 +40,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
@@ -65,7 +66,7 @@ public class FileViewer extends BaseFrame
     private static final long serialVersionUID = 1L;
 
     private final FileViewerCanvas canvas;
-    private static final GLCapabilities GL_CAPS = new GLCapabilities();
+    private static final GLCapabilities GL_CAPS = new GLCapabilities(GLProfile.getDefault());
     static
     {
         GL_CAPS.setSampleBuffers(true);

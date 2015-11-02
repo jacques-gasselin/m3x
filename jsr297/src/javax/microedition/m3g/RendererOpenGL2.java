@@ -33,15 +33,16 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 /**
  * @author jgasseli
  */
 public class RendererOpenGL2 extends Renderer
 {
-    private GL lastInstanceGL;
-    private GL instanceGL;
+    private GL2 lastInstanceGL;
+    private GL2 instanceGL;
     private int width;
     private int height;
 
@@ -69,7 +70,7 @@ public class RendererOpenGL2 extends Renderer
     {
     }
 
-    public GL getGL()
+    public GL2 getGL()
     {
         return instanceGL;
     }
@@ -112,7 +113,7 @@ public class RendererOpenGL2 extends Renderer
             maxAnisotropy = 1.0f;
         }
         maxTextureSize = glGetInteger(gl, GL.GL_MAX_TEXTURE_SIZE);
-        maxTextureUnits = glGetInteger(gl, GL.GL_MAX_TEXTURE_UNITS);
+        maxTextureUnits = glGetInteger(gl, GL2.GL_MAX_TEXTURE_UNITS);
         texcoordScale = new float[maxTextureUnits];
         texcoordBias = new float[maxTextureUnits][3];
         texcoordTransform = new Transform[maxTextureUnits];
@@ -122,11 +123,11 @@ public class RendererOpenGL2 extends Renderer
         }
         texcoordShortBuffer = new ShortBuffer[maxTextureUnits];
         
-        maxLights = glGetInteger(gl, GL.GL_MAX_LIGHTS);
+        maxLights = glGetInteger(gl, GL2.GL_MAX_LIGHTS);
         lights = new Light[maxLights];
     }
 
-    public void bindContext(GL gl, int width, int height)
+    public void bindContext(GL2 gl, int width, int height)
     {
         if (this.instanceGL != null)
         {
@@ -143,12 +144,12 @@ public class RendererOpenGL2 extends Renderer
             this.lastInstanceGL = gl;
         }
 
-        gl.glDisable(GL.GL_NORMALIZE);
-        gl.glDisable(GL.GL_LINE_STIPPLE);
+        gl.glDisable(GL2.GL_NORMALIZE);
+        gl.glDisable(GL2.GL_LINE_STIPPLE);
         gl.glDisable(GL.GL_DITHER);
 
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-        gl.glEnable(GL.GL_RESCALE_NORMAL);
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glEnable(GL2.GL_RESCALE_NORMAL);
         gl.glEnable(GL.GL_MULTISAMPLE);
 
     }
@@ -235,8 +236,8 @@ public class RendererOpenGL2 extends Renderer
         Require.notNull(projection, "projection");
         Require.notNull(view, "view");
 
-        final GL gl = getGL();
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        final GL2 gl = getGL();
+        gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadMatrixf(projection.getColumnMajor(), 0);
 
         this.viewTransform.set(view);
@@ -267,14 +268,14 @@ public class RendererOpenGL2 extends Renderer
         {
             final int mode = light.getMode();
 
-            final GL gl = getGL();
+            final GL2 gl = getGL();
 
-            final int glLight = GL.GL_LIGHT0 + index;
+            final int glLight = GL2.GL_LIGHT0 + index;
             commitModelViewMatrix(gl, transform);
             
             final float[] pos = (mode == Light.DIRECTIONAL) ?
                 LIGHT_DIRECTIONAL : LIGHT_POSITIONAL;
-            gl.glLightfv(glLight, GL.GL_POSITION, pos, 0);
+            gl.glLightfv(glLight, GL2.GL_POSITION, pos, 0);
 
             final float[] color = argbAsRGBVolatile(light.getColor(),
                     light.getIntensity());
@@ -287,23 +288,23 @@ public class RendererOpenGL2 extends Renderer
             final float[] specularColor = (mode == Light.AMBIENT) ?
                 black : color;
 
-            gl.glLightfv(glLight, GL.GL_AMBIENT, ambientColor, 0);
-            gl.glLightfv(glLight, GL.GL_DIFFUSE, diffuseColor, 0);
-            gl.glLightfv(glLight, GL.GL_SPECULAR, specularColor, 0);
+            gl.glLightfv(glLight, GL2.GL_AMBIENT, ambientColor, 0);
+            gl.glLightfv(glLight, GL2.GL_DIFFUSE, diffuseColor, 0);
+            gl.glLightfv(glLight, GL2.GL_SPECULAR, specularColor, 0);
 
             final float spotExponent = (mode == Light.SPOT) ?
                 light.getSpotExponent() : 0;
             final float spotCutoff = (mode == Light.SPOT) ?
                 light.getSpotAngle() : 180;
 
-            gl.glLightf(glLight, GL.GL_SPOT_EXPONENT, spotExponent);
-            gl.glLightf(glLight, GL.GL_SPOT_CUTOFF, spotCutoff);
+            gl.glLightf(glLight, GL2.GL_SPOT_EXPONENT, spotExponent);
+            gl.glLightf(glLight, GL2.GL_SPOT_CUTOFF, spotCutoff);
 
-            gl.glLightf(glLight, GL.GL_CONSTANT_ATTENUATION,
+            gl.glLightf(glLight, GL2.GL_CONSTANT_ATTENUATION,
                     light.getConstantAttenuation());
-            gl.glLightf(glLight, GL.GL_LINEAR_ATTENUATION,
+            gl.glLightf(glLight, GL2.GL_LINEAR_ATTENUATION,
                     light.getLinearAttenuation());
-            gl.glLightf(glLight, GL.GL_QUADRATIC_ATTENUATION,
+            gl.glLightf(glLight, GL2.GL_QUADRATIC_ATTENUATION,
                     light.getQuadraticAttenuation());
         }
 
@@ -324,22 +325,22 @@ public class RendererOpenGL2 extends Renderer
 
             if (!enable)
             {
-                gl.glDisable(GL.GL_LIGHT0 + i);
+                gl.glDisable(GL2.GL_LIGHT0 + i);
             }
             else
             {
-                gl.glEnable(GL.GL_LIGHT0 + i);
+                gl.glEnable(GL2.GL_LIGHT0 + i);
                 ++numEnabled;
             }
         }
         
         if (numEnabled == 0)
         {
-            gl.glDisable(GL.GL_LIGHTING);
+            gl.glDisable(GL2.GL_LIGHTING);
         }
         else
         {
-            gl.glEnable(GL.GL_LIGHTING);
+            gl.glEnable(GL2.GL_LIGHTING);
         }
     }
 
@@ -350,14 +351,14 @@ public class RendererOpenGL2 extends Renderer
         Require.notNull(primitives, "primitives");
         Require.notNull(appearance, "appearance");
 
-        final GL gl = getGL();
+        final GL2 gl = getGL();
         if (appearance.getMaterial() != null)
         {
             selectLights(gl, scope);
         }
         else
         {
-            gl.glDisable(GL.GL_LIGHTING);
+            gl.glDisable(GL2.GL_LIGHTING);
         }
         setModelTransform(transform);
         setAppearance(gl, appearance);
@@ -384,9 +385,9 @@ public class RendererOpenGL2 extends Renderer
             case Fog.LINEAR:
                 return GL.GL_LINEAR;
             case Fog.EXPONENTIAL:
-                return GL.GL_EXP;
+                return GL2.GL_EXP;
             case Fog.EXPONENTIAL_SQUARED:
-                return GL.GL_EXP2;
+                return GL2.GL_EXP2;
             default:
                 throw new UnsupportedOperationException("mode is not valid");
         }
@@ -478,7 +479,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setCompositingMode(GL gl, CompositingMode compositingMode)
+    private final void setCompositingMode(GL2 gl, CompositingMode compositingMode)
     {
         if (compositingMode != null)
         {
@@ -487,11 +488,11 @@ public class RendererOpenGL2 extends Renderer
             {
                 gl.glAlphaFunc(testFuncAsGLEnum(compositingMode.getAlphaTest()),
                         alphaThreshold);
-                gl.glEnable(GL.GL_ALPHA_TEST);
+                gl.glEnable(GL2.GL_ALPHA_TEST);
             }
             else
             {
-                gl.glDisable(GL.GL_ALPHA_TEST);
+                gl.glDisable(GL2.GL_ALPHA_TEST);
             }
 
             if (compositingMode.isDepthTestEnabled())
@@ -616,7 +617,7 @@ public class RendererOpenGL2 extends Renderer
         {
             gl.glColorMask(true, true, true, true);
             
-            gl.glDisable(GL.GL_ALPHA_TEST);
+            gl.glDisable(GL2.GL_ALPHA_TEST);
             gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
             gl.glDisable(GL.GL_BLEND);
             gl.glDisable(GL.GL_STENCIL_TEST);
@@ -627,7 +628,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setPolygonMode(GL gl, PolygonMode polygonMode)
+    private final void setPolygonMode(GL2 gl, PolygonMode polygonMode)
     {
         if (polygonMode != null)
         {
@@ -658,12 +659,12 @@ public class RendererOpenGL2 extends Renderer
             {
                 case PolygonMode.SHADE_FLAT:
                 {
-                    gl.glShadeModel(GL.GL_FLAT);
+                    gl.glShadeModel(GL2.GL_FLAT);
                     break;
                 }
                 case PolygonMode.SHADE_SMOOTH:
                 {
-                    gl.glShadeModel(GL.GL_SMOOTH);
+                    gl.glShadeModel(GL2.GL_SMOOTH);
                     break;
                 }
             }
@@ -684,100 +685,100 @@ public class RendererOpenGL2 extends Renderer
 
             if (polygonMode.isPerspectiveCorrectionEnabled())
             {
-                gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+                gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
             }
             else
             {
-                gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+                gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
             }
 
             if (polygonMode.isLocalCameraLightingEnabled())
             {
-                gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+                gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
             }
             else
             {
-                gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_FALSE);
+                gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_FALSE);
             }
 
             if (polygonMode.isTwoSidedLightingEnabled())
             {
-                gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
+                gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
             }
             else
             {
-                gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
+                gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
             }
         }
         else
         {
             gl.glCullFace(GL.GL_BACK);
-            gl.glShadeModel(GL.GL_SMOOTH);
+            gl.glShadeModel(GL2.GL_SMOOTH);
             gl.glFrontFace(GL.GL_CCW);
             
             gl.glEnable(GL.GL_CULL_FACE);
 
             //Default to off to emulate GLES
-            gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+            gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
             //Desktop defaults to always perspective correct
-            gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+            gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 
-            gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
+            gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
         }
     }
 
-    private final void setFog(GL gl, Fog fog)
+    private final void setFog(GL2 gl, Fog fog)
     {
         if (fog != null)
         {
             if (true)
             {
-                gl.glFogf(GL.GL_FOG_MODE,
+                gl.glFogf(GL2.GL_FOG_MODE,
                         fogModeAsGLEnum(fog.getMode()));
-                gl.glFogfv(GL.GL_FOG_COLOR,
+                gl.glFogfv(GL2.GL_FOG_COLOR,
                         argbAsRGBAVolatile(fog.getColor()), 0);
-                gl.glFogf(GL.GL_FOG_START, fog.getNearDistance());
-                gl.glFogf(GL.GL_FOG_END, fog.getFarDistance());
-                gl.glFogf(GL.GL_FOG_DENSITY, fog.getDensity());
+                gl.glFogf(GL2.GL_FOG_START, fog.getNearDistance());
+                gl.glFogf(GL2.GL_FOG_END, fog.getFarDistance());
+                gl.glFogf(GL2.GL_FOG_DENSITY, fog.getDensity());
             }
             
-            gl.glEnable(GL.GL_FOG);
+            gl.glEnable(GL2.GL_FOG);
         }
         else
         {
-            gl.glDisable(GL.GL_FOG);
+            gl.glDisable(GL2.GL_FOG);
         }
     }
 
-    private final void setMaterial(GL gl, Material material)
+    private final void setMaterial(GL2 gl, Material material)
     {
         if (material != null)
         {
             if (material.isVertexColorTrackingEnabled())
             {
-                gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+                gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
                 //skip ambient and diffuse if color tracking
-                gl.glEnable(GL.GL_COLOR_MATERIAL);
+                gl.glEnable(GL2.GL_COLOR_MATERIAL);
             }
             else
             {
-                gl.glDisable(GL.GL_COLOR_MATERIAL);
-                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                gl.glDisable(GL2.GL_COLOR_MATERIAL);
+                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT,
                         argbAsRGBAVolatile(material.getColor(Material.AMBIENT)), 0);
-                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,
+                gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
                         argbAsRGBAVolatile(material.getColor(Material.DIFFUSE)), 0);
             }
             
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION,
                     argbAsRGBAVolatile(material.getColor(Material.EMISSIVE)), 0);
-            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+            gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR,
                     argbAsRGBAVolatile(material.getColor(Material.SPECULAR)), 0);
-            gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS,
+            gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS,
                     material.getShininess());
         }
         else
         {
-            gl.glDisable(GL.GL_COLOR_MATERIAL);
+            gl.glDisable(GL2.GL_COLOR_MATERIAL);
         }
     }
 
@@ -807,7 +808,7 @@ public class RendererOpenGL2 extends Renderer
 
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData
     {
-        abstract void upload(RendererOpenGL2 renderer, GL gl);
+        abstract void upload(RendererOpenGL2 renderer, GL2 gl);
     }
 
     private static final class Image2DRendererData extends ImageBaseRendererData
@@ -821,7 +822,7 @@ public class RendererOpenGL2 extends Renderer
             this.image = image;
         }
 
-        void upload(RendererOpenGL2 renderer, GL gl)
+        void upload(RendererOpenGL2 renderer, GL2 gl)
         {
             boolean firstUpload = false;
             if (glTextureName == 0)
@@ -837,7 +838,7 @@ public class RendererOpenGL2 extends Renderer
             if (needsUpdate)
             {
                 //don't use a palette during the decode
-                gl.glPixelTransferi(GL.GL_MAP_COLOR, GL.GL_FALSE);
+                gl.glPixelTransferi(GL2.GL_MAP_COLOR, GL.GL_FALSE);
                 //always use 4 byte aligned data
                 gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 4);
 
@@ -856,7 +857,7 @@ public class RendererOpenGL2 extends Renderer
                     case ImageBase.ALPHA:
                     {
                         glInternalFormat = lossless ?
-                            GL.GL_ALPHA : GL.GL_COMPRESSED_ALPHA;
+                            GL.GL_ALPHA : GL2.GL_COMPRESSED_ALPHA;
                         glFormat = GL.GL_ALPHA;
                         glDataType = GL.GL_UNSIGNED_BYTE;
                         break;
@@ -864,7 +865,7 @@ public class RendererOpenGL2 extends Renderer
                     case ImageBase.LUMINANCE:
                     {
                         glInternalFormat = lossless ?
-                            GL.GL_LUMINANCE : GL.GL_COMPRESSED_LUMINANCE;
+                            GL.GL_LUMINANCE : GL2.GL_COMPRESSED_LUMINANCE;
                         glFormat = GL.GL_LUMINANCE;
                         glDataType = GL.GL_UNSIGNED_BYTE;
                         break;
@@ -873,7 +874,7 @@ public class RendererOpenGL2 extends Renderer
                     {
                         glInternalFormat = lossless ?
                             GL.GL_LUMINANCE_ALPHA :
-                            GL.GL_COMPRESSED_LUMINANCE_ALPHA;
+                            GL2.GL_COMPRESSED_LUMINANCE_ALPHA;
                         glFormat = GL.GL_LUMINANCE_ALPHA;
                         glDataType = GL.GL_UNSIGNED_BYTE;
                         break;
@@ -892,7 +893,7 @@ public class RendererOpenGL2 extends Renderer
                             }
                             else
                             {
-                                glInternalFormat = GL.GL_COMPRESSED_RGB;
+                                glInternalFormat = GL2.GL_COMPRESSED_RGB;
                             }
                         }
                         glFormat = GL.GL_RGB;
@@ -913,7 +914,7 @@ public class RendererOpenGL2 extends Renderer
                             }
                             else
                             {
-                                glInternalFormat = GL.GL_COMPRESSED_RGBA;
+                                glInternalFormat = GL2.GL_COMPRESSED_RGBA;
                             }
                         }
                         glFormat = GL.GL_RGBA;
@@ -923,7 +924,7 @@ public class RendererOpenGL2 extends Renderer
                     case ImageBase.RGB565:
                     {
                         glInternalFormat = lossless ?
-                            GL.GL_RGB : GL.GL_COMPRESSED_RGB;
+                            GL.GL_RGB : GL2.GL_COMPRESSED_RGB;
                         glFormat = GL.GL_RGB;
                         glDataType = GL.GL_UNSIGNED_SHORT_5_6_5;
                         break;
@@ -931,7 +932,7 @@ public class RendererOpenGL2 extends Renderer
                     case ImageBase.RGBA5551:
                     {
                         glInternalFormat = lossless ?
-                            GL.GL_RGB5_A1 : GL.GL_COMPRESSED_RGBA;
+                            GL.GL_RGB5_A1 : GL2.GL_COMPRESSED_RGBA;
                         glFormat = GL.GL_RGBA;
                         glDataType = GL.GL_UNSIGNED_SHORT_5_5_5_1;
                         break;
@@ -939,7 +940,7 @@ public class RendererOpenGL2 extends Renderer
                     case ImageBase.RGBA4444:
                     {
                         glInternalFormat = lossless ?
-                            GL.GL_RGBA4 : GL.GL_COMPRESSED_RGBA;
+                            GL.GL_RGBA4 : GL2.GL_COMPRESSED_RGBA;
                         glFormat = GL.GL_RGBA;
                         glDataType = GL.GL_UNSIGNED_SHORT_4_4_4_4;
                         break;
@@ -1010,7 +1011,7 @@ public class RendererOpenGL2 extends Renderer
 
     private static abstract class TextureRendererData extends Texture.RendererData
     {
-        abstract void upload(RendererOpenGL2 renderer, GL gl);
+        abstract void upload(RendererOpenGL2 renderer, GL2 gl);
     }
 
     private static final class Texture2DRendererData extends TextureRendererData
@@ -1170,27 +1171,27 @@ public class RendererOpenGL2 extends Renderer
             {
                 case TextureCombiner.ADD:
                 {
-                    return GL.GL_ADD;
+                    return GL2.GL_ADD;
                 }
                 case TextureCombiner.ADD_SIGNED:
                 {
-                    return GL.GL_ADD_SIGNED;
+                    return GL2.GL_ADD_SIGNED;
                 }
                 case TextureCombiner.DOT3_RGB:
                 {
-                    return GL.GL_DOT3_RGB;
+                    return GL2.GL_DOT3_RGB;
                 }
                 case TextureCombiner.DOT3_RGBA:
                 {
-                    return GL.GL_DOT3_RGBA;
+                    return GL2.GL_DOT3_RGBA;
                 }
                 case TextureCombiner.INTERPOLATE:
                 {
-                    return GL.GL_INTERPOLATE;
+                    return GL2.GL_INTERPOLATE;
                 }
                 case TextureCombiner.MODULATE:
                 {
-                    return GL.GL_MODULATE;
+                    return GL2.GL_MODULATE;
                 }
                 case TextureCombiner.REPLACE:
                 {
@@ -1198,7 +1199,7 @@ public class RendererOpenGL2 extends Renderer
                 }
                 case TextureCombiner.SUBTRACT:
                 {
-                    return GL.GL_SUBTRACT;
+                    return GL2.GL_SUBTRACT;
                 }
                 default:
                 {
@@ -1213,15 +1214,15 @@ public class RendererOpenGL2 extends Renderer
             {
                 case TextureCombiner.CONSTANT:
                 {
-                    return GL.GL_CONSTANT;
+                    return GL2.GL_CONSTANT;
                 }
                 case TextureCombiner.PRIMARY:
                 {
-                    return GL.GL_PRIMARY_COLOR;
+                    return GL2.GL_PRIMARY_COLOR;
                 }
                 case TextureCombiner.PREVIOUS:
                 {
-                    return GL.GL_PREVIOUS;
+                    return GL2.GL_PREVIOUS;
                 }
                 case TextureCombiner.TEXTURE:
                 {
@@ -1270,7 +1271,7 @@ public class RendererOpenGL2 extends Renderer
                 srcAlpha[i] = combinerSourceAsGLenum(alphaSrc);
             }
             
-            glTexEnvMode = GL.GL_COMBINE;
+            glTexEnvMode = GL2.GL_COMBINE;
         }
 
         private void updateBlending(int blending)
@@ -1280,7 +1281,7 @@ public class RendererOpenGL2 extends Renderer
             {
                 case Texture2D.FUNC_ADD:
                 {
-                    envMode = GL.GL_ADD;
+                    envMode = GL2.GL_ADD;
                     break;
                 }
                 case Texture2D.FUNC_BLEND:
@@ -1290,12 +1291,12 @@ public class RendererOpenGL2 extends Renderer
                 }
                 case Texture2D.FUNC_DECAL:
                 {
-                    envMode = GL.GL_DECAL;
+                    envMode = GL2.GL_DECAL;
                     break;
                 }
                 case Texture2D.FUNC_MODULATE:
                 {
-                    envMode = GL.GL_MODULATE;
+                    envMode = GL2.GL_MODULATE;
                     break;
                 }
                 default:
@@ -1306,14 +1307,14 @@ public class RendererOpenGL2 extends Renderer
             this.glTexEnvMode = envMode;
         }
 
-        private static final void glTexEnv(GL gl, int pname, int param)
+        private static final void glTexEnv(GL2 gl, int pname, int param)
         {
-            gl.glTexEnvi(GL.GL_TEXTURE_ENV, pname, param);
+            gl.glTexEnvi(GL2.GL_TEXTURE_ENV, pname, param);
         }
 
-        private static final void glTexEnv(GL gl, int pname, float[] param)
+        private static final void glTexEnv(GL2 gl, int pname, float[] param)
         {
-            gl.glTexEnvfv(GL.GL_TEXTURE_ENV, pname, param, 0);
+            gl.glTexEnvfv(GL2.GL_TEXTURE_ENV, pname, param, 0);
         }
 
         private static final void glTexParameter2D(GL gl, int pname, float param)
@@ -1327,7 +1328,7 @@ public class RendererOpenGL2 extends Renderer
         }
 
         @Override
-        void upload(RendererOpenGL2 renderer, GL gl)
+        void upload(RendererOpenGL2 renderer, GL2 gl)
         {
             if (needsUpdate)
             {
@@ -1373,21 +1374,21 @@ public class RendererOpenGL2 extends Renderer
             glTexParameter2D(gl, GL.GL_TEXTURE_WRAP_S, glWrapS);
             glTexParameter2D(gl, GL.GL_TEXTURE_WRAP_T, glWrapT);
 
-            glTexEnv(gl, GL.GL_TEXTURE_ENV_COLOR, glTexEnvColor);
-            glTexEnv(gl, GL.GL_TEXTURE_ENV_MODE, glTexEnvMode);
-            if (glTexEnvMode == GL.GL_COMBINE)
+            glTexEnv(gl, GL2.GL_TEXTURE_ENV_COLOR, glTexEnvColor);
+            glTexEnv(gl, GL2.GL_TEXTURE_ENV_MODE, glTexEnvMode);
+            if (glTexEnvMode == GL2.GL_COMBINE)
             {
-                glTexEnv(gl, GL.GL_COMBINE_RGB, glCombineRGB);
-                glTexEnv(gl, GL.GL_COMBINE_ALPHA, glCombineAlpha);
-                glTexEnv(gl, GL.GL_RGB_SCALE, glRGBScale);
-                glTexEnv(gl, GL.GL_ALPHA_SCALE, glAlphaScale);
+                glTexEnv(gl, GL2.GL_COMBINE_RGB, glCombineRGB);
+                glTexEnv(gl, GL2.GL_COMBINE_ALPHA, glCombineAlpha);
+                glTexEnv(gl, GL2.GL_RGB_SCALE, glRGBScale);
+                glTexEnv(gl, GL2.GL_ALPHA_SCALE, glAlphaScale);
 
                 for (int i = 0; i < 3; ++i)
                 {
-                    glTexEnv(gl, GL.GL_OPERAND0_RGB + i, operandRGB[i]);
-                    glTexEnv(gl, GL.GL_SRC0_RGB + i, srcRGB[i]);
-                    glTexEnv(gl, GL.GL_OPERAND0_ALPHA + i, operandAlpha[i]);
-                    glTexEnv(gl, GL.GL_SRC0_ALPHA + i, srcAlpha[i]);
+                    glTexEnv(gl, GL2.GL_OPERAND0_RGB + i, operandRGB[i]);
+                    glTexEnv(gl, GL2.GL_SRC0_RGB + i, srcRGB[i]);
+                    glTexEnv(gl, GL2.GL_OPERAND0_ALPHA + i, operandAlpha[i]);
+                    glTexEnv(gl, GL2.GL_SRC0_ALPHA + i, srcAlpha[i]);
                 }
             }
 
@@ -1401,7 +1402,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setTexture(GL gl, int texunit, Texture texture)
+    private final void setTexture(GL2 gl, int texunit, Texture texture)
     {
         gl.glActiveTexture(GL.GL_TEXTURE0 + texunit);
         if (texture != null)
@@ -1431,13 +1432,13 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setAppearanceBase(GL gl, AppearanceBase appearance)
+    private final void setAppearanceBase(GL2 gl, AppearanceBase appearance)
     {
         setCompositingMode(gl, appearance.getCompositingMode());
         setPolygonMode(gl, appearance.getPolygonMode());
     }
 
-    private final void setAppearance(GL gl, Appearance appearance)
+    private final void setAppearance(GL2 gl, Appearance appearance)
     {
         setAppearanceBase(gl, appearance);
         setFog(gl, appearance.getFog());
@@ -1449,7 +1450,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void setVertexBuffer(GL gl, VertexBuffer vertices, float alphaFactor)
+    private void setVertexBuffer(GL2 gl, VertexBuffer vertices, float alphaFactor)
     {
         final float rgba[] = argbAsRGBAVolatile(vertices.getDefaultColor(), alphaFactor);
         gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -1477,7 +1478,7 @@ public class RendererOpenGL2 extends Renderer
                     //FIXED is not supported in GL
                     //rescale and treat like INT
                     positionScale *= 1.0f / 65556;
-                    glType = GL.GL_INT;
+                    glType = GL2.GL_INT;
                     break;
                 }
                 case VertexArray.SHORT:
@@ -1540,11 +1541,11 @@ public class RendererOpenGL2 extends Renderer
 
                 gl.glNormalPointer(glType, normals.getVertexByteStride(),
                         normals.getBuffer());
-                gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+                gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
             else
             {
-                gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+                gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
             }
         }
 
@@ -1575,11 +1576,11 @@ public class RendererOpenGL2 extends Renderer
 
                 gl.glColorPointer(colors.getComponentCount(), glType,
                         colors.getVertexByteStride(), colors.getBuffer());
-                gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+                gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             }
             else
             {
-                gl.glDisableClientState(GL.GL_COLOR_ARRAY);
+                gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
             }
         }
 
@@ -1611,7 +1612,7 @@ public class RendererOpenGL2 extends Renderer
                             //FIXED is not supported in GL
                             //rescale and treat like INT
                             texcoordScale[texunit] *= 1.0f / 65556;
-                            glType = GL.GL_INT;
+                            glType = GL2.GL_INT;
                             break;
                         }
                         case VertexArray.SHORT:
@@ -1642,11 +1643,11 @@ public class RendererOpenGL2 extends Renderer
 
                     gl.glTexCoordPointer(texcoords.getComponentCount(), glType,
                             stride, buffer);
-                    gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+                    gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
                 }
                 else
                 {
-                    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+                    gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
                 }
             }
         }
@@ -1689,7 +1690,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private void commitModelViewMatrix(GL gl, Transform local)
+    private void commitModelViewMatrix(GL2 gl, Transform local)
     {
         final Transform transform = modelViewTransform;
         transform.set(viewTransform);
@@ -1697,11 +1698,11 @@ public class RendererOpenGL2 extends Renderer
         {
             transform.postMultiply(local);
         }
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
 
-    private void commitModelViewMatrix(GL gl)
+    private void commitModelViewMatrix(GL2 gl)
     {
         final Transform transform = modelViewTransform;
         transform.set(viewTransform);
@@ -1710,11 +1711,11 @@ public class RendererOpenGL2 extends Renderer
         transform.postTranslate(bias[0], bias[1], bias[2]);
         final float scale = positionScale;
         transform.postScale(scale, scale, scale);
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadMatrixf(transform.getColumnMajor(), 0);
     }
 
-    private void commitTextureMatrices(GL gl)
+    private void commitTextureMatrices(GL2 gl)
     {
         gl.glMatrixMode(GL.GL_TEXTURE);
         final int maxUnits = maxTextureUnits;
@@ -1731,7 +1732,7 @@ public class RendererOpenGL2 extends Renderer
         }
     }
     
-    private void render(GL gl, IndexBuffer primitives)
+    private void render(GL2 gl, IndexBuffer primitives)
     {
         //commit the texture unit matrices
         commitTextureMatrices(gl);

@@ -28,7 +28,7 @@
 package vertexbuffer.opengl;
 
 import java.awt.Graphics;
-import javax.media.opengl.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;

@@ -33,7 +33,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.media.opengl.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;

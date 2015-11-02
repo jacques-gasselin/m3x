@@ -31,7 +31,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import javax.media.opengl.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;

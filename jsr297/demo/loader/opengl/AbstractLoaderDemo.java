@@ -30,7 +30,7 @@ package loader.opengl;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.media.opengl.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;

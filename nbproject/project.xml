@@ -277,7 +277,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/src</package-root>
-                <classpath mode="compile">lib/jogl/jogl.jar:lib/vecmath/vecmath.jar:jsr297/build:tools/build:lib/taglets/taglets.jar</classpath>
+                <classpath mode="compile">lib/vecmath/vecmath.jar:jsr297/build:tools/build:lib/taglets/taglets.jar:lib/jogl/jogl-all.jar</classpath>
                 <built-to>jsr297/build</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.8</source-level>
@@ -291,7 +291,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>jsr297/demo</package-root>
-                <classpath mode="compile">jsr297/build:tools/build:lib/vecmath/vecmath.jar:lib/jogl/jogl.jar</classpath>
+                <classpath mode="compile">jsr297/build:tools/build:lib/vecmath/vecmath.jar:lib/jogl/jogl-all.jar</classpath>
                 <built-to>jsr297/build</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.8</source-level>

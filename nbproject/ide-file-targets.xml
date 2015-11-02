@@ -6,7 +6,7 @@
     <path id="lib.path">
         <pathelement location="tools/dist/m3x.jar"/>
         <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
-        <pathelement location="${lib.dir}/jogl/jogl.jar"/>
+        <pathelement location="${lib.dir}/jogl/jogl-all.jar"/>
         <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
     </path>
     <path id="src.path">
@@ -21,7 +21,11 @@
     <target name="compile-selected-files-in-demo">
         <fail unless="files">Must set property 'files'</fail>
         <mkdir dir="jsr297/demo/build"/>
-        <javac destdir="jsr297/demo/build" includes="${files}" source="1.5" srcdir="jsr297/demo">
+        <javac destdir="jsr297/demo/build"
+               includes="${files}"
+               source="1.8"
+               srcdir="jsr297/demo"
+               includeantruntime="false">
             <classpath refid="demo.path"/>
         </javac>
     </target>

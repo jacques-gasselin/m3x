@@ -27,13 +27,15 @@
 
 package javax.microedition.m3g.opengl;
 
-import javax.media.opengl.DebugGL;
+import com.jogamp.opengl.DebugGL2;
 import javax.microedition.m3g.RendererOpenGL2;
 import javax.microedition.m3g.Renderer;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLCapabilitiesImmutable;
 import javax.microedition.m3g.AbstractRenderTarget;
 
 /**
@@ -44,7 +46,7 @@ public class GLRenderTarget extends AbstractRenderTarget
     private GLAutoDrawable drawable;
     private RendererOpenGL2 renderer;
     private final boolean debug;
-    private DebugGL debugGL;
+    private DebugGL2 debugGL;
     private GL lastGL;
 
     public GLRenderTarget(GLAutoDrawable drawable)
@@ -62,23 +64,23 @@ public class GLRenderTarget extends AbstractRenderTarget
     
     public int getWidth()
     {
-        return drawable.getWidth();
+        return drawable.getNativeSurface().getSurfaceWidth();
     }
 
     public int getHeight()
     {
-        return drawable.getHeight();
+        return drawable.getNativeSurface().getSurfaceHeight();
     }
 
     public boolean isDepthBuffered()
     {
-        GLCapabilities caps = drawable.getChosenGLCapabilities();
+        GLCapabilitiesImmutable caps = drawable.getChosenGLCapabilities();
         return caps.getDepthBits() > 0;
     }
 
     public boolean isStencilBuffered()
     {
-        GLCapabilities caps = drawable.getChosenGLCapabilities();
+        GLCapabilitiesImmutable caps = drawable.getChosenGLCapabilities();
         return caps.getStencilBits() > 0;
     }
 
@@ -96,10 +98,10 @@ public class GLRenderTarget extends AbstractRenderTarget
         requireValidContext(context);
         
         context.makeCurrent();
-        GL gl = context.getGL();
+        GL2 gl = (GL2) context.getGL();
         if (lastGL != gl)
         {
-            debugGL = new DebugGL(gl);
+            debugGL = new DebugGL2(gl);
             lastGL = gl;
             if (debug)
             {

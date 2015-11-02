@@ -28,7 +28,7 @@
 package camera.opengl;
 
 import java.awt.Graphics;
-import javax.media.opengl.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
