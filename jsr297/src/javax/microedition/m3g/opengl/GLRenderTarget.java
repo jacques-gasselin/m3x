@@ -31,7 +31,6 @@ import com.jogamp.opengl.DebugGL2;
 import javax.microedition.m3g.RendererOpenGL2;
 import javax.microedition.m3g.Renderer;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -62,22 +61,36 @@ public class GLRenderTarget extends AbstractRenderTarget
         renderer = new RendererOpenGL2();
     }
     
+    @Override
     public int getWidth()
     {
-        return drawable.getNativeSurface().getSurfaceWidth();
+        return drawable.getSurfaceWidth();
     }
 
+    @Override
     public int getHeight()
     {
-        return drawable.getNativeSurface().getSurfaceHeight();
+        return drawable.getSurfaceHeight();
     }
 
+    @Override
+    public float getContentScale()
+    {
+        final int[] dims = new int[2];
+        dims[0] = 1;
+        dims[1] = 1;
+        final int[] windowDims = drawable.getNativeSurface().convertToPixelUnits(dims);
+        return windowDims[0];
+    }
+    
+    @Override
     public boolean isDepthBuffered()
     {
         GLCapabilitiesImmutable caps = drawable.getChosenGLCapabilities();
         return caps.getDepthBits() > 0;
     }
 
+    @Override
     public boolean isStencilBuffered()
     {
         GLCapabilitiesImmutable caps = drawable.getChosenGLCapabilities();
@@ -92,6 +105,7 @@ public class GLRenderTarget extends AbstractRenderTarget
         }
     }
 
+    @Override
     public Renderer bindRenderer()
     {
         final GLContext context = drawable.getContext();
@@ -101,10 +115,10 @@ public class GLRenderTarget extends AbstractRenderTarget
         GL2 gl = (GL2) context.getGL();
         if (lastGL != gl)
         {
-            debugGL = new DebugGL2(gl);
             lastGL = gl;
             if (debug)
             {
+                debugGL = new DebugGL2(gl);
                 gl = debugGL;
             }
         }
@@ -112,6 +126,7 @@ public class GLRenderTarget extends AbstractRenderTarget
         return renderer;
     }
 
+    @Override
     public void releaseRenderer()
     {
         //disable any more rendering

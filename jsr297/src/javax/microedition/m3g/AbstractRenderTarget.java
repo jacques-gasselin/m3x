@@ -36,6 +36,7 @@ public abstract class AbstractRenderTarget
 {
     public abstract int getWidth();
     public abstract int getHeight();
+    public abstract float getContentScale();
     
     public abstract boolean isDepthBuffered();
     public abstract boolean isStencilBuffered();

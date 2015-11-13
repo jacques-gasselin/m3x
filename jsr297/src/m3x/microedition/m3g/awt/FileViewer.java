@@ -66,7 +66,7 @@ public class FileViewer extends BaseFrame
     private static final long serialVersionUID = 1L;
 
     private final FileViewerCanvas canvas;
-    private static final GLCapabilities GL_CAPS = new GLCapabilities(GLProfile.getDefault());
+    private static final GLCapabilities GL_CAPS = new GLCapabilities(GLProfile.getGL2ES1());
     static
     {
         GL_CAPS.setSampleBuffers(true);

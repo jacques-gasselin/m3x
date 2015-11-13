@@ -706,7 +706,11 @@ public final class Graphics3D
         
         if (this.renderer != null)
         {
-            this.renderer.setViewport(x, y, width, height);
+            float scale = renderTarget.getContentScale();
+            this.renderer.setViewport((int)(x * scale),
+                                      (int)(y * scale),
+                                      (int)(width * scale),
+                                      (int)(height * scale));
         }
     }
 }

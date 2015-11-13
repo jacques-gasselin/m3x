@@ -183,7 +183,12 @@ public class Object3D
         return null;
     }
 
-    public Object3D[] findAll(Class type)
+    /**
+     *
+     * @param type
+     * @return
+     */
+    public Object3D[] findAll(Class<?> type)
     {
         final HashSet<Object3D> closedList = new HashSet<Object3D>();
         final ArrayList<Object3D> openList = new ArrayList<Object3D>();

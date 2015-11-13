@@ -220,18 +220,12 @@ public class CameraControllerDemo extends BaseFrame
             g2d.drawString("- Alt+LMB emulates MMB", 15, 60);
         }
 
+        @Override
         public void run()
         {
             while (!isClosed())
             {
-                try
-                {
-                    Thread.sleep(1000 / getRefreshRate());
-                }
-                catch (InterruptedException e)
-                {
-                    //e.printStackTrace();
-                }
+                Thread.yield();
                 repaint();
             }
         }

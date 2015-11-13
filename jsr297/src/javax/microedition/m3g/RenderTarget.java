@@ -44,12 +44,20 @@ public class RenderTarget extends AbstractRenderTarget
 
     }
     
+    @Override
     public int getWidth()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public int getHeight()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public float getContentScale()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
