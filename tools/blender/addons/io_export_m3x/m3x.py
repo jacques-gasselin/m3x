@@ -1,11 +1,11 @@
 #!BPY
 """
 Name: 'm3x'
-Blender: 249
+Blender: 276
 Group: 'Export'
 Tooltip: 'Export to m3x, the xml interchange format for the mobile 3d graphics API M3G'
 
-Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+Copyright (c) 2008-2015, Jacques Gasselin de Richebourg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
