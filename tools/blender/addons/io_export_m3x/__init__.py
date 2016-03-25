@@ -35,7 +35,7 @@ __date__ ="$Dec 31, 2009 11:39:06 AM$"
 bl_info = {
     "name": "Mobile 3D xml interchange format (.m3x)",
     "author": "jgasseli",
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (2, 76, 0),
     "location": "File > Export > Mobile 3D xml (.m3x)",
     "description": "Exports to Mobile 3D xml interchange format",
@@ -45,6 +45,13 @@ bl_info = {
 
 import bpy
 from . import m3x
+
+class UTF8Wrapper:
+    def __init__(self, writer):
+        self.__writer = writer
+    
+    def write(self, contents):
+        self.__writer.write(bytes(contents, 'UTF-8'))
 
 
 class Operator_M3XExport( bpy.types.Operator ):
@@ -59,7 +66,7 @@ class Operator_M3XExport( bpy.types.Operator ):
     option_export_world = bpy.props.BoolProperty(
                                 name        = "Export as World",
                                 description = "Ensures all the objects are inside a world container on export",
-                                default     = True)
+                                default     = False)
 
     option_selection_only = bpy.props.BoolProperty(
                                 name        = "Export Selection only",
@@ -104,9 +111,9 @@ class Operator_M3XExport( bpy.types.Operator ):
                 if self.option_export_world:
                     converter.wrapInWorld(context.scene)
                 #pbar(0.2, "Opening destination file")
-                writer = open(filepath, "wb")
+                writer = open(self.filepath, "wb")
                 #pbar(0.3, "Serializing to destination file")
-                converter.serialize(writer)
+                converter.serialize(UTF8Wrapper(writer))
                 #pbar(0.8, "Flushing serializing buffers")
                 writer.flush()
                 #pbar(0.9, "Saving and closing destination file")

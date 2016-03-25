@@ -41,8 +41,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLProfile;
+import java.awt.Color;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
@@ -66,14 +65,8 @@ public class FileViewer extends BaseFrame
     private static final long serialVersionUID = 1L;
 
     private final FileViewerCanvas canvas;
-    private static final GLCapabilities GL_CAPS = new GLCapabilities(GLProfile.getGL2ES1());
-    static
-    {
-        GL_CAPS.setSampleBuffers(true);
-        GL_CAPS.setNumSamples(4);
-    }
 
-    private static final boolean isRenderingEnabled(Node node)
+    private static boolean isRenderingEnabled(Node node)
     {
         while (node != null)
         {
@@ -101,12 +94,11 @@ public class FileViewer extends BaseFrame
 
         private Object3D[] roots;
 
-
+        private float hue;
+        
         public FileViewerCanvas()
         {
-            super(GL_CAPS);
-            
-            renderTarget = new GLRenderTarget(this);
+            renderTarget = new GLRenderTarget(this, true);
             background = new Background();
             background.setColor(0x1f1f1f);
 
@@ -122,6 +114,30 @@ public class FileViewer extends BaseFrame
             this.roots = roots;
         }
 
+        public void paint2(Graphics g)
+        {
+            super.paint(g);
+
+            Graphics3D g3d = Graphics3D.getInstance();
+
+            try
+            {
+                g3d.bindTarget(renderTarget);
+                final int color = Color.HSBtoRGB(hue, 1.0f, 1.0f);
+                background.setColor(color);
+                hue += 0.01f;
+                g3d.clear(background);
+            }
+            catch (Throwable t)
+            {
+                t.printStackTrace();
+            }
+            finally
+            {
+                g3d.releaseTarget();
+            }
+        }
+        
         @Override
         public void paint(Graphics g)
         {
@@ -132,13 +148,14 @@ public class FileViewer extends BaseFrame
             try
             {
                 g3d.bindTarget(renderTarget);
+                
                 camera.setPerspective(50,
                         getWidth() / (float)getHeight(),
                         1.0f, 100.0f);
                 g3d.setViewport(0, 0, getWidth(), getHeight());
                 cameraController.update(1.0 / getRefreshRate());
                 g3d.setCamera(camera, cameraController.getTransform());
-
+                
                 g3d.clear(background);
                 g3d.resetLights();
 
@@ -157,7 +174,7 @@ public class FileViewer extends BaseFrame
                             world.setActiveCamera(camera);
                             camera.setTransform(cameraController.getTransform());
                             world.addChild(camera);
-                            g3d.render(world);
+                            g3d.render((Node)world, transform);
                             world.removeChild(camera);
                             world.setActiveCamera(oldCamera);
                         }
@@ -201,6 +218,7 @@ public class FileViewer extends BaseFrame
             }
         }
 
+        @Override
         public void run()
         {
             while (true)

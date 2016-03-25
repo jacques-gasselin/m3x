@@ -87,6 +87,7 @@ public class BackgroundDemo extends BaseFrame
             }
         }
 
+        @Override
         public void run()
         {
             while (!isClosed())

@@ -62,7 +62,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
     {
         private int count;
         private final IdentityHashMap<VertexArray, VertexArray> arrays =
-                new IdentityHashMap<VertexArray, VertexArray>();
+                new IdentityHashMap<>();
 
         private VertexCounter()
         {
@@ -103,7 +103,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             }
 
             //is the counter empty now?
-            if (this.arrays.size() == 0)
+            if (this.arrays.isEmpty())
             {
                 this.count = 0;
             }
@@ -127,7 +127,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             //is it the first vertex array?
             if (this.count == 0)
             {
-                if (this.arrays.size() != 0)
+                if (!this.arrays.isEmpty())
                 {
                     throw new IllegalStateException("current count is incorrect");
                 }
@@ -164,7 +164,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             return this.scale;
         }
 
-        private static final void requireArrayNotNull(VertexArray array)
+        private static void requireArrayNotNull(VertexArray array)
         {
             if (array == null)
             {
@@ -172,7 +172,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             }
         }
 
-        private static final void requireValidBias(float[] bias, VertexArray array)
+        private static void requireValidBias(float[] bias, VertexArray array)
         {
             if (array == null || bias == null)
             {
@@ -221,6 +221,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             this.scale = scale;
         }
 
+        @Override
         public void deserialise(Deserializer deserialiser)
             throws IOException
         {
@@ -229,6 +230,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
             setScale(deserialiser.readFloat());
         }
 
+        @Override
         public void serialise(Serializer serialiser)
             throws IOException
         {
@@ -300,6 +302,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         }
     }
 
+    @Override
     public int getSectionObjectType()
     {
         return ObjectTypes.VERTEX_BUFFER;
@@ -403,7 +406,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         }
     }
 
-    private final void requireValidTextureIndex(int index)
+    private void requireValidTextureIndex(int index)
     {
         if (index < 0)
         {
@@ -425,14 +428,14 @@ public class VertexBuffer extends Object3D implements SectionSerializable
         this.textureCoordinates[index].set(va, scale, bias);
     }
 
-    public void setDefaultColor(int argb)
+    public final void setDefaultColor(int argb)
     {
         this.defaultColor.set(argb);
     }
 
     public void setDefaultColor(List<Short> defaultColor)
     {
-        if (defaultColor == null || defaultColor.size() == 0)
+        if (defaultColor == null || defaultColor.isEmpty())
         {
             this.defaultColor.set(0xffffffff);
         }

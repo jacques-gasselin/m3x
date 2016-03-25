@@ -254,12 +254,21 @@
     <target name="install-blender-plugins-macosx"
             description="Installs import and export plugins for Blender on MacOSX"
             if="os.macosx">
+        <!-- For Blender 2.4* -->
         <copy todir="${user.home}/.blender/scripts"
               preservelastmodified="true">
             <fileset dir="${basedir}/blender">
                 <include name="*.py"/>
             </fileset>
         </copy>
+        <!-- For Blender 2.76 -->
+        <copy todir="${user.home}/Library/Application Support/Blender/2.76/scripts/addons"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender/addons">
+                <include name="**/*.py"/>
+            </fileset>
+        </copy>
+        
     </target>
 
 </project>

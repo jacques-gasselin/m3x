@@ -128,7 +128,7 @@ public class Dot3Demo extends BaseFrame
             dot3Combiner.setColorSource(1, TextureCombiner.TEXTURE);
             dot3Combiner.setAlphaSource(0, TextureCombiner.PREVIOUS);
             dot3Combiner.setAlphaSource(1, TextureCombiner.TEXTURE);
-            dot3Combiner.setScaling(1, 1);
+            dot3Combiner.setScaling(2, 2);
             dot3Texture.setCombiner(dot3Combiner);
 
             try
@@ -195,10 +195,17 @@ public class Dot3Demo extends BaseFrame
                 {
                     final VertexBuffer vb = plane.getVertexBuffer();
                     //color in this case is the light vector
-                    vb.setDefaultColor(xyzAsRGB(
-                            lightX,
-                            lightY,
-                            lightZ));
+                    if (dot3Enabled)
+                    {
+                        vb.setDefaultColor(xyzAsRGB(
+                                lightX,
+                                lightY,
+                                lightZ));
+                    }
+                    else
+                    {
+                        vb.setDefaultColor(0x0ffffff);
+                    }
                 }
 
                 {

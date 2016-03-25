@@ -39,7 +39,14 @@ import re
 import traceback
 import math
 import mathutils
+import os.path
 
+__logger = open(os.path.expanduser("~/M3XConverter.log"), "ab")
+def log(message):
+    global __logger
+    __logger.write(bytes(str(message) + '\n', 'UTF-8'))
+    __logger.flush()
+log("=== m3x.py ===")
 
 class Object3D(object):
     def __init__(self, idValue):
@@ -128,32 +135,32 @@ class AppearanceBase(Object3D):
                 #TODO support Shaders
                 pass
             else:
-                a = Appearance("Appearance-" + material.name + "-%d" % len(appearances.keys()))
+                materialName = ""
+                if material:
+                    materialName = material.name
+                a = Appearance("Appearance-" + materialName + "-%d" % len(appearances.keys()))
                 a.setCompositingMode(cm)
                 a.setPolygonMode(pm)
-                #get lighting material
-                a.setMaterial(Material.getSharedMaterial(material))
-                #get the texture 2D elements from the material
-                m3xTextures = []
-                #print "material", material
-                #print "textures:", material.getTextures()
-                for i, mtex in enumerate(material.textures):
-                    if material.enabledTextures:
-                        enabled = i in material.enabledTextures
-                    else:
-                        enabled = True
-                    if enabled and mtex:
-                        texture = mtex.tex
-                        m3xImage = None
-                        m3xTexture = None
-                        if texture:
-                            #convert from Blender textures
-                            m3xImage = ImageBase.getSharedImageBase(texture.image, version)
-                        if m3xImage:
-                            m3xTexture = Texture.getSharedTexture(material, mtex, m3xImage, version)
-                        if m3xTexture:
-                            m3xTextures.append(m3xTexture)
-                a.setTextures(m3xTextures)
+                if material:
+                    #get lighting material
+                    a.setMaterial(Material.getSharedMaterial(material))
+                    #get the texture 2D elements from the material
+                    m3xTextures = []
+                    #print "material", material
+                    #print "textures:", material.getTextures()
+                    for mtex in material.texture_slots:
+                        if mtex and mtex.use:
+                            texture = mtex.texture
+                            m3xImage = None
+                            m3xTexture = None
+                            if texture.type == 'IMAGE':
+                                #convert from Blender textures
+                                m3xImage = ImageBase.getSharedImageBase(texture.image, version)
+                            if m3xImage:
+                                m3xTexture = Texture.getSharedTexture(material, mtex, m3xImage, version)
+                            if m3xTexture:
+                                m3xTextures.append(m3xTexture)
+                    a.setTextures(m3xTextures)
             appearances[key] = a
         return appearances[key]
 
@@ -183,8 +190,9 @@ class Appearance(AppearanceBase):
     def serializeChildren(self, serializer):
         AppearanceBase.serializeChildren(self, serializer)
         serializer.writeReference(self.material)
-        for t in self.textures:
-            serializer.writeReference(t)
+        if self.textures:
+            for t in self.textures:
+                serializer.writeReference(t)
 
     def serialize(self, serializer):
         attr = {}
@@ -238,7 +246,7 @@ class BlenderMesh(object):
         self.indexBuffers = indexBuffers[:]
 
     def setAppearanceComponents(self, appearanceComponents):
-        self.appearanceComponents = appearanceComponents[:]
+        self.appearanceComponents = tuple(appearanceComponents)
 
 
 class CompositingMode(Object3D):
@@ -383,10 +391,10 @@ class ImageBase(Object3D):
         if key not in images:
             name = bimage.name
             stype = bimage.source
-            if stype == Blender.Image.Sources["STILL"]:
+            if stype == 'FILE':
                 #TODO support Cube images for version 2
                 im = Image2D.createImage2D(name, bimage)
-            elif stype == Blender.Image.Sources["MOVIE"]:
+            elif stype == 'MOVIE':
                 if version == 2:
                     #TODO support Dynamic images
                     pass
@@ -415,6 +423,7 @@ class Image2D(ImageBase):
         self.pixels = pixels
         
     def createImage2D(idValue, bimage):
+        log("createImage2D(" + str(bimage) + ")")
         im = Image2D("Image2D-" + idValue)
         width, height = bimage.size
         depth = bimage.depth
@@ -424,19 +433,20 @@ class Image2D(ImageBase):
         if depth == 16:
             #LUMINANCE_ALPHA ?
             pass
-        if depth in (24, 32):
-            #RGB or RGBA
-            format = ImageBase.RGBA
-            bpp = 4
-            getPixel = bimage.getPixelI
-            pixels = [0] * (width * height * bpp)
-            for y in xrange(height):
-                yOffset = width * bpp * y
-                for x in xrange(width):
-                    rgba = getPixel(x, y)
-                    offset = x * bpp + yOffset
-                    pixels[offset:offset + bpp] = rgba[:bpp]
-            im.set(format, width, height, pixels)
+        if depth == 24:
+            #RGB
+            pixels = [int(255.99 * c) for c in bimage.pixels]
+            if bimage.channels == 4:
+                #remove alpha elements
+                del pixels[3::4]
+            log("Image2D.set(" + str(format) + ", " + str(width) + ", " + str(height) + ", pixels)")
+            im.set(ImageBase.RGB, width, height, pixels)
+        if depth == 32:
+            #RGBA
+            pixels = [int(255.99 * c) for c in bimage.pixels]
+            log("Image2D.set(" + str(format) + ", " + str(width) + ", " + str(height) + ", pixels)")
+            im.set(ImageBase.RGBA, width, height, pixels)
+        log("createImage2D(" + str(bimage) + ") done")
         return im
 
     createImage2D = staticmethod(createImage2D)
@@ -549,21 +559,21 @@ class Material(Object3D):
     def getSharedMaterial(bmat):
         if bmat is None:
             return None
-        if (bmat.mode & Blender.Material.Modes.SHADELESS):
+        if bmat.use_shadeless:
             return None
         materials = Material.SHARED_MATERIALS
         key = bmat
         if key not in materials:
             name = bmat.name
             mat = Material(name)
-            diffuseRGBA = [int(round(bmat.ref * x * 255)) for x in bmat.rgbCol]
-            diffuseRGBA.append(int(round(bmat.alpha * 255)))
+            diffuseRGBA = [int(round(bmat.diffuse_intensity * x * 255.99)) for x in bmat.diffuse_color]
+            diffuseRGBA.append(int(round(bmat.alpha * 255.99)))
             mat.setDiffuse(diffuseRGBA)
-            mat.setSpecular([int(round(bmat.spec * x * 255)) for x in bmat.specCol])
+            mat.setSpecular([int(round(bmat.specular_intensity * x * 255.99)) for x in bmat.specular_color])
             #remap [1, 511] into the range [0, 128]
-            mat.setShininess(128 * (bmat.hard - 1) / 511.0)
-            mat.setEmissive([int(round(0.5 * bmat.emit * x * 255)) for x in bmat.rgbCol])
-            #TODO ambient
+            mat.setShininess(128 * (bmat.specular_hardness) / 511.0)
+            mat.setEmissive([int(round(0.5 * bmat.emit * x * 255.99)) for x in bmat.diffuse_color])
+            mat.setAmbient([int(round(bmat.ambient * x * 255.99)) for x in (1.0, 1.0, 1.0)])
             materials[key] = mat
         return materials[key]
 
@@ -611,7 +621,7 @@ class Mesh(Node):
     def serializeChildren(self, serializer):
         Node.serializeChildren(self, serializer)
         serializer.writeReference(self.vertexBuffer)
-        for i in xrange(self.submeshCount):
+        for i in range(self.submeshCount):
             ib = self.indexBuffers[i]
             ap = self.appearances[i]
             serializer.startTag("submesh")
@@ -695,7 +705,7 @@ class Texture(Transformable):
 
     def getSharedTexture(material, mtex, m3xImage, version):
         textures = Texture.SHARED_TEXTURES
-        key = (material.name, mtex.tex.name, m3xImage)
+        key = (material.name, mtex.texture.name, m3xImage)
         if key not in textures:
             if isinstance(m3xImage, Image2D):
                 tex = Texture2D.createTexture2D(material, mtex, m3xImage, version)
@@ -719,10 +729,10 @@ class Texture2D(Texture):
         Texture.__init__(self, idValue)
 
     def createTexture2D(material, mtex, m3xImage, version):
-        name = "%s-%s-%s" % (material.name, mtex.tex.name, m3xImage.id)
+        name = "%s-%s-%s" % (material.name, mtex.texture.name, m3xImage.id)
         #TODO wrap/clamp tranforms
         tex = Texture2D(name)
-        if mtex.tex.mipmap:
+        if mtex.texture.use_mipmap:
             levelFilter = Texture.FILTER_LINEAR
         else:
             levelFilter = Texture.FILTER_BASE_LEVEL
@@ -778,8 +788,8 @@ class VertexArray(Object3D):
         self.componentType = VertexArray.FLOAT
         self.scale = None
         self.bias = None
-        self.vertexCount = None
-        self.componentCount = None
+        self.vertexCount = 0
+        self.componentCount = 0
 
     def setId(self, idValue):
         self.id = idValue
@@ -788,8 +798,8 @@ class VertexArray(Object3D):
         """setVertexCount(self, int vertexCount) -> None
         Sets the vertex count of the array and implicitly
         calculates the componentCount."""
-        self.vertexCount = vertexCount
-        self.componentCount = len(self.components) / vertexCount
+        self.vertexCount = int(vertexCount)
+        self.componentCount = int(len(self.components) / vertexCount)
         self.bias = [0.0] * self.componentCount
 
     def extend(self, iterable):
@@ -804,16 +814,16 @@ class VertexArray(Object3D):
         minValues = list(components[0:componentCount])
         maxValues = list(components[0:componentCount])
         vertex = [0.0] * componentCount
-        for v in xrange(1, self.vertexCount):
+        for v in range(1, self.vertexCount):
             start = componentCount * v
             vertex[:] = components[start:start + componentCount]
-            for c in xrange(componentCount):
+            for c in range(componentCount):
                 value = vertex[c]
                 minValues[c] = min(minValues[c], value)
                 maxValues[c] = max(maxValues[c], value)
         maxDist = 0
         bias = [0.0] * componentCount
-        for c in xrange(componentCount):
+        for c in range(componentCount):
             dist = maxValues[c] - minValues[c]
             maxDist = max(maxDist, dist)
             median = (maxValues[c] + minValues[c]) / 2.0
@@ -829,10 +839,10 @@ class VertexArray(Object3D):
         if bias is None:
             bias = [0.0] * componentCount
         vertex = [0.0] * componentCount
-        for v in xrange(self.vertexCount):
+        for v in range(self.vertexCount):
             start = componentCount * v
             vertex[:] = components[start:start + componentCount]
-            for c in xrange(componentCount):
+            for c in range(componentCount):
                 #quantize
                 q = int(((vertex[c] - bias[c]) / scale) + 0.5)
                 #clamp and write back
@@ -899,6 +909,7 @@ class VertexBuffer(Object3D):
         self.colors = None
         self.normals = None
         self.texcoords = []
+        self.defaultColor = [1.0] * 4
 
     def setPositions(self, positions):
         self.positions = positions
@@ -908,7 +919,13 @@ class VertexBuffer(Object3D):
 
     def setNormals(self, normals):
         self.normals = normals
-
+        
+    def setDefaultColor(self, color):
+        self.defaultColor[:4] = color
+    
+    def setDefaultColorAlpha(self, alpha):
+        self.defaultColor[3] = alpha
+        
     def addTexcoords(self, texcoords):
         self.texcoords.append(texcoords)
 
@@ -916,7 +933,7 @@ class VertexBuffer(Object3D):
         serializer.closedTag("VertexBufferInstance", {"ref" : self.id})
         
     def serialize(self, serializer):
-        attr = {}
+        attr = {"defaultColor" : " ".join([str(int(c * 255.99)) for c in self.defaultColor])}
         self.fillAttributes(attr)
         serializer.startTag("VertexBuffer", attr)
         pos = self.positions
@@ -1017,7 +1034,7 @@ class Serializer(object):
         write = self.writer.write
         write("%s<%s" % (indent, name))
         if attr:
-            for n, v in attr.iteritems():
+            for n, v in attr.items():
                 if v is not None:
                     write(" %s=\"%s\"" % (n, str(v)))
         write(">\n")
@@ -1027,7 +1044,7 @@ class Serializer(object):
         write = self.writer.write
         write("%s<%s" % (indent, name))
         if attr:
-            for n, v in attr.iteritems():
+            for n, v in attr.items():
                 if v is not None:
                     write(" %s=\"%s\"" % (n, str(v)))
         write(" />\n")
@@ -1045,7 +1062,7 @@ class Serializer(object):
         write = self.writer.write
         write("%s<%s" % (indent, name))
         if attr:
-            for n, v in attr.iteritems():
+            for n, v in attr.items():
                 if v is not None:
                     write(" %s=\"%s\"" % (n, str(v)))
         if data:
@@ -1098,55 +1115,32 @@ class M3XConverter(object):
         PolygonMode.SHARED_MODES = {}
         Texture.SHARED_TEXTURES = {}
 
-    def getFaceCompositingMode(self, face, hasPerFaceUV):
-        modes = Blender.Mesh.FaceTranspModes
-        if hasPerFaceUV:
-            bmode = face.transp
-        else:
-            bmode = modes["SOLID"]
+    def getCompositingMode(self, bmaterial):
         alphaThreshold = 0.0
-        if bmode == modes["SOLID"]:
-            blending = CompositingMode.REPLACE
-        elif bmode == modes["ADD"]:
-            blending = CompositingMode.ADD
-        elif bmode == modes["ALPHA"]:
-            blending = CompositingMode.ALPHA
-        elif blending == modes["SUB"]:
-            if self.version == 1:
-                blending = CompositingMode.MODULATE
-            elif self.version == 2:
-                #TODO make a blender with subtract blending
-                pass
-        elif blending == modes["CLIP"]:
-            blending = CompositingMode.ALPHA
-            alphaThreshold = 0.75
+        blending = CompositingMode.REPLACE
+        if bmaterial:
+            if bmaterial.use_transparency:
+                blending = CompositingMode.ALPHA
+        #TODO support z-offset
         return CompositingMode.getSharedCompositingMode(blending, alphaThreshold, self.version)
 
     def getFacePolygonMode(self, face, twoSided, hasPerFaceUV):
-        modes = Blender.Mesh.FaceModes
-        if not hasPerFaceUV:
-            if twoSided:
-                culling = PolygonMode.CULL_NONE
-            else:
-                culling = PolygonMode.CULL_BACK
-        elif face.mode & modes.TWOSIDE:
+        if twoSided:
             culling = PolygonMode.CULL_NONE
         else:
             culling = PolygonMode.CULL_BACK
         return PolygonMode.getSharedPolygonMode(culling, self.version)
 
     def getFaceAppearanceComponents(self, face, mesh):
-        hasPerFaceUV = mesh.faceUV
-        twoSided = mesh.mode & Blender.Mesh.Modes.TWOSIDED
-        #get CompositingMode
-        cm = self.getFaceCompositingMode(face, hasPerFaceUV)
+        hasPerFaceUV = True
+        twoSided = mesh.show_double_sided
         #get PolygonMode
         pm = self.getFacePolygonMode(face, twoSided, hasPerFaceUV)
         #TODO get Fog
         #TODO get PointSpriteMode
         #actual appearance has to be linked up later with the
         #per instance materials
-        return cm, pm, face.mat
+        return pm, face.material_index
 
     def getAppearance(self, cm, pm, material):
         return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version)
@@ -1200,22 +1194,26 @@ class M3XConverter(object):
             intensity = -intensity
         blamp = BlenderLamp()
         blamp.setMode(mode)
-        blamp.setColor([int(round(x * 255)) for x in lamp.col])
+        blamp.setColor([int(round(x * 255.99)) for x in lamp.col])
         blamp.setIntensity(intensity)
         blamp.setSpot(spotAngle, spotExponent)
         blamp.setAttenuation(cAttn, lAttn, qAttn)
         return blamp
 
     def convertMesh(self, mesh):
+        log("convertMesh(" + mesh.name + ")")
+        
         version = self.version
-        hasPerVertexColor = mesh.vertexColors
+        hasPerVertexColor = len(mesh.vertex_colors) > 0
         #otherwise they are per face UVs
-        hasPerVertexUV = mesh.vertexUV
-        hasPerFaceUV = mesh.faceUV
+        hasPerFaceUV = len(mesh.uv_layers) > 0
+        
+        log("mesh.uv_layers: " + str(mesh.uv_layers.items()))
+        log("mesh.materials: " + str(mesh.materials.items()))
 
         #sort faces by material
         facesByAppearanceComponents = {}
-        for face in mesh.faces:
+        for face in mesh.polygons:
             key = self.getFaceAppearanceComponents(face, mesh)
             #print "key:", key
             lst = facesByAppearanceComponents.setdefault(key, [])
@@ -1223,28 +1221,43 @@ class M3XConverter(object):
         appearanceComponents = facesByAppearanceComponents.keys()
         #print "appearanceComponents:", appearanceComponents
         #TODO sort appearances on texture and blend mode
+        vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")
+        
         #extract submesh data
-        vseq = VertexSeq(hasPerVertexColor, hasPerVertexUV or hasPerFaceUV)
+        vseq = VertexSeq(hasPerVertexColor, hasPerFaceUV)
         indexBuffers = []
         for submeshIndex, components in enumerate(appearanceComponents):
             faces = facesByAppearanceComponents[components]
+            material_index = components[1]
+            layer = None
+            if len(mesh.materials) > 0:
+                material = mesh.materials[material_index]
+                if material:
+                    vertexBuffer.setDefaultColorAlpha(material.alpha)
+                    #TODO not correct for meshes with per object materials
+                    log("material.texture_slots: " + str(material.texture_slots.items()))
+                    log("material.texture_slots[0].uv_layer: " + str(material.texture_slots[0].uv_layer))
+                    if material.texture_slots[0].uv_layer:
+                        layer = mesh.uv_layers[material.texture_slots[0].uv_layer]
+                    else:
+                        #use default uv layer if none is specified
+                        layer = mesh.uv_layers[0]
             submeshTriStrips = []
             stripLengths = []
             for face in faces:
                 #get the indices
                 faceIndices = []
-                for i, v in enumerate(face.verts):
-                    pos = tuple(v.co)
-                    norm = tuple(v.no)
+                for i in face.loop_indices:
+                    vi = mesh.loops[i].vertex_index
+                    pos = tuple(mesh.vertices[vi].co)
+                    norm = tuple(mesh.vertices[vi].normal)
                     if hasPerVertexColor:
-                        col = tuple(face.col[i])
+                        col = tuple(mesh.vertex_colors[0].data[i].color)
                     else:
                         col = None
                     #per face goes first
-                    if hasPerFaceUV:
-                        uv = tuple(face.uv[i])
-                    elif hasPerVertexUV:
-                        uv = tuple(v.uvco)
+                    if layer:
+                        uv = tuple(layer.data[i].uv)
                     else:
                         uv = None
                     faceIndices.append(vseq.getIndex(pos, norm, col, uv))
@@ -1275,8 +1288,7 @@ class M3XConverter(object):
                 indexBuffer.setLengths(stripLengths)
             indexBuffers.append(indexBuffer)
 
-        vertexBuffer = VertexBuffer(mesh.name + "-vertexBuffer")
-
+        
         #create lists representing the normal and position vertex arrays
         positionArray = VertexArray(mesh.name + "-positions")
         positionArray.extend(vseq.positions)
@@ -1330,7 +1342,8 @@ class M3XConverter(object):
         return bmesh
 
     def convertObject(self, object, childrenByObject):
-        #print "objectName:", object.getName()
+        log("convertObject(" + object.name + ")")
+        
         hasChildren =  object in childrenByObject
         returnObject = None
         if hasChildren:
@@ -1344,32 +1357,27 @@ class M3XConverter(object):
 
         data = object.data
         if data:
-            #print "objectData:", data, data.__class__
+            #print("objectData:", data, type(data), data.__class__)
             #is it a mesh?
-            if type(data) == Blender.Types.MeshType:
+            if type(data) == bpy.types.Mesh:
                 if data not in self.convertedDataObjects:
                     self.convertedDataObjects[data] = self.convertMesh(data)
                 bmesh = self.convertedDataObjects[data]
-                #get the materials, supporting the per object override
-                objectMaterials = object.getMaterials(1)
-                meshMaterials = data.materials
-                materials = []
-                for i in xrange(16):
-                    if object.colbits & (1 << i):
-                        materials.append(objectMaterials[i])
-                    elif meshMaterials and i < len(meshMaterials):
-                        materials.append(meshMaterials[i])
-                    else:
-                        materials.append(None)
-                del objectMaterials
-                del meshMaterials
                 #add a mesh object
                 mesh = Mesh(object.name + "-mesh", self.version)
                 mesh.setVertexBuffer(bmesh.vertexBuffer)
-                for i in xrange(bmesh.getSubmeshCount()):
+                for i in range(bmesh.getSubmeshCount()):
                     ib = bmesh.indexBuffers[i]
-                    cm, pm, materialIndex = bmesh.appearanceComponents[i]
-                    material = materials[materialIndex]
+                    pm, material_index = bmesh.appearanceComponents[i]
+                    log("material_index: " + str(material_index))
+                    material = None
+                    if material is None:
+                        material = data.materials[material_index]
+                        log("data.materials: " + str(data.materials.items()))
+                    if material is None:
+                        material = object.material_slots[material_index].material
+                        log("object.material_slots: " + str(object.material_slots.items()))
+                    cm = self.getCompositingMode(material)
                     appearance = self.getAppearance(cm, pm, material)
                     mesh.addSubmesh(ib, appearance)
                 if returnObject:
@@ -1377,7 +1385,7 @@ class M3XConverter(object):
                     returnObject.addChild(mesh)
                 else:
                     returnObject = mesh
-            elif type(data) == Blender.Types.LampType:
+            elif type(data) == bpy.types.Lamp:
                 if data not in self.convertedDataObjects:
                     self.convertedDataObjects[data] = self.convertLamp(data)
                 blamp = self.convertedDataObjects[data]
@@ -1387,8 +1395,7 @@ class M3XConverter(object):
                 light.setIntensity(blamp.intensity)
                 light.setSpotAngle(blamp.spotAngle)
                 light.setSpotExponent(blamp.spotExponent)
-                light.setAttenuation(blamp.constantAttenuation,
-                    blamp.linearAttenuation, blamp.quadraticAttenuation)
+                light.setAttenuation(blamp.constantAttenuation, blamp.linearAttenuation, blamp.quadraticAttenuation)
                 if returnObject:
                     returnObject.addChild(light)
                 else:
@@ -1397,19 +1404,19 @@ class M3XConverter(object):
             #Empty node
             returnObject = Group(object.name)
         if returnObject:
-            transform = object.matrixLocal.copy()
-            loc = tuple(transform.translationPart())
+            #transform = mathutils.Matrix(object.matrix_local)
+            loc = object.location #tuple(transform.to_translation())
             if loc != M3XConverter.ZEROS_3:
                 returnObject.setTranslation(*loc)
-            scale = tuple(transform.scalePart())
+            scale = object.scale #tuple(transform.to_scale())
             if scale != M3XConverter.ONES_3:
                 returnObject.setScale(*scale)
-            rot = tuple(object.rot)
-            if rot != M3XConverter.ZEROS_3:
-                quat = transform.rotationPart().toQuat()
-                angle = quat.angle
-                x, y, z = quat.axis
-                returnObject.setOrientation(angle, x, y, z)
+            #quat = transform.to_quaternion()
+            #axis, angle = quat.to_axis_angle()
+            axis = object.rotation_axis_angle[:3]
+            angle = object.rotation_axis_angle[3]
+            if angle != 0:
+                returnObject.setOrientation(angle, axis[0], axis[1], axis[2])
         return returnObject
 
 

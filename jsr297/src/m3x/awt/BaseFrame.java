@@ -70,7 +70,7 @@ public class BaseFrame extends Frame
         init(title);
     }
 
-    private final void init(String title)
+    private void init(String title)
     {
         setTitle(title);
         setSize(800, 600);

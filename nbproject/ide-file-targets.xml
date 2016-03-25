@@ -21,11 +21,7 @@
     <target name="compile-selected-files-in-demo">
         <fail unless="files">Must set property 'files'</fail>
         <mkdir dir="jsr297/demo/build"/>
-        <javac destdir="jsr297/demo/build"
-               includes="${files}"
-               source="1.8"
-               srcdir="jsr297/demo"
-               includeantruntime="false">
+        <javac destdir="jsr297/demo/build" includeantruntime="false" includes="${files}" source="1.8" srcdir="jsr297/demo">
             <classpath refid="demo.path"/>
         </javac>
     </target>
@@ -67,8 +63,7 @@
     <target name="run-selected-file-in-src">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
-            <env key="DYLD_LIBRARY_PATH"
-                path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <env key="PATH" path="${PATH}:${lib.dir}/jogl/dll32"/>
             <classpath refid="src.path"/>
             <!--jvmarg value="-Xdock:name=${run.class}"/-->
@@ -86,8 +81,7 @@
             <classpath refid="src.path"/>
         </nbjpdastart>
         <java classname="${debug.class}" fork="true">
-            <env key="DYLD_LIBRARY_PATH"
-                path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
+            <env key="DYLD_LIBRARY_PATH" path="${DYLD_LIBRARY_PATH}:${lib.dir}/jogl/jnilib"/>
             <env key="PATH" path="${PATH}:${lib.dir}/jogl/dll32"/>
             <classpath refid="src.path"/>
             <!--jvmarg value="-Xdock:name=${run.class}"/-->
@@ -98,5 +92,14 @@
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
         </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
+    <target name="compile-selected-files-in-src">
+        <fail unless="files">Must set property 'files'</fail>
+        <mkdir dir="jsr297/build"/>
+        <javac destdir="jsr297/build" includes="${files}" source="1.8" srcdir="jsr297/src">
+            <classpath path="lib/vecmath/vecmath.jar:tools/build:lib/taglets/taglets.jar:lib/jogl/jogl-all.jar:jsr297/dist/m3x-jsr297.jar"/>
+        </javac>
     </target>
 </project>
