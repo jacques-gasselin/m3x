@@ -1146,55 +1146,53 @@ class M3XConverter(object):
         return AppearanceBase.getSharedAppearanceBase(cm, pm, material, self.version)
 
     def convertLamp(self, lamp):
+        log("convertLamp(" + lamp.name + ")")
         mode = Light.DIRECTIONAL
         spotAngle = 45
         spotExponent = 0
-        if lamp.type == Blender.Lamp.Types['Lamp']:
+        if lamp.type == 'POINT':
             mode = Light.OMNI
-        elif lamp.type == Blender.Lamp.Types['Sun']:
+        elif lamp.type == 'SUN':
             mode = Light.DIRECTIONAL
-        elif lamp.type == Blender.Lamp.Types['Spot']:
+        elif lamp.type == 'SPOT':
             mode = Light.SPOT
             #Blender uses double angle
-            spotAngle = lamp.spotSize * 0.5
-            spotExponent = lamp.spotBlend * 128.0
-        elif lamp.type == Blender.Lamp.Types['Hemi']:
+            spotAngle = lamp.spot_size * 0.5
+            spotExponent = lamp.spot_blend * 128.0
+        elif lamp.type == 'HEMI':
             mode = Light.AMBIENT
-        elif lamp.type == Blender.Lamp.Types['Area']:
+        elif lamp.type == 'AREA':
             #TODO this should actually create an array of lights
             pass
-        elif lamp.type == Blender.Lamp.Types['Photon']:
-            #TODO how do we emulate this type?
-            return None
-        dist = lamp.dist
-        falloffType = lamp.falloffType
+        dist = lamp.distance
+        falloffType = lamp.falloff_type
         cAttn = 1.0
         lAttn = 0.0
         qAttn = 0.0
-        if falloffType == Blender.Lamp.Falloffs['INVLINEAR']:
+        if falloffType == "INVERSE_LINEAR":
             #dist is the distance where intensity will be half
             #thus 1 / (0 + l * dist + 0) = .5 gives l = 2 / dist
             cAttn = 0.0
             lAttn = 2 / dist
             qAttn = 0.0
-        elif falloffType == Blender.Lamp.Falloffs['INVSQUARE']:
+        elif falloffType == "INVERSE_SQUARE":
             #dist is the distance where intensity will be half
             #thus 1 / (0 + 0 + q * dist * dist) = .5 gives q = 2 / (dist * dist)
             cAttn = 0.0
             lAttn = 0.0
             qAttn = 2 / (dist * dist)
-        elif falloffType == Blender.Lamp.Falloffs['LINQUAD']:
+        elif falloffType == "LINEAR_QUADRATIC_WEIGHTED":
             #mixed linear & quadratic
             cAttn = 0.0
             lAttn = lamp.quad1 * 2 / dist
             qAttn = lamp.quad2 * 2 / (dist * dist)
         #TODO support other falloffs
         intensity = lamp.energy
-        if lamp.mode & Blender.Lamp.Modes['Negative']:
+        if lamp.use_negative:
             intensity = -intensity
         blamp = BlenderLamp()
         blamp.setMode(mode)
-        blamp.setColor([int(round(x * 255.99)) for x in lamp.col])
+        blamp.setColor([int(x * 255.99) for x in lamp.color])
         blamp.setIntensity(intensity)
         blamp.setSpot(spotAngle, spotExponent)
         blamp.setAttenuation(cAttn, lAttn, qAttn)
@@ -1239,7 +1237,7 @@ class M3XConverter(object):
                     log("material.texture_slots[0].uv_layer: " + str(material.texture_slots[0].uv_layer))
                     if material.texture_slots[0].uv_layer:
                         layer = mesh.uv_layers[material.texture_slots[0].uv_layer]
-                    else:
+                    elif len(mesh.uv_layers) > 0:
                         #use default uv layer if none is specified
                         layer = mesh.uv_layers[0]
             submeshTriStrips = []
@@ -1357,7 +1355,7 @@ class M3XConverter(object):
 
         data = object.data
         if data:
-            #print("objectData:", data, type(data), data.__class__)
+            log("objectData: " + str(type(data)))
             #is it a mesh?
             if type(data) == bpy.types.Mesh:
                 if data not in self.convertedDataObjects:
@@ -1385,7 +1383,7 @@ class M3XConverter(object):
                     returnObject.addChild(mesh)
                 else:
                     returnObject = mesh
-            elif type(data) == bpy.types.Lamp:
+            elif isinstance(data, bpy.types.Lamp):
                 if data not in self.convertedDataObjects:
                     self.convertedDataObjects[data] = self.convertLamp(data)
                 blamp = self.convertedDataObjects[data]
