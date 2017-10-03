@@ -53,13 +53,13 @@ public class SimpleVBDemo extends BaseFrame
     {
         private static final long serialVersionUID = 1L;
 
-        private Background background;
-        private AbstractRenderTarget renderTarget;
+        private final Background background;
+        private final AbstractRenderTarget renderTarget;
 
-        private VertexBuffer vertexBuffer;
-        private IndexBuffer primitives;
-        private Appearance appearance;
-        private Camera camera;
+        private final VertexBuffer vertexBuffer;
+        private final IndexBuffer primitives;
+        private final Appearance appearance;
+        private final Camera camera;
         private final Transform cameraTransform = new Transform();
 
         private float yaw;
@@ -100,8 +100,6 @@ public class SimpleVBDemo extends BaseFrame
             camera.setPerspective(50, 1.0f, 0.1f, 10.0f);
             camera.setTranslation(0, 0.5f, 3);
             camera.getCompositeTransform(cameraTransform);
-
-            new Thread(this).start();
         }
 
         @Override
@@ -124,16 +122,13 @@ public class SimpleVBDemo extends BaseFrame
                 g3d.render(vertexBuffer, primitives, appearance, transform);
 
             }
-            catch (Throwable t)
-            {
-                t.printStackTrace();
-            }
             finally
             {
                 g3d.releaseTarget();
             }
         }
 
+        @Override
         public void run()
         {
             while (!isClosed())
@@ -154,7 +149,12 @@ public class SimpleVBDemo extends BaseFrame
     SimpleVBDemo()
     {
         super("SimpleVBDemo");
-        add(new SimpleVBCanvas());
+        java.awt.EventQueue.invokeLater(() ->
+        {
+            SimpleVBCanvas canvas = new SimpleVBCanvas();
+            add(canvas);
+            new Thread(canvas).start();
+        });
     }
 
     public static void main(String[] args)

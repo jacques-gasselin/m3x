@@ -36,6 +36,8 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
 import com.jogamp.opengl.awt.GLJPanel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
@@ -63,7 +65,7 @@ public class Dot3Demo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    private static final int xyzAsRGB(float x, float y, float z)
+    private static int xyzAsRGB(float x, float y, float z)
     {
         final double lengthInv = 1.0 / Math.sqrt(x* x + y * y + z * z);
         x *= lengthInv;
@@ -72,7 +74,7 @@ public class Dot3Demo extends BaseFrame
         final int r = (int) ((x * 0.5) * 255 + 128);
         final int g = (int) ((y * 0.5) * 255 + 128);
         final int b = (int) ((z * 0.5) * 255 + 128);
-        return (0x80 << 24) | (r << 16) | (g << 8) | (b << 0);
+        return (0x80 << 24) | (r << 16) | (g << 8) | (b);
     }
 
     private final class Dot3Canvas extends GLJPanel
@@ -83,9 +85,9 @@ public class Dot3Demo extends BaseFrame
         private Background background;
         private AbstractRenderTarget renderTarget;
 
-        private Mesh plane;
-        private Camera camera;
-        private TransformController cameraController;
+        private final Mesh plane;
+        private final Camera camera;
+        private final TransformController cameraController;
 
         private final Transform transform = new Transform();
 
@@ -93,30 +95,30 @@ public class Dot3Demo extends BaseFrame
         private Texture2D dot3Texture;
 
         private Image2D diffuseImage;
-        private Texture2D diffuseTexture;
+        private final Texture2D diffuseTexture;
 
-        private Mesh light;
+        private final Mesh light;
         private float lightYaw;
         private boolean dot3Enabled = true;
 
         public Dot3Canvas()
         {
+            final Logger logger = Logger.getLogger(Dot3Demo.class.getName());
+            
             renderTarget = new GLRenderTarget(this);
             background = new Background();
             background.setColor(0x1f1f1f);
 
-            try
+            try (InputStream imageStream = getClass().getResourceAsStream(
+                    "brickround_normal.png"))
             {
-                InputStream imageStream = getClass().getResourceAsStream(
-                        "brickround_normal.png");
                 dot3Image = (Image2D) Loader.loadImage(
                         ImageBase.RGB | ImageBase.LOSSLESS,
-                        imageStream);
-                imageStream.close();
+                    imageStream);
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, null, ex);
             }
 
             dot3Texture = new Texture2D(dot3Image);
@@ -131,18 +133,16 @@ public class Dot3Demo extends BaseFrame
             dot3Combiner.setScaling(2, 2);
             dot3Texture.setCombiner(dot3Combiner);
 
-            try
+            try (InputStream imageStream = getClass().getResourceAsStream(
+                    "brickround_diffuse.png"))
             {
-                InputStream imageStream = getClass().getResourceAsStream(
-                        "brickround_diffuse.png");
                 diffuseImage = (Image2D) Loader.loadImage(
                         ImageBase.RGB,
-                        imageStream);
-                imageStream.close();
+                    imageStream);
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, null, ex);
             }
 
             diffuseTexture = new Texture2D(diffuseImage);
@@ -163,9 +163,6 @@ public class Dot3Demo extends BaseFrame
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
 
-            addKeyListener(this);
-            
-            new Thread(this).start();
         }
 
         @Override
@@ -228,10 +225,6 @@ public class Dot3Demo extends BaseFrame
                 transform.postTranslate(lightX, lightY, lightZ);
                 g3d.render(light, transform);
             }
-            catch (Throwable t)
-            {
-                t.printStackTrace();
-            }
             finally
             {
                 g3d.releaseTarget();
@@ -248,6 +241,7 @@ public class Dot3Demo extends BaseFrame
             g2d.drawString("'t' toggles DOT3 normal map", 15, 75);
         }
 
+        @Override
         public void run()
         {
             while (!isClosed())
@@ -264,20 +258,23 @@ public class Dot3Demo extends BaseFrame
             }
         }
 
+        @Override
         public void keyTyped(KeyEvent e)
         {
             
         }
 
+        @Override
         public void keyPressed(KeyEvent e)
         {
-            System.out.println("keyPressed: " + e);
+            //System.out.println("keyPressed: " + e);
             if (e.getKeyChar() == 't')
             {
                 dot3Enabled = !dot3Enabled;
             }
         }
 
+        @Override
         public void keyReleased(KeyEvent e)
         {
             
@@ -287,7 +284,14 @@ public class Dot3Demo extends BaseFrame
     Dot3Demo()
     {
         super("Dot3Demo");
-        add(new Dot3Canvas());
+
+        java.awt.EventQueue.invokeLater(() -> {
+            Dot3Canvas canvas = new Dot3Canvas();
+            add(canvas);
+            canvas.addKeyListener(canvas);
+
+            new Thread(canvas).start();
+        });
     }
 
     public static void main(String[] args)
