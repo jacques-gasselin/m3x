@@ -62,7 +62,7 @@ public class VertexBuffer extends Object3D implements SectionSerializable
     {
         private int count;
         private final IdentityHashMap<VertexArray, VertexArray> arrays =
-                new IdentityHashMap<>();
+                new IdentityHashMap<VertexArray, VertexArray>();
 
         private VertexCounter()
         {
