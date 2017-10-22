@@ -76,11 +76,19 @@ public class GLRenderTarget extends AbstractRenderTarget
     @Override
     public float getContentScale()
     {
+        if (drawable == null) {
+            return 1.0f;
+        }
         final int[] dims = new int[2];
         dims[0] = 1;
         dims[1] = 1;
-        final int[] windowDims = drawable.getNativeSurface().convertToPixelUnits(dims);
-        return windowDims[0];
+        if (drawable.getNativeSurface() != null) {
+            final int[] windowDims = drawable.getNativeSurface().convertToPixelUnits(dims);
+            return windowDims[0];
+        }
+        else {
+            return 1.0f;
+        }
     }
     
     @Override
