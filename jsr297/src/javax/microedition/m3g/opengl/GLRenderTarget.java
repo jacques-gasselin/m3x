@@ -64,20 +64,29 @@ public class GLRenderTarget extends AbstractRenderTarget
     @Override
     public int getWidth()
     {
+        if (drawable == null)
+        {
+            throw new IllegalStateException("drawable is null");
+        }
         return drawable.getSurfaceWidth();
     }
 
     @Override
     public int getHeight()
     {
+        if (drawable == null)
+        {
+            throw new IllegalStateException("drawable is null");
+        }
         return drawable.getSurfaceHeight();
     }
 
     @Override
     public float getContentScale()
     {
-        if (drawable == null) {
-            return 1.0f;
+        if (drawable == null)
+        {
+            throw new IllegalStateException("drawable is null");
         }
         final int[] dims = new int[2];
         dims[0] = 1;
@@ -105,7 +114,7 @@ public class GLRenderTarget extends AbstractRenderTarget
         return caps.getStencilBits() > 0;
     }
 
-    private static final void requireValidContext(GLContext context)
+    private static void requireValidContext(GLContext context)
     {
         if (context == null)
         {
@@ -119,7 +128,8 @@ public class GLRenderTarget extends AbstractRenderTarget
         final GLContext context = drawable.getContext();
         requireValidContext(context);
         
-        context.makeCurrent();
+        //FIXME: Only do this if it isn't already.
+        //context.makeCurrent();
         GL2 gl = (GL2) context.getGL();
         if (lastGL != gl)
         {
@@ -127,10 +137,17 @@ public class GLRenderTarget extends AbstractRenderTarget
             if (debug)
             {
                 debugGL = new DebugGL2(gl);
-                gl = debugGL;
             }
         }
-        renderer.bindContext(gl, getWidth(), getHeight());
+        
+        if (debug) 
+        {
+            renderer.bindContext(debugGL, getWidth(), getHeight());
+        }
+        else
+        {
+            renderer.bindContext(gl, getWidth(), getHeight());
+        }
         return renderer;
     }
 

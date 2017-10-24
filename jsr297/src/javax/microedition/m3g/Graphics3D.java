@@ -73,7 +73,7 @@ public final class Graphics3D
         
     }
 
-    private final void requireCurrentRenderTarget()
+    private void requireCurrentRenderTarget()
     {
         if (renderTarget == null)
         {
@@ -165,8 +165,9 @@ public final class Graphics3D
             if (target instanceof Image2D)
             {
                 //is it a mutable image?
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Image2D render targets nut supported yet");
             }
+            throw new IllegalArgumentException("target is not a valid render target");
         }
 
         this.target = target;
