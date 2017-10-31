@@ -61,33 +61,35 @@ public class GLRenderTarget extends AbstractRenderTarget
         renderer = new RendererOpenGL2();
     }
     
-    @Override
-    public int getWidth()
+    private static void requireValidDrawable(GLAutoDrawable drawable)
     {
         if (drawable == null)
         {
             throw new IllegalStateException("drawable is null");
         }
+    }
+    
+    @Override
+    public int getWidth()
+    {
+        requireValidDrawable(drawable);
+        
         return drawable.getSurfaceWidth();
     }
 
     @Override
     public int getHeight()
     {
-        if (drawable == null)
-        {
-            throw new IllegalStateException("drawable is null");
-        }
+        requireValidDrawable(drawable);
+        
         return drawable.getSurfaceHeight();
     }
 
     @Override
     public float getContentScale()
     {
-        if (drawable == null)
-        {
-            throw new IllegalStateException("drawable is null");
-        }
+        requireValidDrawable(drawable);
+        
         final int[] dims = new int[2];
         dims[0] = 1;
         dims[1] = 1;

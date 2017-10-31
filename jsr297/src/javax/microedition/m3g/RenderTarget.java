@@ -34,51 +34,106 @@ package javax.microedition.m3g;
  */
 public class RenderTarget extends AbstractRenderTarget
 {
+    private final ImageBase target;
+    private final int face;
+    private final int miplevel;
+
+    private RenderTarget(ImageBase target, int face, int miplevel)
+    {
+        if (target == null)
+        {
+            throw new IllegalArgumentException("target is null");
+        }
+        
+        this.target = target;
+        this.face = face;
+        this.miplevel = miplevel;
+    }
+    
     public RenderTarget(Image2D target, int miplevel)
     {
-
+        this(target, 0, miplevel);
     }
 
     public RenderTarget(ImageCube target, int face, int miplevel)
     {
-
+        this((ImageBase)target, face, miplevel);
     }
     
     @Override
     public int getWidth()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return target.getWidth();
     }
 
     @Override
     public int getHeight()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return target.getHeight();
     }
 
     @Override
     public float getContentScale()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 1.0f;
     }
 
+    @Override
     public boolean isDepthBuffered()
     {
         return false;
     }
 
+    @Override
     public boolean isStencilBuffered()
     {
         return false;
     }
 
+    private static final class NullRenderer extends Renderer {
+
+        @Override
+        public void clear(Background background)
+        {
+        }
+
+        @Override
+        public void setViewport(int x, int y, int width, int height)
+        {
+        }
+
+        @Override
+        public void setProjectionView(Transform projection, Transform view)
+        {
+        }
+
+        @Override
+        public void resetLights()
+        {
+        }
+
+        @Override
+        public void setLight(int index, Light light, Transform transform)
+        {
+        }
+
+        @Override
+        public void render(VertexBuffer vertices, IndexBuffer primitives, Appearance appearance, Transform transform, int scope, float alphaFactor)
+        {
+        }
+        
+    }
+    
+    @Override
     public Renderer bindRenderer()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO: Fallback to GL binding here
+        return new NullRenderer();
     }
 
+    @Override
     public void releaseRenderer()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO: Fallback to GL binding here
     }
 }
