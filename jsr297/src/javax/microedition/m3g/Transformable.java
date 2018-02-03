@@ -27,9 +27,6 @@
 
 package javax.microedition.m3g;
 
-import m3x.Require;
-import m3x.Vmath;
-
 /**
  * @author jgasseli
  */
@@ -253,7 +250,7 @@ public abstract class Transformable extends Object3D
         }
         else
         {
-            final float length = Vmath.vmag3(ax, ay, az);
+            final float length = (float) Math.sqrt(ax * ax + ay * ay + az * az);
             if (length == 0)
             {
                 throw new IllegalArgumentException("rotation axis is zero and" +

@@ -87,7 +87,7 @@ public class CompositingMode extends Object3D
         cm.setDepthWriteEnabled(isDepthWriteEnabled());
         cm.setStencil(getStencil());
     }
-
+    
     public int getAlphaTest()
     {
         return this.alphaTest;

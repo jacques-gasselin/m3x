@@ -50,7 +50,7 @@ public class Camera extends Node
         
     }
 
-    private final void setProjectionType(int type)
+    private void setProjectionType(int type)
     {
         Require.argumentInEnum(type, "type", GENERIC, SCREEN);
 

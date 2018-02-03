@@ -90,7 +90,8 @@ public class RenderTarget extends AbstractRenderTarget
         return false;
     }
 
-    private static final class NullRenderer extends Renderer {
+    private static final class NullRenderer extends Renderer
+    {
 
         @Override
         public void clear(Background background)

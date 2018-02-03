@@ -66,6 +66,10 @@ public class RendererOpenGL2 extends Renderer
     private ShortBuffer positionShortBuffer;
     private ShortBuffer[] texcoordShortBuffer;
     
+    //Cached values
+    private CompositingMode currentCompositingMode;
+    private Stencil currentStencil;
+    
     public RendererOpenGL2()
     {
     }
@@ -407,12 +411,12 @@ public class RendererOpenGL2 extends Renderer
 
     private static final float[] TEMP_FLOAT4 = new float[4];
 
-    private static final float[] argbAsRGBAVolatile(int argb)
+    private static float[] argbAsRGBAVolatile(int argb)
     {
         return argbAsRGBA(argb, TEMP_FLOAT4);
     }
 
-    private static final float[] argbAsRGBVolatile(int argb, float factor)
+    private static float[] argbAsRGBVolatile(int argb, float factor)
     {
         final float[] color = argbAsRGBAVolatile(argb);
         color[0] *= factor;
@@ -422,21 +426,21 @@ public class RendererOpenGL2 extends Renderer
         return color;
     }
 
-    private static final float[] argbAsRGBAVolatile(int argb, float alphaFactor)
+    private static float[] argbAsRGBAVolatile(int argb, float alphaFactor)
     {
         final float[] color = argbAsRGBAVolatile(argb);
         color[3] *= alphaFactor;
         return color;
     }
 
-    private static final boolean isZero(float value)
+    private static boolean isZero(float value)
     {
         //check for the 3 upper bits of the exponent
         //if they are all 0 the exponent is less than 2^(-64)
         return (Float.floatToIntBits(value) & 0x7000000) == 0;
     }
 
-    private static final int testFuncAsGLEnum(int func)
+    private static int testFuncAsGLEnum(int func)
     {
         switch (func)
         {
@@ -478,9 +482,93 @@ public class RendererOpenGL2 extends Renderer
             }
         }
     }
-
-    private final void setCompositingMode(GL2 gl, CompositingMode compositingMode)
+    
+    private static int stencilOpAsGLEnum(int op)
     {
+        switch (op)
+        {
+            case Stencil.KEEP:
+            {
+                return GL.GL_KEEP;
+            }
+            case Stencil.ZERO:
+            {
+                return GL.GL_ZERO;
+            }
+            case Stencil.INVERT:
+            {
+                return GL.GL_INVERT;
+            }
+            case Stencil.REPLACE:
+            {
+                return GL.GL_REPLACE;
+            }
+            case Stencil.DECR:
+            {
+                return GL.GL_DECR;
+            }
+            case Stencil.INCR:
+            {
+                return GL.GL_INCR;
+            }
+            case Stencil.DECR_WRAP:
+            {
+                return GL.GL_DECR_WRAP;
+            }
+            case Stencil.INCR_WRAP:
+            {
+                return GL.GL_INCR_WRAP;
+            }
+            default:
+            {
+                throw new IllegalStateException("unknown gl stencil op " + op);
+            }
+        }
+    }
+
+    private void setStencil(GL2 gl, Stencil stencil)
+    {
+        if (stencil == currentStencil)
+        {
+            return;
+        }
+        currentStencil = stencil;
+
+        if (stencil != null)
+        {
+            int face = Stencil.FRONT;
+            
+            int[] funcRefMaskOps = new int[6];
+            stencil.getStencil(face, funcRefMaskOps);
+            int func = testFuncAsGLEnum(funcRefMaskOps[0]);
+            int ref = funcRefMaskOps[1];
+            int mask = funcRefMaskOps[2];
+            gl.glStencilFunc(func, ref, mask);
+
+            int stencilFailOp = stencilOpAsGLEnum(funcRefMaskOps[3]);
+            int depthFailOp = stencilOpAsGLEnum(funcRefMaskOps[4]);
+            int depthPassOp = stencilOpAsGLEnum(funcRefMaskOps[5]);
+
+            gl.glStencilOp(stencilFailOp, depthFailOp, depthPassOp);
+
+            gl.glStencilMask(stencil.getStencilWriteMask(face));
+
+            gl.glEnable(GL.GL_STENCIL_TEST);
+        }
+        else {
+            gl.glDisable(GL.GL_STENCIL_TEST);
+        }        
+    }
+
+    private void setCompositingMode(GL2 gl, CompositingMode compositingMode)
+    {
+        if (compositingMode == currentCompositingMode)
+        {
+            return;
+        }
+        
+        currentCompositingMode = compositingMode;
+        
         if (compositingMode != null)
         {
             final float alphaThreshold = compositingMode.getAlphaThreshold();
@@ -520,15 +608,7 @@ public class RendererOpenGL2 extends Renderer
                 gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
             }
 
-            final Stencil stencil = compositingMode.getStencil();
-            if (stencil != null)
-            {
-                throw new UnsupportedOperationException("stencil not supported yet");
-            }
-            else
-            {
-                gl.glDisable(GL.GL_STENCIL_TEST);
-            }
+            setStencil(gl, compositingMode.getStencil());
 
             final int colorMask = compositingMode.getColorWriteMask();
             gl.glColorMask(
@@ -1432,13 +1512,13 @@ public class RendererOpenGL2 extends Renderer
         }
     }
 
-    private final void setAppearanceBase(GL2 gl, AppearanceBase appearance)
+    private void setAppearanceBase(GL2 gl, AppearanceBase appearance)
     {
         setCompositingMode(gl, appearance.getCompositingMode());
         setPolygonMode(gl, appearance.getPolygonMode());
     }
 
-    private final void setAppearance(GL2 gl, Appearance appearance)
+    private void setAppearance(GL2 gl, Appearance appearance)
     {
         setAppearanceBase(gl, appearance);
         setFog(gl, appearance.getFog());
