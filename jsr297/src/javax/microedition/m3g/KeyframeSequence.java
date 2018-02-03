@@ -26,8 +26,6 @@
  */
 package javax.microedition.m3g;
 
-import m3x.Require;
-
 /**
  * @author jgasseli
  */

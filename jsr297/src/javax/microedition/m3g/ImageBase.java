@@ -27,7 +27,6 @@
 
 package javax.microedition.m3g;
 
-import m3x.Require;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 

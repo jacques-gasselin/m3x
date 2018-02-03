@@ -27,7 +27,6 @@
 
 package javax.microedition.m3g;
 
-import m3x.Require;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 

@@ -28,7 +28,6 @@
 package javax.microedition.m3g;
 
 import java.util.List;
-import m3x.Require;
 
 /**
  * @author jgasseli

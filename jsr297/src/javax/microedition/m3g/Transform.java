@@ -38,7 +38,7 @@ import javax.vecmath.Vector4f;
  */
 public final class Transform
 {
-    private Matrix4f matrix = new Matrix4f();
+    private final Matrix4f matrix = new Matrix4f();
     
     public Transform()
     {
@@ -50,7 +50,7 @@ public final class Transform
         set(transform);
     }
 
-    private static final void requireMinLength(float[] arr, int length, String name)
+    private static void requireMinLength(float[] arr, int length, String name)
     {
         if (arr.length < length)
         {

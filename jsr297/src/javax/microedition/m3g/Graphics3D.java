@@ -27,7 +27,6 @@
 
 package javax.microedition.m3g;
 
-import m3x.Require;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,7 +81,7 @@ public final class Graphics3D
         }
     }
 
-    private final void requireCurrentCamera()
+    private void requireCurrentCamera()
     {
         if (camera == null)
         {
@@ -204,11 +203,21 @@ public final class Graphics3D
         return this.camera;
     }
 
+    /**
+     * Gets the far value of the depth range.
+     * 
+     * @return the far value.
+     */
     public float getDepthRangeFar()
     {
         return this.depthRangeFar;
     }
 
+    /**
+     * Gets the near value of the depth range.
+     * 
+     * @return the near value.
+     */
     public float getDepthRangeNear()
     {
         return this.depthRangeNear;
@@ -220,6 +229,11 @@ public final class Graphics3D
         return getRenderingFlags();
     }
 
+    /**
+     * Gets the shared Graphics3D instance.
+     * 
+     * @return the shared instance.
+     */
     public static final Graphics3D getInstance()
     {
         return INSTANCE;
@@ -400,6 +414,7 @@ public final class Graphics3D
             return ret;
         }
 
+        @Override
         final void render(Renderer renderer)
         {
             renderer.render(vertices, primitives, appearance,
@@ -410,7 +425,7 @@ public final class Graphics3D
     private final ArrayList<RenderGraphNode> renderGraph =
             new ArrayList<RenderGraphNode>();
 
-    private final void updateRenderGraph(Node node, Transform transform,
+    private void updateRenderGraph(Node node, Transform transform,
             int cameraScope, float alphaFactor)
     {
         if (node instanceof SkinnedMesh)
@@ -545,7 +560,7 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    private final void addAllLights(World world)
+    private void addAllLights(World world)
     {
         final Transform lightTransform = new Transform();
         

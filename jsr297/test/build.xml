@@ -17,6 +17,7 @@
             <classpath>
                 <pathelement location="${test.build.dir}"/>
                 <pathelement location="${lib.dir}/junit-4.4.jar"/>
+                <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
                 <fileset dir="${dist.dir}"/>
             </classpath>
 
