@@ -32,7 +32,7 @@ package javax.microedition.m3g;
  * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public class RenderTarget extends AbstractRenderTarget
+public class RenderTarget extends Object3D implements AbstractRenderTarget
 {
     private final ImageBase target;
     private final int face;
@@ -58,6 +58,16 @@ public class RenderTarget extends AbstractRenderTarget
     public RenderTarget(ImageCube target, int face, int miplevel)
     {
         this((ImageBase)target, face, miplevel);
+    }
+    
+    public int getTargetFace()
+    {
+        return this.face;
+    }
+    
+    public int getTargetLevel()
+    {
+        return this.miplevel;
     }
     
     @Override

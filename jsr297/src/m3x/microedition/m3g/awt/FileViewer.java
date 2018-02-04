@@ -132,7 +132,7 @@ public class FileViewer extends BaseFrame
             }
             catch (Throwable t)
             {
-                t.printStackTrace();
+                t.printStackTrace(System.out);
             }
             finally
             {
@@ -268,12 +268,12 @@ public class FileViewer extends BaseFrame
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                e.printStackTrace(System.out);
             }
         }
     }
 
-    private final void initFileMenu(Menu menu)
+    private void initFileMenu(Menu menu)
     {
         MenuItem openItem = new MenuItem("Open",
                 new MenuShortcut(KeyEvent.VK_O));
@@ -286,7 +286,7 @@ public class FileViewer extends BaseFrame
         menu.add(openItem);
     }
 
-    private final void initWindowMenu(Menu menu)
+    private void initWindowMenu(Menu menu)
     {
         MenuItem toggleFullscreenItem = new MenuItem("Toggle Fullscreen",
                 new MenuShortcut(KeyEvent.VK_F));
@@ -299,7 +299,7 @@ public class FileViewer extends BaseFrame
         menu.add(toggleFullscreenItem);
     }
 
-    private final void initMenu()
+    private void initMenu()
     {
         MenuBar menuBar = getMenuBar();
         if (menuBar == null)

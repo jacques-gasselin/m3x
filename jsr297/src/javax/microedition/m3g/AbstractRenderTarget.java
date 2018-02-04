@@ -32,7 +32,7 @@ package javax.microedition.m3g;
  * type safe interface for Graphics3D.bind
  * @author jgasseli
  */
-public abstract class AbstractRenderTarget
+public interface AbstractRenderTarget
 {
     public abstract int getWidth();
     public abstract int getHeight();

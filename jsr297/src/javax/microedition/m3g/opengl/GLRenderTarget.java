@@ -40,7 +40,7 @@ import javax.microedition.m3g.AbstractRenderTarget;
 /**
  * @author jgasseli
  */
-public class GLRenderTarget extends AbstractRenderTarget
+public class GLRenderTarget implements AbstractRenderTarget
 {
     private GLAutoDrawable drawable;
     private RendererOpenGL2 renderer;

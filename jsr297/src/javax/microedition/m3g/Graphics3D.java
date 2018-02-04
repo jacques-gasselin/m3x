@@ -176,7 +176,7 @@ public final class Graphics3D
     }
 
     /**
-     * Clears the currently bound target with the values conatined in the
+     * Clears the currently bound target with the values contained in the
      * Background object.
      * 
      * @param background the parameters to use for clearing.
@@ -513,7 +513,40 @@ public final class Graphics3D
     {
         Require.notNull(renderPass, "renderPass");
         
-        throw new UnsupportedOperationException();
+        //TODO backup state
+
+        Object3D target = renderPass.getTarget();
+        int targetFlags = renderPass.getTargetFlags();
+        if (target instanceof ImageCube)
+        {
+            //TODO do a 6 face render with preset cameras
+            throw new UnsupportedOperationException("cube render not supported yet");
+        }
+        else
+        {
+            bindTarget(target, targetFlags);
+
+            Node scene = renderPass.getScene();
+            Background background = renderPass.getBackground();
+
+            Camera activeCamera = renderPass.getCamera();
+            final Transform cameraToScene = new Transform();
+            activeCamera.getTransformTo(scene, cameraToScene);
+
+            setCamera(activeCamera, cameraToScene);
+            setDepthRange(renderPass.getDepthRangeNear(), renderPass.getDepthRangeFar());
+
+            clear(background);
+
+            //do lights
+            resetLights();
+            addAllLights(scene);
+
+            //render as a node
+            render(scene, null);
+        }
+        
+        //TODO restore state
     }
 
     public void render(VertexBuffer vertices, IndexBuffer primitives,
@@ -560,7 +593,7 @@ public final class Graphics3D
         throw new UnsupportedOperationException();
     }
 
-    private void addAllLights(World world)
+    private void addAllLights(Node node)
     {
         final Transform lightTransform = new Transform();
         
@@ -570,7 +603,7 @@ public final class Graphics3D
         //since all operations only touch the end of the list;
         //this is a depth first search. Breath first search would
         //require the front to be removed for each iteration
-        openList.add(world);
+        openList.add(node);
         //this is an exhaustive search
         while (openList.size() > 0)
         {
@@ -587,7 +620,7 @@ public final class Graphics3D
                     if (candidate instanceof Light)
                     {
                         final Light light = (Light) candidate;
-                        light.getTransformTo(world, lightTransform);
+                        light.getTransformTo(node, lightTransform);
                         addLight(light, lightTransform);
                     }
                     else if (candidate instanceof Group)

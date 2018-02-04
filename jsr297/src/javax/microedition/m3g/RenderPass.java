@@ -32,5 +32,90 @@ package javax.microedition.m3g;
  */
 public class RenderPass
 {
+    private Camera camera;
+    private Node scene;
+    private Background background;
+    private Object3D target;
+    private int targetFlags;
+    private float depthRangeFar;
+    private float depthRangeNear;
+    
+    public RenderPass()
+    {
+        camera = null;
+        scene = null;
+        background = null;
+        target = null;
+        targetFlags = 0;
+        depthRangeFar = 1.0f;
+        depthRangeNear = 0.0f;
+    }
+    
+    public Background getBackground()
+    {
+        return this.background;
+    }
+    
+    public Camera getCamera()
+    {
+        return this.camera;
+    }
+    
+    public float getDepthRangeFar()
+    {
+        return this.depthRangeFar;
+    }
+    
+    public float getDepthRangeNear()
+    {
+        return this.depthRangeNear;
+    }
+    
+    public Node getScene()
+    {
+        return this.scene;
+    }
+    
+    public Object3D getTarget()
+    {
+        return this.target;
+    }
+    
+    public int getTargetFlags()
+    {
+        return this.targetFlags;
+    }
+    
+    public void setBackground(Background background)
+    {
+        this.background = background;
+    }
+    
+    public void setCamera(Camera camera)
+    {
+        this.camera = camera;
+    }
+    
+    public void setDepthRange(float near, float far)
+    {
+        this.depthRangeNear = near;
+        this.depthRangeFar = far;
+    }
+    
+    public void setScene(Node scene)
+    {
+        this.scene = scene;
+    }
+    
+    public void setTarget(ImageCube target, int flags)
+    {
+        this.target = target;
+        this.targetFlags = flags;
+    }
 
+    public void setTarget(RenderTarget target, int flags)
+    {
+        this.target = target;
+        this.targetFlags = flags;
+    }
 }
