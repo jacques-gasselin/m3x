@@ -103,7 +103,7 @@ public class BaseFrame extends Frame
         return this.closed;
     }
 
-    private final void setRefreshRate(DisplayMode dm)
+    private void setRefreshRate(DisplayMode dm)
     {
         refreshRate = dm.getRefreshRate();
         if (refreshRate == DisplayMode.REFRESH_RATE_UNKNOWN)

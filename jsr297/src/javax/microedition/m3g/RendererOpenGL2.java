@@ -101,21 +101,23 @@ public class RendererOpenGL2 extends Renderer
 
     public void initialize(GL gl)
     {
-        supportsAnisotropy = gl.isExtensionAvailable(
-                "GL_EXT_texture_filter_anisotropic");
-        supportsS3TC = gl.isExtensionAvailable(
-                "GL_EXT_texture_compression_s3tc");
+        supportsAnisotropy = (gl != null) ? gl.isExtensionAvailable(
+                "GL_EXT_texture_filter_anisotropic") : false;
+        supportsS3TC = (gl != null) ? gl.isExtensionAvailable(
+                "GL_EXT_texture_compression_s3tc") : false;
         
         if (supportsAnisotropy)
         {
-            maxAnisotropy = glGetFloat(gl, GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+            maxAnisotropy = (gl != null) ?
+                    glGetFloat(gl, GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT) :
+                    1.0f;
         }
         else
         {
             maxAnisotropy = 1.0f;
         }
-        maxTextureSize = glGetInteger(gl, GL.GL_MAX_TEXTURE_SIZE);
-        maxTextureUnits = glGetInteger(gl, GL2.GL_MAX_TEXTURE_UNITS);
+        maxTextureSize = (gl != null) ? glGetInteger(gl, GL.GL_MAX_TEXTURE_SIZE) : 1024;
+        maxTextureUnits = (gl != null) ? glGetInteger(gl, GL2.GL_MAX_TEXTURE_UNITS) : 4;
         texcoordScale = new float[maxTextureUnits];
         texcoordBias = new float[maxTextureUnits][3];
         texcoordTransform = new Transform[maxTextureUnits];
@@ -125,7 +127,7 @@ public class RendererOpenGL2 extends Renderer
         }
         texcoordShortBuffer = new ShortBuffer[maxTextureUnits];
         
-        maxLights = glGetInteger(gl, GL2.GL_MAX_LIGHTS);
+        maxLights = (gl != null) ? glGetInteger(gl, GL2.GL_MAX_LIGHTS) : 8;
         lights = new Light[maxLights];
     }
 
@@ -146,14 +148,15 @@ public class RendererOpenGL2 extends Renderer
             this.lastInstanceGL = gl;
         }
 
-        gl.glDisable(GL2.GL_NORMALIZE);
-        gl.glDisable(GL2.GL_LINE_STIPPLE);
-        gl.glDisable(GL.GL_DITHER);
+        if (gl != null) {
+            gl.glDisable(GL2.GL_NORMALIZE);
+            gl.glDisable(GL2.GL_LINE_STIPPLE);
+            gl.glDisable(GL.GL_DITHER);
 
-        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-        gl.glEnable(GL2.GL_RESCALE_NORMAL);
-        gl.glEnable(GL.GL_MULTISAMPLE);
-
+            gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+            gl.glEnable(GL2.GL_RESCALE_NORMAL);
+            gl.glEnable(GL.GL_MULTISAMPLE);
+        }
     }
 
     public void releaseContext()
@@ -229,7 +232,10 @@ public class RendererOpenGL2 extends Renderer
     {
         final GL gl = getGL();
         //OpenGL uses lower-left as origin
-        gl.glViewport(x, this.height - (y + height), width, height);
+        if (gl != null)
+        {
+            gl.glViewport(x, this.height - (y + height), width, height);
+        }
     }
 
     @Override
@@ -239,8 +245,11 @@ public class RendererOpenGL2 extends Renderer
         Require.notNull(view, "view");
 
         final GL2 gl = getGL();
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadMatrixf(projection.getColumnMajor(), 0);
+        if (gl != null)
+        {
+            gl.glMatrixMode(GL2.GL_PROJECTION);
+            gl.glLoadMatrixf(projection.getColumnMajor(), 0);
+        }
 
         this.viewTransform.set(view);
     }
@@ -266,11 +275,11 @@ public class RendererOpenGL2 extends Renderer
     {
         Require.indexInRange(index, maxLights);
 
-        if (light != null)
+        final GL2 gl = getGL();
+        
+        if (light != null && gl != null)
         {
             final int mode = light.getMode();
-
-            final GL2 gl = getGL();
 
             final int glLight = GL2.GL_LIGHT0 + index;
             commitModelViewMatrix(gl, transform);

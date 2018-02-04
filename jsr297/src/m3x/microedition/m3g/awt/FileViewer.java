@@ -84,17 +84,19 @@ public class FileViewer extends BaseFrame
     {
         private static final long serialVersionUID = 1L;
         
-        private Background background;
-        private AbstractRenderTarget renderTarget;
+        private final Background background;
+        private final AbstractRenderTarget renderTarget;
 
-        private Camera camera;
-        private TransformController cameraController;
+        private final Camera camera;
+        private final TransformController cameraController;
 
         private final Transform transform = new Transform();
 
         private Object3D[] roots;
 
         private float hue;
+        
+        private boolean closed;
         
         public FileViewerCanvas()
         {
@@ -217,11 +219,11 @@ public class FileViewer extends BaseFrame
                 g3d.releaseTarget();
             }
         }
-
+        
         @Override
         public void run()
         {
-            while (true)
+            while (!closed)
             {
                 try
                 {
@@ -233,6 +235,11 @@ public class FileViewer extends BaseFrame
                 }
                 repaint();
             }
+        }
+        
+        void close()
+        {
+            closed = true;
         }
     }
 
@@ -309,7 +316,7 @@ public class FileViewer extends BaseFrame
         menuBar.add(windowMenu);
         initWindowMenu(windowMenu);
     }
-
+    
     FileViewer()
     {
         super("FileViewer");
@@ -317,6 +324,13 @@ public class FileViewer extends BaseFrame
         add(canvas);
 
         initMenu();
+    }
+    
+    @Override
+    public void close()
+    {
+        super.close();
+        canvas.close();
     }
 
     public static void main(String[] args)

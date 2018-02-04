@@ -130,8 +130,12 @@ public class GLRenderTarget extends AbstractRenderTarget
         final GLContext context = drawable.getContext();
         requireValidContext(context);
         
-        //FIXME: Only do this if it isn't already.
-        //context.makeCurrent();
+        //Only do this if it isn't already.
+        if (!context.isCurrent())
+        {
+            context.makeCurrent();
+        }
+        
         GL2 gl = (GL2) context.getGL();
         if (lastGL != gl)
         {
