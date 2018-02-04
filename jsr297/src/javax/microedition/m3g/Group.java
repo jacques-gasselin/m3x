@@ -50,7 +50,7 @@ public class Group extends Node
         
     }
 
-    private final boolean canParentChild(Node child)
+    private boolean canParentChild(Node child)
     {
         Require.notNull(child, "child");
 
@@ -71,6 +71,11 @@ public class Group extends Node
         return parent != this;
     }
 
+    /**
+     * Adds the node as the last child to this group.
+     * @param child 
+     * @see #insertChild(javax.microedition.m3g.Node, int) 
+     */
     public void addChild(Node child)
     {
         if (canParentChild(child))
@@ -80,6 +85,17 @@ public class Group extends Node
         
         children.add(child);
         invalidatePickingBoundingSphere();
+    }
+    
+    @Override
+    public void align(Node reference)
+    {
+        super.align(reference);
+        
+        for (Node child : children)
+        {
+            child.align(reference);
+        }
     }
 
     @Override

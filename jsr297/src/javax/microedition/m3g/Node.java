@@ -67,6 +67,11 @@ public abstract class Node extends Transformable
         
     }
 
+    /**
+     * Aligns this node and all its children.
+     * @param reference the reference node to use if any of the alignment reference nodes are null.
+     * @see #setAlignment(javax.microedition.m3g.Node, int, javax.microedition.m3g.Node, int)
+     */
     public void align(Node reference)
     {
         if (reference != null && !inSameTree(this, reference))
@@ -74,12 +79,21 @@ public abstract class Node extends Transformable
             throw new IllegalArgumentException("reference is not in the same scene graph as this node");
         }
 
-        if (reference == null)
-        {
-            reference = this;
-        }
+        Node referenceY = (alignmentReferenceY != null) ?
+                alignmentReferenceY : reference;
+
+        Node referenceZ = (alignmentReferenceZ != null) ?
+                alignmentReferenceZ : reference;
         
-        throw new UnsupportedOperationException();
+        if (referenceY != null && alignmentTargetY != NONE)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        if (referenceZ != null && alignmentTargetZ != NONE)
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public void animateLOD(int time, Camera camera, float resX, float resY)
