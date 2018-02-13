@@ -45,6 +45,32 @@ public class Appearance extends AppearanceBase
     {
         
     }
+    
+    @Override
+    void duplicate(Object3D target)
+    {
+        super.duplicate(target);
+
+        final Appearance a = (Appearance) target;
+        a.setFog(getFog());
+        a.setMaterial(getMaterial());
+        a.setPointSpriteMode(getPointSpriteMode());
+        for (int i = 0; i < textures.length; ++i)
+        {
+            Texture t = textures[i];
+            if (t != null)
+            {
+                if (t instanceof Texture2D)
+                {
+                    a.setTexture(i, (Texture2D) t);
+                }
+                else if (t instanceof TextureCube)
+                {
+                    a.setTextureCube(i, (TextureCube) t);
+                }
+            }
+        }
+    }
 
     public Fog getFog()
     {

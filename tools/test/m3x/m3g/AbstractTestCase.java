@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import junit.framework.AssertionFailedError;
 import m3x.m3g.primitives.Serializable;
 
@@ -54,6 +53,7 @@ public abstract class AbstractTestCase extends TestCase
 {
     private final List<Object3D> getDepthFirstReferences(Object3D root)
     {
+         Object3D[] references = new Object3D[64];
          ArrayList<Object3D> openList = new ArrayList<Object3D>();
          //keeps track of all opened and closed objects so the list is unique
          HashSet<Object3D> openedSet = new HashSet<Object3D>();
@@ -69,11 +69,15 @@ public abstract class AbstractTestCase extends TestCase
              closedList.add(top);
 
              final int referenceCount = top.getReferences(null);
-             Object3D[] references = new Object3D[referenceCount];
+             if (referenceCount > references.length)
+             {
+                 references = new Object3D[referenceCount];
+             }
              top.getReferences(references);
 
-             for (Object3D obj : references)
+             for (int i = 0; i < referenceCount; ++i)
              {
+                 Object3D obj = references[i];
                  if (openedSet.add(obj))
                  {
                      openList.add(obj);
@@ -138,7 +142,7 @@ public abstract class AbstractTestCase extends TestCase
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             fail(e.toString());
         }
     }
@@ -159,7 +163,7 @@ public abstract class AbstractTestCase extends TestCase
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             fail(e.toString());
         }
     }
@@ -174,12 +178,12 @@ public abstract class AbstractTestCase extends TestCase
         }
         catch (InstantiationException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             fail(e.toString());
         }
         catch (IllegalAccessException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             fail(e.toString());
         }
         assertSerialiseSingle(from, to);
@@ -191,7 +195,6 @@ public abstract class AbstractTestCase extends TestCase
      *
      * @param object1
      * @param object2
-     * @throws Exception
      */
     protected void doTestAccessors(Object object1, Object object2) throws AssertionFailedError
     {
@@ -235,10 +238,10 @@ public abstract class AbstractTestCase extends TestCase
                 }
                 catch (AssertionFailedError e)
                 {
-                    System.out.println("Failed on method : " + getter);
-                    System.out.println("result1 : " + result1);
-                    System.out.println("result2 : " + result2);
-                    e.printStackTrace();
+                    System.err.println("Failed on method : " + getter);
+                    System.err.println("result1 : " + result1);
+                    System.err.println("result2 : " + result2);
+                    e.printStackTrace(System.err);
                     throw e;
                 }
             }
@@ -288,7 +291,7 @@ public abstract class AbstractTestCase extends TestCase
             }
             catch (AssertionFailedError e)
             {
-                System.out.println(result1 + " is not equal to " + result2);
+                System.err.println(result1 + " is not equal to " + result2);
                 throw e;
             }
         }

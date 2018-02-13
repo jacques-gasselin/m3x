@@ -49,6 +49,8 @@
             <formatter usefile="false" type="brief"/>
             <formatter type="xml"/>
             
+            <jvmarg value="-Xprofile"/>
+            
             <batchtest fork="yes"
                        todir="${test.result.dir}">
                 <fileset dir="${test.dir}">

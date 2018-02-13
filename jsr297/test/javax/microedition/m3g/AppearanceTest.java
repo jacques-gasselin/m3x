@@ -236,4 +236,41 @@ public class AppearanceTest extends AbstractTestCase
         a.setPolygonMode(null);
         assertNull(a.getPolygonMode());
     }
+    
+    public void testDuplicate()
+    {
+        final PolygonMode p = new PolygonMode();
+        final CompositingMode cm = new CompositingMode();
+        final Material m = new Material();
+        final Fog f = new Fog();
+        final Texture2D t = new Texture2D();
+        final int layer = 1;
+        
+        a.setPolygonMode(p);
+        a.setCompositingMode(cm);
+        a.setMaterial(m);
+        a.setFog(f);
+        a.setTexture(0, t);
+        a.setLayer(layer);
+        
+        Appearance dup = (Appearance) a.duplicate();
+        assertNotNull(dup);
+        
+        assertNotNull(dup.getPolygonMode());
+        assertEquals(p, dup.getPolygonMode());
+        
+        assertNotNull(dup.getCompositingMode());
+        assertEquals(cm, dup.getCompositingMode());
+
+        assertNotNull(dup.getMaterial());
+        assertEquals(m, dup.getMaterial());
+        
+        assertNotNull(dup.getFog());
+        assertEquals(f, dup.getFog());
+        
+        assertNotNull(dup.getTexture(0));
+        assertEquals(t, dup.getTexture(0));
+        
+        assertEquals(layer, dup.getLayer());
+    }
 }
