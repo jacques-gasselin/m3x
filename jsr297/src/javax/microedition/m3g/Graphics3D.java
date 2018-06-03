@@ -272,12 +272,12 @@ public final class Graphics3D
         return this.lights.size();
     }
 
-    public static Hashtable getProperties()
+    public static Hashtable<String, Object> getProperties()
     {
         throw new UnsupportedOperationException();
     }
 
-    public static Hashtable getProperties(Object target)
+    public static Hashtable<String, Object> getProperties(Object target)
     {
         Require.notNull(target, "target");
         

@@ -34,6 +34,9 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
 import com.jogamp.opengl.awt.GLJPanel;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
@@ -64,7 +67,6 @@ public class CameraControllerDemo extends BaseFrame
     private static final long serialVersionUID = 1L;
 
     private final class CameraControllerCanvas extends GLJPanel
-            implements Runnable
     {
         private static final long serialVersionUID = 1L;
         
@@ -89,8 +91,6 @@ public class CameraControllerDemo extends BaseFrame
         private Image2D baseImage;
         private Texture2D baseTexture;
 
-        private volatile boolean closed;
-
         public CameraControllerCanvas()
         {
             renderTarget = new GLRenderTarget(this);
@@ -112,34 +112,30 @@ public class CameraControllerDemo extends BaseFrame
                 lightSphere.getVertexBuffer().setDefaultColor(lightColor);
             }
 
-            try
+            try (InputStream imageStream = getClass().getResourceAsStream("specular.png"))
             {
-                InputStream imageStream = getClass().getResourceAsStream("specular.png");
                 specularImage = (Image2D) Loader.loadImage(
                         ImageBase.LUMINANCE | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
-                        imageStream);
-                imageStream.close();
+                    imageStream);
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
 
             specularTexture = new Texture2D(specularImage);
             specularTexture.setFiltering(Texture.FILTER_BASE_LEVEL, Texture.FILTER_ANISOTROPIC);
             specularTexture.setBlending(Texture2D.FUNC_MODULATE);
 
-            try
+            try (InputStream imageStream = getClass().getResourceAsStream("earth.png"))
             {
-                InputStream imageStream = getClass().getResourceAsStream("earth.png");
                 baseImage = (Image2D) Loader.loadImage(
                         ImageBase.RGB | ImageBase.NO_MIPMAPS | ImageBase.LOSSLESS,
-                        imageStream);
-                imageStream.close();
+                    imageStream);
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
 
             baseTexture = new Texture2D(baseImage);
@@ -169,15 +165,25 @@ public class CameraControllerDemo extends BaseFrame
             camera.setScope(NO_LIGHT_SCOPE | LIGHT0_SCOPE);
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
-
-            new Thread(this).start();
         }
 
+        float fpsFiltered = 120.f;
+        long lastTimeMillis = 0;
+        
         @Override
         public void paint(Graphics g)
         {
             super.paint(g);
 
+            long currentTimeMillis = System.currentTimeMillis();
+            if (lastTimeMillis != 0)
+            {
+                long frameTime = currentTimeMillis - lastTimeMillis;
+                float fps = 1000.0f / frameTime;
+                fpsFiltered = fpsFiltered * 0.999f + fps * 0.001f;
+            }
+            lastTimeMillis = currentTimeMillis;
+            
             Graphics3D g3d = Graphics3D.getInstance();
 
             try
@@ -203,7 +209,7 @@ public class CameraControllerDemo extends BaseFrame
             }
             catch (Throwable t)
             {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
             finally
             {
@@ -218,23 +224,29 @@ public class CameraControllerDemo extends BaseFrame
             g2d.drawString("- hold Shift to pan.", 15, 30);
             g2d.drawString("- hold Ctrl to dolly.", 15, 45);
             g2d.drawString("- Alt+LMB emulates MMB", 15, 60);
-        }
-
-        @Override
-        public void run()
-        {
-            while (!isClosed())
-            {
-                Thread.yield();
-                repaint();
-            }
+            
+            g2d.drawString("" + Math.round(fpsFiltered) + " fps", 2, getHeight() - 4);
         }
     }
 
+    ScheduledExecutorService frameService;
     CameraControllerDemo()
     {
         super();
-        add(new CameraControllerCanvas());
+        CameraControllerCanvas canvas = new CameraControllerCanvas();
+        add(canvas);
+        
+        frameService = Executors.newSingleThreadScheduledExecutor();
+        frameService.scheduleAtFixedRate(
+                () -> { canvas.repaint(); },
+                8, 8, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    protected void close()
+    {
+        frameService.shutdown();
+        super.close();
     }
 
     public static void main(String[] args)

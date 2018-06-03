@@ -28,7 +28,13 @@
 package vertexbuffer.opengl;
 
 import java.awt.Graphics;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
@@ -47,9 +53,9 @@ import m3x.awt.BaseFrame;
 public class SimpleVBDemo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
+    static final int scheduledFrameTime = 4;
 
-    private final class SimpleVBCanvas extends GLCanvas
-            implements Runnable
+    private final class SimpleVBCanvas extends GLJPanel
     {
         private static final long serialVersionUID = 1L;
 
@@ -102,10 +108,22 @@ public class SimpleVBDemo extends BaseFrame
             camera.getCompositeTransform(cameraTransform);
         }
 
+        float fpsFiltered = 1000.f / scheduledFrameTime;
+        long lastTimeMillis = 0;
+            
         @Override
         public void paint(Graphics g)
         {
             super.paint(g);
+            
+            long currentTimeMillis = System.currentTimeMillis();
+            if (lastTimeMillis != 0)
+            {
+                long frameTime = currentTimeMillis - lastTimeMillis;
+                float fps = 1000.0f / frameTime;
+                fpsFiltered = fpsFiltered * 0.999f + fps * 0.001f;
+            }
+            lastTimeMillis = currentTimeMillis;
 
             Graphics3D g3d = Graphics3D.getInstance();
 
@@ -126,35 +144,33 @@ public class SimpleVBDemo extends BaseFrame
             {
                 g3d.releaseTarget();
             }
-        }
-
-        @Override
-        public void run()
-        {
-            while (!isClosed())
-            {
-                try
-                {
-                    Thread.sleep(1000 / getRefreshRate());
-                }
-                catch (InterruptedException e)
-                {
-                    //e.printStackTrace();
-                }
-                repaint();
-            }
+            
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("" + Math.round(fpsFiltered) + " fps", 2, getHeight() - 4);
         }
     }
 
+    ScheduledExecutorService frameService;
     SimpleVBDemo()
     {
         super("SimpleVBDemo");
-        java.awt.EventQueue.invokeLater(() ->
-        {
-            SimpleVBCanvas canvas = new SimpleVBCanvas();
-            add(canvas);
-            new Thread(canvas).start();
-        });
+        SimpleVBCanvas canvas = new SimpleVBCanvas();
+        add(canvas);
+        
+        frameService = Executors.newSingleThreadScheduledExecutor();
+        frameService.scheduleAtFixedRate(
+                () -> { canvas.repaint(); },
+                scheduledFrameTime, scheduledFrameTime, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    protected void close()
+    {
+        frameService.shutdown();
+        super.close();
     }
 
     public static void main(String[] args)
@@ -162,5 +178,4 @@ public class SimpleVBDemo extends BaseFrame
         BaseFrame frame = new SimpleVBDemo();
         frame.present(false);
     }
-
 }

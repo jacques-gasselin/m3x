@@ -204,6 +204,11 @@
                 <build-target>build</build-target>
             </export>
             <export>
+                <type>jar</type>
+                <location>jsr297/dist/m3x-jsr297.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
                 <type>folder</type>
                 <location>jsr297/test/build</location>
                 <build-target>build</build-target>
@@ -211,6 +216,11 @@
             <export>
                 <type>folder</type>
                 <location>jsr297/build</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>jsr297/dist/m3x-jsr297.jar</location>
                 <build-target>build</build-target>
             </export>
             <view>
@@ -292,6 +302,7 @@
                 <package-root>jsr297/src</package-root>
                 <classpath mode="compile">lib/vecmath/vecmath.jar:tools/build:lib/taglets/taglets.jar:lib/jogl/jogl-all.jar:jsr297/dist/m3x-jsr297.jar</classpath>
                 <built-to>jsr297/build</built-to>
+                <built-to>jsr297/dist/m3x-jsr297.jar</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.8</source-level>
             </compilation-unit>
@@ -306,6 +317,7 @@
                 <package-root>jsr297/demo</package-root>
                 <classpath mode="compile">lib/jogl/jogl-all.jar:lib/vecmath/vecmath.jar:jsr297/dist/m3x-jsr297.jar:tools/dist/m3x.jar</classpath>
                 <built-to>jsr297/build</built-to>
+                <built-to>jsr297/dist/m3x-jsr297.jar</built-to>
                 <javadoc-built-to>jsr297/docs/api</javadoc-built-to>
                 <source-level>1.8</source-level>
             </compilation-unit>
