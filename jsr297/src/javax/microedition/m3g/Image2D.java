@@ -50,6 +50,16 @@ public class Image2D extends ImageBase
         set(format, image);
     }
 
+    public Image2D(int format, int width, int height, ByteBuffer buffer)
+    {
+        if (buffer == null)
+        {
+            throw new NullPointerException("buffer is null");
+        }
+        set(format, width, height, 1, true);
+        set(0, 0, 0, width, height, buffer);
+    }
+    
     final void set(int format, BufferedImage image)
     {
         Require.notNull(image, "image");
@@ -192,9 +202,17 @@ public class Image2D extends ImageBase
     }
 
     public void set(int miplevel, int x, int y, int width, int height,
-            byte[] image)
+            ByteBuffer image)
     {
-        Require.notNull(image, "image");
+        byte[] bytes = new byte[image.capacity()];
+        image.get(bytes);
+        set(miplevel, x, y, width, height, bytes);
+    }
+            
+    public void set(int miplevel, int x, int y, int width, int height,
+            byte[] bytes)
+    {
+        Require.notNull(bytes, "bytes");
         Require.argumentInRange(miplevel, "miplevel", 0, getLevelCount());
 
         if ((getFormat() & NO_MIPMAPS) != 0 && miplevel > 0)
@@ -218,7 +236,7 @@ public class Image2D extends ImageBase
         {
             final int destY = y + j;
             dest.position(destStride * destY + ((x * bitsPerPixel) >> 3));
-            dest.put(image, srcStride * j, (width * bitsPerPixel) >> 3);
+            dest.put(bytes, srcStride * j, (width * bitsPerPixel) >> 3);
         }
         dest.rewind();
     }
