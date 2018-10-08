@@ -94,7 +94,7 @@ public class XmlToBinaryTask extends Task
     
     public XmlToBinaryTask()
     {
-        filesetList = new ArrayList<FileSet>();
+        filesetList = new ArrayList<>();
     }
 
     @Override
@@ -274,7 +274,7 @@ public class XmlToBinaryTask extends Task
                         }
                         else
                         {
-                            cause.printStackTrace();
+                            cause.printStackTrace(System.err);
                         }
                     }
                     throw new BuildException("convert(File, File) failed on\n"
