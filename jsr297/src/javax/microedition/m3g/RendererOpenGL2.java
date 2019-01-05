@@ -875,10 +875,10 @@ public class RendererOpenGL2 extends Renderer
             this.positionShortBuffer.capacity() < limit)
         {
             this.positionShortBuffer = ByteBuffer.allocateDirect(
-                    limit).order(ByteOrder.nativeOrder()).asShortBuffer();
+                    limit * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return (ShortBuffer) this.positionShortBuffer.rewind();
+        return this.positionShortBuffer.limit(limit).rewind();
     }
 
     private ShortBuffer getTexcoordShortBuffer(int unit, int limit)
@@ -887,10 +887,10 @@ public class RendererOpenGL2 extends Renderer
             this.texcoordShortBuffer[unit].capacity() < limit)
         {
             this.texcoordShortBuffer[unit] = ByteBuffer.allocateDirect(
-                    limit).order(ByteOrder.nativeOrder()).asShortBuffer();
+                    limit * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return (ShortBuffer) this.texcoordShortBuffer[unit].rewind();
+        return this.texcoordShortBuffer[unit].limit(limit).rewind();
     }
 
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData
@@ -1577,7 +1577,7 @@ public class RendererOpenGL2 extends Renderer
                 {
                     final ByteBuffer bytes = (ByteBuffer) buffer;
                     final int limit = bytes.limit();
-                    final ShortBuffer shorts = getPositionShortBuffer(limit * 2);
+                    final ShortBuffer shorts = getPositionShortBuffer(limit);
                     for (int i = 0; i < limit; ++i)
                     {
                         shorts.put(bytes.get());
@@ -1712,7 +1712,7 @@ public class RendererOpenGL2 extends Renderer
                             final ByteBuffer bytes = (ByteBuffer) buffer;
                             final int limit = bytes.limit();
                             final ShortBuffer shorts =
-                                    getTexcoordShortBuffer(texunit, limit * 2);
+                                    getTexcoordShortBuffer(texunit, limit);
                             for (int i = 0; i < limit; ++i)
                             {
                                 shorts.put(bytes.get());

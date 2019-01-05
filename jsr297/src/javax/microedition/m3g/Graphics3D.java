@@ -430,7 +430,19 @@ public final class Graphics3D
     {
         if (node instanceof SkinnedMesh)
         {
-            throw new UnsupportedOperationException();
+            final SkinnedMesh skinnedMesh = (SkinnedMesh) node;
+            final float alpha = alphaFactor * skinnedMesh.getAlphaFactor();
+            final Group skeleton = skinnedMesh.getSkeleton();
+            if (skeleton.isRenderingEnabled())
+            {
+                //prepare the transform to use for the child
+                //TODO grab the transform off a cached list
+                final Transform childTransform = new Transform(transform);
+                childTransform.postMultiply(skeleton.getCompositeTransform());
+                //recurse and update
+                updateRenderGraph(skeleton, childTransform,
+                        cameraScope, alpha);
+            }
         }
         if (node instanceof Mesh)
         {

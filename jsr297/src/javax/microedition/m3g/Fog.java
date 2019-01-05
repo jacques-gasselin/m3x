@@ -36,18 +36,14 @@ public class Fog extends Object3D
     public static final int LINEAR = 81;
     public static final int EXPONENTIAL_SQUARED = 82;
 
-    private int color;
-    private float density;
-    private float farDistance;
-    private int mode;
-    private float nearDistance;
+    private int color = 0x0;
+    private float density = 1.0f;
+    private float farDistance = 1.0f;
+    private int mode = LINEAR;
+    private float nearDistance = 0.0f;
     
     public Fog()
     {
-        setMode(LINEAR);
-        setDensity(1.0f);
-        setLinear(0.0f, 1.0f);
-        setColor(0x0);
     }
 
     public int getColor()

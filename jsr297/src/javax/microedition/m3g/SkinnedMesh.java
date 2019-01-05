@@ -32,5 +32,128 @@ package javax.microedition.m3g;
  */
 public class SkinnedMesh extends Mesh
 {
+    private Group skeleton;
+    private Node[] bones;
+    private Transform[] restPoseTransforms;
+    private boolean isLegacy = false;
+    
+    SkinnedMesh()
+    {
+        super();
+    }
+    
+    public SkinnedMesh(int numSubmeshes, int numMorphTargets, Group skeleton)
+    {
+        super(numSubmeshes, numMorphTargets);
+        this.skeleton = skeleton;
+    }
+    
+    @Deprecated()
+    public SkinnedMesh(VertexBuffer vertices, IndexBuffer[] submeshes, Appearance[] appearances, Group skeleton)
+    {
+        super(vertices, submeshes, appearances);
+        this.skeleton = skeleton;
+        this.isLegacy = true;
+    }
 
+    @Deprecated()
+    public SkinnedMesh(VertexBuffer vertices, IndexBuffer submesh, Appearance appearance, Group skeleton)
+    {
+        super(vertices, submesh, appearance);
+        this.skeleton = skeleton;
+        this.isLegacy = true;
+    }
+    
+    boolean isLegacy()
+    {
+        return isLegacy;
+    }
+    
+    void setLegacy(boolean b)
+    {
+        isLegacy = b;
+    }
+    
+    void setSkeleton(Group skeleton)
+    {
+        Require.notNull(skeleton, "skeleton");
+        if (this.skeleton != null)
+        {
+            throw new IllegalStateException("already has a skeleton");
+        }
+        this.skeleton = skeleton;
+    }
+    
+    @Deprecated
+    public void addTransform(Node bone, int weight, int firstVertex, int numVertices)
+    {
+        Require.notNull(bone, "bone");
+        Require.argumentGreaterThanZero(weight, "weight");
+        Require.argumentGreaterThanZero(numVertices, "numVertices");
+        Require.indexNotNegative(firstVertex, "firstVertex");
+        Require.indexInRange(firstVertex + numVertices, "firstVertex + numVertices", 65535);
+        
+        if (!isLegacy)
+        {
+            throw new IllegalStateException("not a legacy skinned mesh");
+        }
+    }
+    
+    public Node[] getBones()
+    {
+        return this.bones;
+    }
+    
+    public void getBoneTransform(Node bone, Transform transform)
+    {
+        Require.notNull(bone, "bone");
+        Require.notNull(transform, "transform");
+        
+        for (int i = 0; i < bones.length; ++i)
+        {
+            if (bone == bones[i])
+            {
+                transform.set(restPoseTransforms[i]);
+                return;
+            }
+        }
+        
+        throw new IllegalArgumentException("bone is not in skeleton group");
+    }
+    
+    @Deprecated
+    public int getBoneVertices(Node bone, int[] indices, float[] weights)
+    {
+        Require.notNull(bone, "bone");
+        
+        if (!isLegacy)
+        {
+            throw new IllegalStateException("not a legacy skinned mesh");
+        }
+        
+        return 0;
+    }
+    
+    public Group getSkeleton()
+    {
+        return skeleton;
+    }
+    
+    void setBones(Node[] bones)
+    {
+        Require.notNull(bones, "bones");
+        
+        this.restPoseTransforms = new Transform[bones.length];
+
+        for (int i = 0; i < bones.length; ++i)
+        {
+            if (!getTransformTo(bones[i], restPoseTransforms[i]))
+            {
+                throw new IllegalArgumentException("bone not in the skeleton group");
+            }
+        }
+
+        this.bones = new Node[bones.length];
+        System.arraycopy(bones, 0, this.bones, 0, bones.length);
+    }
 }

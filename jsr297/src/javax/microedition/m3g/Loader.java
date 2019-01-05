@@ -596,8 +596,12 @@ public final class Loader
                     }
                     case TYPE_FOG:
                     {
-                        throw new IOException("Unsupported object type "
-                                + objectType + " (Fog)");
+                        Fog obj = new Fog();
+                        
+                        loadFog(obj);
+                        
+                        addReference(obj);
+                        break;
                     }
                     case TYPE_GROUP:
                     {
@@ -651,8 +655,12 @@ public final class Loader
                     }
                     case TYPE_SKINNEDMESH:
                     {
-                        throw new IOException("Unsupported object type "
-                                + objectType + " (SkinnedMesh)");
+                        SkinnedMesh obj = new SkinnedMesh();
+                        
+                        loadSkinnedMesh(obj);
+                        
+                        addReference(obj);
+                        break;
                     }
                     case TYPE_POLYGONMODE:
                     {
@@ -928,6 +936,27 @@ public final class Loader
             }
         }
 
+        private void loadFog(Fog obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+            
+            obj.setColor(readRGBasARGB());
+            final int mode = readUnsignedByte();
+            obj.setMode(mode);
+            
+            if (mode == Fog.EXPONENTIAL || (isFileFormat2() && mode == Fog.EXPONENTIAL_SQUARED))
+            {
+                obj.setDensity(readFloat());
+            }
+            else if (mode == Fog.LINEAR)
+            {
+                final float near = readFloat();
+                final float far = readFloat();
+                obj.setLinear(near, far);
+            }
+        }
+        
         private void loadGroup(Group obj)
             throws IOException
         {
@@ -1215,6 +1244,42 @@ public final class Loader
             }
         }
 
+        @SuppressWarnings("deprecation")
+        private void loadSkinnedMesh(SkinnedMesh obj)
+            throws IOException
+        {
+            loadMesh(obj);
+            
+            obj.setSkeleton(readReference());
+            
+            boolean isLegacy = true;
+            if (isFileFormat2())
+            {
+                isLegacy = readBoolean();
+            }
+            
+            obj.setLegacy(isLegacy);
+            
+            final int boneCount = readInt();
+            final Node[] bones = new Node[boneCount];
+            for (int i = 0; i < boneCount; ++i)
+            {
+                bones[i] = readReference();
+                if (isLegacy)
+                {
+                    int firstVertex = readInt();
+                    int numVertices = readInt();
+                    int weight = readInt();
+                    obj.addTransform(bones[i], weight, firstVertex, numVertices);
+                }
+            }
+            
+            if (!isLegacy)
+            {
+                obj.setBones(bones);
+            }
+        }
+        
         private void loadNode(Node obj)
             throws IOException
         {
