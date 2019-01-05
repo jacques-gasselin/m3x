@@ -18,13 +18,13 @@
 
     <target name="pre-build">
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
         <mkdir dir="${test.build.dir}"/>
         <mkdir dir="${demo.build.dir}"/>
     </target>
 
-    <target name="clean">
-        <mkdir dir="${test.build.dir}" />
-        <mkdir dir="${demo.build.dir}" />
+    <target name="clean"
+            depends="pre-build">
         <delete>
             <fileset dir="${build.dir}" includes="**/*.class"/>
             <fileset dir="${build.dir}" includes="**/*.java"/>
@@ -68,6 +68,7 @@
                fork="true"
                debug="true"
                failonerror="true"
+               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
@@ -103,6 +104,7 @@
                fork="true"
                debug="true"
                failonerror="true"
+               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
@@ -125,6 +127,7 @@
                fork="true"
                debug="true"
                failonerror="true"
+               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
