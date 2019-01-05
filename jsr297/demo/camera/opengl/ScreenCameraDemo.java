@@ -28,7 +28,7 @@
 package camera.opengl;
 
 import java.awt.Graphics;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.Background;
@@ -49,7 +49,7 @@ public class ScreenCameraDemo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    private final class ScreenCameraCanvas extends GLCanvas
+    private final class ScreenCameraCanvas extends GLJPanel
             implements Runnable
     {
         private static final long serialVersionUID = 1L;

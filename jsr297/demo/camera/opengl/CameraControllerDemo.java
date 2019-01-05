@@ -233,13 +233,15 @@ public class CameraControllerDemo extends BaseFrame
     CameraControllerDemo()
     {
         super();
-        CameraControllerCanvas canvas = new CameraControllerCanvas();
-        add(canvas);
-        
-        frameService = Executors.newSingleThreadScheduledExecutor();
-        frameService.scheduleAtFixedRate(
-                () -> { canvas.repaint(); },
-                8, 8, TimeUnit.MILLISECONDS);
+        java.awt.EventQueue.invokeLater(() -> {
+            CameraControllerCanvas canvas = new CameraControllerCanvas();
+            add(canvas);
+
+            frameService = Executors.newSingleThreadScheduledExecutor();
+            frameService.scheduleAtFixedRate(
+                    () -> { canvas.repaint(); },
+                    8, 8, TimeUnit.MILLISECONDS);
+        });
     }
 
     @Override

@@ -31,7 +31,13 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
@@ -52,8 +58,8 @@ public class PickingDemo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    class PickingDemoCanvas extends GLCanvas
-            implements Runnable, MouseListener, MouseMotionListener
+    class PickingDemoCanvas extends GLJPanel
+            implements MouseListener, MouseMotionListener
     {
         private static final long serialVersionUID = 1L;
         
@@ -126,7 +132,6 @@ public class PickingDemo extends BaseFrame
             cameraController = 
                     new BlenderTurntableCameraController(camera, this, 0.0f, 10.0f, 4.0f);
             renderTarget = new GLRenderTarget(this);
-            new Thread(this).start();
         }
 
         @Override
@@ -173,22 +178,14 @@ public class PickingDemo extends BaseFrame
                 g3d.releaseTarget();
             }
             
-        }
-
-        public void run()
-        {
-            while (!isClosed())
-            {
-                try
-                {
-                    Thread.sleep(1000 / getRefreshRate());
-                }
-                catch (InterruptedException e)
-                {
-                    //e.printStackTrace();
-                }
-                repaint();
-            }
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("MMB rotates view", 15, 15);
+            g2d.drawString("- hold Shift to pan.", 15, 30);
+            g2d.drawString("- hold Ctrl to dolly.", 15, 45);
+            g2d.drawString("- Alt+LMB emulates MMB", 15, 60);
         }
 
         public void mouseExited(MouseEvent e)
@@ -212,6 +209,7 @@ public class PickingDemo extends BaseFrame
             yMouse = e.getY();
         }
 
+        @Override
         public void mouseClicked(MouseEvent e)
         {
             RayIntersection ri = new RayIntersection();
@@ -288,12 +286,28 @@ public class PickingDemo extends BaseFrame
         }
     }
 
+    ScheduledExecutorService frameService;
     PickingDemo()
     {
         super("PickingDemo");
-        add(new PickingDemoCanvas());
+        java.awt.EventQueue.invokeLater(() -> {
+            PickingDemoCanvas canvas = new PickingDemoCanvas();
+            add(canvas);
+
+            frameService = Executors.newSingleThreadScheduledExecutor();
+            frameService.scheduleAtFixedRate(
+                    () -> { canvas.repaint(); },
+                    8, 8, TimeUnit.MILLISECONDS);
+        });
     }
 
+    @Override
+    protected void close()
+    {
+        frameService.shutdown();
+        super.close();
+    }
+    
     public static void main(String[] args)
     {
 

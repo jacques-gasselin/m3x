@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2008-2010, Jacques Gasselin de Richebourg
+/*
+ * Copyright (c) 2009-2010, Jacques Gasselin de Richebourg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,24 +24,28 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package m3x.translation.m3g.xml;
-
-import m3x.translation.m3g.XmlToBinaryTranslator;
+package javax.microedition.m3g;
 
 /**
- *
  * @author jgasseli
  */
-public abstract class NodeConverter extends TransformableConverter
+public class ShaderVariable
 {
-    protected final void setFromXML(XmlToBinaryTranslator translator,
-        m3x.m3g.Node to, m3x.xml.Node from)
+    public static final int FLOAT = 320;
+    public static final int SAMPLER_CUBE = 337;
+    
+    public int getLength()
     {
-        super.setFromXML(translator, to, from);
-        to.setAlphaFactor(from.getAlphaFactor());
-        to.setPickingEnabled(from.isPickingEnabled());
-        to.setRenderingEnabled(from.isRenderingEnabled());
-        to.setScope(from.getScope());
+        throw new UnsupportedOperationException();
+    }
+    
+    public String getName()
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    public int getType()
+    {
+        throw new UnsupportedOperationException();
     }
 }

@@ -51,8 +51,8 @@ public class GroupConverter extends NodeConverter
     {
         super.setFromXML(translator, to, from);
         to.setAlphaFactor(from.getAlphaFactor());
-        to.setPickingEnabled(from.getPickingEnabled());
-        to.setRenderingEnabled(from.getRenderingEnabled());
+        to.setPickingEnabled(from.isPickingEnabled());
+        to.setRenderingEnabled(from.isRenderingEnabled());
         to.setScope(from.getScope());
         to.setChildNodes(getChildNodes(translator, from));
     }

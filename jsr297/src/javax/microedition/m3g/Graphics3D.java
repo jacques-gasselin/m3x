@@ -469,11 +469,7 @@ public final class Graphics3D
                     {
                         //prepare the transform to use for the child
                         //TODO grab the transform off a cached list
-                        final Transform childTransform = new Transform();
-                        if (transform != null)
-                        {
-                            childTransform.set(transform);
-                        }
+                        final Transform childTransform = new Transform(transform);
                         childTransform.postMultiply(child.getCompositeTransform());
                         //recurse and update
                         updateRenderGraph(child, childTransform,
@@ -495,7 +491,11 @@ public final class Graphics3D
         {
             return;
         }
-
+        
+        if (transform == null)
+        {
+            transform = new Transform();
+        }
         updateRenderGraph(node, transform, camera.getScope(),
                 1.0f);
 

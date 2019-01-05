@@ -39,6 +39,7 @@ import java.util.zip.CheckedInputStream;
 import java.util.zip.Checksum;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 /**
@@ -216,6 +217,14 @@ public final class Loader
             }
         }
 
+        void readFully(float[] f, int off, int len) throws IOException
+        {
+            for (int i = 0; i < len; ++i)
+            {
+                f[off + i] = readFloat();
+            }
+        }
+        
         /**
          * Reads a little-endian signed integer value.
          * @return the int value of the next 4 bytes in the stream.
@@ -255,7 +264,9 @@ public final class Loader
          * @return the reference at the read index, or null if 0
          * @throws IOException if the stream hits EOF or any other error
          */
-        Object3D readReference() throws IOException
+        @SuppressWarnings("unchecked")
+        <Object3DDerived extends Object3D>
+        Object3DDerived readReference() throws IOException
         {
             final int index = readInt();
             if (index == 0)
@@ -264,7 +275,7 @@ public final class Loader
             }
             Object3D ret = references.get(index - 2);
             rootObjects.remove(ret);
-            return ret;
+            return (Object3DDerived) ret;
         }
 
         /**
@@ -301,7 +312,7 @@ public final class Loader
         }
 
         /**
-         * Checks the stream for the prescence of the M3G file identifier.
+         * Checks the stream for the presence of the M3G file identifier.
          * @throws IOException if the identifier is missing.
          */
         private void checkIdentifier() throws IOException
@@ -538,11 +549,38 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_ANIMATIONTRACK:
+                    {
+                        AnimationTrack obj = new AnimationTrack();
+                        
+                        loadAnimationTrack(obj);
+                        
+                        addReference(obj);
+                        break;
+                    }
                     case TYPE_APPEARANCE:
                     {
                         Appearance obj = new Appearance();
 
                         loadAppearance(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_BACKGROUND:
+                    {
+                        Background obj = new Background();
+
+                        loadBackground(obj);
+
+                        addReference(obj);
+                        break;                        
+                    }
+                    case TYPE_CAMERA:
+                    {
+                        Camera obj = new Camera();
+
+                        loadCamera(obj);
 
                         addReference(obj);
                         break;
@@ -555,6 +593,11 @@ public final class Loader
 
                         addReference(obj);
                         break;
+                    }
+                    case TYPE_FOG:
+                    {
+                        throw new IOException("Unsupported object type "
+                                + objectType + " (Fog)");
                     }
                     case TYPE_GROUP:
                     {
@@ -601,6 +644,16 @@ public final class Loader
                         addReference(obj);
                         break;
                     }
+                    case TYPE_MORPHINGMESH:
+                    {
+                        throw new IOException("Unsupported object type "
+                                + objectType + " (MorphingMesh)");
+                    }
+                    case TYPE_SKINNEDMESH:
+                    {
+                        throw new IOException("Unsupported object type "
+                                + objectType + " (SkinnedMesh)");
+                    }
                     case TYPE_POLYGONMODE:
                     {
                         PolygonMode obj = new PolygonMode();
@@ -615,6 +668,20 @@ public final class Loader
                         Texture2D obj = new Texture2D();
 
                         loadTexture2D(obj);
+
+                        addReference(obj);
+                        break;
+                    }
+                    case TYPE_SPRITE3D:
+                    {
+                        throw new IOException("Unsupported object type "
+                                + objectType + " (Sprite3D)");
+                    }
+                    case TYPE_KEYFRAMESEQUENCE:
+                    {
+                        KeyframeSequence obj = new KeyframeSequence();
+
+                        loadKeyframeSequence(obj);
 
                         addReference(obj);
                         break;
@@ -657,13 +724,14 @@ public final class Loader
                     }
                     default:
                     {
-                        throw new IOException("Unsupported object type " + objectType);
+                        throw new IOException("Unsupported object type "
+                                + objectType);
                     }
                 }
             }
         }
 
-        private final void loadAnimationController(AnimationController obj)
+        private void loadAnimationController(AnimationController obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -675,11 +743,40 @@ public final class Loader
             final float referenceSequenceTime = readFloat();
             final int referenceWorldTime = readInt();
             
-            //TODO set the values
-            throw new UnsupportedOperationException();
+            obj.setPosition(referenceSequenceTime, referenceWorldTime);
+            obj.setWeight(weight);
+            obj.setSpeed(speed, referenceWorldTime);
+            obj.setActiveInterval(activeIntervalStart, activeIntervalEnd);
         }
 
-        private final void loadAppearanceBase(AppearanceBase obj)
+        private void loadAnimationTrack(AnimationTrack obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+            
+            KeyframeSequence sequence = readReference();
+            AnimationController controller = readReference();
+            
+            final int property;
+            if (isFileFormat2())
+            {
+                property = readUnsignedShort();
+                if (property >= ShaderVariable.FLOAT || property <= ShaderVariable.SAMPLER_CUBE)
+                {
+                    boolean normalized = readBoolean();
+                }
+            }
+            else 
+            {
+                property = readInt();
+            }
+            
+            obj.setTargetProperty(property);
+            obj.setKeyframeSequence(sequence);
+            obj.setController(controller);
+        }
+        
+        private void loadAppearanceBase(AppearanceBase obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -693,38 +790,111 @@ public final class Loader
                 obj.setLayer(readByte());
             }
 
-            obj.setCompositingMode((CompositingMode) readReference());
+            obj.setCompositingMode(readReference());
 
             if (isFileFormat2())
             {
-                obj.setPolygonMode((PolygonMode) readReference());
+                obj.setPolygonMode(readReference());
                 obj.setDepthSortEnabled(readBoolean());
             }
         }
 
-        private final void loadAppearance(Appearance obj)
+        private void loadAppearance(Appearance obj)
             throws IOException
         {
             loadAppearanceBase(obj);
 
-            obj.setFog((Fog) readReference());
+            obj.setFog(readReference());
             if (isFileFormat1())
             {
-                obj.setPolygonMode((PolygonMode) readReference());
+                obj.setPolygonMode(readReference());
             }
             else
             {
-                obj.setPointSpriteMode((PointSpriteMode) readReference());
+                obj.setPointSpriteMode(readReference());
             }
-            obj.setMaterial((Material) readReference());
+            obj.setMaterial(readReference());
             final int textureCount = readInt();
             for (int i = 0; i < textureCount; ++i)
             {
-                obj.setTexture(i, (Texture2D) readReference());
+                obj.setTexture(i, readReference());
             }
         }
 
-        private final void loadCompositingMode(CompositingMode obj)
+        @SuppressWarnings("deprecation")
+        private void loadBackground(Background obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+            
+            obj.setColor(readRGBAasARGB());
+            obj.setImage(readReference());
+            
+            int modeX = readUnsignedByte();
+            int modeY = readUnsignedByte();
+            obj.setImageMode(modeX, modeY);
+            
+            int cropX = readInt();
+            int cropY = readInt();
+            int cropWidth = readInt();
+            int cropHeight = readInt();
+            obj.setCrop(cropX, cropY, cropWidth, cropHeight);
+            
+            obj.setDepthClearEnabled(readBoolean());
+
+            if (isFileFormat2())
+            {
+                obj.setDepth(readFloat());
+                obj.setStencil(readInt());
+                obj.setStencilClearMask(readInt());
+                obj.setColorClearMask(readRGBAasARGB());
+            }
+            else
+            {
+                obj.setColorClearEnabled(readBoolean());
+            }
+
+        }
+        
+        private void loadCamera(Camera obj)
+            throws IOException
+        {
+            loadNode(obj);
+            
+            int projectionType = readUnsignedByte();
+            if (projectionType == Camera.GENERIC)
+            {
+                final float[] matrix = new float[16];
+                for (int i = 0; i < 16; ++i)
+                {
+                    matrix[i] = readFloat();
+                }
+                final Transform transform = new Transform();
+                transform.set(matrix);
+                
+                obj.setGeneric(transform);
+            }
+            else if (isFileFormat2() && projectionType == Camera.SCREEN)
+            {
+                float x = readFloat();
+                float y = readFloat();
+                float width = readFloat();
+                float height = readFloat();
+                
+                obj.setScreen(x, y, width, height);
+            }
+            else
+            {
+                float fovy = readFloat();
+                float aspect = readFloat();
+                float near = readFloat();
+                float far = readFloat();
+                
+                obj.setPerspective(fovy, aspect, near, far);
+            }
+        }
+
+        private void loadCompositingMode(CompositingMode obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -752,13 +922,13 @@ public final class Loader
             {
                 obj.setDepthTest(readUnsignedShort());
                 obj.setAlphaTest(readUnsignedShort());
-                obj.setBlender((Blender) readReference());
-                obj.setStencil((Stencil) readReference());
+                obj.setBlender(readReference());
+                obj.setStencil(readReference());
                 obj.setColorWriteMask(readRGBAasARGB());
             }
         }
 
-        private final void loadGroup(Group obj)
+        private void loadGroup(Group obj)
             throws IOException
         {
             loadNode(obj);
@@ -766,7 +936,7 @@ public final class Loader
             final int childCount = readInt();
             for (int i = 0; i < childCount; ++i)
             {
-                obj.addChild((Node) readReference());
+                obj.addChild(readReference());
             }
 
             if (!isFileFormat1())
@@ -778,7 +948,7 @@ public final class Loader
             }
         }
 
-        private final void loadIndexBuffer(IndexBuffer obj)
+        private void loadIndexBuffer(IndexBuffer obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -903,7 +1073,7 @@ public final class Loader
             }
         }
 
-        private final void loadImage2D(Image2D obj)
+        private void loadImage2D(Image2D obj)
             throws IOException
         {
             final boolean isMutable = loadImageBase(obj);
@@ -958,7 +1128,7 @@ public final class Loader
             }
         }
 
-        private final boolean loadImageBase(ImageBase obj)
+        private boolean loadImageBase(ImageBase obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -984,7 +1154,7 @@ public final class Loader
             return isMutable;
         }
 
-        private final void loadLight(Light obj)
+        private void loadLight(Light obj)
             throws IOException
         {
             loadNode(obj);
@@ -1001,7 +1171,7 @@ public final class Loader
             obj.setSpotExponent(readFloat());
         }
 
-        private final void loadMaterial(Material obj)
+        private void loadMaterial(Material obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -1014,12 +1184,12 @@ public final class Loader
             obj.setVertexColorTrackingEnabled(readBoolean());
         }
 
-        private final void loadMesh(Mesh obj)
+        private void loadMesh(Mesh obj)
             throws IOException
         {
             loadNode(obj);
 
-            obj.setVertexBuffer((VertexBuffer) readReference());
+            obj.setVertexBuffer(readReference());
 
             final int submeshCount = readInt();
 
@@ -1027,8 +1197,8 @@ public final class Loader
 
             for (int i = 0; i < submeshCount; ++i)
             {
-                obj.setIndexBuffer(i, (IndexBuffer) readReference());
-                AppearanceBase appearance = (AppearanceBase) readReference();
+                obj.setIndexBuffer(i,readReference());
+                AppearanceBase appearance = readReference();
                 if (appearance instanceof Appearance)
                 {
                     obj.setAppearance(i, (Appearance) appearance);
@@ -1045,7 +1215,7 @@ public final class Loader
             }
         }
 
-        private final void loadNode(Node obj)
+        private void loadNode(Node obj)
             throws IOException
         {
             loadTransformable(obj);
@@ -1076,7 +1246,7 @@ public final class Loader
             }
         }
 
-        private final void loadObject3D(Object3D obj)
+        private void loadObject3D(Object3D obj)
             throws IOException
         {
             obj.setUserID(readInt());
@@ -1084,13 +1254,13 @@ public final class Loader
             final int animationTrackCount = readInt();
             for (int i = 0; i < animationTrackCount; ++i)
             {
-                Object3D animationTrack = readReference();
+                AnimationTrack animationTrack = readReference();
                 int channel = 0;
                 if (isFileFormat2())
                 {
                     channel = readInt();
                 }
-                obj.addAnimationTrack((AnimationTrack) animationTrack, channel);
+                obj.addAnimationTrack(animationTrack, channel);
             }
 
             final int userParameterCount = readInt();
@@ -1120,7 +1290,7 @@ public final class Loader
             }
         }
 
-        private final void loadPolygonMode(PolygonMode obj)
+        private void loadPolygonMode(PolygonMode obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -1138,12 +1308,12 @@ public final class Loader
             }
         }
 
-        private final void loadTexture(Texture obj)
+        private void loadTexture(Texture obj)
             throws IOException
         {
             loadTransformable(obj);
 
-            obj.setImageBase((ImageBase) readReference());
+            obj.setImageBase(readReference());
 
             if (!isFileFormat1())
             {
@@ -1153,7 +1323,7 @@ public final class Loader
             }
         }
 
-        private final void loadTexture2D(Texture2D obj)
+        private void loadTexture2D(Texture2D obj)
             throws IOException
         {
             loadTexture(obj);
@@ -1181,11 +1351,113 @@ public final class Loader
             }
             else
             {
-                obj.setCombiner((TextureCombiner) readReference());
+                obj.setCombiner(readReference());
             }
         }
 
-        private final void loadTransformable(Transformable obj)
+        private void loadKeyframeSequence(KeyframeSequence obj)
+            throws IOException
+        {
+            loadObject3D(obj);
+            
+            int interpolation = readUnsignedByte();
+            int repeatMode = readUnsignedByte();
+            int encoding = readUnsignedByte();
+            int duration = readInt();
+            int validRangeFirst = readInt();
+            int validRangeLast = readInt();
+            
+            int componentCount = readInt();
+            int keyframeCount = readInt();
+
+            int channelCount = 1;
+            if (isFileFormat2())
+            {
+                channelCount = readInt();
+            }
+            
+            obj.set(channelCount, keyframeCount, componentCount, interpolation);
+            obj.setDuration(duration);
+            obj.setRepeatMode(repeatMode);
+            obj.setValidRange(validRangeFirst, validRangeLast);
+            
+            if (encoding == 0)
+            {
+                // raw float keyframes
+                
+                float values[] = new float[componentCount * channelCount];
+                for (int k = 0; k < keyframeCount; ++k)
+                {
+                    final int time = readInt();
+                    readFully(values, 0, componentCount * channelCount);
+                }
+            }
+            else if (encoding == 1)
+            {
+                // scale and bias compressed byte keyframes
+                float bias[] = new float[componentCount];
+                float scale[] = new float[componentCount];
+                readFully(bias, 0, componentCount);
+                readFully(scale, 0, componentCount);
+                
+                float values[] = new float[componentCount * channelCount];
+                for (int k = 0; k < keyframeCount; ++k)
+                {
+                    final int time = readInt();
+                    for (int c = 0; c < channelCount; ++c)
+                    {
+                        for (int i = 0; i < componentCount; ++i)
+                        {
+                            float v = bias[i] + scale[i]
+                                    * readUnsignedByte() / 255.0f;
+                            values[c * componentCount + i] = v;
+                        }
+                    }
+                }
+            }
+            else if (encoding == 2)
+            {
+                // scale and bias compressed short keyframes
+                float bias[] = new float[componentCount];
+                float scale[] = new float[componentCount];
+                readFully(bias, 0, componentCount);
+                readFully(scale, 0, componentCount);
+                
+                float values[] = new float[componentCount * channelCount];
+                for (int k = 0; k < keyframeCount; ++k)
+                {
+                    final int time = readInt();
+                    for (int c = 0; c < channelCount; ++c)
+                    {
+                        for (int i = 0; i < componentCount; ++i)
+                        {
+                            float v = bias[i] + scale[i]
+                                    * readUnsignedShort() / 65535.0f;
+                            values[c * componentCount + i] = v;
+                        }
+                    }
+                }
+            }
+            else 
+            {
+                throw new IOException("unsupported KeyframeSequence encoding "
+                        + encoding);
+            }
+            
+            if (isFileFormat2())
+            {
+                final int eventCount = readInt();
+                final int eventTimes[] = new int[eventCount];
+                final int eventIDs[] = new int[eventCount];
+                for (int i = 0; i < eventCount; ++i)
+                {
+                    eventTimes[i] = readInt();
+                    eventIDs[i] = readInt();
+                }
+            }
+        }
+        
+        private void loadTransformable(Transformable obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -1230,7 +1502,7 @@ public final class Loader
             }
         }
 
-        private final void loadTriangleStripArray(TriangleStripArray obj)
+        private void loadTriangleStripArray(TriangleStripArray obj)
             throws IOException
         {
             loadIndexBuffer(obj);
@@ -1248,7 +1520,7 @@ public final class Loader
             }
         }
 
-        private final void loadVertexArray(VertexArray obj)
+        private void loadVertexArray(VertexArray obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -1371,7 +1643,7 @@ public final class Loader
             }
         }
 
-        private final void loadVertexBuffer(VertexBuffer obj)
+        private void loadVertexBuffer(VertexBuffer obj)
             throws IOException
         {
             loadObject3D(obj);
@@ -1381,7 +1653,7 @@ public final class Loader
             obj.setDefaultColor(readRGBAasARGB());
 
             {
-                VertexArray positions = (VertexArray) readReference();
+                VertexArray positions = readReference();
                 final float[] positionBias = bias;
                 for (int i = 0; i < 3; ++i)
                 {
@@ -1392,19 +1664,19 @@ public final class Loader
             }
 
             {
-                final VertexArray normals = (VertexArray) readReference();
+                final VertexArray normals = readReference();
                 obj.setNormals(normals);
             }
 
             {
-                final VertexArray colors = (VertexArray) readReference();
+                final VertexArray colors = readReference();
                 obj.setColors(colors);
             }
 
             final int texcoordArrayCount = readInt();
             for (int unit = 0; unit < texcoordArrayCount; ++unit)
             {
-                VertexArray texCoords = (VertexArray) readReference();
+                VertexArray texCoords = readReference();
                 final float[] texCoordBias = bias;
                 for (int i = 0; i < 3; ++i)
                 {
@@ -1420,13 +1692,13 @@ public final class Loader
             }
         }
 
-        private final void loadWorld(World obj)
+        private void loadWorld(World obj)
             throws IOException
         {
             loadGroup(obj);
 
-            obj.setActiveCamera((Camera) readReference());
-            obj.setBackground((Background) readReference());
+            obj.setActiveCamera(readReference());
+            obj.setBackground(readReference());
         }
 
         private Object3D[] getRootObjects()

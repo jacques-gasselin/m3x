@@ -69,6 +69,7 @@
                debug="true"
                failonerror="true"
                target="1.8"
+               source="1.8"
                includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${src.dir}"/>
@@ -103,6 +104,7 @@
                debug="true"
                failonerror="true"
                target="1.8"
+               source="1.8"
                includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${test.dir}"/>
@@ -124,6 +126,7 @@
                debug="true"
                failonerror="true"
                target="1.8"
+               source="1.8"
                includeantruntime="false">
             <compilerarg value="-Xlint"/>
             <src path="${demo.dir}"/>

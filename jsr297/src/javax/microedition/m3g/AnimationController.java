@@ -37,6 +37,8 @@ public final class AnimationController extends Object3D
     private int duration;
     private float speed;
     private float weight;
+    private float sequenceTime;
+    private int worldTime;
     
     public AnimationController()
     {
@@ -60,13 +62,13 @@ public final class AnimationController extends Object3D
 
     public float getPosition(int worldTime)
     {
-        throw new UnsupportedOperationException();
+        return sequenceTime + speed * (worldTime - this.worldTime); 
     }
 
     @Deprecated
     public int getRefWorldTime()
     {
-        throw new UnsupportedOperationException();
+        return this.worldTime;
     }
 
     public float getSpeed()
@@ -81,7 +83,7 @@ public final class AnimationController extends Object3D
 
     public int getWorldTime(float sequenceTime)
     {
-        throw new UnsupportedOperationException();
+        return worldTime + Math.round((sequenceTime - this.sequenceTime) / speed);
     }
 
     public void setActiveInterval(int start, int end)
@@ -97,12 +99,15 @@ public final class AnimationController extends Object3D
 
     public void setPosition(float sequenceTime, int worldTime)
     {
-        throw new UnsupportedOperationException();
+        this.sequenceTime = sequenceTime;
+        this.worldTime = worldTime;
     }
 
     public void setSpeed(float speed, int worldTime)
     {
-        throw new UnsupportedOperationException();
+        this.sequenceTime = getPosition(worldTime);
+        this.worldTime = worldTime;
+        this.speed = speed;
     }
 
     public void setWeight(float weight)

@@ -29,7 +29,10 @@ package background.opengl;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.AbstractRenderTarget;
@@ -43,8 +46,7 @@ public class BackgroundDemo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    private final class BackgroundCanvas extends GLCanvas
-            implements Runnable
+    private final class BackgroundCanvas extends GLJPanel
     {
         private static final long serialVersionUID = 1L;
 
@@ -58,8 +60,6 @@ public class BackgroundDemo extends BaseFrame
         {
             renderTarget = new GLRenderTarget(this);
             background = new Background();
-
-            new Thread(this).start();
         }
 
         @Override
@@ -79,36 +79,28 @@ public class BackgroundDemo extends BaseFrame
             }
             catch (Throwable t)
             {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
             finally
             {
                 g3d.releaseTarget();
             }
         }
-
-        @Override
-        public void run()
-        {
-            while (!isClosed())
-            {
-                try
-                {
-                    Thread.sleep(1000 / getRefreshRate());
-                }
-                catch (InterruptedException e)
-                {
-                    //e.printStackTrace();
-                }
-                repaint();
-            }
-        }
     }
 
+    ScheduledExecutorService frameService;
     BackgroundDemo()
     {
         super("BackgroundDemo");
-        add(new BackgroundCanvas());
+        java.awt.EventQueue.invokeLater(() -> {
+            BackgroundCanvas canvas = new BackgroundCanvas();
+            add(canvas);
+
+            frameService = Executors.newSingleThreadScheduledExecutor();
+            frameService.scheduleAtFixedRate(
+                    () -> { canvas.repaint(); },
+                    8, 8, TimeUnit.MILLISECONDS);
+        });
     }
 
     public static void main(String[] args)

@@ -30,7 +30,7 @@ package loader.opengl;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.InputStream;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
@@ -51,7 +51,7 @@ public abstract class AbstractLoaderDemo extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    protected final class LoaderCanvas extends GLCanvas
+    protected final class LoaderCanvas extends GLJPanel
             implements Runnable
     {
         private static final long serialVersionUID = 1L;

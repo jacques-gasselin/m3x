@@ -40,8 +40,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 import java.awt.Color;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
@@ -64,7 +67,7 @@ public class FileViewer extends BaseFrame
 {
     private static final long serialVersionUID = 1L;
 
-    private final FileViewerCanvas canvas;
+    private FileViewerCanvas canvas;
 
     private static boolean isRenderingEnabled(Node node)
     {
@@ -79,8 +82,7 @@ public class FileViewer extends BaseFrame
         return true;
     }
 
-    private final class FileViewerCanvas extends GLCanvas
-            implements Runnable
+    private final class FileViewerCanvas extends GLJPanel
     {
         private static final long serialVersionUID = 1L;
         
@@ -96,8 +98,6 @@ public class FileViewer extends BaseFrame
 
         private float hue;
         
-        private boolean closed;
-        
         public FileViewerCanvas()
         {
             renderTarget = new GLRenderTarget(this, true);
@@ -107,8 +107,6 @@ public class FileViewer extends BaseFrame
             camera = new Camera();
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
-
-            new Thread(this).start();
         }
 
         protected void setRoots(Object3D[] roots)
@@ -116,30 +114,6 @@ public class FileViewer extends BaseFrame
             this.roots = roots;
         }
 
-        public void paint2(Graphics g)
-        {
-            super.paint(g);
-
-            Graphics3D g3d = Graphics3D.getInstance();
-
-            try
-            {
-                g3d.bindTarget(renderTarget);
-                final int color = Color.HSBtoRGB(hue, 1.0f, 1.0f);
-                background.setColor(color);
-                hue += 0.01f;
-                g3d.clear(background);
-            }
-            catch (Throwable t)
-            {
-                t.printStackTrace(System.out);
-            }
-            finally
-            {
-                g3d.releaseTarget();
-            }
-        }
-        
         @Override
         public void paint(Graphics g)
         {
@@ -219,28 +193,6 @@ public class FileViewer extends BaseFrame
                 g3d.releaseTarget();
             }
         }
-        
-        @Override
-        public void run()
-        {
-            while (!closed)
-            {
-                try
-                {
-                    Thread.sleep(1000 / getRefreshRate());
-                }
-                catch (InterruptedException e)
-                {
-                    Thread.yield();
-                }
-                repaint();
-            }
-        }
-        
-        void close()
-        {
-            closed = true;
-        }
     }
 
     private void openAction()
@@ -317,22 +269,38 @@ public class FileViewer extends BaseFrame
         initWindowMenu(windowMenu);
     }
     
+    private ScheduledExecutorService frameService;
     FileViewer()
     {
         super("FileViewer");
-        canvas = new FileViewerCanvas();
-        add(canvas);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run()
+            {
+                canvas = new FileViewerCanvas();
+                add(canvas);
 
-        initMenu();
+                initMenu();
+                
+                frameService = Executors.newSingleThreadScheduledExecutor();
+                frameService.scheduleAtFixedRate(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        canvas.repaint();
+                    }
+                }, 8, 8, TimeUnit.MILLISECONDS);
+            }
+        });
     }
-    
+
     @Override
-    public void close()
+    protected void close()
     {
         super.close();
-        canvas.close();
+        frameService.shutdown();
     }
-
+    
     public static void main(String[] args)
     {
         BaseFrame frame = new FileViewer();

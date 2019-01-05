@@ -813,7 +813,7 @@ public class RendererOpenGL3 extends Renderer
                     limit).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return (ShortBuffer) this.positionShortBuffer.rewind();
+        return this.positionShortBuffer.rewind();
     }
 
     private ShortBuffer getTexcoordShortBuffer(int unit, int limit)
@@ -825,7 +825,7 @@ public class RendererOpenGL3 extends Renderer
                     limit).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return (ShortBuffer) this.texcoordShortBuffer[unit].rewind();
+        return this.texcoordShortBuffer[unit].rewind();
     }
 
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData

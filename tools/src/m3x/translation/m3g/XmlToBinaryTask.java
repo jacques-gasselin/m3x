@@ -94,7 +94,7 @@ public class XmlToBinaryTask extends Task
     
     public XmlToBinaryTask()
     {
-        filesetList = new ArrayList<>();
+        filesetList = new ArrayList<FileSet>();
     }
 
     @Override

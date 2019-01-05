@@ -49,19 +49,48 @@ public class KeyframeSequence extends Object3D
     private int repeatMode;
     private int validRangeFirst;
     private int validRangeLast;
+    
+    private int keyTimes[];
+    private float keyValues[];
 
     KeyframeSequence()
     {
     }
-
+    
     public KeyframeSequence(int numKeyframes, int numComponents, int interpolation)
+    {
+        set(1, numKeyframes, numComponents, interpolation);
+    }
+    
+    public KeyframeSequence(int numChannels, int numKeyframes, int numComponents, int interpolation)
+    {
+        set(numChannels, numKeyframes, numComponents, interpolation);
+    }
+
+    final void set(int numChannels, int numKeyframes, int numComponents, int interpolation)
     {
         Require.argumentGreaterThanZero(numKeyframes, "numKeyframes");
         Require.argumentGreaterThanZero(numComponents, "numComponents");
-
-        throw new UnsupportedOperationException();
+        if (interpolation < LINEAR || interpolation > STEP)
+        {
+            throw new IllegalArgumentException(
+                    "interpolation is not one of valid the interpolation modes");
+        }
+        
+        channelCount = numChannels;
+        keyframeCount = numKeyframes;
+        componentCount = numComponents;
+        interpolationType = interpolation;
+        
+        keyTimes = new int[keyframeCount];
+        keyValues = new float[keyframeCount * channelCount * componentCount];
     }
 
+    private int valueOffset(int channel, int keyframeIndex)
+    {
+        return keyframeIndex * channelCount * componentCount + channel * componentCount;
+    }
+    
     public void addEvent(int time, int eventID)
     {
         throw new UnsupportedOperationException();
@@ -109,7 +138,9 @@ public class KeyframeSequence extends Object3D
 
     public int getKeyframe(int channel, int index, float[] value)
     {
-        throw new UnsupportedOperationException();
+        final int offset = valueOffset(channel, index);
+        System.arraycopy(keyValues, offset, value, 0, componentCount);
+        return keyTimes[index];
     }
 
     public int getKeyframeCount()
@@ -149,31 +180,34 @@ public class KeyframeSequence extends Object3D
 
     public void setDuration(int duration)
     {
-        throw new UnsupportedOperationException();
+        this.duration = duration;
     }
 
     public void setKeyframe(int index, int time, float[] value)
     {
-        throw new UnsupportedOperationException();
+        setKeyframeTime(index, time);
+        setKeyframeValue(0, index, value);
     }
 
     public void setKeyframeTime(int index, int time)
     {
-        throw new UnsupportedOperationException();
+        keyTimes[index] = time;
     }
-
+    
     public void setKeyframeValue(int channel, int index, float[] value)
     {
-        throw new UnsupportedOperationException();
+        final int offset = valueOffset(channel, index);
+        System.arraycopy(value, 0, keyValues, offset, componentCount);
     }
 
     public void setRepeatMode(int mode)
     {
-        throw new UnsupportedOperationException();
+        this.repeatMode = mode;
     }
 
     public void setValidRange(int first, int last)
     {
-        throw new UnsupportedOperationException();
+        this.validRangeFirst = first;
+        this.validRangeLast = last;
     }
 }

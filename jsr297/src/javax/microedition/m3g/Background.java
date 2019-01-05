@@ -160,7 +160,7 @@ public class Background extends Object3D
     @Deprecated
     public void setColorClearEnabled(boolean enabled)
     {
-        throw new UnsupportedOperationException();
+        setColorClearMask(enabled ? 0xffffffff : 0x0);
     }
 
     public void setColorClearMask(int mask)

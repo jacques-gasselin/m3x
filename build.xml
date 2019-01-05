@@ -58,7 +58,19 @@
     
     <target name="run"
             description="runs the run target in all the subfolders">
-        
+        <path id="run.classpath">
+            <pathelement location="${jsr297.dir}/dist/m3x-jsr297.jar"/>
+            <pathelement location="${tools.dir}/dist/m3x.jar"/>
+            <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
+            <pathelement location="${lib.dir}/jogl/jogl-all.jar"/>
+            <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
+        </path>
+        <!--run the file viewer-->
+        <java classname="m3x.microedition.m3g.awt.FileViewer"
+              fork="true">
+            <classpath refid="run.classpath"/>
+            <jvmarg value="-Dsun.awt.noerasebackground=true"/>
+        </java>        
     </target>
 
     <target name="profile"

@@ -55,7 +55,7 @@
     <target name="compile-selected-files-in-test">
         <fail unless="files">Must set property 'files'</fail>
         <mkdir dir="tools/test/build"/>
-        <javac destdir="tools/test/build" includes="${files}" source="1.5" srcdir="tools/test">
+        <javac destdir="tools/test/build" includes="${files}" source="1.8" srcdir="tools/test">
             <classpath path="lib/junit-4.4.jar:lib/jaxb/activation.jar:lib/jaxb/jaxb-api.jar:lib/jaxb/jaxb-impl.jar:lib/jaxb/jaxb-xjc.jar:lib/jaxb/jaxb1-impl.jar:lib/jaxb/jsr173_1.0_api.jar:tools/build"/>
         </javac>
     </target>

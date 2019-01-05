@@ -67,7 +67,7 @@ public class Image2DConverter extends Object3DConverter
         to.setFormat(from.getFormat().value());
         to.setSize(width, height);
 
-        final boolean mutable = from.getMutable();
+        final boolean mutable = from.isMutable();
         to.setMutable(mutable);
         if (!mutable)
         {
