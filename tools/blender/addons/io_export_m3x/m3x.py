@@ -109,6 +109,81 @@ class Node(Transformable):
     def serializeChildren(self, serializer):
         Transformable.serializeChildren(self, serializer)
 
+class AnimationController(Object3D):
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+        self.speed = 1.0
+        self.weight = 1.0
+        self.activeIntervalStart = 0
+        self.activeIntervalEnd = 0
+        self.referenceSequenceTime = 0.0
+        self.referenceWorldTime = 0
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("AnimationControllerInstance", {"ref" : self.id})
+
+    def serialize(self, serializer):
+        attr = { 
+            "speed": self.speed
+            "weight": self.weight
+            "activeIntervalStart": self.activeIntervalStart
+            "activeIntervalEnd": self.activeIntervalEnd
+            "referenceSequenceTime" : self.referenceSequenceTime
+            "referenceWorldTime" : self.referenceWorldTime
+        }
+        self.fillAttributes(attr)
+        serializer.startTag("AnimationController", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
+
+class AnimationTrack(Object3D):
+    ALPHA = "ALPHA"
+    AMBIENT_COLOR = "AMBIENT_COLOR"
+    ANIMATION_POSITION = "ANIMATION_POSITION"
+    ANIMATION_SPEED = "ANIMATION_SPEED"
+    ANIMATION_WEIGHT = "ANIMATION_WEIGHT"
+    BOUNDING_BOX = "BOUNDING_BOX"
+    BOUNDING_SPHERE = "BOUNDING_SPHERE"
+    COLLISION_SHAPE = "COLLISION_SHAPE"
+    COLOR = "COLOR"
+    CROP = "CROP"
+    DENSITY = "DENSITY"
+    DEPTH = "DEPTH"
+    DIFFUSE_COLOR = "DIFFUSE_COLOR"
+    EMISSIVE_COLOR = "EMISSIVE_COLOR"
+    FAR_DISTANCE = "FAR_DISTANCE"
+    FIELD_OF_VIEW = "FIELD_OF_VIEW"
+    INTENSITY = "INTENSITY"
+    MORPH_WEIGHTS = "MORPH_WEIGHTS"
+    NEAR_DISTANCE = "NEAR_DISTANCE"
+    ORIENTATION = "ORIENTATION"
+    PICKABILITY = "PICKABILITY"
+    POINT_SIZE = "POINT_SIZE"
+    SCALE = "SCALE"
+    SHININESS = "SHININESS"
+    SPECULAR_COLOR = "SPECULAR_COLOR"
+    SPOT_ANGLE = "SPOT_ANGLE"
+    SPOT_EXPONENT = "SPOT_EXPONENT"
+    STENCIL = "STENCIL"
+    TRANSLATION = "TRANSLATION"
+    VISIBILITY = "VISIBILITY"
+
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+        self.targetProperty = AnimationTrack.ALPHA
+        self.animationController = None
+        self.keyframeSequence = None
+
+    def serialize(self, serializer):
+        attr = { 
+            "targetProperty": self.targetProperty
+        }
+        self.fillAttributes(attr)
+        serializer.startTag("AnimationTrack", attr)
+        self.serializeChildren(serializer)
+        serializer.writeReference(self.animationController)
+        serializer.writeReference(self.keyframeSequence)
+        serializer.endTag()
 
 class AppearanceBase(Object3D):
     def __init__(self, idValue):
