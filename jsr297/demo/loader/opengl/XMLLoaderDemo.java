@@ -47,7 +47,7 @@ public class XMLLoaderDemo extends AbstractLoaderDemo
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 

@@ -68,7 +68,6 @@
                fork="true"
                debug="true"
                failonerror="true"
-               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
@@ -104,7 +103,6 @@
                fork="true"
                debug="true"
                failonerror="true"
-               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
@@ -127,7 +125,6 @@
                fork="true"
                debug="true"
                failonerror="true"
-               source="1.8"
                target="1.8"
                source="1.8"
                includeantruntime="false">
