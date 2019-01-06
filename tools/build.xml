@@ -238,11 +238,20 @@
         <condition property="os.macosx" value="true">
             <os family="mac"/>
         </condition>
+        <condition property="os.linux" value="true">
+            <and>
+                <os family="unix"/>
+                <not>
+                    <os family="mac"/>
+                </not>
+            </and>
+        </condition>
     </target>
     
     <target name="install-blender-plugins"
             description="Installs import and export plugins for Blender"
-            depends="check-os, install-blender-plugins-macosx">
+            depends="check-os, install-blender-plugins-macosx, install-blender-plugins-linux">
+        <!-- See https://docs.blender.org/manual/en/latest/getting_started/installing/configuration/directories.html -->
         <copy todir="${dist.dir}/blender/scripts"
               preservelastmodified="true">
             <fileset dir="${basedir}/blender">
@@ -254,6 +263,7 @@
     <target name="install-blender-plugins-macosx"
             description="Installs import and export plugins for Blender on MacOSX"
             if="os.macosx">
+        <echo>*** Installing Blender Export Scripts for macOS ***</echo>
         <!-- For Blender 2.4* -->
         <copy todir="${user.home}/.blender/scripts"
               preservelastmodified="true">
@@ -277,4 +287,23 @@
         </copy>
     </target>
 
+    <target name="install-blender-plugins-linux"
+            description="Installs import and export plugins for Blender on Linux"
+            if="os.linux">
+        <echo>*** Installing Blender Export Scripts for Linux ***</echo>
+        <!-- For Blender 2.76 -->
+        <copy todir="${user.home}/.config/blender/2.76/scripts/addons"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender/addons">
+                <include name="**/*.py"/>
+            </fileset>
+        </copy>
+        <!-- For Blender 2.79 -->
+        <copy todir="${user.home}/.config/blender/2.79/scripts/addons"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender/addons">
+                <include name="**/*.py"/>
+            </fileset>
+        </copy>
+    </target>
 </project>
