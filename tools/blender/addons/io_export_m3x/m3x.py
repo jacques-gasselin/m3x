@@ -123,12 +123,12 @@ class AnimationController(Object3D):
         serializer.closedTag("AnimationControllerInstance", {"ref" : self.id})
 
     def serialize(self, serializer):
-        attr = { 
-            "speed": self.speed
-            "weight": self.weight
-            "activeIntervalStart": self.activeIntervalStart
-            "activeIntervalEnd": self.activeIntervalEnd
-            "referenceSequenceTime" : self.referenceSequenceTime
+        attr = {
+            "speed": self.speed,
+            "weight": self.weight,
+            "activeIntervalStart": self.activeIntervalStart,
+            "activeIntervalEnd": self.activeIntervalEnd,
+            "referenceSequenceTime" : self.referenceSequenceTime,
             "referenceWorldTime" : self.referenceWorldTime
         }
         self.fillAttributes(attr)
@@ -748,7 +748,7 @@ class PolygonMode(Object3D):
     def serialize(self, serializer):
         attr = {
             "culling": self.culling
-            }
+        }
         self.fillAttributes(attr)
         if serializer.version == 2:
             #TODO add some more bits
