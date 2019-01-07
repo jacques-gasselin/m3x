@@ -136,7 +136,7 @@ public class BaseFrame extends Frame
             setFullscreen(gd);
         }
     }
-
+    
     public final void setWindowed(GraphicsDevice gd)
     {
         DisplayMode dm = gd.getDisplayMode();

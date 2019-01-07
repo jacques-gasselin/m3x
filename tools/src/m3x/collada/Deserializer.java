@@ -113,7 +113,7 @@ public abstract class Deserializer
 
     /**Deserialise an input stream that contains an XML document.
      *
-     * @param stream - the inout stream to read from.
+     * @param stream - the input stream to read from.
      * @return - the root COLLADA object
      * @throws IllegalArgumentException - if the stream is unable to be read
      * or the sections are empty

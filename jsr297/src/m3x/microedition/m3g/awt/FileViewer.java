@@ -49,13 +49,26 @@ import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.Graphics3D;
+import javax.microedition.m3g.Group;
 import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Loader;
+import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.Node;
 import javax.microedition.m3g.Object3D;
 import javax.microedition.m3g.Transform;
+import javax.microedition.m3g.Transformable;
 import javax.microedition.m3g.World;
 import javax.microedition.m3g.opengl.GLRenderTarget;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.border.Border;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import m3x.awt.BaseFrame;
 import m3x.microedition.m3g.TransformController;
 import m3x.microedition.m3g.XMLLoader;
@@ -68,6 +81,8 @@ public class FileViewer extends BaseFrame
     private static final long serialVersionUID = 1L;
 
     private FileViewerCanvas canvas;
+    private JTree treeView;
+    private TreeNode root;
 
     private static boolean isRenderingEnabled(Node node)
     {
@@ -112,6 +127,11 @@ public class FileViewer extends BaseFrame
         protected void setRoots(Object3D[] roots)
         {
             this.roots = roots;
+        }
+        
+        public Object3D[] getRoots()
+        {
+            return roots;
         }
 
         @Override
@@ -186,7 +206,7 @@ public class FileViewer extends BaseFrame
             }
             catch (Throwable t)
             {
-                t.printStackTrace();
+                t.printStackTrace(System.err);
             }
             finally
             {
@@ -217,6 +237,12 @@ public class FileViewer extends BaseFrame
                     canvas.setRoots(XMLLoader.load(stream));
                 }
                 stream.close();
+                
+                if (treeView != null)
+                {
+                    root = null;
+                    populateTreeView();
+                }
             }
             catch (IOException e)
             {
@@ -225,11 +251,180 @@ public class FileViewer extends BaseFrame
         }
     }
 
+    private void populateTreeViewObject3D(DefaultMutableTreeNode treeNode, Object3D obj)
+    {
+        if (obj.getUserID() != 0)
+        {
+            treeNode.add(new DefaultMutableTreeNode("userID : " + obj.getUserID(), false));
+        }
+    }
+    
+    private void populateTreeViewTransformable(DefaultMutableTreeNode treeNode, Transformable obj)
+    {
+        populateTreeViewObject3D(treeNode, obj);
+        
+        float[] v = new float[3];
+        obj.getTranslation(v);
+        if (v[0] != 0.0f || v[1] != 0.0f || v[2] != 0.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("translation : [ " + v[0] + ", " + v[1] + ", " + v[2] + " ]", false));
+        }
+        
+        obj.getScale(v);
+        if (v[0] != 1.0f || v[1] != 1.0f || v[2] != 1.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("scale : [ " + v[0] + ", " + v[1] + ", " + v[2] + " ]"));
+        }
+
+    }
+
+    private void populateTreeViewNode(DefaultMutableTreeNode treeNode, Node obj)
+    {
+        populateTreeViewTransformable(treeNode, obj);
+        
+        if (obj.getScope() != ~0)
+        {
+            treeNode.add(new DefaultMutableTreeNode("scope : " + obj.getScope()));
+        }
+
+        if (obj.getAlphaFactor() != 1.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("alphaFactor : " + obj.getAlphaFactor()));
+        }
+    }
+    
+    private void populateTreeViewMesh(DefaultMutableTreeNode treeNode, Mesh obj)
+    {
+        populateTreeViewNode(treeNode, obj);
+        
+        if (obj.getVertexBuffer() != null)
+        {
+            DefaultMutableTreeNode n = new DefaultMutableTreeNode(obj.getVertexBuffer());
+            treeNode.add(n);
+            populateTreeViewObject3D(n, obj.getVertexBuffer());
+        }
+        
+        if (obj.getSubmeshCount() > 0)
+        {
+            for (int i = 0; i < obj.getSubmeshCount(); ++i)
+            {
+                DefaultMutableTreeNode n = new DefaultMutableTreeNode("submeshes[" + i + "]");
+                treeNode.add(n);
+
+                DefaultMutableTreeNode ib = new DefaultMutableTreeNode(obj.getIndexBuffer(i));
+                n.add(ib);
+
+                DefaultMutableTreeNode a = new DefaultMutableTreeNode(obj.getAppearance(i));
+                n.add(a);
+            }
+        }
+
+        if (obj.getAlphaFactor() != 1.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("alphaFactor : " + obj.getAlphaFactor()));
+        }
+    }
+
+    private void populateTreeViewGroup(DefaultMutableTreeNode treeNode, Group g)
+    {
+        populateTreeViewNode(treeNode, g);
+        
+        if (g.getChildCount() > 0)
+        {
+            for (int i = 0; i < g.getChildCount(); ++i)
+            {
+                Node child = g.getChild(i);
+                DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(child);
+                treeNode.add(childTreeNode);
+                if (child instanceof Group)
+                {
+                    populateTreeViewGroup(childTreeNode, (Group) child);
+                }
+                else if (child instanceof Mesh)
+                {
+                    populateTreeViewMesh(childTreeNode, (Mesh) child);
+                }
+            }
+        }
+    }
+    
+    private void populateTreeView()
+    {
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("scene");
+        
+        if (canvas.getRoots() != null)
+        {
+            for (Object3D root : canvas.getRoots())
+            {
+                DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode(root);
+                top.add(rootTreeNode);
+                if (root instanceof Group)
+                {
+                    populateTreeViewGroup(rootTreeNode, (Group) root);
+                }
+                else if (root instanceof Mesh)
+                {
+                    populateTreeViewMesh(rootTreeNode, (Mesh) root);
+                }
+                else if (root instanceof Node)
+                {
+                    populateTreeViewNode(rootTreeNode, (Node) root);
+                }
+                else
+                {
+                    populateTreeViewObject3D(rootTreeNode, root);
+                }
+            }
+        }
+        
+        root = top;
+        
+        treeView.setModel(new DefaultTreeModel(root));
+    }
+
+    private void toggleTreeView()
+    {
+        if (treeView == null)
+        {
+            getContentPane().removeAll();
+            
+            treeView = new JTree();
+            treeView.setSize(getWidth() / 5, getHeight());
+            canvas.setSize((getWidth() * 4 / 5), getHeight());
+
+            populateTreeView();
+            
+            JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            split.setBorder(BorderFactory.createEmptyBorder());
+            split.setResizeWeight(0.8);
+            
+            JScrollPane treeScroll = new JScrollPane(treeView);
+            
+            split.setLeftComponent(canvas);
+            split.setRightComponent(treeScroll);
+            
+            split.setSize(getWidth(), getHeight());
+            split.setDividerLocation(0.8);
+
+            getContentPane().add(split);
+        }
+        else
+        {
+            getContentPane().removeAll();
+            canvas.setSize(getWidth(), getHeight());
+            getContentPane().add(canvas);
+            
+            treeView = null;
+        }
+        validate();
+    }
+    
     private void initFileMenu(Menu menu)
     {
         MenuItem openItem = new MenuItem("Open",
                 new MenuShortcut(KeyEvent.VK_O));
         openItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                 openAction();
@@ -243,12 +438,25 @@ public class FileViewer extends BaseFrame
         MenuItem toggleFullscreenItem = new MenuItem("Toggle Fullscreen",
                 new MenuShortcut(KeyEvent.VK_F));
         toggleFullscreenItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                 toggleFullscreen();
             }
         });
+
+        MenuItem toggleTreeViewItem = new MenuItem("Toggle TreeView",
+                new MenuShortcut(KeyEvent.VK_T));
+        toggleTreeViewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                toggleTreeView();
+            }
+        });
+        
         menu.add(toggleFullscreenItem);
+        menu.add(toggleTreeViewItem);
     }
 
     private void initMenu()
@@ -270,6 +478,14 @@ public class FileViewer extends BaseFrame
     }
     
     private ScheduledExecutorService frameService;
+    
+    private final JPanel contentPane = new JPanel();
+    
+    private JPanel getContentPane()
+    {
+        return contentPane;
+    }
+    
     FileViewer()
     {
         super("FileViewer");
@@ -277,8 +493,11 @@ public class FileViewer extends BaseFrame
             @Override
             public void run()
             {
+                add(getContentPane());
+                getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+                
                 canvas = new FileViewerCanvas();
-                add(canvas);
+                getContentPane().add(canvas);
 
                 initMenu();
                 
