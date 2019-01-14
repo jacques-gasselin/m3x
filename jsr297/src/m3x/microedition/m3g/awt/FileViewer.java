@@ -42,12 +42,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import com.jogamp.opengl.awt.GLJPanel;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.microedition.m3g.AbstractRenderTarget;
+import javax.microedition.m3g.AnimationTrack;
+import javax.microedition.m3g.Appearance;
+import javax.microedition.m3g.AppearanceBase;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Camera;
+import javax.microedition.m3g.CompositingMode;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Group;
 import javax.microedition.m3g.Light;
@@ -55,6 +60,8 @@ import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Mesh;
 import javax.microedition.m3g.Node;
 import javax.microedition.m3g.Object3D;
+import javax.microedition.m3g.PolygonMode;
+import javax.microedition.m3g.SkinnedMesh;
 import javax.microedition.m3g.Transform;
 import javax.microedition.m3g.Transformable;
 import javax.microedition.m3g.World;
@@ -67,6 +74,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import m3x.awt.BaseFrame;
@@ -251,18 +259,95 @@ public class FileViewer extends BaseFrame
         }
     }
 
-    private void populateTreeViewObject3D(DefaultMutableTreeNode treeNode, Object3D obj)
+    private static void populateTreeViewObject3D(DefaultMutableTreeNode treeNode, Object3D obj)
     {
         if (obj.getUserID() != 0)
         {
             treeNode.add(new DefaultMutableTreeNode("userID : " + obj.getUserID(), false));
         }
+        
+        for (int i = 0; i < obj.getAnimationTrackCount(); ++i)
+        {
+            populateTreeView(treeNode, obj.getAnimationTrack(i));
+        }
     }
     
-    private void populateTreeViewTransformable(DefaultMutableTreeNode treeNode, Transformable obj)
+    private static void populateTreeViewAnimationTrack(DefaultMutableTreeNode treeNode, AnimationTrack obj)
     {
         populateTreeViewObject3D(treeNode, obj);
         
+        populateTreeView(treeNode, obj.getController());
+        populateTreeView(treeNode, obj.getKeyframeSequence());
+    }
+
+    private static void populateTreeViewCompositingMode(DefaultMutableTreeNode treeNode, CompositingMode obj)
+    {
+        if (obj.getBlending() != CompositingMode.REPLACE)
+        {
+            treeNode.add(new DefaultMutableTreeNode("blending : " + obj.getBlending(), false));
+        }
+
+        if (obj.getAlphaThreshold() > 0.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("alphaThreshold : " + obj.getAlphaThreshold(), false));
+        }
+
+        populateTreeViewObject3D(treeNode, obj);
+        
+        populateTreeView(treeNode, obj.getBlender());
+        populateTreeView(treeNode, obj.getStencil());
+    }
+    
+    private static void populateTreeViewPolygonMode(DefaultMutableTreeNode treeNode, PolygonMode obj)
+    {
+        if (obj.getShading() != PolygonMode.SHADE_SMOOTH)
+        {
+            treeNode.add(new DefaultMutableTreeNode("shading : " + obj.getShading(), false));
+        }
+        
+        if (obj.getCulling() != PolygonMode.CULL_BACK)
+        {
+            treeNode.add(new DefaultMutableTreeNode("culling : " + obj.getCulling(), false));
+        }
+        
+        populateTreeViewObject3D(treeNode, obj);
+        
+    }
+    
+    private static void populateTreeViewAppearanceBase(DefaultMutableTreeNode treeNode, AppearanceBase obj)
+    {
+        populateTreeViewObject3D(treeNode, obj);
+        
+        if (obj.getLayer() != 0)
+        {
+            treeNode.add(new DefaultMutableTreeNode("layer : " + obj.getLayer(), false));
+        }
+        
+        populateTreeView(treeNode, obj.getCompositingMode());
+        populateTreeView(treeNode, obj.getPolygonMode());
+    }
+
+    private static void populateTreeViewAppearance(DefaultMutableTreeNode treeNode, Appearance obj)
+    {
+        populateTreeViewAppearanceBase(treeNode, obj);
+        
+        populateTreeView(treeNode, obj.getFog());
+        populateTreeView(treeNode, obj.getMaterial());
+        populateTreeView(treeNode, obj.getPointSpriteMode());
+        
+        for (int i = 0; i < i; ++i)
+        {
+            if (obj.getTexture(i) != null)
+            {
+                DefaultMutableTreeNode n = new DefaultMutableTreeNode("texture[" + i + "]");
+                treeNode.add(n);
+                populateTreeView(n, obj.getTexture(i));
+            }
+        }
+    }
+    
+    private static void populateTreeViewTransformable(DefaultMutableTreeNode treeNode, Transformable obj)
+    {
         float[] v = new float[3];
         obj.getTranslation(v);
         if (v[0] != 0.0f || v[1] != 0.0f || v[2] != 0.0f)
@@ -276,9 +361,10 @@ public class FileViewer extends BaseFrame
             treeNode.add(new DefaultMutableTreeNode("scale : [ " + v[0] + ", " + v[1] + ", " + v[2] + " ]"));
         }
 
+        populateTreeViewObject3D(treeNode, obj);
     }
 
-    private void populateTreeViewNode(DefaultMutableTreeNode treeNode, Node obj)
+    private static void populateTreeViewNode(DefaultMutableTreeNode treeNode, Node obj)
     {
         populateTreeViewTransformable(treeNode, obj);
         
@@ -293,16 +379,11 @@ public class FileViewer extends BaseFrame
         }
     }
     
-    private void populateTreeViewMesh(DefaultMutableTreeNode treeNode, Mesh obj)
+    private static void populateTreeViewMesh(DefaultMutableTreeNode treeNode, Mesh obj)
     {
         populateTreeViewNode(treeNode, obj);
         
-        if (obj.getVertexBuffer() != null)
-        {
-            DefaultMutableTreeNode n = new DefaultMutableTreeNode(obj.getVertexBuffer());
-            treeNode.add(n);
-            populateTreeViewObject3D(n, obj.getVertexBuffer());
-        }
+        populateTreeView(treeNode, obj.getVertexBuffer());
         
         if (obj.getSubmeshCount() > 0)
         {
@@ -311,21 +392,45 @@ public class FileViewer extends BaseFrame
                 DefaultMutableTreeNode n = new DefaultMutableTreeNode("submeshes[" + i + "]");
                 treeNode.add(n);
 
-                DefaultMutableTreeNode ib = new DefaultMutableTreeNode(obj.getIndexBuffer(i));
-                n.add(ib);
-
-                DefaultMutableTreeNode a = new DefaultMutableTreeNode(obj.getAppearance(i));
-                n.add(a);
+                populateTreeView(n, obj.getIndexBuffer(i));
+                populateTreeView(n, obj.getAppearance(i));
             }
         }
-
-        if (obj.getAlphaFactor() != 1.0f)
+    }
+    
+    private static void populateTreeViewSkinnedMesh(DefaultMutableTreeNode treeNode, SkinnedMesh obj)
+    {
+        populateTreeViewMesh(treeNode, obj);
+        
+        populateTreeView(treeNode, obj.getSkeleton());
+    }
+    
+    private static String lightModeString(int mode)
+    {
+        switch (mode)
         {
-            treeNode.add(new DefaultMutableTreeNode("alphaFactor : " + obj.getAlphaFactor()));
+            case Light.DIRECTIONAL: return "Directional";
+            case Light.OMNI: return "Omni";
+            default: return Integer.toString(mode);
         }
     }
+    
+    private static void populateTreeViewLight(DefaultMutableTreeNode treeNode, Light obj)
+    {
+        if (obj.getColor() != 0xffffff)
+        {
+            treeNode.add(new DefaultMutableTreeNode("color : " + obj.getColor()));
+        }
+        
+        if (obj.getMode() != Light.DIRECTIONAL)
+        {
+            treeNode.add(new DefaultMutableTreeNode("mode : " + lightModeString(obj.getMode())));
+        }
 
-    private void populateTreeViewGroup(DefaultMutableTreeNode treeNode, Group g)
+        populateTreeViewNode(treeNode, obj);
+    }
+    
+    private static void populateTreeViewGroup(DefaultMutableTreeNode treeNode, Group g)
     {
         populateTreeViewNode(treeNode, g);
         
@@ -334,17 +439,71 @@ public class FileViewer extends BaseFrame
             for (int i = 0; i < g.getChildCount(); ++i)
             {
                 Node child = g.getChild(i);
-                DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(child);
-                treeNode.add(childTreeNode);
-                if (child instanceof Group)
-                {
-                    populateTreeViewGroup(childTreeNode, (Group) child);
-                }
-                else if (child instanceof Mesh)
-                {
-                    populateTreeViewMesh(childTreeNode, (Mesh) child);
-                }
+                populateTreeView(treeNode, child);
             }
+        }
+    }
+
+    private static void populateTreeViewWorld(DefaultMutableTreeNode treeNode, World obj)
+    {
+        populateTreeView(treeNode, obj.getBackground());
+
+        populateTreeViewGroup(treeNode, obj);
+    }
+    
+    private static void populateTreeView(DefaultMutableTreeNode parent, Object3D obj)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+        
+        DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(obj);
+        parent.add(treeNode);
+        
+        if (obj instanceof World)
+        {
+            populateTreeViewWorld(treeNode, (World) obj);
+        }
+        else if (obj instanceof Group)
+        {
+            populateTreeViewGroup(treeNode, (Group) obj);
+        }
+        else if (obj instanceof SkinnedMesh)
+        {
+            populateTreeViewSkinnedMesh(treeNode, (SkinnedMesh) obj);
+        }
+        else if (obj instanceof Mesh)
+        {
+            populateTreeViewMesh(treeNode, (Mesh) obj);
+        }
+        else if (obj instanceof Light)
+        {
+            populateTreeViewLight(treeNode, (Light) obj);
+        }
+        else if (obj instanceof Node)
+        {
+            populateTreeViewNode(treeNode, (Node) obj);
+        }
+        else if (obj instanceof AnimationTrack)
+        {
+            populateTreeViewAnimationTrack(treeNode, (AnimationTrack) obj);
+        }
+        else if (obj instanceof Appearance)
+        {
+            populateTreeViewAppearance(treeNode, (Appearance) obj);
+        }
+        else if (obj instanceof CompositingMode)
+        {
+            populateTreeViewCompositingMode(treeNode, (CompositingMode) obj);
+        }
+        else if (obj instanceof PolygonMode)
+        {
+            populateTreeViewPolygonMode(treeNode, (PolygonMode) obj);
+        }
+        else
+        {
+            populateTreeViewObject3D(treeNode, obj);
         }
     }
     
@@ -356,24 +515,7 @@ public class FileViewer extends BaseFrame
         {
             for (Object3D root : canvas.getRoots())
             {
-                DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode(root);
-                top.add(rootTreeNode);
-                if (root instanceof Group)
-                {
-                    populateTreeViewGroup(rootTreeNode, (Group) root);
-                }
-                else if (root instanceof Mesh)
-                {
-                    populateTreeViewMesh(rootTreeNode, (Mesh) root);
-                }
-                else if (root instanceof Node)
-                {
-                    populateTreeViewNode(rootTreeNode, (Node) root);
-                }
-                else
-                {
-                    populateTreeViewObject3D(rootTreeNode, root);
-                }
+                populateTreeView(top, root);
             }
         }
         
@@ -382,6 +524,24 @@ public class FileViewer extends BaseFrame
         treeView.setModel(new DefaultTreeModel(root));
     }
 
+    private static class TreeCellRenderer extends DefaultTreeCellRenderer
+    {
+        static final long serialVersionUID = 1L;
+        
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
+        {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            DefaultMutableTreeNode v = (DefaultMutableTreeNode) value;
+            if (!(v.getUserObject() instanceof Object3D))
+            {
+                setIcon(null);
+            }
+            return this;
+        }
+        
+    }
+    
     private void toggleTreeView()
     {
         if (treeView == null)
@@ -389,6 +549,7 @@ public class FileViewer extends BaseFrame
             getContentPane().removeAll();
             
             treeView = new JTree();
+            treeView.setCellRenderer(new TreeCellRenderer());
             treeView.setSize(getWidth() / 5, getHeight());
             canvas.setSize((getWidth() * 4 / 5), getHeight());
 
