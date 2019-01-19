@@ -409,9 +409,12 @@ public class FileViewer extends BaseFrame
     {
         switch (mode)
         {
-            case Light.DIRECTIONAL: return "Directional";
-            case Light.OMNI: return "Omni";
-            default: return Integer.toString(mode);
+            case Light.DIRECTIONAL:
+                return "Directional";
+            case Light.OMNI:
+                return "Omni";
+            default:
+                return Integer.toString(mode);
         }
     }
     
