@@ -43,6 +43,9 @@ import java.io.InputStream;
 import com.jogamp.opengl.awt.GLJPanel;
 import java.awt.Color;
 import java.awt.Component;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -110,7 +113,8 @@ public class FileViewer extends BaseFrame
         private static final long serialVersionUID = 1L;
         
         private final Background background;
-        private final AbstractRenderTarget renderTarget;
+        private final GLRenderTarget renderTarget;
+        private PrintStream traceStream;
 
         private final Camera camera;
         private final TransformController cameraController;
@@ -130,6 +134,13 @@ public class FileViewer extends BaseFrame
             camera = new Camera();
             cameraController = new BlenderTurntableCameraController(camera, this,
                     0, 0, 3);
+            
+            traceStream = null;
+        }
+        
+        public void setTraceStream(PrintStream stream)
+        {
+            traceStream = stream;
         }
 
         protected void setRoots(Object3D[] roots)
@@ -141,6 +152,59 @@ public class FileViewer extends BaseFrame
         {
             return roots;
         }
+        
+        private void addAllLights(Node node, Graphics3D g3d)
+        {
+            final Transform lightTransform = new Transform();
+
+            final HashSet<Node> closedList = new HashSet<Node>();
+            final ArrayList<Node> openList = new ArrayList<Node>();
+
+            //since all operations only touch the end of the list;
+            //this is a depth first search. Breath first search would
+            //require the front to be removed for each iteration
+            openList.add(node);
+            //this is an exhaustive search
+            while (openList.size() > 0)
+            {
+                final Node candidate = openList.remove(openList.size() - 1);
+                //skip objects already visited
+                if (!closedList.contains(candidate))
+                {
+                    //count it as visited now
+                    closedList.add(candidate);
+                    //is it renderable
+                    if (candidate.isRenderingEnabled())
+                    {
+                        //is it a light
+                        if (candidate instanceof Light)
+                        {
+                            final Light light = (Light) candidate;
+                            light.getTransformTo(node, lightTransform);
+                            g3d.addLight(light, lightTransform);
+                        }
+                        else if (candidate instanceof Group)
+                        {
+                            final Group group = (Group) candidate;
+                            //add the children from the candidate to the open list
+                            final int count = group.getChildCount();
+                            for (int i = 0; i < count; ++i)
+                            {
+                                openList.add(group.getChild(i));
+                            }
+                        }
+                        else if (candidate instanceof SkinnedMesh)
+                        {
+                            final SkinnedMesh mesh = (SkinnedMesh) candidate;
+                            if (mesh.getSkeleton() != null)
+                            {
+                                openList.add(mesh.getSkeleton());
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         @Override
         public void paint(Graphics g)
@@ -151,6 +215,12 @@ public class FileViewer extends BaseFrame
 
             try
             {
+                if (traceStream != null)
+                {
+                    renderTarget.setTraceStream(traceStream);
+                    // a single frame only
+                    traceStream = null;
+                }
                 g3d.bindTarget(renderTarget);
                 
                 camera.setPerspective(50,
@@ -178,6 +248,7 @@ public class FileViewer extends BaseFrame
                             world.setActiveCamera(camera);
                             camera.setTransform(cameraController.getTransform());
                             world.addChild(camera);
+                            addAllLights(world, g3d);
                             g3d.render((Node)world, transform);
                             world.removeChild(camera);
                             world.setActiveCamera(oldCamera);
@@ -220,6 +291,7 @@ public class FileViewer extends BaseFrame
             {
                 g3d.releaseTarget();
             }
+            renderTarget.setTraceStream(null);
         }
     }
 
@@ -583,6 +655,11 @@ public class FileViewer extends BaseFrame
         validate();
     }
     
+    private void toggleGLTrace()
+    {
+        canvas.setTraceStream(System.out);
+    }
+    
     private void initFileMenu(Menu menu)
     {
         MenuItem openItem = new MenuItem("Open",
@@ -597,6 +674,21 @@ public class FileViewer extends BaseFrame
         menu.add(openItem);
     }
 
+    private void initDebugMenu(Menu menu)
+    {
+        MenuItem toggleTraceItem = new MenuItem("GL trace single frame",
+                new MenuShortcut(KeyEvent.VK_G));
+        toggleTraceItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                toggleGLTrace();
+            }
+        });
+        
+        menu.add(toggleTraceItem);
+    }
+    
     private void initWindowMenu(Menu menu)
     {
         MenuItem toggleFullscreenItem = new MenuItem("Toggle Fullscreen",
@@ -636,6 +728,10 @@ public class FileViewer extends BaseFrame
         menuBar.add(fileMenu);
         initFileMenu(fileMenu);
 
+        Menu debugMenu = new Menu("Debug");
+        menuBar.add(debugMenu);
+        initDebugMenu(debugMenu);
+        
         Menu windowMenu = new Menu("Window");
         menuBar.add(windowMenu);
         initWindowMenu(windowMenu);

@@ -28,6 +28,7 @@
 package javax.microedition.m3g.opengl;
 
 import com.jogamp.opengl.DebugGL2;
+import com.jogamp.opengl.TraceGL2;
 import javax.microedition.m3g.RendererOpenGL2;
 import javax.microedition.m3g.Renderer;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -35,6 +36,7 @@ import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLCapabilitiesImmutable;
+import java.io.PrintStream;
 import javax.microedition.m3g.AbstractRenderTarget;
 
 /**
@@ -45,7 +47,9 @@ public class GLRenderTarget implements AbstractRenderTarget
     private GLAutoDrawable drawable;
     private RendererOpenGL2 renderer;
     private final boolean debug;
+    private PrintStream traceStream;
     private DebugGL2 debugGL;
+    private TraceGL2 traceGL;
     private GL lastGL;
 
     public GLRenderTarget(GLAutoDrawable drawable)
@@ -57,10 +61,29 @@ public class GLRenderTarget implements AbstractRenderTarget
     {
         this.drawable = drawable;
         this.debug = debug;
+        this.traceStream = null;
+
+        renderer = new RendererOpenGL2();
+    }
+
+    public GLRenderTarget(GLAutoDrawable drawable, boolean debug, PrintStream traceStream)
+    {
+        this.drawable = drawable;
+        this.debug = debug;
+        this.traceStream = traceStream;
 
         renderer = new RendererOpenGL2();
     }
     
+    public void setTraceStream(PrintStream traceStream)
+    {
+        if (traceStream != this.traceStream)
+        {
+            this.traceGL = null;
+        }
+        this.traceStream = traceStream;
+    }
+
     private static void requireValidDrawable(GLAutoDrawable drawable)
     {
         if (drawable == null)
@@ -144,9 +167,21 @@ public class GLRenderTarget implements AbstractRenderTarget
             {
                 debugGL = new DebugGL2(gl);
             }
+            if (traceStream != null)
+            {
+                traceGL = new TraceGL2(gl, traceStream);
+            }
         }
         
-        if (debug) 
+        if (traceStream != null)
+        {
+            if (traceGL == null)
+            {
+                traceGL = new TraceGL2(gl, traceStream);
+            }
+            renderer.bindContext(traceGL, getWidth(), getHeight());
+        }
+        else if (debug) 
         {
             renderer.bindContext(debugGL, getWidth(), getHeight());
         }
