@@ -91,6 +91,8 @@ class Operator_M3XExport( bpy.types.Operator ):
 
     def execute(self, context):
         export = False
+        import imp
+        imp.reload(m3x)
         converter = m3x.M3XConverter()
         self.objectsToConvert = None
         if self.option_version == '1':

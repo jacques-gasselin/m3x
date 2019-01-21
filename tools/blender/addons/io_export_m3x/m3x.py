@@ -41,12 +41,18 @@ import math
 import mathutils
 import os.path
 
-__logger = open(os.path.expanduser("~/M3XConverter.log"), "ab")
+__logger = None
 def log(message):
     global __logger
+    if not __logger:
+        __logger = open(os.path.expanduser("~/M3XConverter.log"), "ab")
     __logger.write(bytes(str(message) + '\n', 'UTF-8'))
     __logger.flush()
-log("=== m3x.py ===")
+    
+def closeLog():
+    global __logger
+    if __logger:
+        __logger.close()
 
 class Object3D(object):
     def __init__(self, idValue):
@@ -1175,11 +1181,14 @@ class M3XConverter(object):
 
     def __init__(self):
         object.__init__(self)
+        log("=== m3x.py ===")
+        log("M3XConverter")
         self.convertedDataObjects = {}
         self.objects = []
 
     def setVersion(self, version):
         self.version = version
+        log("setVersion(" + str(version) + ")")
 
     def clearCaches(self):
         self.convertedDataObjects = {}
@@ -1445,11 +1454,13 @@ class M3XConverter(object):
                     log("material_index: " + str(material_index))
                     material = None
                     if material is None:
-                        material = data.materials[material_index]
                         log("data.materials: " + str(data.materials.items()))
+                        if len(data.materials) > material_index:
+                            material = data.materials[material_index]
                     if material is None:
-                        material = object.material_slots[material_index].material
                         log("object.material_slots: " + str(object.material_slots.items()))
+                        if len(object.material_slots) > material_index:
+                            material = object.material_slots[material_index].material
                     cm = self.getCompositingMode(material)
                     appearance = self.getAppearance(cm, pm, material)
                     mesh.addSubmesh(ib, appearance)
@@ -1479,6 +1490,7 @@ class M3XConverter(object):
         if returnObject:
             #transform = mathutils.Matrix(object.matrix_local)
             loc = object.location #tuple(transform.to_translation())
+            log("loc = " + str(loc))
             if loc != M3XConverter.ZEROS_3:
                 returnObject.setTranslation(*loc)
             scale = object.scale #tuple(transform.to_scale())
@@ -1486,8 +1498,10 @@ class M3XConverter(object):
                 returnObject.setScale(*scale)
             #quat = transform.to_quaternion()
             #axis, angle = quat.to_axis_angle()
-            axis = object.rotation_axis_angle[:3]
-            angle = object.rotation_axis_angle[3]
+            axis = object.rotation_axis_angle[1:4]
+            angle = object.rotation_axis_angle[0]
+            log("axis = " + str(axis))
+            log("angle = " + str(angle))
             if angle != 0:
                 returnObject.setOrientation(angle, axis[0], axis[1], axis[2])
         return returnObject
@@ -1544,4 +1558,5 @@ class M3XConverter(object):
         sections = []
         sections.append(self.objects)
         s.serialize(sections)
+        closeLog()
 

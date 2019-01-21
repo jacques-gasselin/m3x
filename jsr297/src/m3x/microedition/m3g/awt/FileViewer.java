@@ -420,7 +420,7 @@ public class FileViewer extends BaseFrame
     
     private static void populateTreeViewTransformable(DefaultMutableTreeNode treeNode, Transformable obj)
     {
-        float[] v = new float[3];
+        float[] v = new float[4];
         obj.getTranslation(v);
         if (v[0] != 0.0f || v[1] != 0.0f || v[2] != 0.0f)
         {
@@ -433,6 +433,12 @@ public class FileViewer extends BaseFrame
             treeNode.add(new DefaultMutableTreeNode("scale : [ " + v[0] + ", " + v[1] + ", " + v[2] + " ]"));
         }
 
+        obj.getOrientation(v);
+        if (v[0] != 0.0f)
+        {
+            treeNode.add(new DefaultMutableTreeNode("orientation : [ " + v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3] + " ]"));
+        }
+        
         populateTreeViewObject3D(treeNode, obj);
     }
 
