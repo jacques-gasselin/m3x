@@ -260,7 +260,7 @@ public class IndexBuffer extends Object3D
 
     final ShortBuffer getIndexBuffer()
     {
-        return this.indices.rewind();
+        return (ShortBuffer) this.indices.rewind();
     }
 
     final int[] getStripLengths()

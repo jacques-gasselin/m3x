@@ -878,7 +878,7 @@ public class RendererOpenGL2 extends Renderer
                     limit * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return this.positionShortBuffer.limit(limit).rewind();
+        return (ShortBuffer) this.positionShortBuffer.limit(limit).rewind();
     }
 
     private ShortBuffer getTexcoordShortBuffer(int unit, int limit)
@@ -890,7 +890,7 @@ public class RendererOpenGL2 extends Renderer
                     limit * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
         }
 
-        return this.texcoordShortBuffer[unit].limit(limit).rewind();
+        return (ShortBuffer) this.texcoordShortBuffer[unit].limit(limit).rewind();
     }
 
     private static abstract class ImageBaseRendererData extends ImageBase.RendererData

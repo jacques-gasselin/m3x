@@ -246,11 +246,14 @@
                 </not>
             </and>
         </condition>
+        <condition property="os.windows" value="true">
+            <os family="windows"/>
+        </condition>
     </target>
     
     <target name="install-blender-plugins"
             description="Installs import and export plugins for Blender"
-            depends="check-os, install-blender-plugins-macosx, install-blender-plugins-linux">
+            depends="check-os, install-blender-plugins-macosx, install-blender-plugins-linux, install-blender-plugins-windows">
         <!-- See https://docs.blender.org/manual/en/latest/getting_started/installing/configuration/directories.html -->
         <copy todir="${dist.dir}/blender/scripts"
               preservelastmodified="true">
@@ -300,6 +303,26 @@
         </copy>
         <!-- For Blender 2.79 -->
         <copy todir="${user.home}/.config/blender/2.79/scripts/addons"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender/addons">
+                <include name="**/*.py"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="install-blender-plugins-windows"
+            description="Installs import and export plugins for Blender on Windows"
+            if="os.windows">
+        <echo>*** Installing Blender Export Scripts for Windows ***</echo>
+        <!-- For Blender 2.76 -->
+        <copy todir="${user.home}/AppData/Roaming/Blender Foundation/Blender/2.76/scripts/addons"
+              preservelastmodified="true">
+            <fileset dir="${basedir}/blender/addons">
+                <include name="**/*.py"/>
+            </fileset>
+        </copy>
+        <!-- For Blender 2.79 -->
+        <copy todir="${user.home}/AppData/Roaming/Blender Foundation/Blender/2.79/scripts/addons"
               preservelastmodified="true">
             <fileset dir="${basedir}/blender/addons">
                 <include name="**/*.py"/>
