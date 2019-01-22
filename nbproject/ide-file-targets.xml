@@ -8,6 +8,7 @@
         <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
         <pathelement location="${lib.dir}/jogl/jogl-all.jar"/>
         <pathelement location="${lib.dir}/jogl/gluegen-rt.jar"/>
+        <pathelement location="${lib.dir}/jaxb/activation.jar"/>
         <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
     </path>
     <path id="src.path">

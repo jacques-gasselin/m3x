@@ -39,9 +39,11 @@
     <target name="xjc-typedef">
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
             <classpath>
-                <fileset dir="${lib.dir}/jaxb">
-                    <include name="*.jar"/>
-                </fileset>
+                <pathelement location="${lib.dir}/jaxb/activation.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-core.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-xjc.jar"/>
             </classpath>
         </taskdef>        
     </target>
@@ -50,6 +52,13 @@
         <echo>XJC on m3x schema</echo>
         <xjc package="${m3x.xml.package}"
              destdir="${build.src.dir}">
+            <classpath>
+                <pathelement location="${lib.dir}/jaxb/activation.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-core.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-xjc.jar"/>
+            </classpath>
             <schema file="${schema.dir}/m3x.xsd"/>
             <produces dir="${build.src.dir}/m3x/xml">
                 <include name="*.java"/>
@@ -62,6 +71,13 @@
         <xjc package="${m3x.collada.package}"
              destdir="${build.src.dir}"
              extension="true">
+            <classpath>
+                <pathelement location="${lib.dir}/jaxb/activation.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-core.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-api.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-xjc.jar"/>
+            </classpath>
             <schema file="${schema.dir}/collada.xsd"/>
             <produces dir="${build.src.dir}/m3x/collada">
                 <include name="*.java"/>

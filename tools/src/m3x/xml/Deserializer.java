@@ -80,7 +80,7 @@ public final class Deserializer
         }
         catch (JAXBException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new NoClassDefFoundError("Unable to parse the m3x schema. " +
                     "The m3x.xml classes may be missing from your distribution.");
         }

@@ -61,6 +61,7 @@
         <path id="run.classpath">
             <pathelement location="${jsr297.dir}/dist/m3x-jsr297.jar"/>
             <pathelement location="${tools.dir}/dist/m3x.jar"/>
+            <pathelement location="${lib.dir}/jaxb/activation.jar"/>
             <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
             <pathelement location="${lib.dir}/vecmath/vecmath.jar"/>
             <pathelement location="${lib.dir}/jogl/jogl-all.jar"/>
