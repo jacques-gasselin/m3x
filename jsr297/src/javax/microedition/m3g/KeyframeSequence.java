@@ -46,7 +46,7 @@ public class KeyframeSequence extends Object3D
     private int duration;
     private int interpolationType;
     private int keyframeCount;
-    private int repeatMode;
+    private int repeatMode = CONSTANT;
     private int validRangeFirst;
     private int validRangeLast;
     
