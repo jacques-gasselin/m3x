@@ -12,10 +12,8 @@
         </taskdef>
         <m3x_m3g dir="${res.dir}">
             <classpath>
-                <!--fileset dir="${lib.dir}/jaxb">
-                    <include name="*.jar"/>
-                </fileset-->
                 <pathelement location="${build.dir}"/>
+                <pathelement location="${lib.dir}/jaxb/activation.jar"/>
                 <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
             </classpath>
             <fileset dir="${res.dir}">
@@ -40,16 +38,13 @@
             <classpath>
                 <pathelement location="${test.build.dir}"/>
                 <pathelement location="${lib.dir}/junit-4.4.jar"/>
-                <fileset dir="${lib.dir}/jaxb">
-                    <include name="*.jar"/>
-                </fileset>
+                <pathelement location="${lib.dir}/jaxb/activation.jar"/>
+                <pathelement location="${lib.dir}/jaxb/jaxb-impl.jar"/>
                 <fileset dir="${dist.dir}"/>
             </classpath>
             
             <formatter usefile="false" type="brief"/>
             <formatter type="xml"/>
-            
-            <jvmarg value="-Xprofile"/>
             
             <batchtest fork="yes"
                        todir="${test.result.dir}">
