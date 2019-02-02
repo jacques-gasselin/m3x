@@ -35,7 +35,7 @@ public final class AnimationController extends Object3D
     private int activeIntervalStart;
     private int activeIntervalEnd;
     private int duration;
-    private float speed;
+    private float speed = 1.0f;
     private float weight;
     private float sequenceTime;
     private int worldTime;

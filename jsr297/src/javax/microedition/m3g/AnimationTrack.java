@@ -126,12 +126,52 @@ public class AnimationTrack extends Object3D
 
     public float sample(int worldTime, int channel)
     {
-        throw new UnsupportedOperationException();
+        if (controller == null)
+        {
+            throw new IllegalStateException("no controller set");
+        }
+        
+        if (controller.getActiveIntervalStart() != 0 && controller.getActiveIntervalEnd() != 0)
+        {
+            if (controller.getActiveIntervalStart() > worldTime)
+            {
+                throw new IllegalStateException("worldTime is before the start of the controller's active interval");
+            }
+
+            if (controller.getActiveIntervalEnd() < worldTime)
+            {
+                throw new IllegalStateException("worldTime is after the end of the controller's active interval");
+            }
+        }
+        
+        float sequenceTime = controller.getPosition(worldTime);
+        
+        return sequence.sample(sequenceTime, channel);
     }
 
     public void sample(int worldTime, int channel, float[] value)
     {
-        throw new UnsupportedOperationException();
+        if (controller == null)
+        {
+            throw new IllegalStateException("no controller set");
+        }
+        
+        if (controller.getActiveIntervalStart() != 0 && controller.getActiveIntervalEnd() != 0)
+        {
+            if (controller.getActiveIntervalStart() > worldTime)
+            {
+                throw new IllegalStateException("worldTime is before the start of the controller's active interval");
+            }
+
+            if (controller.getActiveIntervalEnd() < worldTime)
+            {
+                throw new IllegalStateException("worldTime is after the end of the controller's active interval");
+            }
+        }
+        
+        float sequenceTime = controller.getPosition(worldTime);
+        
+        sequence.sample(sequenceTime, channel, value);
     }
 
     public void setController(AnimationController controller)
@@ -139,23 +179,15 @@ public class AnimationTrack extends Object3D
         this.controller = controller;
     }
 
-    public void setKeyframeSequence(KeyframeSequence sequence)
+    final void setKeyframeSequence(KeyframeSequence sequence)
     {
         Require.notNull(sequence, "sequence");
         //TODO check compatibility
 
-        if (this.sequence == null)
-        {
-            this.sequence = sequence;
-        }
-        else
-        {
-            //TODO implement replace
-            throw new UnsupportedOperationException();
-        }
+        this.sequence = sequence;
     }
 
-    void setTargetProperty(int property)
+    final void setTargetProperty(int property)
     {
         Require.argumentInEnum(property, "property", ALPHA, STENCIL);
 
