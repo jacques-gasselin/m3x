@@ -63,4 +63,69 @@ public class KeyframeSequenceTest extends AbstractTestCase
         KeyframeSequence k = new KeyframeSequence(1, 4, KeyframeSequence.LINEAR);
         assertEquals(1, k.getChannelCount());
     }
+    
+    public void testSampleSingleUninitialized()
+    {
+        KeyframeSequence k = new KeyframeSequence(1, 1, KeyframeSequence.LINEAR);
+        try
+        {
+            k.sample(0, 0);
+            fail("KeyframeSequence has deferred exceptions for uninitialized instances");
+        }
+        catch (IllegalStateException e)
+        {
+            
+        }
+    }
+
+    public void testSampleSingleLINEAREmpty()
+    {
+        KeyframeSequence k = new KeyframeSequence(1, 1, KeyframeSequence.LINEAR);
+        k.setDuration(100);
+        assertEquals(0.0f, k.sample(0, 0), 0.0001f);
+    }
+
+    public void testSampleSingleLINEAR()
+    {
+        KeyframeSequence k = new KeyframeSequence(1, 1, KeyframeSequence.LINEAR);
+        k.setKeyframe(0, 50, new float[]{ 1.0f });
+        k.setDuration(100);
+        assertEquals(1.0f, k.sample(0, 0), 0.0001f);
+        assertEquals(1.0f, k.sample(50, 0), 0.0001f);
+        assertEquals(1.0f, k.sample(100, 0), 0.0001f);
+    }
+
+    public void testSampleSingleSTEP()
+    {
+        KeyframeSequence k = new KeyframeSequence(1, 1, KeyframeSequence.STEP);
+        k.setKeyframe(0, 100, new float[]{ 1.0f });
+        k.setDuration(200);
+        assertEquals(1.0f, k.sample(0, 0), 0.0001f);
+    }
+
+    public void testSampleTwoSTEP()
+    {
+        KeyframeSequence k = new KeyframeSequence(2, 1, KeyframeSequence.STEP);
+        k.setKeyframe(0, 100, new float[]{ 1.0f });
+        k.setKeyframe(1, 200, new float[]{ 2.0f });
+        k.setDuration(300);
+        assertEquals(1.0f, k.sample(50, 0), 0.0001f);
+        assertEquals(1.0f, k.sample(150, 0), 0.0001f);
+        assertEquals(2.0f, k.sample(250, 0), 0.0001f);
+    }
+
+    public void testSampleTwoLINEAR()
+    {
+        KeyframeSequence k = new KeyframeSequence(2, 1, KeyframeSequence.LINEAR);
+        k.setKeyframe(0, 100, new float[]{ 1.0f });
+        k.setKeyframe(1, 200, new float[]{ 2.0f });
+        k.setDuration(300);
+        assertEquals(1.0f, k.sample(50, 0), 0.0001f);
+        assertEquals(1.0f, k.sample(99, 0), 0.0001f);
+        assertEquals(1.0f, k.sample(100, 0), 0.0001f);
+        assertEquals(1.5f, k.sample(150, 0), 0.0001f);
+        assertEquals(2.0f, k.sample(200, 0), 0.0001f);
+        assertEquals(2.0f, k.sample(201, 0), 0.0001f);
+        assertEquals(2.0f, k.sample(250, 0), 0.0001f);
+    }
 }
