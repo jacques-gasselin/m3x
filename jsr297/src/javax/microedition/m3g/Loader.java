@@ -1450,11 +1450,16 @@ public final class Loader
             {
                 // raw float keyframes
                 
-                float values[] = new float[componentCount * channelCount];
+                float values[] = new float[componentCount];
                 for (int k = 0; k < keyframeCount; ++k)
                 {
                     final int time = readInt();
-                    readFully(values, 0, componentCount * channelCount);
+                    obj.setKeyframeTime(k, time);
+                    for (int c = 0; c < channelCount; ++c)
+                    {
+                        readFully(values, 0, componentCount);
+                        obj.setKeyframeValue(c, k, values);
+                    }
                 }
             }
             else if (encoding == 1)
@@ -1465,18 +1470,20 @@ public final class Loader
                 readFully(bias, 0, componentCount);
                 readFully(scale, 0, componentCount);
                 
-                float values[] = new float[componentCount * channelCount];
+                float values[] = new float[componentCount];
                 for (int k = 0; k < keyframeCount; ++k)
                 {
                     final int time = readInt();
+                    obj.setKeyframeTime(k, time);
                     for (int c = 0; c < channelCount; ++c)
                     {
                         for (int i = 0; i < componentCount; ++i)
                         {
                             float v = bias[i] + scale[i]
                                     * readUnsignedByte() / 255.0f;
-                            values[c * componentCount + i] = v;
+                            values[i] = v;
                         }
+                        obj.setKeyframeValue(c, k, values);
                     }
                 }
             }
@@ -1488,18 +1495,20 @@ public final class Loader
                 readFully(bias, 0, componentCount);
                 readFully(scale, 0, componentCount);
                 
-                float values[] = new float[componentCount * channelCount];
+                float values[] = new float[componentCount];
                 for (int k = 0; k < keyframeCount; ++k)
                 {
                     final int time = readInt();
+                    obj.setKeyframeTime(k, time);
                     for (int c = 0; c < channelCount; ++c)
                     {
                         for (int i = 0; i < componentCount; ++i)
                         {
                             float v = bias[i] + scale[i]
                                     * readUnsignedShort() / 65535.0f;
-                            values[c * componentCount + i] = v;
+                            values[i] = v;
                         }
+                        obj.setKeyframeValue(c, k, values);
                     }
                 }
             }

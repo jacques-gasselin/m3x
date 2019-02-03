@@ -36,7 +36,7 @@ public final class AnimationController extends Object3D
     private int activeIntervalEnd;
     private int duration;
     private float speed = 1.0f;
-    private float weight;
+    private float weight = 1.0f;
     private float sequenceTime;
     private int worldTime;
     
@@ -58,6 +58,21 @@ public final class AnimationController extends Object3D
     public int getDuration()
     {
         return this.duration;
+    }
+    
+    final boolean isWorldTimeInActiveInterval(int worldTime)
+    {
+        if (activeIntervalStart == 0 && activeIntervalEnd == 0)
+        {
+            return true;
+        }
+        
+        if (worldTime >= activeIntervalStart && worldTime < activeIntervalEnd)
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     public float getPosition(int worldTime)

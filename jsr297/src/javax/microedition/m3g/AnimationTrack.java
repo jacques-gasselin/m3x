@@ -131,14 +131,13 @@ public class AnimationTrack extends Object3D
             throw new IllegalStateException("no controller set");
         }
         
-        if (controller.getActiveIntervalStart() != 0 && controller.getActiveIntervalEnd() != 0)
+        if (!controller.isWorldTimeInActiveInterval(worldTime))
         {
-            if (controller.getActiveIntervalStart() > worldTime)
+            if (worldTime < controller.getActiveIntervalStart())
             {
                 throw new IllegalStateException("worldTime is before the start of the controller's active interval");
             }
-
-            if (controller.getActiveIntervalEnd() < worldTime)
+            else
             {
                 throw new IllegalStateException("worldTime is after the end of the controller's active interval");
             }
@@ -156,14 +155,13 @@ public class AnimationTrack extends Object3D
             throw new IllegalStateException("no controller set");
         }
         
-        if (controller.getActiveIntervalStart() != 0 && controller.getActiveIntervalEnd() != 0)
+        if (!controller.isWorldTimeInActiveInterval(worldTime))
         {
-            if (controller.getActiveIntervalStart() > worldTime)
+            if (worldTime < controller.getActiveIntervalStart())
             {
                 throw new IllegalStateException("worldTime is before the start of the controller's active interval");
             }
-
-            if (controller.getActiveIntervalEnd() < worldTime)
+            else
             {
                 throw new IllegalStateException("worldTime is after the end of the controller's active interval");
             }

@@ -41,15 +41,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import com.jogamp.opengl.awt.GLJPanel;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.microedition.m3g.AbstractRenderTarget;
 import javax.microedition.m3g.AnimationTrack;
 import javax.microedition.m3g.Appearance;
 import javax.microedition.m3g.AppearanceBase;
@@ -75,7 +74,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
-import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -123,6 +121,7 @@ public class FileViewer extends BaseFrame
 
         private Object3D[] roots;
 
+        private int animationWorldTime = -1;
         private float hue;
         
         public FileViewerCanvas()
@@ -141,6 +140,23 @@ public class FileViewer extends BaseFrame
         public void setTraceStream(PrintStream stream)
         {
             traceStream = stream;
+        }
+        
+        public boolean isAnimating()
+        {
+            return animationWorldTime >= 0;
+        }
+        
+        public void setAnimating(boolean enabled)
+        {
+            if (enabled)
+            {
+                animationWorldTime = 0;
+            }
+            else
+            {
+                animationWorldTime = -1;
+            }
         }
 
         protected void setRoots(Object3D[] roots)
@@ -211,6 +227,21 @@ public class FileViewer extends BaseFrame
         {
             super.paint(g);
 
+            //copy to avoid concurrency issues
+            final Object3D[] rootsArray = this.roots;
+            
+            if (isAnimating())
+            {
+                if (rootsArray != null)
+                {
+                    for (Object3D root : rootsArray)
+                    {
+                        root.animate(animationWorldTime);
+                        animationWorldTime += 8;
+                    }
+                }
+            }
+            
             Graphics3D g3d = Graphics3D.getInstance();
 
             try
@@ -235,7 +266,6 @@ public class FileViewer extends BaseFrame
 
                 transform.setIdentity();
                 //copy to avoid concurrency issues
-                final Object3D[] rootsArray = this.roots;
                 if (rootsArray != null)
                 {
                     for (Object3D root : rootsArray)
@@ -666,6 +696,11 @@ public class FileViewer extends BaseFrame
         canvas.setTraceStream(System.out);
     }
     
+    private void toggleAnimation()
+    {
+        canvas.setAnimating(!canvas.isAnimating());
+    }
+    
     private void initFileMenu(Menu menu)
     {
         MenuItem openItem = new MenuItem("Open",
@@ -775,6 +810,20 @@ public class FileViewer extends BaseFrame
                         canvas.repaint();
                     }
                 }, 8, 8, TimeUnit.MILLISECONDS);
+                
+                canvas.addKeyListener(new KeyAdapter()
+                {
+                    @Override
+                    public void keyPressed(KeyEvent e)
+                    {
+                        super.keyPressed(e);
+                        
+                        if (' ' == e.getKeyChar())
+                        {
+                            toggleAnimation();
+                        }
+                    }
+                });
             }
         });
     }

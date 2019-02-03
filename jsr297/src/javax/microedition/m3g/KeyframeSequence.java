@@ -239,6 +239,9 @@ public class KeyframeSequence extends Object3D
                 return keyValues[valueOffset(channel, index)];
             }
             case LINEAR:
+            case SLERP:
+            case SPLINE:
+            case SQUAD:
             {
                 int index = getKeyframeIndex(time);
                 int nextIndex = wrappedValidIndex(index + 1);
@@ -277,6 +280,9 @@ public class KeyframeSequence extends Object3D
                 return;
             }
             case LINEAR:
+            case SLERP:
+            case SPLINE:
+            case SQUAD:
             {
                 int index = getKeyframeIndex(time);
                 int nextIndex = wrappedValidIndex(index + 1);
