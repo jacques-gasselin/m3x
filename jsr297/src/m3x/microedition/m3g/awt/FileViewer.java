@@ -45,6 +45,7 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,6 +58,7 @@ import javax.microedition.m3g.Camera;
 import javax.microedition.m3g.CompositingMode;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Group;
+import javax.microedition.m3g.KeyframeSequence;
 import javax.microedition.m3g.Light;
 import javax.microedition.m3g.Loader;
 import javax.microedition.m3g.Mesh;
@@ -416,6 +418,34 @@ public class FileViewer extends BaseFrame
         
     }
     
+    private static void populateTreeViewKeyframeSequence(DefaultMutableTreeNode treeNode, KeyframeSequence obj)
+    {
+        populateTreeViewObject3D(treeNode, obj);
+
+        if (obj.getInterpolationType() != KeyframeSequence.STEP)
+        {
+            treeNode.add(new DefaultMutableTreeNode("interpolation : " + obj.getInterpolationType(), false));
+        }
+        
+        if (obj.getDuration() != 0)
+        {
+            treeNode.add(new DefaultMutableTreeNode("duration : " + obj.getDuration(), false));
+        }
+        
+        if (obj.getKeyframeCount() > 0)
+        {
+            DefaultMutableTreeNode frames = new DefaultMutableTreeNode("frames[" + obj.getKeyframeCount() + "]");
+            float value[] = new float[obj.getComponentCount()];
+            for (int i = 0; i < obj.getKeyframeCount(); ++i)
+            {
+                int time = obj.getKeyframe(i, value);
+                frames.add(new DefaultMutableTreeNode(Integer.toString(time) + " : " + Arrays.toString(value), false));
+            }
+            
+            treeNode.add(frames);
+        }
+    }
+    
     private static void populateTreeViewAppearanceBase(DefaultMutableTreeNode treeNode, AppearanceBase obj)
     {
         populateTreeViewObject3D(treeNode, obj);
@@ -611,6 +641,10 @@ public class FileViewer extends BaseFrame
         else if (obj instanceof PolygonMode)
         {
             populateTreeViewPolygonMode(treeNode, (PolygonMode) obj);
+        }
+        else if (obj instanceof KeyframeSequence)
+        {
+            populateTreeViewKeyframeSequence(treeNode, (KeyframeSequence) obj);
         }
         else
         {

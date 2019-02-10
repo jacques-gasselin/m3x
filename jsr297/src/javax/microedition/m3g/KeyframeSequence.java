@@ -186,9 +186,12 @@ public class KeyframeSequence extends Object3D
             index -= keyframeCount;
         }
         
-        if (index > validRangeLast)
+        if (validRangeFirst != 0 || validRangeLast != 0)
         {
-            index = validRangeLast;
+            if (index > validRangeLast)
+            {
+                index = validRangeLast;
+            }
         }
         
         return index;

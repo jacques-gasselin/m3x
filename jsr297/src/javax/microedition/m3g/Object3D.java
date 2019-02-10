@@ -85,15 +85,14 @@ public class Object3D
 
     public final int animate(int time)
     {
-        final List<Object3D> references = new ArrayList<Object3D>();
-        getReferences(references);
+        final ArrayList<Object3D> references = new ArrayList<Object3D>();
+        references.add(this);
         
         final Set<Object3D> closedSet = new HashSet<Object3D>(references.size());
         final List<Object3D> animated = new ArrayList<Object3D>(references.size());
-        int referenceIndex = 0;
-        while (referenceIndex < references.size())
+        while (references.size() > 0)
         {
-            Object3D o = references.get(referenceIndex++);
+            Object3D o = references.remove(references.size() - 1);
             if (closedSet.contains(o))
             {
                 continue;
