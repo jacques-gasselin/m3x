@@ -28,6 +28,7 @@
 package javax.microedition.m3g;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -128,7 +129,7 @@ public final class Loader
 
         void push(InputStream stream)
         {
-            streamStack.add(stream);
+            streamStack.add(new BufferedInputStream(stream));
             currentStream = stream;
         }
 
