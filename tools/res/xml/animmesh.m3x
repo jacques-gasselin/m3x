@@ -6,7 +6,7 @@
                 <keytimes>0 500</keytimes>
                 <keyframes>
                     0 0 0
-                    0 128 0
+                    0 2 0
                 </keyframes>
             </KeyframeSequence>
             <AnimationController/>
@@ -20,22 +20,24 @@
             </byteComponents>
         </VertexArray>
         <VertexBuffer id="vertexBuffer" defaultColor="127 65 255 255">
-            <positions>
+            <positions scale="0.01">
                 <VertexArrayInstance ref="posArray"/>
             </positions>
         </VertexBuffer>
-        <Mesh>
-            <AnimationTrackInstance ref="track1"/>
-            <VertexBufferInstance ref="vertexBuffer"/>
-            <submesh>
-                <TriangleStripArray>
-                    <indices>0 1 2 3</indices>
-                    <stripLengths>4</stripLengths>
-                </TriangleStripArray>
-                <Appearance>
-                    <PolygonMode culling="CULL_NONE"/>
-                </Appearance>
-            </submesh>
-        </Mesh>
+        <Group>
+            <Mesh>
+                <AnimationTrackInstance ref="track1"/>
+                <VertexBufferInstance ref="vertexBuffer"/>
+                <submesh>
+                    <TriangleStripArray>
+                        <indices>0 1 2 3</indices>
+                        <stripLengths>4</stripLengths>
+                    </TriangleStripArray>
+                    <Appearance>
+                        <PolygonMode culling="CULL_NONE"/>
+                    </Appearance>
+                </submesh>
+            </Mesh>
+        </Group>
     </section>
 </m3g>

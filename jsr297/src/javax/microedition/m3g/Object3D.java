@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author jgasseli
@@ -74,16 +75,163 @@ public class Object3D
             
             final int[] newChannels = new int[channels.length + 1];
             System.arraycopy(channels, 0, newChannels, 0, channels.length);
-            channels[channels.length] = channel;
-            Arrays.sort(channels);
+            newChannels[channels.length] = channel;
+            Arrays.sort(newChannels);
+            channels = newChannels;
         }
 
         channelsByTrack.put(animationTrack, channels);
     }
 
-    public int animate(int time)
+    public final int animate(int time)
     {
-        throw new UnsupportedOperationException();
+        final ArrayList<Object3D> references = new ArrayList<Object3D>();
+        references.add(this);
+        
+        final Set<Object3D> closedSet = new HashSet<Object3D>(references.size());
+        final List<Object3D> animated = new ArrayList<Object3D>(references.size());
+        while (references.size() > 0)
+        {
+            Object3D o = references.remove(references.size() - 1);
+            if (closedSet.contains(o))
+            {
+                continue;
+            }
+            
+            closedSet.add(o);
+            
+            if (!o.isAnimationEnabled())
+            {
+                continue;
+            }
+            
+            o.getReferences(references);
+            
+            if (o.getAnimationTrackCount() == 0)
+            {
+                continue;
+            }
+            
+            animated.add(o);
+        }
+        
+        final float sampleValues[] = new float[4];
+        final float translationValues[] = new float[3];
+        final float orientationValues[] = new float[4];
+        final float scaleValues[] = new float[3];
+        final List<AnimationTrack> validTracks = new ArrayList<AnimationTrack>();
+        
+        for (Object3D o : animated)
+        {
+            validTracks.clear();
+            for (AnimationTrack track : o.channelsByTrack.keySet())
+            {
+                AnimationController c = track.getController();
+                if (c != null && c.isWorldTimeInActiveInterval(time))
+                {
+                    validTracks.add(track);
+                }
+            }
+            
+            // clear property values
+            for (AnimationTrack track : validTracks)
+            {
+                int property = track.getTargetProperty();
+                switch (property)
+                {
+                    case AnimationTrack.TRANSLATION:
+                    {
+                        Arrays.fill(translationValues, 0.0f);
+                        break;
+                    }
+                    case AnimationTrack.ORIENTATION:
+                    {
+                        Arrays.fill(orientationValues, 0.0f);
+                        break;
+                    }
+                    case AnimationTrack.SCALE:
+                    {
+                        Arrays.fill(scaleValues, 0.0f);
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException("property " + property);
+                    }
+                }
+            }
+
+            // accumulate the weighted values
+            for (AnimationTrack track : validTracks)
+            {
+                int property = track.getTargetProperty();
+                final float resultValues[];
+                switch (property)
+                {
+                    case AnimationTrack.TRANSLATION:
+                    {
+                        resultValues = translationValues;
+                        break;
+                    }
+                    case AnimationTrack.ORIENTATION:
+                    {
+                        resultValues = orientationValues;
+                        break;
+                    }
+                    case AnimationTrack.SCALE:
+                    {
+                        resultValues = scaleValues;
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException("property " + property);
+                    }
+                }
+                
+                for (int channel : o.channelsByTrack.get(track))
+                {
+                    track.sample(time, channel, sampleValues);
+                    for (int i = 0; i < resultValues.length; ++i)
+                    {
+                        resultValues[i] += sampleValues[i];
+                    }
+                }
+            }
+
+            // set the animated values
+            for (AnimationTrack track : validTracks)
+            {
+                int property = track.getTargetProperty();
+                switch (property)
+                {
+                    case AnimationTrack.TRANSLATION:
+                    {
+                        Transformable t = (Transformable) o;
+                        t.setTranslation(translationValues[0], translationValues[1], translationValues[2]);
+                        break;
+                    }
+                    case AnimationTrack.ORIENTATION:
+                    {
+                        Transformable t = (Transformable) o;
+                        t.setOrientationQuat(orientationValues[0], orientationValues[1], orientationValues[2], orientationValues[3]);
+                        break;
+                    }
+                    case AnimationTrack.SCALE:
+                    {
+                        Transformable t = (Transformable) o;
+                        t.setScale(scaleValues[0], scaleValues[1], scaleValues[2]);
+                        break;
+                    }
+                    default:
+                    {
+                        throw new UnsupportedOperationException("property " + property);
+                    }
+                }
+            }
+        }
+        
+        return 0;
     }
 
     /**
@@ -106,11 +254,11 @@ public class Object3D
         }
         catch (InstantiationException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
         catch (IllegalAccessException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
         throw new UnsupportedOperationException("Class " + getClass() + " does" +
                 " not allow duplication");
@@ -275,7 +423,7 @@ public class Object3D
         return count;
     }
 
-    public Object3D[] getReferences()
+    public final Object3D[] getReferences()
     {
         final int referenceCount = getReferences((Object3D[]) null);
         final Object3D[] references = new Object3D[referenceCount];
@@ -331,6 +479,7 @@ public class Object3D
      * 
      * @param enable
      * @deprecated
+     * @see #setAnimationEnabled(boolean)
      */
     @Deprecated
     public void setAnimationEnable(boolean enable)

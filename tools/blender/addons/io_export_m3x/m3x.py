@@ -59,6 +59,7 @@ class Object3D(object):
         object.__init__(self)
         self.id = idValue
         self.userID = 0
+        self.animationTracks = []
         if self.id:
             regex = r'#(?P<userID>\d+)'
             match = re.search(regex, self.id)
@@ -73,10 +74,12 @@ class Object3D(object):
             attrs["userID"] = self.userID
         return
 
-    def serializeChildren(self, serializer):
-        #TODO animation tracks
-        pass
+    def addAnimationTrack(self, track):
+        self.animationTracks.append(track)
 
+    def serializeChildren(self, serializer):
+        for track in self.animationTracks:
+            serializer.writeReference(track)
 
 class Transformable(Object3D):
     def __init__(self, idValue):
@@ -180,6 +183,19 @@ class AnimationTrack(Object3D):
         self.animationController = None
         self.keyframeSequence = None
 
+    def set(self, prop, controller, sequence):
+        self.targetProperty = prop
+        self.animationController = controller
+        self.keyframeSequence = sequence
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("AnimationTrackInstance", {"ref" : self.id})
+
+    def serializeChildren(self, serializer):
+        Object3D.serializeChildren(self, serializer)
+        serializer.writeReference(self.animationController)
+        serializer.writeReference(self.keyframeSequence)
+
     def serialize(self, serializer):
         attr = { 
             "targetProperty": self.targetProperty
@@ -187,8 +203,6 @@ class AnimationTrack(Object3D):
         self.fillAttributes(attr)
         serializer.startTag("AnimationTrack", attr)
         self.serializeChildren(serializer)
-        serializer.writeReference(self.animationController)
-        serializer.writeReference(self.keyframeSequence)
         serializer.endTag()
 
 class AppearanceBase(Object3D):
@@ -546,6 +560,65 @@ class Image2D(ImageBase):
         self.serializeChildren(serializer)
         serializer.endTag()
 
+
+class KeyframeSequence(Object3D):
+    CONSTANT = "CONSTANT"
+    LOOP = "LOOP"
+    ADDITIVE_LOOP = "ADDITIVE_LOOP"
+
+    STEP = "STEP"
+    LINEAR = "LINEAR"
+    SPLINE = "SPLINE"
+    SLERP = "SLERP"
+    SQUAD = "SQUAD"
+
+    FLOAT = "FLOAT"
+    SHORT = "SHORT"
+    BYTE = "BYTE"
+
+    def __init__(self, idValue):
+        Object3D.__init__(self, idValue)
+        self.encoding = KeyframeSequence.FLOAT
+        self.validRangeFirst = 0
+        self.validRangeLast = 0
+        self.repeatMode = KeyframeSequence.CONSTANT
+        self.interpolation = KeyframeSequence.STEP
+        self.keytimes = []
+        self.keyframes = []
+
+    def set(self, componentCount, interpolation):
+        self.componentCount = componentCount
+        self.interpolation = interpolation
+
+    def setDuration(self, duration):
+        self.duration = int(duration)
+
+    def addKeyframe(self, time, value):
+        self.keytimes.append(int(time))
+        self.keyframes.extend(value[:self.componentCount])
+
+    def serializeInstance(self, serializer):
+        serializer.closedTag("KeyframeSequenceInstance", {"ref" : self.id})
+
+    def serializeChildren(self, serializer):
+        ImageBase.serializeChildren(self, serializer)
+        serializer.writeDataTag("keytimes", self.keytimes)
+        serializer.writeDataTag("keyframes", self.keyframes)
+
+    def serialize(self, serializer):
+        attr = { 
+            "componentCount": self.componentCount,
+            "encoding": self.encoding,
+            "duration": self.duration,
+            "interpolation": self.interpolation,
+            "validRangeFirst" : self.validRangeFirst,
+            "validRangeLast" : self.validRangeLast,
+            "repeatMode" : self.repeatMode
+        }
+        self.fillAttributes(attr)
+        serializer.startTag("KeyframeSequence", attr)
+        self.serializeChildren(serializer)
+        serializer.endTag()
 
 class Light(Node):
     AMBIENT = "AMBIENT"
@@ -1488,6 +1561,53 @@ class M3XConverter(object):
             #Empty node
             returnObject = Group(object.name)
         if returnObject:
+            # does it have animation?
+            log("data.animation_data = " + str(data.animation_data))
+            log("object.animation_data = " + str(object.animation_data))
+            animation_data = data.animation_data
+            if not animation_data:
+                animation_data = object.animation_data
+            if animation_data:
+                fcurves = animation_data.action.fcurves
+                log("fcurves = " + str(fcurves[:]))
+                ac = AnimationController(object.name + "-controller")
+                ac.speed = 1.0 / 24.0 # 24 fps animation speed
+                for curve in fcurves:
+                    ks = KeyframeSequence(object.name + "-keyframes-" + curve.data_path + "[" + str(curve.array_index) + "]")
+                    at = AnimationTrack(object.name + "-track-" + curve.data_path + "[" + str(curve.array_index) + "]")
+                    if curve.data_path == "location":
+                        ks.set(3, KeyframeSequence.LINEAR)
+                        at.set(AnimationTrack.TRANSLATION, ac, ks)
+                        for key in curve.keyframe_points:
+                            time = key.co[0]
+                            value = [0.0] * 3
+                            value[curve.array_index] = key.co[1]
+                            ks.addKeyframe(time, value)
+                    elif curve.data_path == "rotation":
+                        ks.set(4, KeyframeSequence.LINEAR)
+                        at.set(AnimationTrack.ORIENTATION, ac, ks)
+                    elif curve.data_path == "rotation_euler":
+                        ks.set(4, KeyframeSequence.LINEAR)
+                        at.set(AnimationTrack.ORIENTATION, ac, ks)
+                        for key in curve.keyframe_points:
+                            time = key.co[0]
+                            angle = key.co[1]
+                            c = math.cos(angle * 0.5)
+                            s = math.sin(angle * 0.5)
+                            quat = [0.0] * 4
+                            quat[curve.array_index] = s
+                            quat[3] = c
+                            ks.addKeyframe(time, quat)
+                    elif curve.data_path == "scale":
+                        ks.set(3, KeyframeSequence.LINEAR)
+                        at.set(AnimationTrack.SCALE, ac, ks)
+                        for key in curve.keyframe_points:
+                            time = key.co[0]
+                            value = [0.0] * 3
+                            value[curve.array_index] = key.co[1]
+                            ks.addKeyframe(time, value)
+                    ks.setDuration(curve.range()[1])
+                    returnObject.addAnimationTrack(at)
             #transform = mathutils.Matrix(object.matrix_local)
             loc = object.location #tuple(transform.to_translation())
             log("loc = " + str(loc))

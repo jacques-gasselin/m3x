@@ -332,10 +332,13 @@ public abstract class Transformable extends Object3D
         {
             throw new IllegalArgumentException("Zero quaternion");
         }
-        this.qx = qx;
-        this.qy = qy;
-        this.qz = qz;
-        this.qw = qw;
+        
+        final float invNorm = (float) (1.0 / Math.sqrt(qx * qx + qy * qy + qz * qz + qw * qw));
+        
+        this.qx = qx * invNorm;
+        this.qy = qy * invNorm;
+        this.qz = qz * invNorm;
+        this.qw = qw * invNorm;
 
         compositeTransformNeedsUpdate = true;
     }
@@ -381,7 +384,7 @@ public abstract class Transformable extends Object3D
         compositeTransformNeedsUpdate = true;
     }
 
-    private final void updateCompositeTransform()
+    private void updateCompositeTransform()
     {
         final Transform t = this.compositeTransform;
         t.setIdentity();

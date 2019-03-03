@@ -256,7 +256,7 @@ public class RendererOpenGL2 extends Renderer
 
     private static final float[] LIGHT_POSITIONAL = new float[]{ 0, 0, 0, 1 };
     private static final float[] LIGHT_DIRECTIONAL = new float[]{ 0, 0, 1, 0 };
-    private static final float[] COLOR_BLACK_RGB = new float[]{ 0, 0, 0 };
+    private static final float[] COLOR_BLACK_RGBA = new float[]{ 0, 0, 0, 1 };
     
 
     @Override
@@ -290,7 +290,7 @@ public class RendererOpenGL2 extends Renderer
 
             final float[] color = argbAsRGBVolatile(light.getColor(),
                     light.getIntensity());
-            final float[] black = COLOR_BLACK_RGB;
+            final float[] black = COLOR_BLACK_RGBA;
 
             final float[] ambientColor = (mode == Light.AMBIENT) ?
                 color : black;

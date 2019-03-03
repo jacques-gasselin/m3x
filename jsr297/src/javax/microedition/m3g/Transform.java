@@ -132,6 +132,22 @@ public final class Transform
         this.matrix.mul(transform.matrix);
     }
 
+    void preRotate(float angle, float ax, float ay, float az)
+    {
+        if (angle != 0 && (ax == 0 && ay == 0 && az == 0))
+        {
+            throw new IllegalArgumentException("angle is nonzero but rotation axis is zero");
+        }
+        
+        Matrix4f rotate = new Matrix4f();
+        rotate.setIdentity();
+        rotate.set(new AxisAngle4f(ax, ay, az, (float)Math.toRadians(angle)));
+        
+        rotate.mul(this.matrix);
+        
+        this.matrix.set(rotate);
+    }
+    
     public void postRotate(float angle, float ax, float ay, float az)
     {
         if (angle != 0 && (ax == 0 && ay == 0 && az == 0))
